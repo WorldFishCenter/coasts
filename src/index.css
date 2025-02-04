@@ -43,14 +43,18 @@ button {
   font-family: inherit;
   background-color: #1a1a1a;
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: all 0.25s;
 }
 button:hover {
   border-color: #646cff;
 }
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(100, 108, 255, 0.4);
+}
+button:focus:not(:focus-visible) {
+  outline: none;
+  box-shadow: none;
 }
 
 @media (prefers-color-scheme: light) {
@@ -77,11 +81,6 @@ button:focus-visible {
   position: relative;
 }
 
-.leaflet-container {
-  width: 100%;
-  height: 100%;
-}
-
 .info-control {
   padding: 6px 8px;
   font: 14px/16px Arial, Helvetica, sans-serif;
@@ -103,3 +102,40 @@ button:focus-visible {
   margin-right: 8px;
   opacity: 0.7;
 }
+
+.custom-popup {
+  z-index: 1;
+}
+
+.custom-popup .mapboxgl-popup-content {
+  padding: 0 !important;
+  background: transparent !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+  box-shadow: none !important;
+}
+
+.custom-popup .mapboxgl-popup-tip {
+  border-top-color: #2c3e50 !important;
+  border-width: 8px !important;
+}
+
+.custom-popup.dark .mapboxgl-popup-tip {
+  border-top-color: #2c3e50 !important;
+}
+
+.custom-popup.light .mapboxgl-popup-tip {
+  border-top-color: #ffffff !important;
+}
+
+/* Ensure popup is above other map elements */
+.mapboxgl-popup {
+  z-index: 2 !important;
+}
+
+/* Remove default popup close button */
+.mapboxgl-popup-close-button {
+  display: none !important;
+}
+
+/* End of file */

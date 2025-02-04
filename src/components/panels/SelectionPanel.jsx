@@ -32,7 +32,10 @@ const SelectionPanel = memo(({
           justifyContent: 'space-between',
           alignItems: 'center',
           cursor: 'pointer',
-          borderBottom: showPanel ? `1px solid ${isDarkTheme ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}` : 'none'
+          borderBottom: showPanel ? `1px solid ${isDarkTheme ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}` : 'none',
+          userSelect: 'none',
+          WebkitTapHighlightColor: 'transparent',
+          outline: 'none'
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -44,7 +47,10 @@ const SelectionPanel = memo(({
         </div>
         <div style={{ 
           transform: `rotate(${showPanel ? 180 : 0}deg)`,
-          transition: 'transform 0.3s ease'
+          transition: 'transform 0.3s ease',
+          userSelect: 'none',
+          WebkitTapHighlightColor: 'transparent',
+          outline: 'none'
         }}>
           ▼
         </div>

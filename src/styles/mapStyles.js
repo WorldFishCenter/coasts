@@ -41,7 +41,53 @@ export const getColor = (d) => {
                     '#FFEDA0';
 };
 
-export const getMapStyles = (isDarkTheme) => ({
+export const getMapStyles = (isDarkTheme) => {
+  return isDarkTheme 
+    ? 'mapbox://styles/mapbox/dark-v11'
+    : 'mapbox://styles/mapbox/light-v11';
+};
+
+// Mapbox layer styles
+export const getDistrictLayer = (selectedDistricts, isDarkTheme, opacity = 0.7, coverage = 75) => ({
+  id: 'districts',
+  type: 'fill',
+  paint: {
+    'fill-color': [
+      'case',
+      ['in', ['get', 'ADM2_PCODE'], ['literal', selectedDistricts.map(d => d.properties.ADM2_PCODE)]],
+      isDarkTheme ? '#3498db' : '#2980b9',
+      [
+        'interpolate',
+        ['linear'],
+        ['get', 'value'],
+        0, '#eff3ff',
+        coverage * 1, '#c6dbef',
+        coverage * 3, '#9ecae1',
+        coverage * 5, '#6baed6',
+        coverage * 7, '#3182bd',
+        coverage * 9, '#08519c'
+      ]
+    ],
+    'fill-opacity': [
+      'case',
+      ['in', ['get', 'ADM2_PCODE'], ['literal', selectedDistricts.map(d => d.properties.ADM2_PCODE)]],
+      0.8,
+      opacity
+    ],
+    'fill-outline-color': isDarkTheme ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.3)'
+  }
+});
+
+export const getHoverLayer = (isDarkTheme, radius = 2) => ({
+  id: 'districts-hover',
+  type: 'line',
+  paint: {
+    'line-color': isDarkTheme ? '#ffffff' : '#000000',
+    'line-width': radius / 10
+  }
+});
+
+export const containerStyles = (isDarkTheme) => ({
   container: {
     position: 'relative',
     height: '100vh',
@@ -63,6 +109,7 @@ export const getMapStyles = (isDarkTheme) => ({
     flexDirection: 'column',
     gap: '10px',
     maxHeight: 'calc(100vh - 100px)',
+    width: '300px',
     zIndex: 1000
   },
   legend: {
@@ -75,6 +122,15 @@ export const getMapStyles = (isDarkTheme) => ({
     borderRadius: '8px',
     boxShadow: isDarkTheme ? '0 4px 6px rgba(255,255,255,0.1)' : '0 4px 6px rgba(0,0,0,0.1)',
     zIndex: 1000,
-    maxWidth: '200px'
+    maxWidth: '200px',
+    backdropFilter: 'blur(10px)'
+  },
+  popup: {
+    backgroundColor: isDarkTheme ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+    color: isDarkTheme ? '#fff' : '#2c3e50',
+    borderRadius: '8px',
+    padding: '10px',
+    boxShadow: isDarkTheme ? '0 4px 6px rgba(255,255,255,0.1)' : '0 4px 6px rgba(0,0,0,0.1)',
+    backdropFilter: 'blur(10px)'
   }
 }); 

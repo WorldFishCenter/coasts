@@ -1,66 +1,41 @@
 # Coasts Map
 
-Interactive map visualization for coastal regions using React, Leaflet, and D3.js.
+Interactive map visualization for coastal regions using React and Mapbox GL JS.
 
 ## Features
 
-- Interactive district selection
-- Real-time data visualization
-- Customizable map parameters
-- Data export capabilities
-- Modern dark theme map style
+- Interactive map visualization
+- District selection and analysis
+- Data visualization with charts
+- Dark/Light theme support
+- Mobile responsive design
 
-## Tech Stack
+## Technologies
 
 - React
-- Vite
-- Leaflet (react-leaflet)
-- D3.js
+- Mapbox GL JS
+- ApexCharts for data visualization
+- Vite for build tooling
 
-## Development
+## Getting Started
 
-To run the project locally:
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Create a `.env` file with your Mapbox token:
+   ```
+   VITE_MAPBOX_TOKEN=your_token_here
+   ```
+4. Run development server: `npm run dev`
 
-```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-```
-
-The development server will start at `http://localhost:5173`
-
-## Building
-
-To build the project:
+## Building for Production
 
 ```bash
 npm run build
 ```
 
-The build output will be in the `dist` directory.
-
 ## Deployment
 
-This project is configured for deployment on Vercel. To deploy:
-
-1. Fork or clone this repository
-2. Connect your GitHub repository to Vercel:
-   - Go to [Vercel](https://vercel.com)
-   - Click "New Project"
-   - Import your GitHub repository
-   - Select "Vite" as the framework
-   - Deploy!
-
-The deployment will automatically use the following settings:
-- Build Command: `npm run build`
-- Output Directory: `dist`
-- Install Command: `npm install`
-
-## Environment Variables
-
-No environment variables are required for basic functionality.
+The project is configured for deployment on Vercel.
 
 ## License
 

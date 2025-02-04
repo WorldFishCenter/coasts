@@ -1,11 +1,11 @@
 // Function to load GeoJSON data
 export const loadBoundaries = async () => {
   try {
-    // This is a placeholder - you'll need to replace with your actual data source
-    const response = await fetch('/api/boundaries');
-    return await response.json();
+    const response = await fetch('/data/palma_area.geojson');
+    const data = await response.json();
+    return data;
   } catch (error) {
-    console.error('Error loading boundary data:', error);
+    console.error('Error loading boundaries:', error);
     return null;
   }
 };
@@ -13,9 +13,16 @@ export const loadBoundaries = async () => {
 // Function to load fishery catch data
 export const loadFisheryData = async () => {
   try {
-    // This is a placeholder - you'll need to replace with your actual data source
-    const response = await fetch('/api/fishery-data');
-    return await response.json();
+    // Sample fishery data - replace with actual API endpoint when available
+    const sampleData = {
+      'MZ0101': 850, // Ancuabe
+      'MZ0102': 650, // Balama
+      'MZ0103': 450, // Chiure
+      'MZ0104': 750, // Cidade De Pemba
+      'MZ0105': 550, // Ibo
+      'MZ0106': 350  // Macomia
+    };
+    return sampleData;
   } catch (error) {
     console.error('Error loading fishery data:', error);
     return null;
@@ -26,22 +33,21 @@ export const loadFisheryData = async () => {
 export const mergeBoundaryAndFisheryData = (boundaries, fisheryData) => {
   if (!boundaries || !fisheryData) return null;
 
-  const mergedFeatures = boundaries.features.map(feature => {
-    const regionId = feature.properties.id; // Adjust based on your data structure
-    const fisheryValue = fisheryData[regionId] || 0;
-    
+  const features = boundaries.features.map(feature => {
+    const pcode = feature.properties.ADM2_PCODE;
+    const value = fisheryData[pcode] || 0;
     return {
       ...feature,
       properties: {
         ...feature.properties,
-        fisheryValue
+        value
       }
     };
   });
 
   return {
-    type: 'FeatureCollection',
-    features: mergedFeatures
+    ...boundaries,
+    features
   };
 };
 

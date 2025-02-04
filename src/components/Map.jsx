@@ -1,39 +1,239 @@
-import { useState, useCallback, useEffect } from 'react';
-import { MapContainer, TileLayer } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
+import { useState, useCallback, useEffect, useMemo } from 'react';
+import ReactMapGL, { Source, Layer, NavigationControl, Popup } from 'react-map-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
 import Header from './Header';
 import SelectionPanel from './panels/SelectionPanel';
 import AnalysisPanel from './panels/AnalysisPanel';
 import ChartsPanel from './panels/ChartsPanel';
-import MapControls from './map/MapControls';
 import { useMapData } from '../hooks/useMapData';
-import { getMapStyles, getDistrictStyle, getColor } from '../styles/mapStyles';
+import { getMapStyles, containerStyles, getDistrictLayer, getHoverLayer } from '../styles/mapStyles';
 
-const Map = () => {
-  // State
-  const [selectedDistricts, setSelectedDistricts] = useState([]);
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
+
+// Shared constants for legend and layer filtering
+const GRADES = [0, 100, 300, 500, 700, 900];
+const COLORS = ['#eff3ff', '#c6dbef', '#9ecae1', '#6baed6', '#3182bd', '#08519c'];
+
+const Legend = ({ isDarkTheme, onToggleLayer, visibleRanges }) => {
+  return (
+    <div style={{
+      padding: '10px',
+      backgroundColor: isDarkTheme ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+      borderRadius: '4px',
+      color: isDarkTheme ? '#fff' : '#000'
+    }}>
+      <h4 style={{ margin: '0 0 10px 0' }}>Fishery Catch (tons)</h4>
+      {GRADES.map((grade, i) => {
+        const isVisible = visibleRanges[i];
+        return (
+          <div 
+            key={i} 
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              marginBottom: '5px',
+              cursor: 'pointer',
+              opacity: isVisible ? 1 : 0.5,
+              transition: 'opacity 0.2s ease'
+            }}
+            onClick={() => onToggleLayer(i)}
+          >
+            <span style={{
+              width: '20px',
+              height: '20px',
+              backgroundColor: COLORS[i],
+              display: 'inline-block',
+              marginRight: '8px',
+              border: `1px solid ${isDarkTheme ? '#fff' : '#000'}`
+            }}></span>
+            <span>{grade}{i < GRADES.length - 1 ? ` - ${GRADES[i + 1]}` : '+'}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+const CustomPopup = ({ info, isDarkTheme, onClose }) => (
+  <Popup
+    longitude={info.longitude}
+    latitude={info.latitude}
+    closeButton={false}
+    closeOnClick={false}
+    onClose={onClose}
+    anchor="bottom"
+    maxWidth="300px"
+    className={`custom-popup ${isDarkTheme ? 'dark' : 'light'}`}
+    style={{
+      zIndex: 2
+    }}
+  >
+    <div style={{
+      backgroundColor: isDarkTheme ? '#2c3e50' : '#ffffff',
+      color: isDarkTheme ? '#ecf0f1' : '#2c3e50',
+      padding: '12px 16px',
+      borderRadius: '8px',
+      boxShadow: isDarkTheme 
+        ? '0 4px 6px rgba(0, 0, 0, 0.3)' 
+        : '0 4px 6px rgba(0, 0, 0, 0.1)',
+      position: 'relative'
+    }}>
+      <button
+        onClick={onClose}
+        style={{
+          position: 'absolute',
+          top: '8px',
+          right: '8px',
+          background: 'none',
+          border: 'none',
+          padding: '4px',
+          cursor: 'pointer',
+          color: isDarkTheme ? '#bdc3c7' : '#95a5a6',
+          fontSize: '18px',
+          lineHeight: '18px',
+          height: '24px',
+          width: '24px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: '4px',
+          transition: 'all 0.2s ease',
+          outline: 'none'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundColor = isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)';
+          e.currentTarget.style.color = isDarkTheme ? '#ffffff' : '#2c3e50';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = 'transparent';
+          e.currentTarget.style.color = isDarkTheme ? '#bdc3c7' : '#95a5a6';
+        }}
+      >
+        ×
+      </button>
+      <h3 style={{
+        margin: '0 0 8px 0',
+        fontSize: '16px',
+        fontWeight: '600',
+        paddingRight: '20px'
+      }}>
+        {info.feature.properties.ADM2_PT}
+      </h3>
+      <div style={{
+        fontSize: '14px',
+        lineHeight: '1.4'
+      }}>
+        <div style={{
+          marginBottom: '4px',
+          color: isDarkTheme ? '#bdc3c7' : '#7f8c8d'
+        }}>
+          Province: {info.feature.properties.ADM1_PT}
+        </div>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '4px'
+        }}>
+          <span style={{
+            color: isDarkTheme ? '#bdc3c7' : '#7f8c8d'
+          }}>
+            Value:
+          </span>
+          <span style={{
+            fontWeight: '500',
+            color: isDarkTheme ? '#3498db' : '#2980b9'
+          }}>
+            {info.feature.properties.value?.toLocaleString() || 0}
+          </span>
+        </div>
+      </div>
+    </div>
+  </Popup>
+);
+
+const MapComponent = () => {
+  // Mobile detection
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  
+  // Theme state
   const [isDarkTheme, setIsDarkTheme] = useState(true);
-  const [showSelectionPanel, setShowSelectionPanel] = useState(false);
-  const [showAnalysisPanel, setShowAnalysisPanel] = useState(false);
-  const [showChartsPanel, setShowChartsPanel] = useState(false);
+  
+  // Panel states
+  const [activePanel, setActivePanel] = useState(null);
+  
+  // Map states
+  const [selectedDistricts, setSelectedDistricts] = useState([]);
+  const [popupInfo, setPopupInfo] = useState(null);
+  const [hoverInfo, setHoverInfo] = useState(null);
+  
+  // Analysis states
   const [coverage, setCoverage] = useState(75);
   const [radius, setRadius] = useState(30);
   const [upperPercentile, setUpperPercentile] = useState(95);
   const [opacity, setOpacity] = useState(0.7);
+  
+  // Viewport state
+  const [viewState, setViewState] = useState({
+    longitude: 40.5,
+    latitude: -12.5,
+    zoom: isMobile ? 8 : 9,
+    bearing: 0,
+    pitch: 0
+  });
 
-  // Custom hook for data management
-  const { 
-    boundaries, 
-    palmaArea, 
-    loading, 
-    error, 
-    totalValue,
-    getPalmaCenter
-  } = useMapData();
+  // Load map data
+  const { boundaries, loading, error, totalValue } = useMapData();
 
-  // Add mobile detection
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  // Add new state for legend layer visibility
+  const [visibleRanges, setVisibleRanges] = useState(Array(6).fill(true));
 
+  // Get container styles
+  const styles = {
+    container: {
+      position: 'relative',
+      height: '100vh',
+      width: '100%',
+      backgroundColor: isDarkTheme ? '#1a1a1a' : '#f8f9fa',
+      display: 'flex',
+      flexDirection: 'column'
+    },
+    contentWrapper: {
+      position: 'relative',
+      flexGrow: 1,
+      marginTop: '60px'
+    },
+    panelsContainer: {
+      position: 'fixed',
+      top: '80px',
+      left: '20px',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '10px',
+      maxHeight: 'calc(100vh - 100px)',
+      zIndex: 1000,
+      overflowY: 'auto'
+    },
+    expandedChartsContainer: {
+      maxWidth: activePanel === 'charts' ? '80vw' : '300px',
+      width: activePanel === 'charts' ? '80vw' : '300px',
+      transition: 'all 0.3s ease-in-out'
+    },
+    legend: {
+      position: 'absolute',
+      bottom: '20px',
+      right: '20px',
+      padding: '15px',
+      backgroundColor: isDarkTheme ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+      color: isDarkTheme ? '#fff' : '#2c3e50',
+      borderRadius: '8px',
+      boxShadow: isDarkTheme ? '0 4px 6px rgba(255,255,255,0.1)' : '0 4px 6px rgba(0,0,0,0.1)',
+      zIndex: 1000,
+      maxWidth: '200px',
+      backdropFilter: 'blur(10px)'
+    }
+  };
+
+  // Update viewport when mobile state changes
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -66,267 +266,228 @@ const Map = () => {
     setSelectedDistricts(prev => prev.filter(d => d.properties.ADM2_PCODE !== districtId));
   }, []);
 
-  // Style functions
-  const style = useCallback((feature) => {
-    const value = feature.properties.fisheryValue || 0;
-    return {
-      fillColor: getColor(value),
-      weight: 2,
-      opacity: 1,
-      color: 'white',
-      dashArray: '3',
-      fillOpacity: 0.7
-    };
+  const onHover = useCallback(event => {
+    const { features } = event;
+    const hoveredFeature = features && features[0];
+    setHoverInfo(hoveredFeature || null);
   }, []);
 
-  const districtStyleCallback = useCallback((feature) => {
-    return getDistrictStyle(feature, { isDarkTheme, opacity, selectedDistricts });
-  }, [isDarkTheme, opacity, selectedDistricts]);
-
-  // Event handlers
-  const onEachFeature = useCallback((feature, layer) => {
-    layer.on({
-      mouseover: (e) => {
-        const layer = e.target;
-        layer.setStyle({
-          weight: 5,
-          color: '#666',
-          dashArray: '',
-          fillOpacity: 0.7
-        });
-        layer.bringToFront();
-      },
-      mouseout: (e) => {
-        const layer = e.target;
-        layer.setStyle(style(layer.feature));
-      },
-      click: (e) => {
-        const layer = e.target;
-        const popupContent = `
-          <div>
-            <h3>${feature.properties.name || 'Unknown Region'}</h3>
-            <p>Fishery Catch: ${feature.properties.fisheryValue || 0} tons</p>
-          </div>
-        `;
-        layer.bindPopup(popupContent).openPopup();
+  const onClick = useCallback(event => {
+    const { features } = event;
+    const clickedFeature = features && features[0];
+    
+    if (clickedFeature) {
+      const districtId = clickedFeature.properties.ADM2_PCODE;
+      const isSelected = selectedDistricts.some(d => d.properties.ADM2_PCODE === districtId);
+      
+      if (!isSelected) {
+        setSelectedDistricts(prev => [...prev, clickedFeature]);
       }
-    });
-  }, [style]);
+      
+      setPopupInfo({
+        longitude: event.lngLat.lng,
+        latitude: event.lngLat.lat,
+        feature: clickedFeature
+      });
+    } else {
+      setPopupInfo(null);
+    }
+  }, [selectedDistricts]);
 
-  const onEachDistrictFeature = useCallback((feature, layer) => {
-    layer.on({
-      mouseover: (e) => {
-        const layer = e.target;
-        if (!selectedDistricts.some(d => d.properties.ADM2_PCODE === feature.properties.ADM2_PCODE)) {
-          layer.setStyle({
-            weight: 5,
-            color: '#666',
-            dashArray: '',
-            fillOpacity: 0.8
-          });
-        }
-        layer.bringToFront();
-      },
-      mouseout: (e) => {
-        const layer = e.target;
-        layer.setStyle(districtStyleCallback(feature));
-      },
-      click: (e) => {
-        const layer = e.target;
-        const isSelected = selectedDistricts.some(d => d.properties.ADM2_PCODE === feature.properties.ADM2_PCODE);
-        
-        if (isSelected) {
-          setSelectedDistricts(prev => prev.filter(d => d.properties.ADM2_PCODE !== feature.properties.ADM2_PCODE));
-        } else {
-          setSelectedDistricts(prev => [...prev, feature]);
-        }
-        
-        layer.setStyle(districtStyleCallback(feature));
+  // Add handler for toggling legend layers
+  const handleToggleLayer = useCallback((index) => {
+    setVisibleRanges(prev => {
+      const newRanges = [...prev];
+      newRanges[index] = !newRanges[index];
+      return newRanges;
+    });
+  }, []);
+
+  // Update district layer with visibility filters
+  const districtLayer = useMemo(() => {
+    const baseLayer = getDistrictLayer(selectedDistricts, isDarkTheme, opacity, coverage);
+    
+    // Build the color expression based on visible ranges
+    const colorExpression = [
+      'case',
+      ['boolean', ['feature-state', 'selected'], false],
+      isDarkTheme ? '#e74c3c' : '#c0392b',
+      [
+        'case',
+        ...GRADES.map((grade, i) => {
+          if (!visibleRanges[i]) return [];
+          
+          // For the first range (0-100)
+          if (i === 0) {
+            return [
+              ['all', 
+                ['>=', ['get', 'value'], grade],
+                ['<', ['get', 'value'], GRADES[i + 1]]
+              ],
+              COLORS[i]
+            ];
+          }
+          // For the last range (900+)
+          else if (i === GRADES.length - 1) {
+            return [
+              ['>=', ['get', 'value'], grade],
+              COLORS[i]
+            ];
+          }
+          // For middle ranges
+          else {
+            return [
+              ['all',
+                ['>=', ['get', 'value'], grade],
+                ['<', ['get', 'value'], GRADES[i + 1]]
+              ],
+              COLORS[i]
+            ];
+          }
+        }).flat(),
+        'rgba(0,0,0,0)' // default color if no range matches
+      ]
+    ];
+
+    return {
+      ...baseLayer,
+      paint: {
+        'fill-color': colorExpression,
+        'fill-opacity': [
+          'case',
+          ['boolean', ['feature-state', 'selected'], false],
+          0.8,  // Back to original selected districts opacity
+          opacity  // Back to original non-selected districts opacity
+        ]
       }
-    });
-  }, [selectedDistricts, districtStyleCallback]);
+    };
+  }, [selectedDistricts, isDarkTheme, opacity, coverage, visibleRanges]);
 
-  if (loading) return <div>Loading map data...</div>;
+  // Get layer styles
+  const hoverLayer = useMemo(() => 
+    getHoverLayer(isDarkTheme, radius),
+    [isDarkTheme, radius]
+  );
+
+  // Calculate selected total
+  const selectedTotal = useMemo(() => 
+    selectedDistricts.reduce((sum, d) => sum + (d.properties.value || 0), 0),
+    [selectedDistricts]
+  );
+
+  // Update panel visibility handlers
+  const handleTogglePanel = (panelName) => {
+    setActivePanel(activePanel === panelName ? null : panelName);
+  };
+
+  if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
-
-  const styles = getMapStyles(isDarkTheme);
-  const palmaCenter = getPalmaCenter();
+  if (!boundaries) return <div>No data available</div>;
 
   return (
     <div style={styles.container}>
-      <Header onThemeChange={handleThemeChange} />
+      <Header 
+        isDarkTheme={isDarkTheme} 
+        onThemeChange={handleThemeChange}
+        onToggleSelection={() => handleTogglePanel('selection')}
+        onToggleAnalysis={() => handleTogglePanel('analysis')}
+        onToggleCharts={() => handleTogglePanel('charts')}
+      />
       
       <div style={styles.contentWrapper}>
-        <MapContainer
-          center={palmaCenter}
-          zoom={isMobile ? 8 : 9}
-          style={{ height: "100%", width: "100%" }}
-          minZoom={2}
-          zoomControl={false}
-          dragging={!isMobile || (isMobile && selectedDistricts.length === 0)}
-          touchZoom={true}
-          doubleClickZoom={true}
+        <ReactMapGL
+          {...viewState}
+          onMove={evt => setViewState(evt.viewState)}
+          mapStyle={getMapStyles(isDarkTheme)}
+          mapboxAccessToken={MAPBOX_TOKEN}
+          interactiveLayerIds={['districts']}
+          onMouseMove={onHover}
+          onClick={onClick}
+          style={{ width: '100%', height: '100%' }}
         >
-          <TileLayer
-            url={isDarkTheme 
-              ? `https://api.mapbox.com/styles/v1/mapbox/dark-v11/tiles/{z}/{x}/{y}?access_token=${import.meta.env.VITE_MAPBOX_TOKEN}`
-              : `https://api.mapbox.com/styles/v1/mapbox/light-v11/tiles/{z}/{x}/{y}?access_token=${import.meta.env.VITE_MAPBOX_TOKEN}`
-            }
-            attribution='© <a href="https://www.mapbox.com/about/maps/">Mapbox</a>'
-          />
-          <MapControls
-            boundaries={boundaries}
-            palmaArea={palmaArea}
-            style={style}
-            districtStyle={districtStyleCallback}
-            onEachFeature={onEachFeature}
-            onEachDistrictFeature={onEachDistrictFeature}
-          />
-        </MapContainer>
+          <NavigationControl position="top-right" />
+          
+          <Source type="geojson" data={boundaries}>
+            <Layer 
+              {...districtLayer} 
+              beforeId="waterway-label"
+            />
+            {hoverInfo && (
+              <Layer
+                {...hoverLayer}
+                filter={['==', 'ADM2_PCODE', hoverInfo.properties.ADM2_PCODE]}
+                beforeId="waterway-label"
+              />
+            )}
+          </Source>
 
-        <div style={{
-          ...styles.panelsContainer,
-          ...(isMobile && {
-            position: 'fixed',
-            bottom: '0',
-            right: '0',
-            left: '0',
-            top: 'auto',
-            transform: showSelectionPanel || showAnalysisPanel || showChartsPanel ? 'translateY(0)' : 'translateY(calc(100% - 40px))',
-            maxHeight: '70vh',
-            width: '100%',
-            padding: '0 10px 10px',
-            background: isDarkTheme ? 'rgba(0, 0, 0, 0.9)' : 'rgba(255, 255, 255, 0.9)',
-            backdropFilter: 'blur(10px)',
-            borderTopLeftRadius: '15px',
-            borderTopRightRadius: '15px',
-            transition: 'transform 0.3s ease',
-            zIndex: 1001,
-            overflowY: 'auto'
-          })
-        }}>
-          {isMobile && (
-            <div 
-              onClick={() => {
-                if (!showSelectionPanel && !showAnalysisPanel && !showChartsPanel) {
-                  setShowSelectionPanel(true);
-                }
-              }}
-              style={{
-                width: '100%',
-                height: '40px',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                cursor: 'pointer',
-                borderTopLeftRadius: '15px',
-                borderTopRightRadius: '15px',
-                borderBottom: `1px solid ${isDarkTheme ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
-              }}
-            >
-              <div style={{
-                width: '40px',
-                height: '4px',
-                backgroundColor: isDarkTheme ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.2)',
-                borderRadius: '2px',
-                margin: '8px 0'
-              }} />
-            </div>
+          {popupInfo && (
+            <CustomPopup
+              info={popupInfo}
+              isDarkTheme={isDarkTheme}
+              onClose={() => setPopupInfo(null)}
+            />
           )}
 
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '10px',
-            maxHeight: isMobile ? 'calc(70vh - 40px)' : '100vh',
-            overflowY: 'auto',
-            paddingRight: isMobile ? '0' : '10px',
-            marginRight: isMobile ? '0' : '-10px' // Compensate for padding to hide scrollbar
-          }}>
-            <SelectionPanel
-              isDarkTheme={isDarkTheme}
-              showPanel={showSelectionPanel}
-              onTogglePanel={() => {
-                setShowSelectionPanel(!showSelectionPanel);
-                if (!showSelectionPanel) {
-                  setShowAnalysisPanel(false);
-                  setShowChartsPanel(false);
-                }
-              }}
-              selectedDistricts={selectedDistricts}
-              onClearSelection={() => setSelectedDistricts([])}
-              selectedTotal={selectedDistricts.reduce((sum, d) => sum + (d.properties.value || 0), 0)}
-              totalValue={totalValue}
-              onRemoveDistrict={handleRemoveDistrict}
-              onExportSelection={handleExportSelection}
-              isMobile={isMobile}
-            />
-
-            <AnalysisPanel
-              isDarkTheme={isDarkTheme}
-              showPanel={showAnalysisPanel}
-              onTogglePanel={() => {
-                setShowAnalysisPanel(!showAnalysisPanel);
-                if (!showAnalysisPanel) {
-                  setShowSelectionPanel(false);
-                  setShowChartsPanel(false);
-                }
-              }}
-              totalValue={totalValue}
-              coverage={coverage}
-              onCoverageChange={setCoverage}
-              radius={radius}
-              onRadiusChange={setRadius}
-              upperPercentile={upperPercentile}
-              onUpperPercentileChange={setUpperPercentile}
-              opacity={opacity}
-              onOpacityChange={setOpacity}
-              isMobile={isMobile}
-            />
-
-            <ChartsPanel
-              isDarkTheme={isDarkTheme}
-              showPanel={showChartsPanel}
-              onTogglePanel={() => {
-                setShowChartsPanel(!showChartsPanel);
-                if (!showChartsPanel) {
-                  setShowSelectionPanel(false);
-                  setShowAnalysisPanel(false);
-                }
-              }}
-              selectedDistricts={selectedDistricts}
-              totalValue={totalValue}
-              isMobile={isMobile}
+          <div style={styles.legend}>
+            <Legend 
+              isDarkTheme={isDarkTheme} 
+              onToggleLayer={handleToggleLayer}
+              visibleRanges={visibleRanges}
             />
           </div>
+        </ReactMapGL>
+
+        <div style={{...styles.panelsContainer, ...styles.expandedChartsContainer}}>
+          <SelectionPanel
+            isDarkTheme={isDarkTheme}
+            showPanel={activePanel === 'selection'}
+            onTogglePanel={() => handleTogglePanel('selection')}
+            selectedDistricts={selectedDistricts}
+            onClearSelection={() => setSelectedDistricts([])}
+            selectedTotal={selectedTotal}
+            totalValue={totalValue}
+            onRemoveDistrict={handleRemoveDistrict}
+            onExportSelection={handleExportSelection}
+            isMobile={isMobile}
+          />
+
+          <AnalysisPanel
+            isDarkTheme={isDarkTheme}
+            showPanel={activePanel === 'analysis'}
+            onTogglePanel={() => handleTogglePanel('analysis')}
+            totalValue={totalValue}
+            coverage={coverage}
+            onCoverageChange={setCoverage}
+            radius={radius}
+            onRadiusChange={setRadius}
+            upperPercentile={upperPercentile}
+            onUpperPercentileChange={setUpperPercentile}
+            opacity={opacity}
+            onOpacityChange={setOpacity}
+            isMobile={isMobile}
+          />
+
+          <ChartsPanel
+            isDarkTheme={isDarkTheme}
+            showPanel={activePanel === 'charts'}
+            onTogglePanel={() => handleTogglePanel('charts')}
+            selectedDistricts={selectedDistricts}
+            totalValue={totalValue}
+            isMobile={isMobile}
+            style={{ 
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+              gap: '20px',
+              justifyContent: 'space-between'
+            }}
+          />
         </div>
       </div>
-
-      <style>
-        {`
-          .district-polygon {
-            transition: all 0.3s ease;
-          }
-          .leaflet-control-zoom {
-            margin-top: ${isMobile ? '70px' : '20px'} !important;
-            margin-left: ${isMobile ? '10px' : '20px'} !important;
-          }
-          .leaflet-control-attribution {
-            background-color: ${isDarkTheme ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.8)'} !important;
-            color: ${isDarkTheme ? '#fff' : '#000'} !important;
-          }
-          .leaflet-control-attribution a {
-            color: ${isDarkTheme ? '#3498db' : '#2980b9'} !important;
-          }
-          @media (max-width: 768px) {
-            .leaflet-control-attribution {
-              font-size: 10px !important;
-            }
-          }
-        `}
-      </style>
     </div>
   );
 };
 
-export default Map; 
+export default MapComponent; 

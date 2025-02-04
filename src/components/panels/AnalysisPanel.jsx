@@ -34,7 +34,10 @@ const AnalysisPanel = memo(({
           justifyContent: 'space-between',
           alignItems: 'center',
           cursor: 'pointer',
-          borderBottom: showPanel ? `1px solid ${isDarkTheme ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}` : 'none'
+          borderBottom: showPanel ? `1px solid ${isDarkTheme ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}` : 'none',
+          userSelect: 'none',
+          WebkitTapHighlightColor: 'transparent',
+          outline: 'none'
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -47,7 +50,10 @@ const AnalysisPanel = memo(({
         </div>
         <div style={{ 
           transform: `rotate(${showPanel ? 180 : 0}deg)`,
-          transition: 'transform 0.3s ease'
+          transition: 'transform 0.3s ease',
+          userSelect: 'none',
+          WebkitTapHighlightColor: 'transparent',
+          outline: 'none'
         }}>
           ▼
         </div>
@@ -90,6 +96,9 @@ const AnalysisPanel = memo(({
           <div style={{
             width: '100%',
             boxSizing: 'border-box',
+            paddingTop: 0,
+            paddingBottom: 0,
+            paddingLeft: 0,
             paddingRight: '5px' // Add slight padding to prevent slider thumb from touching edge
           }}>
             {/* Sliders */}
