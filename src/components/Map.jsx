@@ -152,10 +152,10 @@ const Map = () => {
         >
           <TileLayer
             url={isDarkTheme 
-              ? "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
-              : "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png"
+              ? `https://api.mapbox.com/styles/v1/mapbox/dark-v11/tiles/{z}/{x}/{y}?access_token=${import.meta.env.VITE_MAPBOX_TOKEN}`
+              : `https://api.mapbox.com/styles/v1/mapbox/light-v11/tiles/{z}/{x}/{y}?access_token=${import.meta.env.VITE_MAPBOX_TOKEN}`
             }
-            attribution='&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>'
+            attribution='© <a href="https://www.mapbox.com/about/maps/">Mapbox</a>'
           />
           <MapControls
             boundaries={boundaries}
