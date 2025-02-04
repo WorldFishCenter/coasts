@@ -55,12 +55,20 @@ const AnalysisPanel = memo(({
       
       {/* Panel Content */}
       <div style={{
-        maxHeight: showPanel ? (isMobile ? '50vh' : '500px') : '0',
+        maxHeight: showPanel ? (isMobile ? '60vh' : '500px') : '0',
         opacity: showPanel ? 1 : 0,
         transition: 'all 0.3s ease',
         overflow: 'hidden'
       }}>
-        <div style={{ padding: isMobile ? '15px' : '20px' }}>
+        <div style={{ 
+          padding: isMobile ? '15px' : '20px',
+          overflowY: 'auto',
+          maxHeight: isMobile ? '58vh' : '480px', // Slightly less than container to prevent double scrollbars
+          paddingRight: '10px', // Space for scrollbar
+          marginRight: '-10px',  // Compensate padding to maintain alignment
+          width: '100%',
+          boxSizing: 'border-box'
+        }}>
           <div style={{ marginBottom: '20px' }}>
             <div style={{ 
               fontSize: isMobile ? '20px' : '24px',
@@ -78,50 +86,57 @@ const AnalysisPanel = memo(({
             </div>
           </div>
 
-          {/* Sliders */}
-          <Slider
-            label="Coverage"
-            value={coverage}
-            onChange={onCoverageChange}
-            min={0}
-            max={100}
-            unit="%"
-            isDarkTheme={isDarkTheme}
-            isMobile={isMobile}
-          />
+          {/* Sliders Container */}
+          <div style={{
+            width: '100%',
+            boxSizing: 'border-box',
+            paddingRight: '5px' // Add slight padding to prevent slider thumb from touching edge
+          }}>
+            {/* Sliders */}
+            <Slider
+              label="Coverage"
+              value={coverage}
+              onChange={onCoverageChange}
+              min={0}
+              max={100}
+              unit="%"
+              isDarkTheme={isDarkTheme}
+              isMobile={isMobile}
+            />
 
-          <Slider
-            label="Radius"
-            value={radius}
-            onChange={onRadiusChange}
-            min={10}
-            max={100}
-            unit="km"
-            isDarkTheme={isDarkTheme}
-            isMobile={isMobile}
-          />
+            <Slider
+              label="Radius"
+              value={radius}
+              onChange={onRadiusChange}
+              min={10}
+              max={100}
+              unit="km"
+              isDarkTheme={isDarkTheme}
+              isMobile={isMobile}
+            />
 
-          <Slider
-            label="Upper Percentile"
-            value={upperPercentile}
-            onChange={onUpperPercentileChange}
-            min={50}
-            max={100}
-            unit="%"
-            isDarkTheme={isDarkTheme}
-            isMobile={isMobile}
-          />
+            <Slider
+              label="Upper Percentile"
+              value={upperPercentile}
+              onChange={onUpperPercentileChange}
+              min={50}
+              max={100}
+              unit="%"
+              isDarkTheme={isDarkTheme}
+              isMobile={isMobile}
+            />
 
-          <Slider
-            label="Opacity"
-            value={opacity * 100}
-            onChange={(value) => onOpacityChange(value / 100)}
-            min={0}
-            max={100}
-            unit="%"
-            isDarkTheme={isDarkTheme}
-            isMobile={isMobile}
-          />
+            <Slider
+              label="Opacity"
+              value={opacity * 100}
+              onChange={(value) => onOpacityChange(value / 100)}
+              min={0}
+              max={100}
+              unit="%"
+              isDarkTheme={isDarkTheme}
+              isMobile={isMobile}
+            />
+          </div>
 
           <div style={{
             fontSize: isMobile ? '11px' : '12px',
@@ -138,7 +153,11 @@ const AnalysisPanel = memo(({
 });
 
 const Slider = memo(({ label, value, onChange, min, max, unit, isDarkTheme, isMobile }) => (
-  <div style={{ marginBottom: '15px' }}>
+  <div style={{ 
+    marginBottom: '15px',
+    width: '100%',
+    boxSizing: 'border-box'
+  }}>
     <label style={{ 
       display: 'block', 
       marginBottom: '5px',
@@ -155,7 +174,8 @@ const Slider = memo(({ label, value, onChange, min, max, unit, isDarkTheme, isMo
       onChange={(e) => onChange(Number(e.target.value))}
       style={{ 
         width: '100%',
-        accentColor: isDarkTheme ? '#3498db' : '#2980b9'
+        accentColor: isDarkTheme ? '#3498db' : '#2980b9',
+        boxSizing: 'border-box'
       }}
     />
   </div>

@@ -160,12 +160,16 @@ const ChartsPanel = memo(({
       
       {/* Panel Content */}
       <div style={{
-        maxHeight: showPanel ? (isMobile ? '70vh' : '600px') : '0',
+        maxHeight: showPanel ? (isMobile ? '60vh' : '600px') : '0',
         opacity: showPanel ? 1 : 0,
         transition: 'all 0.3s ease',
         overflow: 'hidden'
       }}>
-        <div style={{ padding: isMobile ? '15px' : '20px' }}>
+        <div style={{ 
+          padding: isMobile ? '15px' : '20px',
+          overflowY: 'auto',
+          maxHeight: isMobile ? '58vh' : '580px' // Slightly less than container to prevent double scrollbars
+        }}>
           {selectedDistricts.length === 0 ? (
             <div style={{ 
               color: '#95a5a6',
@@ -176,7 +180,13 @@ const ChartsPanel = memo(({
               Select districts to view charts
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div style={{ 
+              display: 'flex', 
+              flexDirection: 'column', 
+              gap: '20px',
+              paddingRight: '10px', // Space for scrollbar
+              marginRight: '-10px'  // Compensate padding to maintain alignment
+            }}>
               {/* Distribution Chart */}
               <div>
                 <h3 style={{ 

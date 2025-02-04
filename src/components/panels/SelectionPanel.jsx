@@ -52,12 +52,16 @@ const SelectionPanel = memo(({
       
       {/* Panel Content */}
       <div style={{
-        maxHeight: showPanel ? (isMobile ? '50vh' : '500px') : '0',
+        maxHeight: showPanel ? (isMobile ? '60vh' : '500px') : '0',
         opacity: showPanel ? 1 : 0,
         transition: 'all 0.3s ease',
         overflow: 'hidden'
       }}>
-        <div style={{ padding: isMobile ? '15px' : '20px' }}>
+        <div style={{ 
+          padding: isMobile ? '15px' : '20px',
+          overflowY: 'auto',
+          maxHeight: isMobile ? '58vh' : '480px' // Slightly less than container to prevent double scrollbars
+        }}>
           {selectedDistricts.length === 0 ? (
             <div style={{ 
               color: '#95a5a6',
@@ -68,7 +72,12 @@ const SelectionPanel = memo(({
               Click on districts to select them
             </div>
           ) : (
-            <>
+            <div style={{ 
+              display: 'flex', 
+              flexDirection: 'column',
+              paddingRight: '10px', // Space for scrollbar
+              marginRight: '-10px'  // Compensate padding to maintain alignment
+            }}>
               <div style={{ 
                 backgroundColor: isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : '#f8f9fa',
                 padding: '10px',
@@ -160,7 +169,7 @@ const SelectionPanel = memo(({
                   Export Selection
                 </button>
               </div>
-            </>
+            </div>
           )}
         </div>
       </div>

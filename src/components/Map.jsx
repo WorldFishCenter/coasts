@@ -13,9 +13,9 @@ const Map = () => {
   // State
   const [selectedDistricts, setSelectedDistricts] = useState([]);
   const [isDarkTheme, setIsDarkTheme] = useState(true);
-  const [showSelectionPanel, setShowSelectionPanel] = useState(true);
-  const [showAnalysisPanel, setShowAnalysisPanel] = useState(true);
-  const [showChartsPanel, setShowChartsPanel] = useState(true);
+  const [showSelectionPanel, setShowSelectionPanel] = useState(false);
+  const [showAnalysisPanel, setShowAnalysisPanel] = useState(false);
+  const [showChartsPanel, setShowChartsPanel] = useState(false);
   const [coverage, setCoverage] = useState(75);
   const [radius, setRadius] = useState(30);
   const [upperPercentile, setUpperPercentile] = useState(95);
@@ -201,7 +201,8 @@ const Map = () => {
             borderTopLeftRadius: '15px',
             borderTopRightRadius: '15px',
             transition: 'transform 0.3s ease',
-            zIndex: 1001
+            zIndex: 1001,
+            overflowY: 'auto'
           })
         }}>
           {isMobile && (
@@ -237,8 +238,10 @@ const Map = () => {
             display: 'flex',
             flexDirection: 'column',
             gap: '10px',
-            maxHeight: isMobile ? 'calc(70vh - 40px)' : 'auto',
-            overflowY: 'auto'
+            maxHeight: isMobile ? 'calc(70vh - 40px)' : '100vh',
+            overflowY: 'auto',
+            paddingRight: isMobile ? '0' : '10px',
+            marginRight: isMobile ? '0' : '-10px' // Compensate for padding to hide scrollbar
           }}>
             <SelectionPanel
               isDarkTheme={isDarkTheme}
