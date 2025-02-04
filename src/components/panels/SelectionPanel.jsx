@@ -9,23 +9,25 @@ const SelectionPanel = memo(({
   selectedTotal,
   totalValue,
   onRemoveDistrict,
-  onExportSelection 
+  onExportSelection,
+  isMobile
 }) => {
   return (
     <div style={{
       backgroundColor: isDarkTheme ? 'rgba(0, 0, 0, 0.8)' : 'white',
       color: isDarkTheme ? '#fff' : '#2c3e50',
-      borderRadius: '8px',
+      borderRadius: isMobile ? '12px' : '8px',
       boxShadow: isDarkTheme ? '0 2px 10px rgba(255,255,255,0.1)' : '0 2px 10px rgba(0,0,0,0.1)',
-      width: '300px',
+      width: isMobile ? '100%' : '300px',
       transition: 'all 0.3s ease',
-      overflow: 'hidden'
+      overflow: 'hidden',
+      marginBottom: isMobile ? '10px' : '0'
     }}>
       {/* Panel Header */}
       <div 
         onClick={onTogglePanel}
         style={{
-          padding: '15px 20px',
+          padding: isMobile ? '15px' : '15px 20px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -50,17 +52,18 @@ const SelectionPanel = memo(({
       
       {/* Panel Content */}
       <div style={{
-        maxHeight: showPanel ? '500px' : '0',
+        maxHeight: showPanel ? (isMobile ? '50vh' : '500px') : '0',
         opacity: showPanel ? 1 : 0,
         transition: 'all 0.3s ease',
         overflow: 'hidden'
       }}>
-        <div style={{ padding: '20px' }}>
+        <div style={{ padding: isMobile ? '15px' : '20px' }}>
           {selectedDistricts.length === 0 ? (
             <div style={{ 
               color: '#95a5a6',
               textAlign: 'center',
-              padding: '20px 0'
+              padding: isMobile ? '15px 0' : '20px 0',
+              fontSize: isMobile ? '14px' : '16px'
             }}>
               Click on districts to select them
             </div>
@@ -72,16 +75,16 @@ const SelectionPanel = memo(({
                 borderRadius: '4px',
                 marginBottom: '15px'
               }}>
-                <div style={{ fontSize: '14px', color: isDarkTheme ? '#ddd' : '#7f8c8d' }}>Selected Total</div>
+                <div style={{ fontSize: isMobile ? '12px' : '14px', color: isDarkTheme ? '#ddd' : '#7f8c8d' }}>Selected Total</div>
                 <div style={{ 
-                  fontSize: '24px',
+                  fontSize: isMobile ? '20px' : '24px',
                   fontWeight: 'bold',
                   color: isDarkTheme ? '#fff' : '#2c3e50'
                 }}>
                   {selectedTotal.toLocaleString()}
                 </div>
                 <div style={{ 
-                  fontSize: '12px',
+                  fontSize: isMobile ? '11px' : '12px',
                   color: isDarkTheme ? '#bbb' : '#95a5a6',
                   marginTop: '5px'
                 }}>
@@ -89,12 +92,16 @@ const SelectionPanel = memo(({
                 </div>
               </div>
 
-              <div style={{ marginBottom: '15px' }}>
+              <div style={{ 
+                marginBottom: '15px',
+                maxHeight: isMobile ? '30vh' : 'none',
+                overflowY: isMobile ? 'auto' : 'visible'
+              }}>
                 {selectedDistricts.map((district, index) => (
                   <div
                     key={district.properties.ADM2_PCODE}
                     style={{
-                      padding: '10px',
+                      padding: isMobile ? '8px' : '10px',
                       backgroundColor: isDarkTheme 
                         ? index % 2 === 0 ? 'rgba(255, 255, 255, 0.05)' : 'transparent'
                         : index % 2 === 0 ? '#f8f9fa' : 'white',
@@ -102,14 +109,15 @@ const SelectionPanel = memo(({
                       justifyContent: 'space-between',
                       alignItems: 'center',
                       borderRadius: '4px',
-                      marginBottom: '5px'
+                      marginBottom: '5px',
+                      fontSize: isMobile ? '13px' : '14px'
                     }}
                   >
                     <div>
                       <div style={{ fontWeight: 'bold', color: isDarkTheme ? '#fff' : '#2c3e50' }}>
                         {district.properties.ADM2_PT}
                       </div>
-                      <div style={{ fontSize: '12px', color: isDarkTheme ? '#bbb' : '#7f8c8d' }}>
+                      <div style={{ fontSize: isMobile ? '11px' : '12px', color: isDarkTheme ? '#bbb' : '#7f8c8d' }}>
                         Value: {district.properties.value?.toLocaleString() || 0}
                       </div>
                     </div>
@@ -120,7 +128,8 @@ const SelectionPanel = memo(({
                         border: 'none',
                         color: '#e74c3c',
                         cursor: 'pointer',
-                        padding: '5px'
+                        padding: '5px',
+                        fontSize: isMobile ? '16px' : '18px'
                       }}
                     >
                       ✕
@@ -139,12 +148,13 @@ const SelectionPanel = memo(({
                   onClick={onExportSelection}
                   style={{
                     flex: 1,
-                    padding: '8px',
+                    padding: isMobile ? '10px' : '8px',
                     backgroundColor: '#3498db',
                     color: 'white',
                     border: 'none',
                     borderRadius: '4px',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    fontSize: isMobile ? '14px' : 'inherit'
                   }}
                 >
                   Export Selection

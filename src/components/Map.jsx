@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { MapContainer, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import Header from './Header';
@@ -28,6 +28,18 @@ const Map = () => {
     totalValue,
     getPalmaCenter
   } = useMapData();
+
+  // Add mobile detection
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Callbacks
   const handleThemeChange = useCallback((isDark) => {
@@ -145,10 +157,13 @@ const Map = () => {
       <div style={styles.contentWrapper}>
         <MapContainer
           center={palmaCenter}
-          zoom={9}
+          zoom={isMobile ? 8 : 9}
           style={{ height: "100%", width: "100%" }}
           minZoom={2}
           zoomControl={false}
+          dragging={!isMobile || (isMobile && selectedDistricts.length === 0)}
+          touchZoom={true}
+          doubleClickZoom={true}
         >
           <TileLayer
             url={isDarkTheme 
@@ -167,33 +182,97 @@ const Map = () => {
           />
         </MapContainer>
 
-        <div style={styles.panelsContainer}>
-          <SelectionPanel
-            isDarkTheme={isDarkTheme}
-            showPanel={showSelectionPanel}
-            onTogglePanel={() => setShowSelectionPanel(!showSelectionPanel)}
-            selectedDistricts={selectedDistricts}
-            onClearSelection={() => setSelectedDistricts([])}
-            selectedTotal={selectedDistricts.reduce((sum, d) => sum + (d.properties.value || 0), 0)}
-            totalValue={totalValue}
-            onRemoveDistrict={handleRemoveDistrict}
-            onExportSelection={handleExportSelection}
-          />
+        <div style={{
+          ...styles.panelsContainer,
+          ...(isMobile && {
+            position: 'fixed',
+            bottom: '0',
+            right: '0',
+            left: '0',
+            top: 'auto',
+            transform: showSelectionPanel || showAnalysisPanel ? 'translateY(0)' : 'translateY(calc(100% - 40px))',
+            maxHeight: '70vh',
+            width: '100%',
+            padding: '0 10px 10px',
+            background: isDarkTheme ? 'rgba(0, 0, 0, 0.9)' : 'rgba(255, 255, 255, 0.9)',
+            backdropFilter: 'blur(10px)',
+            borderTopLeftRadius: '15px',
+            borderTopRightRadius: '15px',
+            transition: 'transform 0.3s ease',
+            zIndex: 1001
+          })
+        }}>
+          {isMobile && (
+            <div 
+              onClick={() => {
+                if (!showSelectionPanel && !showAnalysisPanel) {
+                  setShowSelectionPanel(true);
+                }
+              }}
+              style={{
+                width: '100%',
+                height: '40px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                cursor: 'pointer',
+                borderTopLeftRadius: '15px',
+                borderTopRightRadius: '15px',
+                borderBottom: `1px solid ${isDarkTheme ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
+              }}
+            >
+              <div style={{
+                width: '40px',
+                height: '4px',
+                backgroundColor: isDarkTheme ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.2)',
+                borderRadius: '2px',
+                margin: '8px 0'
+              }} />
+            </div>
+          )}
 
-          <AnalysisPanel
-            isDarkTheme={isDarkTheme}
-            showPanel={showAnalysisPanel}
-            onTogglePanel={() => setShowAnalysisPanel(!showAnalysisPanel)}
-            totalValue={totalValue}
-            coverage={coverage}
-            onCoverageChange={setCoverage}
-            radius={radius}
-            onRadiusChange={setRadius}
-            upperPercentile={upperPercentile}
-            onUpperPercentileChange={setUpperPercentile}
-            opacity={opacity}
-            onOpacityChange={setOpacity}
-          />
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '10px',
+            maxHeight: isMobile ? 'calc(70vh - 40px)' : 'auto',
+            overflowY: 'auto'
+          }}>
+            <SelectionPanel
+              isDarkTheme={isDarkTheme}
+              showPanel={showSelectionPanel}
+              onTogglePanel={() => {
+                setShowSelectionPanel(!showSelectionPanel);
+                if (!showSelectionPanel) setShowAnalysisPanel(false);
+              }}
+              selectedDistricts={selectedDistricts}
+              onClearSelection={() => setSelectedDistricts([])}
+              selectedTotal={selectedDistricts.reduce((sum, d) => sum + (d.properties.value || 0), 0)}
+              totalValue={totalValue}
+              onRemoveDistrict={handleRemoveDistrict}
+              onExportSelection={handleExportSelection}
+              isMobile={isMobile}
+            />
+
+            <AnalysisPanel
+              isDarkTheme={isDarkTheme}
+              showPanel={showAnalysisPanel}
+              onTogglePanel={() => {
+                setShowAnalysisPanel(!showAnalysisPanel);
+                if (!showAnalysisPanel) setShowSelectionPanel(false);
+              }}
+              totalValue={totalValue}
+              coverage={coverage}
+              onCoverageChange={setCoverage}
+              radius={radius}
+              onRadiusChange={setRadius}
+              upperPercentile={upperPercentile}
+              onUpperPercentileChange={setUpperPercentile}
+              opacity={opacity}
+              onOpacityChange={setOpacity}
+              isMobile={isMobile}
+            />
+          </div>
         </div>
       </div>
 
@@ -203,8 +282,8 @@ const Map = () => {
             transition: all 0.3s ease;
           }
           .leaflet-control-zoom {
-            margin-top: 20px !important;
-            margin-left: 20px !important;
+            margin-top: ${isMobile ? '70px' : '20px'} !important;
+            margin-left: ${isMobile ? '10px' : '20px'} !important;
           }
           .leaflet-control-attribution {
             background-color: ${isDarkTheme ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.8)'} !important;
@@ -212,6 +291,11 @@ const Map = () => {
           }
           .leaflet-control-attribution a {
             color: ${isDarkTheme ? '#3498db' : '#2980b9'} !important;
+          }
+          @media (max-width: 768px) {
+            .leaflet-control-attribution {
+              font-size: 10px !important;
+            }
           }
         `}
       </style>

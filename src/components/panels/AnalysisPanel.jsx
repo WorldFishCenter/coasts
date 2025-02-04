@@ -12,15 +12,16 @@ const AnalysisPanel = memo(({
   upperPercentile,
   onUpperPercentileChange,
   opacity,
-  onOpacityChange
+  onOpacityChange,
+  isMobile
 }) => {
   return (
     <div style={{
       backgroundColor: isDarkTheme ? 'rgba(0, 0, 0, 0.8)' : 'white',
       color: isDarkTheme ? '#fff' : '#2c3e50',
-      borderRadius: '8px',
+      borderRadius: isMobile ? '12px' : '8px',
       boxShadow: isDarkTheme ? '0 2px 10px rgba(255,255,255,0.1)' : '0 2px 10px rgba(0,0,0,0.1)',
-      width: '300px',
+      width: isMobile ? '100%' : '300px',
       transition: 'all 0.3s ease',
       overflow: 'hidden'
     }}>
@@ -28,7 +29,7 @@ const AnalysisPanel = memo(({
       <div 
         onClick={onTogglePanel}
         style={{
-          padding: '15px 20px',
+          padding: isMobile ? '15px' : '15px 20px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -54,15 +55,15 @@ const AnalysisPanel = memo(({
       
       {/* Panel Content */}
       <div style={{
-        maxHeight: showPanel ? '500px' : '0',
+        maxHeight: showPanel ? (isMobile ? '50vh' : '500px') : '0',
         opacity: showPanel ? 1 : 0,
         transition: 'all 0.3s ease',
         overflow: 'hidden'
       }}>
-        <div style={{ padding: '20px' }}>
+        <div style={{ padding: isMobile ? '15px' : '20px' }}>
           <div style={{ marginBottom: '20px' }}>
             <div style={{ 
-              fontSize: '24px', 
+              fontSize: isMobile ? '20px' : '24px',
               fontWeight: 'bold',
               color: isDarkTheme ? '#fff' : '#2c3e50',
               marginBottom: '5px'
@@ -70,7 +71,7 @@ const AnalysisPanel = memo(({
               {totalValue.toLocaleString()}
             </div>
             <div style={{ 
-              fontSize: '14px',
+              fontSize: isMobile ? '12px' : '14px',
               color: isDarkTheme ? '#bbb' : '#7f8c8d'
             }}>
               Total District Value
@@ -86,6 +87,7 @@ const AnalysisPanel = memo(({
             max={100}
             unit="%"
             isDarkTheme={isDarkTheme}
+            isMobile={isMobile}
           />
 
           <Slider
@@ -96,6 +98,7 @@ const AnalysisPanel = memo(({
             max={100}
             unit="km"
             isDarkTheme={isDarkTheme}
+            isMobile={isMobile}
           />
 
           <Slider
@@ -106,6 +109,7 @@ const AnalysisPanel = memo(({
             max={100}
             unit="%"
             isDarkTheme={isDarkTheme}
+            isMobile={isMobile}
           />
 
           <Slider
@@ -116,10 +120,11 @@ const AnalysisPanel = memo(({
             max={100}
             unit="%"
             isDarkTheme={isDarkTheme}
+            isMobile={isMobile}
           />
 
           <div style={{
-            fontSize: '12px',
+            fontSize: isMobile ? '11px' : '12px',
             color: isDarkTheme ? '#bbb' : '#95a5a6',
             marginTop: '20px',
             textAlign: 'center'
@@ -132,12 +137,12 @@ const AnalysisPanel = memo(({
   );
 });
 
-const Slider = memo(({ label, value, onChange, min, max, unit, isDarkTheme }) => (
+const Slider = memo(({ label, value, onChange, min, max, unit, isDarkTheme, isMobile }) => (
   <div style={{ marginBottom: '15px' }}>
     <label style={{ 
       display: 'block', 
       marginBottom: '5px',
-      fontSize: '14px',
+      fontSize: isMobile ? '12px' : '14px',
       color: isDarkTheme ? '#ddd' : '#34495e'
     }}>
       {label}: {value}{unit}

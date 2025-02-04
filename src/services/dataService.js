@@ -48,7 +48,7 @@ export const mergeBoundaryAndFisheryData = (boundaries, fisheryData) => {
 // Function to load Palma area GeoJSON data
 export const loadPalmaArea = async () => {
   try {
-    const response = await fetch('/src/data/palma_area.geojson');
+    const response = await fetch('/data/palma_area.geojson');
     return await response.json();
   } catch (error) {
     console.error('Error loading Palma area data:', error);
