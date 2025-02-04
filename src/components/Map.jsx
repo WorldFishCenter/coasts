@@ -4,6 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import Header from './Header';
 import SelectionPanel from './panels/SelectionPanel';
 import AnalysisPanel from './panels/AnalysisPanel';
+import ChartsPanel from './panels/ChartsPanel';
 import MapControls from './map/MapControls';
 import { useMapData } from '../hooks/useMapData';
 import { getMapStyles, getDistrictStyle, getColor } from '../styles/mapStyles';
@@ -14,6 +15,7 @@ const Map = () => {
   const [isDarkTheme, setIsDarkTheme] = useState(true);
   const [showSelectionPanel, setShowSelectionPanel] = useState(true);
   const [showAnalysisPanel, setShowAnalysisPanel] = useState(true);
+  const [showChartsPanel, setShowChartsPanel] = useState(true);
   const [coverage, setCoverage] = useState(75);
   const [radius, setRadius] = useState(30);
   const [upperPercentile, setUpperPercentile] = useState(95);
@@ -190,7 +192,7 @@ const Map = () => {
             right: '0',
             left: '0',
             top: 'auto',
-            transform: showSelectionPanel || showAnalysisPanel ? 'translateY(0)' : 'translateY(calc(100% - 40px))',
+            transform: showSelectionPanel || showAnalysisPanel || showChartsPanel ? 'translateY(0)' : 'translateY(calc(100% - 40px))',
             maxHeight: '70vh',
             width: '100%',
             padding: '0 10px 10px',
@@ -205,7 +207,7 @@ const Map = () => {
           {isMobile && (
             <div 
               onClick={() => {
-                if (!showSelectionPanel && !showAnalysisPanel) {
+                if (!showSelectionPanel && !showAnalysisPanel && !showChartsPanel) {
                   setShowSelectionPanel(true);
                 }
               }}
@@ -243,7 +245,10 @@ const Map = () => {
               showPanel={showSelectionPanel}
               onTogglePanel={() => {
                 setShowSelectionPanel(!showSelectionPanel);
-                if (!showSelectionPanel) setShowAnalysisPanel(false);
+                if (!showSelectionPanel) {
+                  setShowAnalysisPanel(false);
+                  setShowChartsPanel(false);
+                }
               }}
               selectedDistricts={selectedDistricts}
               onClearSelection={() => setSelectedDistricts([])}
@@ -259,7 +264,10 @@ const Map = () => {
               showPanel={showAnalysisPanel}
               onTogglePanel={() => {
                 setShowAnalysisPanel(!showAnalysisPanel);
-                if (!showAnalysisPanel) setShowSelectionPanel(false);
+                if (!showAnalysisPanel) {
+                  setShowSelectionPanel(false);
+                  setShowChartsPanel(false);
+                }
               }}
               totalValue={totalValue}
               coverage={coverage}
@@ -270,6 +278,21 @@ const Map = () => {
               onUpperPercentileChange={setUpperPercentile}
               opacity={opacity}
               onOpacityChange={setOpacity}
+              isMobile={isMobile}
+            />
+
+            <ChartsPanel
+              isDarkTheme={isDarkTheme}
+              showPanel={showChartsPanel}
+              onTogglePanel={() => {
+                setShowChartsPanel(!showChartsPanel);
+                if (!showChartsPanel) {
+                  setShowSelectionPanel(false);
+                  setShowAnalysisPanel(false);
+                }
+              }}
+              selectedDistricts={selectedDistricts}
+              totalValue={totalValue}
               isMobile={isMobile}
             />
           </div>
