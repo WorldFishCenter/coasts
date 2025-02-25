@@ -213,9 +213,10 @@ const MapComponent = () => {
       zIndex: 1000,
       overflowY: 'auto'
     },
-    expandedChartsContainer: {
-      maxWidth: activePanel === 'charts' ? '80vw' : '300px',
-      width: activePanel === 'charts' ? '80vw' : '300px',
+    chartsContainer: {
+      position: 'relative',
+      maxWidth: '300px',
+      width: '300px',
       transition: 'all 0.3s ease-in-out'
     },
     legend: {
@@ -438,7 +439,7 @@ const MapComponent = () => {
           </div>
         </ReactMapGL>
 
-        <div style={{...styles.panelsContainer, ...styles.expandedChartsContainer}}>
+        <div style={{...styles.panelsContainer, ...styles.ChartsContainer}}>
           <SelectionPanel
             isDarkTheme={isDarkTheme}
             showPanel={activePanel === 'selection'}

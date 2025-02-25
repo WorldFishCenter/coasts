@@ -49,7 +49,7 @@ const Header = ({ onThemeChange }) => {
               fontSize: '18px', 
               fontWeight: 'bold' 
             }}>
-              Coastal Districts Explorer
+              SSFs explorer
             </h1>
             <div style={{ 
               fontSize: '12px', 
@@ -166,7 +166,7 @@ const Header = ({ onThemeChange }) => {
             <h2 style={{ marginTop: 0, marginBottom: '20px', fontSize: '24px' }}>About This Map</h2>
             <div style={{ lineHeight: '1.6' }}>
               <p>
-                The Coastal Districts Explorer is an interactive mapping tool designed to visualize and analyze district-level data in coastal regions. This tool is part of a broader initiative to understand and monitor coastal development, resource distribution, and demographic patterns.
+                The SSFs explorer is an interactive mapping tool designed to visualize and analyze small scale fisheries data in coastal regions. This tool is part of a broader initiative to understand and monitor coastal development, resource distribution, and demographic patterns.
               </p>
               <h3 style={{ fontSize: '18px', marginTop: '20px' }}>Features</h3>
               <ul style={{ paddingLeft: '20px' }}>
@@ -177,7 +177,7 @@ const Header = ({ onThemeChange }) => {
               </ul>
               <h3 style={{ fontSize: '18px', marginTop: '20px' }}>Data Sources</h3>
               <p>
-                The map utilizes comprehensive district-level data collected from various sources, including:
+                The map utilizes district-level data collected from various sources, including:
               </p>
               <ul style={{ paddingLeft: '20px' }}>
                 <li>Administrative boundaries from national mapping agencies</li>
