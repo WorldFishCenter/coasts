@@ -117,7 +117,7 @@ const CustomPopup = ({ info, isDarkTheme, onClose }) => (
         fontWeight: '600',
         paddingRight: '20px'
       }}>
-        {info.feature.properties.ADM2_PT}
+        {info.feature.properties.ADM2_PT || info.feature.properties.ADM2_EN}
       </h3>
       <div style={{
         fontSize: '14px',
@@ -127,7 +127,7 @@ const CustomPopup = ({ info, isDarkTheme, onClose }) => (
           marginBottom: '4px',
           color: isDarkTheme ? '#bdc3c7' : '#7f8c8d'
         }}>
-          Province: {info.feature.properties.ADM1_PT}
+          Province: {info.feature.properties.ADM1_PT || info.feature.properties.ADM1_EN}
         </div>
         <div style={{
           display: 'flex',
@@ -172,11 +172,11 @@ const MapComponent = () => {
   const [upperPercentile, setUpperPercentile] = useState(95);
   const [opacity, setOpacity] = useState(0.7);
   
-  // Viewport state
+  // Viewport state - adjusted to show both regions
   const [viewState, setViewState] = useState({
-    longitude: 40.5,
-    latitude: -12.5,
-    zoom: isMobile ? 8 : 9,
+    longitude: 40.0,
+    latitude: -8.0,
+    zoom: isMobile ? 5 : 6,
     bearing: 0,
     pitch: 0
   });

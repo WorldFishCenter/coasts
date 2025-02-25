@@ -1,6 +1,10 @@
 import { useState } from 'react';
 
-const Header = ({ onThemeChange }) => {
+const Header = ({ 
+  onThemeChange, 
+  selectedRegion,
+  onRegionChange
+}) => {
   const [isDark, setIsDark] = useState(true);
   const [showAbout, setShowAbout] = useState(false);
 

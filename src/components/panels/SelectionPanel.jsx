@@ -130,7 +130,7 @@ const SelectionPanel = memo(({
                   >
                     <div>
                       <div style={{ fontWeight: 'bold', color: isDarkTheme ? '#fff' : '#2c3e50' }}>
-                        {district.properties.ADM2_PT}
+                        {district.properties.ADM2_PT || district.properties.ADM2_EN}
                       </div>
                       <div style={{ fontSize: isMobile ? '11px' : '12px', color: isDarkTheme ? '#bbb' : '#7f8c8d' }}>
                         Value: {district.properties.value?.toLocaleString() || 0}

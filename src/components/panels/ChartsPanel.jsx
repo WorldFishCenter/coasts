@@ -10,7 +10,7 @@ const ChartsPanel = memo(({
   isMobile
 }) => {
   const districtValues = selectedDistricts.map(d => ({
-    name: d.properties.ADM2_PT,
+    name: d.properties.ADM2_PT || d.properties.ADM2_EN,
     value: d.properties.value || 0
   }));
 
