@@ -34,8 +34,8 @@ const Header = ({
         {/* Left section with logo and title */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
           <div style={{ 
-            width: '32px', 
-            height: '32px', 
+            width: '86px', 
+            height: '46px', 
             backgroundColor: '#3498db',
             borderRadius: '6px',
             display: 'flex',
@@ -45,7 +45,7 @@ const Header = ({
             fontWeight: 'bold',
             fontSize: '18px'
           }}>
-            C
+            PESKAS
           </div>
           <div>
             <h1 style={{ 
