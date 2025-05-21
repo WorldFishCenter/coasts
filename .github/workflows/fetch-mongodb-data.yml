@@ -1,0 +1,44 @@
+name: Fetch MongoDB Data
+
+on:
+  schedule:
+    # Run every day at midnight UTC
+    - cron: "0 0 * * *"
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  fetch-data:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Install script dependencies
+        run: npm install mongodb dotenv
+      
+      - name: Create .env file
+        run: |
+          echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" > .env
+          echo "VITE_MAPBOX_TOKEN=${{ secrets.VITE_MAPBOX_TOKEN }}" >> .env
+      
+      - name: Fetch MongoDB data
+        run: node scripts/data/fetchMongoData.js
+      
+      - name: Commit changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add public/data/pds_grids.json public/data/wio_summaries_geo.json
+          git commit -m "Update MongoDB data (automated)" || echo "No changes to commit"
+          git push 
