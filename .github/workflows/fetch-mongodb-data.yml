@@ -39,6 +39,6 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add public/data/pds_grids.json public/data/wio_summaries_geo.json
+          git add public/data/*.json
           git commit -m "Update MongoDB data (automated)" || echo "No changes to commit"
           git push 
