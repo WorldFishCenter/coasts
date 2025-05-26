@@ -41,7 +41,7 @@ const TimeRangeButton = ({ range, index, isSelected, colorRange, isDarkTheme, on
 );
 
 // Info Panel for grid statistics
-const GridInfoPanel = ({ isDarkTheme, data, colorRange, selectedRanges, onRangeToggle }) => {
+const GridInfoPanel = ({ isDarkTheme, data, colorRange, selectedRanges, onRangeToggle, style }) => {
   const stats = useMemo(() => {
     console.log('GridInfoPanel - data:', data);
     const calculatedStats = calculateGridStats(data);
@@ -68,7 +68,8 @@ const GridInfoPanel = ({ isDarkTheme, data, colorRange, selectedRanges, onRangeT
         width: '380px',
         zIndex: 1000,
         pointerEvents: 'auto',
-        ...SHARED_STYLES.glassPanel(isDarkTheme)
+        ...SHARED_STYLES.glassPanel(isDarkTheme),
+        ...style // allow parent to override position and other styles
       }}
     >
       <h3 style={{ 

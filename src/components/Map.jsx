@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import DeckGL from '@deck.gl/react';
-import { Map as MapGL, NavigationControl, Popup, Source, Layer } from 'react-map-gl';
-import { ColumnLayer } from '@deck.gl/layers';
+import { Map as MapGL, NavigationControl, Popup } from 'react-map-gl';
+import { ColumnLayer, GeoJsonLayer } from '@deck.gl/layers';
 import { MapView } from '@deck.gl/core';
 import { Satellite, Map as MapIcon } from 'lucide-react';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -77,7 +77,6 @@ const MapComponent = () => {
   
   // Map states
   const [hoverInfo, setHoverInfo] = useState(null);
-  const [popupInfo, setPopupInfo] = useState(null);
   
   // Analysis states
   const [opacity, setOpacity] = useState(0.7);
@@ -166,33 +165,12 @@ const MapComponent = () => {
     setViewState(viewState);
   }, []);
 
-  // Handle hover - simplified for react-map-gl integration
-  const onHover = useCallback((event) => {
-    if (mapRef.current && event) {
-      const features = mapRef.current.queryRenderedFeatures(event.point, {
-        layers: ['wio-regions']
-      });
-      setHoverInfo(features && features[0]);
-    }
-  }, []);
-
-  // Handle click - simplified for react-map-gl integration
-  const onClick = useCallback((event) => {
-    if (mapRef.current && event) {
-      const features = mapRef.current.queryRenderedFeatures(event.point, {
-        layers: ['wio-regions']
-      });
-      const clickedFeature = features && features[0];
-      
-      if (clickedFeature) {
-        setPopupInfo({
-          longitude: event.lngLat.lng,
-          latitude: event.lngLat.lat,
-          feature: clickedFeature
-        });
-      } else {
-        setPopupInfo(null);
-      }
+  // Simplified hover handler for highlighting
+  const onHover = useCallback((info) => {
+    if (info.object && info.layer.id === 'wio-regions') {
+      setHoverInfo(info.object);
+    } else if (!info.object) {
+      setHoverInfo(null);
     }
   }, []);
 
@@ -223,74 +201,65 @@ const MapComponent = () => {
   }, [selectedRanges, pdsDataLoaded]);
 
   // Tooltip for PDS grid
-  const getTooltip = useCallback(({object}) => {
+  const getTooltip = useCallback(({object, layer}) => {
     if (!object) return null;
 
-    const avgTime = object.avgTimeHours;
-    const breakIndex = TIME_BREAKS.findIndex(range => 
-      avgTime >= range.min && (range.max === Infinity ? true : avgTime < range.max)
-    );
-    const cellColor = COLOR_RANGE[breakIndex >= 0 ? breakIndex : 0];
-    const totalVisits = object.totalVisits;
-    
-    return {
-      html: `
-        <div style="padding: 8px">
-          <div><strong>Time spent</strong></div>
-          <div>Average time: ${avgTime.toFixed(2)} hours</div>
-          <div><strong>Activity</strong></div>
-          <div>Total visits: ${totalVisits}</div>
-        </div>
-      `,
-      style: {
-        backgroundColor: `rgba(${cellColor.join(',')}, 0.95)`,
-        color: breakIndex > COLOR_RANGE.length / 2 ? '#ffffff' : '#000000',
-        fontSize: '12px',
-        borderRadius: '4px',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-      }
-    };
-  }, []);
-
-  // Create layers - Use ColumnLayer for pre-aggregated data
-  const layers = useMemo(() => {
-    if (transformedPdsData.length === 0) return [];
-
-    return [
-      new ColumnLayer({
-        id: 'pds-grid-layer',
-        data: transformedPdsData,
-        pickable: true,
-        // Position
-        getPosition: d => d.position,
-        // Size - 1km = 1000m, but we need to adjust for visualization
-        radius: 500, // Half of cell size for better visualization
-        // Elevation
-        elevationScale: 2500, // or 1000, experiment for best effect
-        getElevation: d => d.avgTimeHours,
-        // Color
-        getFillColor: d => {
-          const colorIndex = getColorForValue(d.avgTimeHours);
-          return COLOR_RANGE[colorIndex];
-        },
-        // Style
-        opacity: 0.8, // Always visible with 0.8 opacity
-        // Optimization
-        material: {
-          ambient: 0.64,
-          diffuse: 0.6,
-          shininess: 32,
-          specularColor: [51, 51, 51]
-        },
-        updateTriggers: {
-          getFillColor: [selectedRanges],
-          opacity: [] // Removed isPdsGridVisible from update triggers
+    // Handle GeoJsonLayer (choropleth) tooltips
+    if (layer.id === 'wio-regions') {
+      const props = object.properties;
+      const metricValue = props[selectedMetric];
+      
+      return {
+        html: `
+          <div style="padding: 8px">
+            <div style="font-weight: bold; margin-bottom: 4px">${props.region}</div>
+            <div>Country: ${props.country}</div>
+            <div>${selectedMetric}: ${metricValue != null ? metricValue.toFixed(2) : 'N/A'}</div>
+          </div>
+        `,
+        style: {
+          backgroundColor: isDarkTheme ? 'rgba(28, 28, 28, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+          color: isDarkTheme ? '#ffffff' : '#000000',
+          fontSize: '12px',
+          borderRadius: '4px',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+          border: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`
         }
-      })
-    ];
-  }, [transformedPdsData, selectedRanges]);
+      };
+    }
 
-  // Compute dynamic grades & color stops for current metric
+    // Handle ColumnLayer (PDS grid) tooltips
+    if (layer.id === 'pds-grid-layer') {
+      const avgTime = object.avgTimeHours;
+      const breakIndex = TIME_BREAKS.findIndex(range => 
+        avgTime >= range.min && (range.max === Infinity ? true : avgTime < range.max)
+      );
+      const cellColor = COLOR_RANGE[breakIndex >= 0 ? breakIndex : 0];
+      const totalVisits = object.totalVisits;
+      
+      return {
+        html: `
+          <div style="padding: 8px">
+            <div><strong>Time spent</strong></div>
+            <div>Average time: ${avgTime.toFixed(2)} hours</div>
+            <div><strong>Activity</strong></div>
+            <div>Total visits: ${totalVisits}</div>
+          </div>
+        `,
+        style: {
+          backgroundColor: `rgba(${cellColor.join(',')}, 0.95)`,
+          color: breakIndex > COLOR_RANGE.length / 2 ? '#ffffff' : '#000000',
+          fontSize: '12px',
+          borderRadius: '4px',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+        }
+      };
+    }
+
+    return null;
+  }, [selectedMetric, isDarkTheme]);
+
+  // Compute dynamic grades & color stops for current metric - MOVED BEFORE LAYERS
   const metricStats = useMemo(() => {
     if (!boundaries || !boundaries.features) {
       return { grades: [0,1,2,3,4,5], stops: [0,COLORS[0],1,COLORS[1],2,COLORS[2],3,COLORS[3],4,COLORS[4],5,COLORS[5]] };
@@ -306,6 +275,98 @@ const MapComponent = () => {
     const stops = grades.flatMap((g, idx) => [g, COLORS[idx]]);
     return { grades, stops };
   }, [boundaries, selectedMetric]);
+
+  // Create layers - Use ColumnLayer for pre-aggregated data
+  const layers = useMemo(() => {
+    const allLayers = [];
+
+    // Add choropleth layer
+    if (boundaries) {
+      // Function to get color based on metric value
+      const getColorForFeature = (feature) => {
+        const value = feature.properties[selectedMetric];
+        if (value == null || isNaN(value)) return [200, 200, 200, 255 * opacity];
+        
+        // Find which grade this value falls into
+        const { grades } = metricStats;
+        let colorIndex = 0;
+        for (let i = 0; i < grades.length - 1; i++) {
+          if (value >= grades[i] && value < grades[i + 1]) {
+            colorIndex = i;
+            break;
+          } else if (value >= grades[grades.length - 1]) {
+            colorIndex = grades.length - 1;
+          }
+        }
+        
+        // Convert hex color to RGB
+        const hexColor = COLORS[colorIndex];
+        const r = parseInt(hexColor.slice(1, 3), 16);
+        const g = parseInt(hexColor.slice(3, 5), 16);
+        const b = parseInt(hexColor.slice(5, 7), 16);
+        
+        return [r, g, b, 255 * (isSatellite ? opacity * 1.2 : opacity)];
+      };
+
+      allLayers.push(
+        new GeoJsonLayer({
+          id: 'wio-regions',
+          data: boundaries,
+          pickable: true,
+          stroked: true,
+          filled: true,
+          getFillColor: getColorForFeature,
+          getLineColor: isSatellite ? [255, 255, 255, 230] : (isDarkTheme ? [255, 255, 255, 200] : [0, 0, 0, 200]),
+          getLineWidth: isSatellite ? 2 : 1,
+          lineWidthUnits: 'pixels',
+          autoHighlight: true,
+          highlightColor: [255, 126, 95, 200],
+          updateTriggers: {
+            getFillColor: [selectedMetric, metricStats, opacity, isSatellite],
+            getLineColor: [isSatellite, isDarkTheme]
+          }
+        })
+      );
+    }
+
+    // Add PDS grid columns if data exists
+    if (transformedPdsData.length > 0) {
+      allLayers.push(
+        new ColumnLayer({
+          id: 'pds-grid-layer',
+          data: transformedPdsData,
+          pickable: true,
+          // Position
+          getPosition: d => d.position,
+          // Size - 1km = 1000m, but we need to adjust for visualization
+          radius: 500, // Half of cell size for better visualization
+          // Elevation
+          elevationScale: 2500, // or 1000, experiment for best effect
+          getElevation: d => d.avgTimeHours,
+          // Color
+          getFillColor: d => {
+            const colorIndex = getColorForValue(d.avgTimeHours);
+            return COLOR_RANGE[colorIndex];
+          },
+          // Style
+          opacity: 0.8, // Always visible with 0.8 opacity
+          // Optimization
+          material: {
+            ambient: 0.64,
+            diffuse: 0.6,
+            shininess: 32,
+            specularColor: [51, 51, 51]
+          },
+          updateTriggers: {
+            getFillColor: [selectedRanges],
+            opacity: [] // Removed isPdsGridVisible from update triggers
+          }
+        })
+      );
+    }
+
+    return allLayers;
+  }, [transformedPdsData, selectedRanges, boundaries, selectedMetric, metricStats, opacity, isSatellite, isDarkTheme]);
 
   // Add satellite toggle callback
   const handleMapStyleToggle = useCallback(() => {
@@ -400,6 +461,7 @@ const MapComponent = () => {
             controller={true}
             layers={layers}
             getTooltip={getTooltip}
+            onHover={onHover}
             getCursor={({isDragging, isHovering}) => 
               isDragging ? 'grabbing' : isHovering ? 'pointer' : 'grab'
             }
@@ -408,103 +470,31 @@ const MapComponent = () => {
               ref={mapRef}
               mapStyle={getMapStyle()}
               mapboxAccessToken={MAPBOX_TOKEN}
-              onMouseMove={onHover}
-              onClick={onClick}
-              interactiveLayerIds={['wio-regions']}
               style={{ position: 'absolute', width: '100%', height: '100%' }}
             >
-              <NavigationControl position="top-right" />
-              
-              {/* WIO regions layer */}
-              {boundaries && (
-                <Source id="geojson-source" type="geojson" data={boundaries}>
-                  <Layer 
-                    id="wio-regions"
-                    type="fill"
-                    paint={{
-                      'fill-color': ['interpolate', ['linear'], ['coalesce', ['to-number', ['get', selectedMetric]], metricStats.grades[0]], ...metricStats.stops],
-                      'fill-opacity': isSatellite ? opacity * 1.2 : opacity // Increase opacity in satellite mode for better visibility
-                    }}
-                  />
-                  <Layer
-                    id="wio-regions-outline"
-                    type="line"
-                    paint={{
-                      'line-color': isSatellite ? '#ffffff' : (isDarkTheme ? '#ffffff' : '#000000'),
-                      'line-width': isSatellite ? 1.5 : 1,
-                      'line-opacity': isSatellite ? 0.9 : 0.8
-                    }}
-                  />
-                  {hoverInfo && (
-                    <Layer
-                      id="wio-hover"
-                      type="fill"
-                      paint={{
-                        'fill-color': '#ff7e5f',
-                        'fill-opacity': isSatellite ? 0.9 : 0.8
-                      }}
-                      filter={['==', ['get', 'region'], hoverInfo.properties.region]}
-                    />
-                  )}
-                </Source>
-              )}
-
-              {popupInfo && (
-                <Popup
-                  longitude={popupInfo.longitude}
-                  latitude={popupInfo.latitude}
-                  closeButton={true}
-                  closeOnClick={false}
-                  onClose={() => setPopupInfo(null)}
-                  anchor="bottom"
-                  className={`custom-popup ${isDarkTheme ? 'dark' : 'light'}`}
-                >
-                  <div style={{
-                    backgroundColor: isDarkTheme ? '#2c3e50' : '#ffffff',
-                    color: isDarkTheme ? '#ecf0f1' : '#2c3e50',
-                    padding: '12px 16px',
-                    borderRadius: '8px',
-                    boxShadow: isDarkTheme 
-                      ? '0 4px 6px rgba(0, 0, 0, 0.3)' 
-                      : '0 4px 6px rgba(0, 0, 0, 0.1)'
-                  }}>
-                    <h3 style={{ margin: '0 0 8px 0', fontSize: '16px' }}>
-                      {popupInfo.feature.properties.region}
-                    </h3>
-                    <div style={{ fontSize: '14px' }}>
-                      <div>Country: {popupInfo.feature.properties.country}</div>
-                      <div>Date: {popupInfo.feature.properties.date}</div>
-                      <div>Mean CPUE: {popupInfo.feature.properties.mean_cpue?.toFixed(2)} kg/hour</div>
-                      <div>Mean CPUA: {popupInfo.feature.properties.mean_cpua?.toFixed(2)} kg/km²</div>
-                      <div>Mean RPUE: ${popupInfo.feature.properties.mean_rpue?.toFixed(2)}/hour</div>
-                      <div>Mean RPUA: ${popupInfo.feature.properties.mean_rpua?.toFixed(2)}/km²</div>
-                      <div>Mean Price: ${popupInfo.feature.properties.mean_price_kg?.toFixed(2)}/kg</div>
-                    </div>
-                  </div>
-                </Popup>
-              )}
-
-              {/* Legend - always visible */}
-              <div style={{
-                position: 'absolute',
-                bottom: '20px',
-                right: '20px',
-                padding: '15px',
-                backgroundColor: isDarkTheme ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.9)',
-                color: isDarkTheme ? '#fff' : '#2c3e50',
-                borderRadius: '8px',
-                boxShadow: isDarkTheme ? '0 4px 6px rgba(255,255,255,0.1)' : '0 4px 6px rgba(0,0,0,0.1)',
-                zIndex: 1000,
-                maxWidth: '200px',
-                backdropFilter: 'blur(10px)'
-              }}>
-                <Legend 
-                  isDarkTheme={isDarkTheme}
-                  grades={metricStats.grades}
-                />
-              </div>
+              {/* <NavigationControl position="top-right" /> Removed as requested */}
             </MapGL>
           </DeckGL>
+
+          {/* Legend - always visible */}
+          <div style={{
+            position: 'absolute',
+            bottom: '20px',
+            right: '20px',
+            padding: '15px',
+            backgroundColor: isDarkTheme ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+            color: isDarkTheme ? '#fff' : '#2c3e50',
+            borderRadius: '8px',
+            boxShadow: isDarkTheme ? '0 4px 6px rgba(255,255,255,0.1)' : '0 4px 6px rgba(0,0,0,0.1)',
+            zIndex: 1000,
+            maxWidth: '200px',
+            backdropFilter: 'blur(10px)'
+          }}>
+            <Legend 
+              isDarkTheme={isDarkTheme}
+              grades={metricStats.grades}
+            />
+          </div>
 
           {/* PDS Grid Info Panel - always visible */}
           <GridInfoPanel
@@ -513,6 +503,12 @@ const MapComponent = () => {
             colorRange={COLOR_RANGE}
             selectedRanges={selectedRanges}
             onRangeToggle={handleRangeToggle}
+            style={{
+              position: 'absolute',
+              top: 24,
+              left: 24,
+              zIndex: 1000
+            }}
           />
 
           {/* Map Style Toggle Button */}
@@ -521,10 +517,10 @@ const MapComponent = () => {
             title={isSatellite ? 'Switch to standard view' : 'Switch to satellite view'}
             style={{
               position: 'absolute',
-              top: '80px',
-              right: '20px',
-              width: '40px',
-              height: '40px',
+              top: 24,
+              right: 24,
+              width: '48px',
+              height: '48px',
               padding: '8px',
               backgroundColor: isDarkTheme ? 'rgba(28, 28, 28, 0.9)' : 'rgba(255, 255, 255, 0.9)',
               backdropFilter: 'blur(10px)',
@@ -555,19 +551,19 @@ const MapComponent = () => {
             }}
           >
             {isSatellite ? (
-              <MapIcon size={20} strokeWidth={1.5} />
+              <MapIcon size={28} strokeWidth={1.5} />
             ) : (
-              <Satellite size={20} strokeWidth={1.5} />
+              <Satellite size={28} strokeWidth={1.5} />
             )}
           </button>
         </div>
 
-        {/* Sidebar Toggle Button */}
+        {/* Sidebar Toggle Button
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
           style={{
             position: 'absolute',
-            left: isSidebarOpen ? '350px' : '0',
+            left: isSidebarOpen ? '400px' : '0',
             top: '20px',
             zIndex: 1000,
             padding: '8px 12px',
@@ -582,7 +578,7 @@ const MapComponent = () => {
           }}
         >
           {isSidebarOpen ? '←' : '→'}
-        </button>
+        </button> */}
       </div>
     </div>
   );
