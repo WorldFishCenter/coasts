@@ -2,6 +2,8 @@ import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import DeckGL from '@deck.gl/react';
 import { Map as MapGL, NavigationControl, Popup, Source, Layer } from 'react-map-gl';
 import { ColumnLayer } from '@deck.gl/layers';
+import { MapView } from '@deck.gl/core';
+import { Satellite, Map as MapIcon } from 'lucide-react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import Header from './Header';
 import Sidebar from './Sidebar';
@@ -67,6 +69,9 @@ const MapComponent = () => {
   // Theme state
   const [isDarkTheme, setIsDarkTheme] = useState(true);
   
+  // Satellite mode state
+  const [isSatellite, setIsSatellite] = useState(false);
+  
   // Panel states
   const [activeTab, setActiveTab] = useState('analysis'); // 'analysis' | 'charts' | 'selection'
   
@@ -77,13 +82,16 @@ const MapComponent = () => {
   // Analysis states
   const [opacity, setOpacity] = useState(0.7);
   
+  // Force update state to trigger re-renders when PDS data loads
+  const [pdsDataLoaded, setPdsDataLoaded] = useState(false);
+  
   // Viewport state - only used for updates, not initial
   const [viewState, setViewState] = useState({
     longitude: 40.0,
     latitude: -8.0,
-    zoom: isMobile ? 5 : 6,
+    zoom: isMobile ? 5 : 7,
     bearing: 0,
-    pitch: 0
+    pitch: 45
   });
 
   // Load map data including PDS grids
@@ -103,8 +111,7 @@ const MapComponent = () => {
     new Date('2025-12-31').getTime()
   ]);
 
-  // Add PDS grid layer visibility state
-  const [isPdsGridVisible, setIsPdsGridVisible] = useState(false);
+  // Add PDS grid layer visibility state - REMOVED isPdsGridVisible as it's no longer needed
   const [selectedRanges, setSelectedRanges] = useState(TIME_BREAKS);
 
   // Time range constants
@@ -113,6 +120,7 @@ const MapComponent = () => {
 
   // Ref for Map instance
   const mapRef = useRef(null);
+  const deckRef = useRef(null);
 
   // Pre-process PDS data once when it loads (like reference)
   useEffect(() => {
@@ -133,6 +141,8 @@ const MapComponent = () => {
           isFinite(d.position[1])
         );
       console.log('Pre-filtered PDS data:', FILTERED_PDS_DATA.length);
+      // Force update to trigger re-render
+      setPdsDataLoaded(true);
     }
   }, [pdsGridsData]);
 
@@ -151,43 +161,39 @@ const MapComponent = () => {
     setIsDarkTheme(isDark);
   }, []);
 
-  const onHover = useCallback(event => {
-    const { features, object } = event;
-    const hoveredFeature = features && features[0];
-    setHoverInfo(hoveredFeature || null);
-  }, []);
-
-  const onClick = useCallback(event => {
-    const { features } = event;
-    const clickedFeature = features && features[0];
-    
-    if (clickedFeature) {
-      setPopupInfo({
-        longitude: event.lngLat.lng,
-        latitude: event.lngLat.lat,
-        feature: clickedFeature
-      });
-    } else {
-      setPopupInfo(null);
-    }
-  }, []);
-
-  // Handle view state change - MATCH REFERENCE EXACTLY
-  const handleViewStateChange = useCallback(({ viewState }) => {
+  // Handle view state change
+  const onViewStateChange = useCallback(({ viewState }) => {
     setViewState(viewState);
   }, []);
 
-  // Toggle PDS grid visibility and adjust pitch
-  const handleTogglePdsGrid = useCallback(() => {
-    setIsPdsGridVisible(prev => {
-      const newVisible = !prev;
-      // Set pitch to 0 for 2D view when showing grid, restore to 40 when hiding
-      setViewState(current => ({
-        ...current,
-        pitch: newVisible ? 0 : 40
-      }));
-      return newVisible;
-    });
+  // Handle hover - simplified for react-map-gl integration
+  const onHover = useCallback((event) => {
+    if (mapRef.current && event) {
+      const features = mapRef.current.queryRenderedFeatures(event.point, {
+        layers: ['wio-regions']
+      });
+      setHoverInfo(features && features[0]);
+    }
+  }, []);
+
+  // Handle click - simplified for react-map-gl integration
+  const onClick = useCallback((event) => {
+    if (mapRef.current && event) {
+      const features = mapRef.current.queryRenderedFeatures(event.point, {
+        layers: ['wio-regions']
+      });
+      const clickedFeature = features && features[0];
+      
+      if (clickedFeature) {
+        setPopupInfo({
+          longitude: event.lngLat.lng,
+          latitude: event.lngLat.lat,
+          feature: clickedFeature
+        });
+      } else {
+        setPopupInfo(null);
+      }
+    }
   }, []);
 
   // Handle range toggle for PDS grids
@@ -203,15 +209,18 @@ const MapComponent = () => {
   }, []);
 
   // Transform PDS grid data - MATCH REFERENCE EXACTLY
-  const transformedPdsData = useMemo(() => 
-    isPdsGridVisible ? FILTERED_PDS_DATA.filter(d => 
+  const transformedPdsData = useMemo(() => {
+    const filtered = FILTERED_PDS_DATA.filter(d => 
       selectedRanges.some(range => 
         d.avgTimeHours >= range.min && (
           range.max === Infinity ? true : d.avgTimeHours < range.max
         )
       )
-    ) : []
-  , [selectedRanges, isPdsGridVisible]);
+    );
+    console.log('Transformed PDS data length:', filtered.length);
+    console.log('Sample data:', filtered[0]);
+    return filtered;
+  }, [selectedRanges, pdsDataLoaded]);
 
   // Tooltip for PDS grid
   const getTooltip = useCallback(({object}) => {
@@ -245,7 +254,7 @@ const MapComponent = () => {
 
   // Create layers - Use ColumnLayer for pre-aggregated data
   const layers = useMemo(() => {
-    if (!isPdsGridVisible || transformedPdsData.length === 0) return [];
+    if (transformedPdsData.length === 0) return [];
 
     return [
       new ColumnLayer({
@@ -265,7 +274,7 @@ const MapComponent = () => {
           return COLOR_RANGE[colorIndex];
         },
         // Style
-        opacity: 0.8,
+        opacity: 0.8, // Always visible with 0.8 opacity
         // Optimization
         material: {
           ambient: 0.64,
@@ -274,11 +283,12 @@ const MapComponent = () => {
           specularColor: [51, 51, 51]
         },
         updateTriggers: {
-          getFillColor: [selectedRanges]
+          getFillColor: [selectedRanges],
+          opacity: [] // Removed isPdsGridVisible from update triggers
         }
       })
     ];
-  }, [transformedPdsData, selectedRanges, isPdsGridVisible]);
+  }, [transformedPdsData, selectedRanges]);
 
   // Compute dynamic grades & color stops for current metric
   const metricStats = useMemo(() => {
@@ -296,6 +306,19 @@ const MapComponent = () => {
     const stops = grades.flatMap((g, idx) => [g, COLORS[idx]]);
     return { grades, stops };
   }, [boundaries, selectedMetric]);
+
+  // Add satellite toggle callback
+  const handleMapStyleToggle = useCallback(() => {
+    setIsSatellite(prev => !prev);
+  }, []);
+
+  // Get map style based on satellite mode and theme
+  const getMapStyle = useCallback(() => {
+    if (isSatellite) {
+      return "mapbox://styles/mapbox/satellite-v9";
+    }
+    return getMapStyles(isDarkTheme);
+  }, [isSatellite, isDarkTheme]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -364,53 +387,53 @@ const MapComponent = () => {
           maxDate={maxDate}
         />
 
-        {/* Map Container - using DeckGL as parent like reference */}
+        {/* Map Container - Best practice: DeckGL as parent with MapGL as child */}
         <div style={{
           flexGrow: 1,
           position: 'relative',
           transition: 'margin-left 0.3s ease'
         }}>
           <DeckGL
-            initialViewState={viewState}
+            ref={deckRef}
+            viewState={viewState}
+            onViewStateChange={onViewStateChange}
             controller={true}
             layers={layers}
-            onViewStateChange={handleViewStateChange}
-            getTooltip={isPdsGridVisible ? getTooltip : null}
+            getTooltip={getTooltip}
+            getCursor={({isDragging, isHovering}) => 
+              isDragging ? 'grabbing' : isHovering ? 'pointer' : 'grab'
+            }
           >
             <MapGL
               ref={mapRef}
-              mapStyle={getMapStyles(isDarkTheme)}
+              mapStyle={getMapStyle()}
               mapboxAccessToken={MAPBOX_TOKEN}
-              interactiveLayerIds={['wio-regions']}
               onMouseMove={onHover}
               onClick={onClick}
-              style={{ width: '100%', height: '100%' }}
-              reuseMaps
-              attributionControl={false}
-              preventStyleDiffing={true}
-              renderWorldCopies={false}
-              antialias={true}
-              terrain={false}
+              interactiveLayerIds={['wio-regions']}
+              style={{ position: 'absolute', width: '100%', height: '100%' }}
             >
               <NavigationControl position="top-right" />
               
               {/* WIO regions layer */}
               {boundaries && (
-                <Source type="geojson" data={boundaries}>
+                <Source id="geojson-source" type="geojson" data={boundaries}>
                   <Layer 
                     id="wio-regions"
                     type="fill"
                     paint={{
-                      'fill-color': [
-                        'case',
-                        ['boolean', ['feature-state', 'hover'], false],
-                        '#ff7e5f',
-                        ['interpolate', ['linear'], ['coalesce', ['to-number', ['get', selectedMetric]], metricStats.grades[0]], ...metricStats.stops]
-                      ],
-                      'fill-opacity': isPdsGridVisible ? 0.3 : opacity,
-                      'fill-outline-color': isDarkTheme ? '#ffffff' : '#000000'
+                      'fill-color': ['interpolate', ['linear'], ['coalesce', ['to-number', ['get', selectedMetric]], metricStats.grades[0]], ...metricStats.stops],
+                      'fill-opacity': isSatellite ? opacity * 1.2 : opacity // Increase opacity in satellite mode for better visibility
                     }}
-                    beforeId="waterway-label"
+                  />
+                  <Layer
+                    id="wio-regions-outline"
+                    type="line"
+                    paint={{
+                      'line-color': isSatellite ? '#ffffff' : (isDarkTheme ? '#ffffff' : '#000000'),
+                      'line-width': isSatellite ? 1.5 : 1,
+                      'line-opacity': isSatellite ? 0.9 : 0.8
+                    }}
                   />
                   {hoverInfo && (
                     <Layer
@@ -418,11 +441,9 @@ const MapComponent = () => {
                       type="fill"
                       paint={{
                         'fill-color': '#ff7e5f',
-                        'fill-opacity': 0.8,
-                        'fill-outline-color': isDarkTheme ? '#ffffff' : '#000000'
+                        'fill-opacity': isSatellite ? 0.9 : 0.8
                       }}
-                      filter={['==', 'region', hoverInfo.properties.region]}
-                      beforeId="waterway-label"
+                      filter={['==', ['get', 'region'], hoverInfo.properties.region]}
                     />
                   )}
                 </Source>
@@ -463,63 +484,81 @@ const MapComponent = () => {
                 </Popup>
               )}
 
-              {!isPdsGridVisible && (
-                <div style={{
-                  position: 'absolute',
-                  bottom: '20px',
-                  right: '20px',
-                  padding: '15px',
-                  backgroundColor: isDarkTheme ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.9)',
-                  color: isDarkTheme ? '#fff' : '#2c3e50',
-                  borderRadius: '8px',
-                  boxShadow: isDarkTheme ? '0 4px 6px rgba(255,255,255,0.1)' : '0 4px 6px rgba(0,0,0,0.1)',
-                  zIndex: 1000,
-                  maxWidth: '200px',
-                  backdropFilter: 'blur(10px)'
-                }}>
-                  <Legend 
-                    isDarkTheme={isDarkTheme}
-                    grades={metricStats.grades}
-                  />
-                </div>
-              )}
+              {/* Legend - always visible */}
+              <div style={{
+                position: 'absolute',
+                bottom: '20px',
+                right: '20px',
+                padding: '15px',
+                backgroundColor: isDarkTheme ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+                color: isDarkTheme ? '#fff' : '#2c3e50',
+                borderRadius: '8px',
+                boxShadow: isDarkTheme ? '0 4px 6px rgba(255,255,255,0.1)' : '0 4px 6px rgba(0,0,0,0.1)',
+                zIndex: 1000,
+                maxWidth: '200px',
+                backdropFilter: 'blur(10px)'
+              }}>
+                <Legend 
+                  isDarkTheme={isDarkTheme}
+                  grades={metricStats.grades}
+                />
+              </div>
             </MapGL>
           </DeckGL>
 
-          {/* PDS Grid Info Panel */}
-          {isPdsGridVisible && (
-            <GridInfoPanel
-              isDarkTheme={isDarkTheme}
-              data={transformedPdsData}
-              colorRange={COLOR_RANGE}
-              selectedRanges={selectedRanges}
-              onRangeToggle={handleRangeToggle}
-              isVisible={isPdsGridVisible}
-            />
-          )}
+          {/* PDS Grid Info Panel - always visible */}
+          <GridInfoPanel
+            isDarkTheme={isDarkTheme}
+            data={transformedPdsData}
+            colorRange={COLOR_RANGE}
+            selectedRanges={selectedRanges}
+            onRangeToggle={handleRangeToggle}
+          />
 
-          {/* Layer Toggle Button */}
+          {/* Map Style Toggle Button */}
           <button
-            onClick={handleTogglePdsGrid}
+            onClick={handleMapStyleToggle}
+            title={isSatellite ? 'Switch to standard view' : 'Switch to satellite view'}
             style={{
               position: 'absolute',
-              bottom: '20px',
-              left: isSidebarOpen ? '370px' : '20px',
-              padding: '10px 16px',
-              backgroundColor: isDarkTheme ? 'rgba(28, 28, 28, 0.95)' : 'rgba(255, 255, 255, 0.95)',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              color: isDarkTheme ? '#fff' : '#000',
-              transition: 'all 0.3s ease',
-              boxShadow: isDarkTheme ? '0 2px 4px rgba(0, 0, 0, 0.3)' : '0 2px 4px rgba(0, 0, 0, 0.1)',
+              top: '80px',
+              right: '20px',
+              width: '40px',
+              height: '40px',
+              padding: '8px',
+              backgroundColor: isDarkTheme ? 'rgba(28, 28, 28, 0.9)' : 'rgba(255, 255, 255, 0.9)',
               backdropFilter: 'blur(10px)',
-              fontSize: '14px',
-              fontWeight: '500',
-              zIndex: 1000
+              borderRadius: '8px',
+              boxShadow: isDarkTheme 
+                ? '0 4px 6px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2)' 
+                : '0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06)',
+              border: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`,
+              cursor: 'pointer',
+              zIndex: 1000,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.2s ease-in-out',
+              color: isDarkTheme ? '#ffffff' : '#000000'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-1px)';
+              e.currentTarget.style.backgroundColor = isDarkTheme 
+                ? 'rgba(31, 41, 55, 0.9)' 
+                : 'rgba(255, 255, 255, 0.95)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.backgroundColor = isDarkTheme 
+                ? 'rgba(28, 28, 28, 0.9)' 
+                : 'rgba(255, 255, 255, 0.9)';
             }}
           >
-            {isPdsGridVisible ? 'Hide GPS Data' : 'Show GPS Data'}
+            {isSatellite ? (
+              <MapIcon size={20} strokeWidth={1.5} />
+            ) : (
+              <Satellite size={20} strokeWidth={1.5} />
+            )}
           </button>
         </div>
 

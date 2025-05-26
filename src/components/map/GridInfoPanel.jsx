@@ -41,10 +41,22 @@ const TimeRangeButton = ({ range, index, isSelected, colorRange, isDarkTheme, on
 );
 
 // Info Panel for grid statistics
-const GridInfoPanel = ({ isDarkTheme, data, colorRange, selectedRanges, onRangeToggle, isVisible }) => {
-  const stats = useMemo(() => calculateGridStats(data), [data]);
+const GridInfoPanel = ({ isDarkTheme, data, colorRange, selectedRanges, onRangeToggle }) => {
+  const stats = useMemo(() => {
+    console.log('GridInfoPanel - data:', data);
+    const calculatedStats = calculateGridStats(data);
+    console.log('GridInfoPanel - stats:', calculatedStats);
+    // Return default stats if no data
+    return calculatedStats || {
+      totalVisits: '0',
+      avgTime: '0.0',
+      maxTime: '0.0',
+      gridCells: '0',
+      avgSpeed: '0.0'
+    };
+  }, [data]);
 
-  if (!isVisible || !stats) return null;
+  console.log('GridInfoPanel - rendering with stats:', stats);
 
   return (
     <div
