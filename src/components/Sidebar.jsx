@@ -34,27 +34,73 @@ const SectionHeader = ({ title, icon: Icon, isDarkTheme, isExpanded, onToggle, s
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      padding: '12px 16px',
-      backgroundColor: isDarkTheme ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)',
-      borderRadius: '8px',
+      padding: '14px 16px',
+      backgroundColor: isExpanded 
+        ? (isDarkTheme ? 'rgba(59, 130, 246, 0.1)' : 'rgba(59, 130, 246, 0.08)')
+        : (isDarkTheme ? 'rgba(255, 255, 255, 0.02)' : 'rgba(0, 0, 0, 0.01)'),
+      borderRadius: isExpanded ? '8px 8px 0 0' : '8px',
       cursor: 'pointer',
       transition: 'all 0.2s ease',
-      marginBottom: isExpanded ? '12px' : '0',
-      border: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)'}`
+      marginBottom: isExpanded ? '0' : '0',
+      border: `1px solid ${isExpanded
+        ? (isDarkTheme ? 'rgba(59, 130, 246, 0.3)' : 'rgba(59, 130, 246, 0.25)')
+        : (isDarkTheme ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)')}`,
+      borderBottom: isExpanded ? 'none' : undefined,
+      position: 'relative'
     }}
     onMouseEnter={(e) => {
-      e.currentTarget.style.backgroundColor = isDarkTheme 
-        ? 'rgba(255, 255, 255, 0.05)' 
-        : 'rgba(0, 0, 0, 0.04)';
+      if (!isExpanded) {
+        e.currentTarget.style.backgroundColor = isDarkTheme 
+          ? 'rgba(255, 255, 255, 0.04)' 
+          : 'rgba(0, 0, 0, 0.03)';
+        e.currentTarget.style.borderColor = isDarkTheme
+          ? 'rgba(255, 255, 255, 0.1)'
+          : 'rgba(0, 0, 0, 0.1)';
+      }
     }}
     onMouseLeave={(e) => {
-      e.currentTarget.style.backgroundColor = isDarkTheme 
-        ? 'rgba(255, 255, 255, 0.03)' 
-        : 'rgba(0, 0, 0, 0.02)';
+      if (!isExpanded) {
+        e.currentTarget.style.backgroundColor = isDarkTheme 
+          ? 'rgba(255, 255, 255, 0.02)' 
+          : 'rgba(0, 0, 0, 0.01)';
+        e.currentTarget.style.borderColor = isDarkTheme
+          ? 'rgba(255, 255, 255, 0.06)'
+          : 'rgba(0, 0, 0, 0.06)';
+      }
     }}
   >
+    {/* Active indicator bar */}
+    {isExpanded && (
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: '3px',
+        background: 'linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%)',
+        borderRadius: '8px 8px 0 0'
+      }} />
+    )}
+    
     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-      <Icon size={18} style={{ color: isDarkTheme ? '#60a5fa' : '#3b82f6' }} />
+      <div style={{
+        width: '32px',
+        height: '32px',
+        borderRadius: '6px',
+        backgroundColor: isExpanded
+          ? (isDarkTheme ? 'rgba(96, 165, 250, 0.2)' : 'rgba(59, 130, 246, 0.15)')
+          : (isDarkTheme ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)'),
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        transition: 'all 0.2s ease'
+      }}>
+        <Icon size={18} style={{ 
+          color: isExpanded 
+            ? (isDarkTheme ? '#60a5fa' : '#3b82f6')
+            : (isDarkTheme ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)')
+        }} />
+      </div>
       <div>
         <h3 style={{
           ...SHARED_STYLES.text.heading(isDarkTheme),
@@ -75,7 +121,13 @@ const SectionHeader = ({ title, icon: Icon, isDarkTheme, isExpanded, onToggle, s
         )}
       </div>
     </div>
-    {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+    <div style={{
+      transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+      transition: 'transform 0.2s ease',
+      color: isDarkTheme ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)'
+    }}>
+      <ChevronDown size={16} />
+    </div>
   </div>
 );
 
@@ -155,7 +207,9 @@ const Sidebar = memo(({
   onRegionRemove,
   // Filter props
   selectedCountries = [],
-  onCountryToggle
+  onCountryToggle,
+  // Style prop
+  style = {}
 }) => {
   // Section expansion states
   const [expandedSections, setExpandedSections] = useState({
@@ -194,36 +248,43 @@ const Sidebar = memo(({
   }, [boundaries, selectedCountries]);
 
   const containerStyle = {
-    width: isOpen ? (isMobile ? '100%' : '420px') : '0',
+    width: isOpen ? (isMobile ? '100%' : '460px') : '0',
     height: '100%',
     minHeight: 0,
-    transform: isOpen ? 'translateX(0)' : `translateX(${isMobile ? '-100%' : '-420px'})`,
+    transform: isOpen ? 'translateX(0)' : `translateX(${isMobile ? '-100%' : '-460px'})`,
     ...SHARED_STYLES.glassPanel(isDarkTheme),
+    backgroundColor: isDarkTheme ? 'rgba(28, 28, 28, 0.85)' : 'rgba(255, 255, 255, 0.85)',
     display: 'flex',
     flexDirection: 'column',
     transition: 'transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
     zIndex: 1000,
-    overflow: 'hidden'
+    overflow: 'hidden',
+    borderRadius: 0,
+    borderRight: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`,
+    boxShadow: isDarkTheme 
+      ? '2px 0 8px rgba(0, 0, 0, 0.3)' 
+      : '2px 0 8px rgba(0, 0, 0, 0.08)',
+    ...style
   };
 
   return (
     <div style={containerStyle}>
       {/* Header */}
       <div style={{
-        padding: '20px 20px 16px',
+        padding: '28px 24px 20px',
         borderBottom: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)'}`,
         flexShrink: 0
       }}>
         <h2 style={{
           ...SHARED_STYLES.text.heading(isDarkTheme),
           margin: 0,
-          fontSize: '18px',
+          fontSize: '20px',
           fontWeight: 700,
           display: 'flex',
           alignItems: 'center',
-          gap: '8px'
+          gap: '10px'
         }}>
-          <Layers size={20} />
+          <Layers size={22} />
           Analysis Controls
         </h2>
         <p style={{
@@ -240,7 +301,12 @@ const Sidebar = memo(({
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           
           {/* Metrics Section */}
-          <div>
+          <div style={{
+            backgroundColor: isDarkTheme ? 'rgba(255, 255, 255, 0.02)' : 'rgba(0, 0, 0, 0.01)',
+            borderRadius: '8px',
+            border: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)'}`,
+            overflow: 'hidden'
+          }}>
             <SectionHeader
               title="Metrics"
               subtitle="Select data to visualize"
@@ -251,114 +317,195 @@ const Sidebar = memo(({
             />
             
             {expandedSections.metrics && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {METRICS.map(metric => {
-                  const isActive = selectedMetric === metric.id;
-                  return (
-                    <div
-                      key={metric.id}
-                      onClick={() => onMetricChange(metric.id)}
-                      style={{
-                        padding: '12px 14px',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                        backgroundColor: isActive 
-                          ? (isDarkTheme ? 'rgba(59, 130, 246, 0.2)' : 'rgba(59, 130, 246, 0.15)')
-                          : (isDarkTheme ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)'),
-                        border: `1px solid ${isActive 
-                          ? (isDarkTheme ? 'rgba(59, 130, 246, 0.4)' : 'rgba(59, 130, 246, 0.3)')
-                          : (isDarkTheme ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)')}`,
-                        transition: 'all 0.2s ease'
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!isActive) {
-                          e.currentTarget.style.backgroundColor = isDarkTheme 
-                            ? 'rgba(255, 255, 255, 0.05)' 
-                            : 'rgba(0, 0, 0, 0.04)';
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!isActive) {
-                          e.currentTarget.style.backgroundColor = isDarkTheme 
-                            ? 'rgba(255, 255, 255, 0.03)' 
-                            : 'rgba(0, 0, 0, 0.02)';
-                        }
-                      }}
-                    >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div>
-                          <h4 style={{
-                            ...SHARED_STYLES.text.body(isDarkTheme),
-                            margin: 0,
-                            fontWeight: 600,
-                            fontSize: '14px'
-                          }}>
-                            {metric.label}
-                          </h4>
-                          <p style={{
-                            ...SHARED_STYLES.text.muted(isDarkTheme),
-                            margin: '2px 0 0 0',
-                            fontSize: '12px'
-                          }}>
-                            {metric.description}
-                          </p>
-                        </div>
-                        <span style={{
-                          ...SHARED_STYLES.text.label(isDarkTheme),
+              <div style={{ 
+                padding: '20px',
+                backgroundColor: isDarkTheme ? 'rgba(0, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.5)',
+                borderTop: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)'}`
+              }}>
+                {/* Metrics Grid */}
+                <div style={{ 
+                  display: 'grid', 
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '10px',
+                  marginBottom: '20px'
+                }}>
+                  {METRICS.map(metric => {
+                    const isActive = selectedMetric === metric.id;
+                    return (
+                      <div
+                        key={metric.id}
+                        onClick={() => onMetricChange(metric.id)}
+                        style={{
+                          padding: '14px',
+                          borderRadius: '10px',
+                          cursor: 'pointer',
+                          backgroundColor: isActive 
+                            ? (isDarkTheme ? 'rgba(59, 130, 246, 0.15)' : 'rgba(59, 130, 246, 0.12)')
+                            : 'transparent',
+                          border: `1.5px solid ${isActive 
+                            ? (isDarkTheme ? 'rgba(59, 130, 246, 0.4)' : 'rgba(59, 130, 246, 0.35)')
+                            : (isDarkTheme ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)')}`,
+                          transition: 'all 0.2s ease',
+                          position: 'relative'
+                        }}
+                        onMouseEnter={(e) => {
+                          if (!isActive) {
+                            e.currentTarget.style.backgroundColor = isDarkTheme 
+                              ? 'rgba(255, 255, 255, 0.04)' 
+                              : 'rgba(0, 0, 0, 0.02)';
+                            e.currentTarget.style.borderColor = isDarkTheme
+                              ? 'rgba(255, 255, 255, 0.12)'
+                              : 'rgba(0, 0, 0, 0.12)';
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (!isActive) {
+                            e.currentTarget.style.backgroundColor = 'transparent';
+                            e.currentTarget.style.borderColor = isDarkTheme
+                              ? 'rgba(255, 255, 255, 0.08)'
+                              : 'rgba(0, 0, 0, 0.08)';
+                          }
+                        }}
+                      >
+                        {/* Selection indicator dot */}
+                        {isActive && (
+                          <div style={{
+                            position: 'absolute',
+                            top: '12px',
+                            right: '12px',
+                            width: '8px',
+                            height: '8px',
+                            borderRadius: '50%',
+                            backgroundColor: isDarkTheme ? '#60a5fa' : '#3b82f6',
+                            boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.2)'
+                          }} />
+                        )}
+                        
+                        <h4 style={{
+                          ...SHARED_STYLES.text.body(isDarkTheme),
+                          margin: 0,
+                          fontWeight: 600,
+                          fontSize: '14px',
+                          marginBottom: '4px',
+                          color: isActive 
+                            ? (isDarkTheme ? '#60a5fa' : '#3b82f6')
+                            : (isDarkTheme ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)')
+                        }}>
+                          {metric.label}
+                        </h4>
+                        <p style={{
+                          ...SHARED_STYLES.text.muted(isDarkTheme),
+                          margin: 0,
                           fontSize: '11px',
-                          padding: '2px 8px',
-                          backgroundColor: isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)',
-                          borderRadius: '4px'
+                          lineHeight: '1.5',
+                          marginBottom: '8px'
+                        }}>
+                          {metric.description}
+                        </p>
+                        <div style={{
+                          display: 'inline-block',
+                          ...SHARED_STYLES.text.label(isDarkTheme),
+                          fontSize: '10px',
+                          padding: '3px 8px',
+                          backgroundColor: isDarkTheme ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.04)',
+                          borderRadius: '12px',
+                          border: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)'}`
                         }}>
                           {metric.unit}
-                        </span>
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
+
+                {/* Divider */}
+                <div style={{
+                  height: '1px',
+                  backgroundColor: isDarkTheme ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)',
+                  margin: '0 -20px 20px'
+                }} />
 
                 {/* Opacity Control */}
-                <div style={{
-                  marginTop: '8px',
-                  padding: '12px',
-                  backgroundColor: isDarkTheme ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)',
-                  borderRadius: '6px',
-                  border: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)'}`
-                }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <label style={{
-                      ...SHARED_STYLES.text.body(isDarkTheme),
-                      fontSize: '13px',
-                      fontWeight: 500
-                    }}>
-                      Layer Opacity
-                    </label>
+                <div>
+                  <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center', 
+                    marginBottom: '12px' 
+                  }}>
+                    <div>
+                      <label style={{
+                        ...SHARED_STYLES.text.body(isDarkTheme),
+                        fontSize: '13px',
+                        fontWeight: 500,
+                        display: 'block'
+                      }}>
+                        Layer Opacity
+                      </label>
+                      <span style={{
+                        ...SHARED_STYLES.text.muted(isDarkTheme),
+                        fontSize: '11px'
+                      }}>
+                        Adjust choropleth transparency
+                      </span>
+                    </div>
                     <span style={{
-                      ...SHARED_STYLES.text.muted(isDarkTheme),
-                      fontSize: '12px'
+                      ...SHARED_STYLES.text.body(isDarkTheme),
+                      fontSize: '14px',
+                      fontWeight: 600,
+                      padding: '4px 10px',
+                      backgroundColor: isDarkTheme ? 'rgba(59, 130, 246, 0.1)' : 'rgba(59, 130, 246, 0.08)',
+                      borderRadius: '16px',
+                      color: isDarkTheme ? '#60a5fa' : '#3b82f6'
                     }}>
                       {(opacity * 100).toFixed(0)}%
                     </span>
                   </div>
-                  <input 
-                    type="range" 
-                    min={0} 
-                    max={100} 
-                    value={opacity * 100} 
-                    onChange={(e) => onOpacityChange(Number(e.target.value) / 100)} 
-                    style={{ 
-                      width: '100%', 
-                      accentColor: isDarkTheme ? '#3b82f6' : '#2563eb',
-                      cursor: 'pointer'
-                    }} 
-                  />
+                  <div style={{
+                    position: 'relative',
+                    height: '32px',
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}>
+                    <div style={{
+                      position: 'absolute',
+                      left: 0,
+                      right: 0,
+                      height: '4px',
+                      backgroundColor: isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+                      borderRadius: '2px'
+                    }} />
+                    <input 
+                      type="range" 
+                      min={0} 
+                      max={100} 
+                      value={opacity * 100} 
+                      onChange={(e) => onOpacityChange(Number(e.target.value) / 100)} 
+                      style={{ 
+                        position: 'relative',
+                        width: '100%', 
+                        height: '4px',
+                        WebkitAppearance: 'none',
+                        appearance: 'none',
+                        background: 'transparent',
+                        outline: 'none',
+                        cursor: 'pointer'
+                      }}
+                      className="custom-slider"
+                    />
+                  </div>
                 </div>
               </div>
             )}
           </div>
 
           {/* Grid Activity Section */}
-          <div>
+          <div style={{
+            backgroundColor: isDarkTheme ? 'rgba(255, 255, 255, 0.02)' : 'rgba(0, 0, 0, 0.01)',
+            borderRadius: '8px',
+            border: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)'}`,
+            overflow: 'hidden'
+          }}>
             <SectionHeader
               title="Fishing Activity"
               subtitle={`${gridStats.totalCells.toLocaleString()} grid cells detected`}
@@ -369,92 +516,200 @@ const Sidebar = memo(({
             />
             
             {expandedSections.gridActivity && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {/* Grid Statistics */}
+              <div style={{
+                padding: '20px',
+                backgroundColor: isDarkTheme ? 'rgba(0, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.5)',
+                borderTop: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)'}`
+              }}>
+                {/* Statistics Cards */}
                 <div style={{
                   display: 'grid',
                   gridTemplateColumns: '1fr 1fr',
-                  gap: '8px',
-                  marginBottom: '8px'
+                  gap: '12px',
+                  marginBottom: '20px'
                 }}>
                   <div style={{
-                    padding: '10px',
-                    backgroundColor: isDarkTheme ? 'rgba(59, 130, 246, 0.1)' : 'rgba(59, 130, 246, 0.08)',
-                    borderRadius: '6px',
+                    padding: '16px',
+                    background: `linear-gradient(135deg, 
+                      ${isDarkTheme ? 'rgba(59, 130, 246, 0.15)' : 'rgba(59, 130, 246, 0.1)'} 0%, 
+                      ${isDarkTheme ? 'rgba(59, 130, 246, 0.08)' : 'rgba(59, 130, 246, 0.05)'} 100%)`,
+                    borderRadius: '12px',
                     border: `1px solid ${isDarkTheme ? 'rgba(59, 130, 246, 0.2)' : 'rgba(59, 130, 246, 0.15)'}`
                   }}>
                     <div style={{
-                      ...SHARED_STYLES.text.muted(isDarkTheme),
-                      fontSize: '11px',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.5px'
+                      ...SHARED_STYLES.text.label(isDarkTheme),
+                      fontSize: '10px',
+                      marginBottom: '6px',
+                      opacity: 0.8
                     }}>
-                      Avg Time
+                      AVERAGE TIME
                     </div>
                     <div style={{
                       ...SHARED_STYLES.text.body(isDarkTheme),
-                      fontSize: '16px',
-                      fontWeight: 600,
-                      marginTop: '2px'
+                      fontSize: '24px',
+                      fontWeight: 700,
+                      color: isDarkTheme ? '#60a5fa' : '#3b82f6',
+                      lineHeight: 1
                     }}>
-                      {gridStats.avgTime.toFixed(2)}h
+                      {gridStats.avgTime.toFixed(2)}
+                      <span style={{ fontSize: '14px', fontWeight: 400, marginLeft: '2px' }}>h</span>
                     </div>
                   </div>
                   
                   <div style={{
-                    padding: '10px',
-                    backgroundColor: isDarkTheme ? 'rgba(34, 197, 94, 0.1)' : 'rgba(34, 197, 94, 0.08)',
-                    borderRadius: '6px',
+                    padding: '16px',
+                    background: `linear-gradient(135deg, 
+                      ${isDarkTheme ? 'rgba(34, 197, 94, 0.15)' : 'rgba(34, 197, 94, 0.1)'} 0%, 
+                      ${isDarkTheme ? 'rgba(34, 197, 94, 0.08)' : 'rgba(34, 197, 94, 0.05)'} 100%)`,
+                    borderRadius: '12px',
                     border: `1px solid ${isDarkTheme ? 'rgba(34, 197, 94, 0.2)' : 'rgba(34, 197, 94, 0.15)'}`
                   }}>
                     <div style={{
-                      ...SHARED_STYLES.text.muted(isDarkTheme),
-                      fontSize: '11px',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.5px'
+                      ...SHARED_STYLES.text.label(isDarkTheme),
+                      fontSize: '10px',
+                      marginBottom: '6px',
+                      opacity: 0.8
                     }}>
-                      Total Visits
+                      TOTAL VISITS
                     </div>
                     <div style={{
                       ...SHARED_STYLES.text.body(isDarkTheme),
-                      fontSize: '16px',
-                      fontWeight: 600,
-                      marginTop: '2px'
+                      fontSize: '24px',
+                      fontWeight: 700,
+                      color: isDarkTheme ? '#22c55e' : '#16a34a',
+                      lineHeight: 1
                     }}>
                       {gridStats.totalVisits.toLocaleString()}
                     </div>
                   </div>
                 </div>
 
-                {/* Time Range Filters */}
-                <div>
+                {/* Divider with label */}
+                <div style={{ 
+                  position: 'relative', 
+                  marginBottom: '16px'
+                }}>
                   <div style={{
-                    ...SHARED_STYLES.text.label(isDarkTheme),
-                    marginBottom: '8px',
-                    fontSize: '12px'
+                    height: '1px',
+                    backgroundColor: isDarkTheme ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)'
+                  }} />
+                  <div style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    backgroundColor: isDarkTheme ? 'rgba(0, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.5)',
+                    padding: '0 12px'
                   }}>
-                    FILTER BY TIME SPENT
+                    <span style={{
+                      ...SHARED_STYLES.text.label(isDarkTheme),
+                      fontSize: '10px',
+                      opacity: 0.7
+                    }}>
+                      FILTER BY TIME
+                    </span>
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                    {TIME_BREAKS.map((range, index) => (
-                      <TimeRangeButton
+                </div>
+
+                {/* Time Range Filters */}
+                <div style={{ 
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(3, 1fr)',
+                  gap: '8px'
+                }}>
+                  {TIME_BREAKS.map((range, index) => {
+                    const isSelected = selectedRanges.some(r => r.min === range.min && r.max === range.max);
+                    const timeValue = range.min + (range.max === Infinity ? 8 : range.max - range.min) / 2;
+                    const normalizedValue = Math.min(timeValue / 12, 1);
+                    const opacity = 0.4 + (normalizedValue * 0.5);
+                    
+                    return (
+                      <div
                         key={`${range.min}-${range.max}`}
-                        range={range}
-                        index={index}
-                        isSelected={selectedRanges.some(r => r.min === range.min && r.max === range.max)}
-                        colorRange={COLOR_RANGE}
-                        isDarkTheme={isDarkTheme}
-                        onToggle={onRangeToggle}
-                      />
-                    ))}
-                  </div>
+                        onClick={() => onRangeToggle(range)}
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          padding: '12px 8px',
+                          cursor: 'pointer',
+                          backgroundColor: isSelected ? 
+                            (isDarkTheme ? 'rgba(59, 130, 246, 0.1)' : 'rgba(59, 130, 246, 0.08)') : 
+                            'transparent',
+                          borderRadius: '10px',
+                          border: `1.5px solid ${isSelected 
+                            ? (isDarkTheme ? 'rgba(59, 130, 246, 0.3)' : 'rgba(59, 130, 246, 0.25)') 
+                            : (isDarkTheme ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)')}`,
+                          transition: 'all 0.2s ease',
+                          position: 'relative'
+                        }}
+                        onMouseEnter={(e) => {
+                          if (!isSelected) {
+                            e.currentTarget.style.backgroundColor = isDarkTheme 
+                              ? 'rgba(255, 255, 255, 0.04)' 
+                              : 'rgba(0, 0, 0, 0.02)';
+                            e.currentTarget.style.borderColor = isDarkTheme
+                              ? 'rgba(255, 255, 255, 0.12)'
+                              : 'rgba(0, 0, 0, 0.12)';
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (!isSelected) {
+                            e.currentTarget.style.backgroundColor = 'transparent';
+                            e.currentTarget.style.borderColor = isDarkTheme
+                              ? 'rgba(255, 255, 255, 0.08)'
+                              : 'rgba(0, 0, 0, 0.08)';
+                          }
+                        }}
+                      >
+                        {isSelected && (
+                          <div style={{
+                            position: 'absolute',
+                            top: '8px',
+                            right: '8px',
+                            width: '6px',
+                            height: '6px',
+                            borderRadius: '50%',
+                            backgroundColor: isDarkTheme ? '#60a5fa' : '#3b82f6'
+                          }} />
+                        )}
+                        
+                        <div
+                          style={{
+                            width: '32px',
+                            height: '32px',
+                            backgroundColor: `rgba(${COLOR_RANGE[index].join(',')}, ${opacity})`,
+                            borderRadius: '8px',
+                            marginBottom: '8px',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                          }}
+                        />
+                        <span style={{ 
+                          ...SHARED_STYLES.text.body(isDarkTheme),
+                          fontSize: '11px',
+                          fontWeight: isSelected ? 600 : 400,
+                          textAlign: 'center',
+                          color: isSelected 
+                            ? (isDarkTheme ? '#60a5fa' : '#3b82f6')
+                            : undefined
+                        }}>
+                          {range.label}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}
           </div>
 
           {/* Country Filter Section */}
-          <div>
+          <div style={{
+            backgroundColor: isDarkTheme ? 'rgba(255, 255, 255, 0.02)' : 'rgba(0, 0, 0, 0.01)',
+            borderRadius: '8px',
+            border: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)'}`,
+            overflow: 'hidden'
+          }}>
             <SectionHeader
               title="Country Filter"
               subtitle={selectedCountries.length > 0 ? `${selectedCountries.length} selected` : 'All countries'}
@@ -465,57 +720,91 @@ const Sidebar = memo(({
             />
             
             {expandedSections.filters && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {availableCountries.map(country => {
-                  const isSelected = selectedCountries.includes(country);
-                  return (
-                    <label
-                      key={country}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        padding: '8px 12px',
-                        borderRadius: '6px',
-                        cursor: 'pointer',
-                        backgroundColor: isDarkTheme ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)',
-                        border: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)'}`,
-                        transition: 'all 0.2s ease'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = isDarkTheme 
-                          ? 'rgba(255, 255, 255, 0.05)' 
-                          : 'rgba(0, 0, 0, 0.04)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = isDarkTheme 
-                          ? 'rgba(255, 255, 255, 0.03)' 
-                          : 'rgba(0, 0, 0, 0.02)';
-                      }}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={isSelected}
-                        onChange={() => onCountryToggle(country)}
+              <div style={{
+                padding: '20px',
+                backgroundColor: isDarkTheme ? 'rgba(0, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.5)',
+                borderTop: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)'}`
+              }}>
+                <div style={{ 
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '8px'
+                }}>
+                  {availableCountries.map(country => {
+                    const isSelected = selectedCountries.includes(country);
+                    return (
+                      <label
+                        key={country}
                         style={{
-                          marginRight: '10px',
-                          accentColor: isDarkTheme ? '#3b82f6' : '#2563eb'
+                          display: 'flex',
+                          alignItems: 'center',
+                          padding: '12px 14px',
+                          borderRadius: '10px',
+                          cursor: 'pointer',
+                          backgroundColor: isSelected
+                            ? (isDarkTheme ? 'rgba(59, 130, 246, 0.1)' : 'rgba(59, 130, 246, 0.08)')
+                            : 'transparent',
+                          border: `1.5px solid ${isSelected
+                            ? (isDarkTheme ? 'rgba(59, 130, 246, 0.3)' : 'rgba(59, 130, 246, 0.25)')
+                            : (isDarkTheme ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)')}`,
+                          transition: 'all 0.2s ease'
                         }}
-                      />
-                      <span style={{
-                        ...SHARED_STYLES.text.body(isDarkTheme),
-                        fontSize: '13px'
-                      }}>
-                        {formatCountryName(country)}
-                      </span>
-                    </label>
-                  );
-                })}
+                        onMouseEnter={(e) => {
+                          if (!isSelected) {
+                            e.currentTarget.style.backgroundColor = isDarkTheme
+                              ? 'rgba(255, 255, 255, 0.04)'
+                              : 'rgba(0, 0, 0, 0.02)';
+                            e.currentTarget.style.borderColor = isDarkTheme
+                              ? 'rgba(255, 255, 255, 0.12)'
+                              : 'rgba(0, 0, 0, 0.12)';
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (!isSelected) {
+                            e.currentTarget.style.backgroundColor = 'transparent';
+                            e.currentTarget.style.borderColor = isDarkTheme
+                              ? 'rgba(255, 255, 255, 0.08)'
+                              : 'rgba(0, 0, 0, 0.08)';
+                          }
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => onCountryToggle(country)}
+                          style={{
+                            marginRight: '10px',
+                            width: '18px',
+                            height: '18px',
+                            accentColor: isDarkTheme ? '#3b82f6' : '#2563eb',
+                            cursor: 'pointer'
+                          }}
+                        />
+                        <span style={{
+                          ...SHARED_STYLES.text.body(isDarkTheme),
+                          fontSize: '13px',
+                          fontWeight: isSelected ? 600 : 400,
+                          color: isSelected 
+                            ? (isDarkTheme ? '#60a5fa' : '#3b82f6')
+                            : (isDarkTheme ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)')
+                        }}>
+                          {formatCountryName(country)}
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
               </div>
             )}
           </div>
 
           {/* District Comparison Section */}
-          <div>
+          <div style={{
+            backgroundColor: isDarkTheme ? 'rgba(255, 255, 255, 0.02)' : 'rgba(0, 0, 0, 0.01)',
+            borderRadius: '8px',
+            border: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)'}`,
+            overflow: 'hidden'
+          }}>
             <SectionHeader
               title="District Comparison"
               subtitle={selectedRegions.length > 0 ? `${selectedRegions.length} districts` : 'Click districts to compare'}
@@ -526,78 +815,156 @@ const Sidebar = memo(({
             />
             
             {expandedSections.comparison && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div style={{
+                padding: '20px',
+                backgroundColor: isDarkTheme ? 'rgba(0, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.5)',
+                borderTop: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)'}`
+              }}>
                 {selectedRegions.length === 0 ? (
                   <div style={{
-                    ...SHARED_STYLES.text.muted(isDarkTheme),
-                    fontSize: '13px',
                     textAlign: 'center',
-                    padding: '20px'
+                    padding: '40px 20px',
+                    borderRadius: '10px',
+                    border: `2px dashed ${isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`,
+                    backgroundColor: isDarkTheme ? 'rgba(255, 255, 255, 0.02)' : 'rgba(0, 0, 0, 0.01)'
                   }}>
-                    Click on districts in the map to add them to comparison
+                    <div style={{ 
+                      fontSize: '32px',
+                      marginBottom: '12px',
+                      opacity: 0.3,
+                      filter: 'grayscale(100%)'
+                    }}>
+                      🗺️
+                    </div>
+                    <div style={{
+                      ...SHARED_STYLES.text.body(isDarkTheme),
+                      fontSize: '14px',
+                      fontWeight: 500,
+                      marginBottom: '4px'
+                    }}>
+                      No districts selected
+                    </div>
+                    <div style={{
+                      ...SHARED_STYLES.text.muted(isDarkTheme),
+                      fontSize: '12px'
+                    }}>
+                      Click on districts in the map to compare
+                    </div>
                   </div>
                 ) : (
-                  selectedRegions.map((region, idx) => {
-                    const metricValue = region.properties[selectedMetric];
-                    const metricInfo = METRIC_CONFIG[selectedMetric];
-                    return (
-                      <div
-                        key={idx}
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                          padding: '10px 12px',
-                          backgroundColor: idx % 2 === 0 
-                            ? (isDarkTheme ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)')
-                            : 'transparent',
-                          borderRadius: '6px',
-                          border: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)'}`
-                        }}
-                      >
-                        <div style={{ flex: 1 }}>
-                          <div style={{
-                            ...SHARED_STYLES.text.body(isDarkTheme),
-                            fontSize: '13px',
-                            fontWeight: 600
-                          }}>
-                            {formatRegionName(region.properties)}
+                  <div style={{
+                    maxHeight: '360px',
+                    overflowY: 'auto',
+                    overflowX: 'hidden',
+                    marginRight: '-8px',
+                    paddingRight: '8px'
+                  }}>
+                    <div style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '8px'
+                    }}>
+                      {selectedRegions.map((region, idx) => {
+                        const metricValue = region.properties[selectedMetric];
+                        const metricInfo = METRIC_CONFIG[selectedMetric];
+                        return (
+                          <div
+                            key={idx}
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              padding: '14px',
+                              backgroundColor: 'transparent',
+                              borderRadius: '10px',
+                              border: `1.5px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)'}`,
+                              transition: 'all 0.2s ease'
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.backgroundColor = isDarkTheme 
+                                ? 'rgba(255, 255, 255, 0.04)' 
+                                : 'rgba(0, 0, 0, 0.02)';
+                              e.currentTarget.style.borderColor = isDarkTheme
+                                ? 'rgba(255, 255, 255, 0.12)'
+                                : 'rgba(0, 0, 0, 0.12)';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.backgroundColor = 'transparent';
+                              e.currentTarget.style.borderColor = isDarkTheme
+                                ? 'rgba(255, 255, 255, 0.08)'
+                                : 'rgba(0, 0, 0, 0.08)';
+                            }}
+                          >
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{
+                                ...SHARED_STYLES.text.body(isDarkTheme),
+                                fontSize: '13px',
+                                fontWeight: 600,
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                marginBottom: '4px'
+                              }}>
+                                {formatRegionName(region.properties)}
+                              </div>
+                              <div style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                flexWrap: 'wrap'
+                              }}>
+                                <span style={{
+                                  ...SHARED_STYLES.text.muted(isDarkTheme),
+                                  fontSize: '11px'
+                                }}>
+                                  {formatCountryName(region.properties.country)}
+                                </span>
+                                <span style={{
+                                  ...SHARED_STYLES.text.body(isDarkTheme),
+                                  fontSize: '12px',
+                                  fontWeight: 600,
+                                  color: isDarkTheme ? '#60a5fa' : '#3b82f6',
+                                  backgroundColor: isDarkTheme ? 'rgba(59, 130, 246, 0.1)' : 'rgba(59, 130, 246, 0.08)',
+                                  padding: '2px 8px',
+                                  borderRadius: '12px'
+                                }}>
+                                  {metricInfo.format(metricValue)}
+                                </span>
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => onRegionRemove(region)}
+                              style={{
+                                background: 'none',
+                                border: 'none',
+                                color: isDarkTheme ? '#6b7280' : '#9ca3af',
+                                cursor: 'pointer',
+                                fontSize: '18px',
+                                lineHeight: 1,
+                                padding: '6px',
+                                borderRadius: '6px',
+                                transition: 'all 0.2s',
+                                marginLeft: '12px',
+                                flexShrink: 0
+                              }}
+                              onMouseEnter={(e) => {
+                                e.target.style.backgroundColor = isDarkTheme 
+                                  ? 'rgba(239, 68, 68, 0.1)' 
+                                  : 'rgba(220, 38, 38, 0.1)';
+                                e.target.style.color = isDarkTheme ? '#ef4444' : '#dc2626';
+                              }}
+                              onMouseLeave={(e) => {
+                                e.target.style.backgroundColor = 'transparent';
+                                e.target.style.color = isDarkTheme ? '#6b7280' : '#9ca3af';
+                              }}
+                            >
+                              ×
+                            </button>
                           </div>
-                          <div style={{
-                            ...SHARED_STYLES.text.muted(isDarkTheme),
-                            fontSize: '12px',
-                            marginTop: '2px'
-                          }}>
-                            {metricInfo.format(metricValue)}
-                          </div>
-                        </div>
-                        <button
-                          onClick={() => onRegionRemove(region)}
-                          style={{
-                            background: 'none',
-                            border: 'none',
-                            color: isDarkTheme ? '#ef4444' : '#dc2626',
-                            cursor: 'pointer',
-                            fontSize: '18px',
-                            lineHeight: 1,
-                            padding: '4px',
-                            borderRadius: '4px',
-                            transition: 'background-color 0.2s'
-                          }}
-                          onMouseEnter={(e) => {
-                            e.target.style.backgroundColor = isDarkTheme 
-                              ? 'rgba(239, 68, 68, 0.1)' 
-                              : 'rgba(220, 38, 38, 0.1)';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.target.style.backgroundColor = 'transparent';
-                          }}
-                        >
-                          ×
-                        </button>
-                      </div>
-                    );
-                  })
+                        );
+                      })}
+                    </div>
+                  </div>
                 )}
               </div>
             )}
@@ -605,16 +972,28 @@ const Sidebar = memo(({
 
           {/* Future: Taxonomic Information Section */}
           <div style={{
-            ...SHARED_STYLES.card(isDarkTheme),
+            backgroundColor: isDarkTheme ? 'rgba(255, 255, 255, 0.02)' : 'rgba(0, 0, 0, 0.01)',
+            borderRadius: '8px',
+            border: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)'}`,
             opacity: 0.5
           }}>
             <div style={{
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              padding: '12px 16px'
+              padding: '14px 16px'
             }}>
-              <Info size={16} style={{ color: isDarkTheme ? '#60a5fa' : '#3b82f6' }} />
+              <div style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '6px',
+                backgroundColor: isDarkTheme ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <Info size={18} style={{ color: isDarkTheme ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)' }} />
+              </div>
               <div>
                 <h4 style={{
                   ...SHARED_STYLES.text.body(isDarkTheme),

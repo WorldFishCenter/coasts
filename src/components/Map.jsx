@@ -575,9 +575,9 @@ const MapComponent = () => {
       <div style={{
         position: 'relative',
         flexGrow: 1,
-        marginTop: '60px',
+        marginTop: '64px',
         display: 'flex',
-        height: 'calc(100vh - 60px)',
+        height: 'calc(100vh - 64px)',
         minHeight: 0
       }}>
         {/* Sidebar */}
@@ -601,6 +601,12 @@ const MapComponent = () => {
           // Filter props
           selectedCountries={selectedCountries}
           onCountryToggle={handleCountryToggle}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            height: '100%'
+          }}
         />
 
         {/* Map Container - Best practice: DeckGL as parent with MapGL as child */}
