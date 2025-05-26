@@ -48,6 +48,7 @@ const validateTimeSeries = (data) => {
  */
 const loadPdsGridsData = async () => {
   try {
+    console.log('Loading PDS grids data...');
     const response = await fetch('/data/pds_grids.json');
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -56,6 +57,7 @@ const loadPdsGridsData = async () => {
     if (!Array.isArray(data)) {
       throw new Error('Invalid PDS grids data format');
     }
+    console.log(`Successfully loaded ${data.length} PDS grid cells`);
     return data;
   } catch (error) {
     console.error('Error loading PDS grids data:', error);

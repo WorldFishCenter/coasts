@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { loadMapData, loadTimeSeriesData } from '../services/dataService';
+import { loadMapData, loadTimeSeriesData, loadPdsGridsData } from '../services/dataService';
 
 export const useMapData = () => {
   const [boundaries, setBoundaries] = useState(null);
   const [timeSeriesData, setTimeSeriesData] = useState(null);
+  const [pdsGridsData, setPdsGridsData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [totalValue, setTotalValue] = useState(0);
@@ -14,10 +15,11 @@ export const useMapData = () => {
         setLoading(true);
         setError(null);
 
-        // Load both data sources
-        const [mapData, timeSeries] = await Promise.all([
+        // Load all data sources
+        const [mapData, timeSeries, pdsGrids] = await Promise.all([
           loadMapData(),
-          loadTimeSeriesData()
+          loadTimeSeriesData(),
+          loadPdsGridsData()
         ]);
 
         if (!mapData) {
@@ -26,6 +28,11 @@ export const useMapData = () => {
 
         if (!timeSeries) {
           throw new Error('Failed to load time series data');
+        }
+
+        // PDS grids data is optional, so we don't throw error if it's missing
+        if (!pdsGrids) {
+          console.warn('PDS grids data not available');
         }
 
         // Calculate total value from the latest metrics
@@ -41,6 +48,7 @@ export const useMapData = () => {
 
         setBoundaries(mapData);
         setTimeSeriesData(timeSeries);
+        setPdsGridsData(pdsGrids);
         setTotalValue(total);
       } catch (err) {
         console.error('Error fetching data:', err);
@@ -56,6 +64,7 @@ export const useMapData = () => {
   return {
     boundaries,
     timeSeriesData,
+    pdsGridsData,
     loading,
     error,
     totalValue
