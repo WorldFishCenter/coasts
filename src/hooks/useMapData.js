@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { loadMapData, loadTimeSeriesData, loadPdsGridsData } from '../services/dataService';
+import { loadMapData, loadTimeSeriesData, loadPdsGridsData, getLatestMetrics } from '../services/dataService';
 
 export const useMapData = () => {
   const [boundaries, setBoundaries] = useState(null);
@@ -35,18 +35,36 @@ export const useMapData = () => {
           console.warn('PDS grids data not available');
         }
 
-        // Calculate total value from the latest metrics
-        const total = Object.values(timeSeries).reduce((sum, regionData) => {
-          if (regionData.data && regionData.data.length > 0) {
-            const latestData = regionData.data.sort((a, b) => 
-              new Date(b.date) - new Date(a.date)
-            )[0];
-            return sum + (latestData.mean_cpue || 0);
-          }
-          return sum;
+        // Add latest metrics to each feature from time series data
+        const enrichedMapData = {
+          ...mapData,
+          features: mapData.features.map(feature => {
+            const country = feature.properties.country;
+            const region = feature.properties.region;
+            const latestMetrics = getLatestMetrics(timeSeries, country, region);
+            
+            return {
+              ...feature,
+              properties: {
+                ...feature.properties,
+                // Add metrics if they exist, otherwise they'll be undefined
+                mean_cpue: latestMetrics?.mean_cpue,
+                mean_cpua: latestMetrics?.mean_cpua,
+                mean_rpue: latestMetrics?.mean_rpue,
+                mean_rpua: latestMetrics?.mean_rpua,
+                mean_price_kg: latestMetrics?.mean_price_kg
+              }
+            };
+          })
+        };
+
+        // Calculate total value from the enriched map data
+        const total = enrichedMapData.features.reduce((sum, feature) => {
+          const value = feature.properties.mean_cpue;
+          return sum + (value !== null && value !== undefined ? value : 0);
         }, 0);
 
-        setBoundaries(mapData);
+        setBoundaries(enrichedMapData);
         setTimeSeriesData(timeSeries);
         setPdsGridsData(pdsGrids);
         setTotalValue(total);

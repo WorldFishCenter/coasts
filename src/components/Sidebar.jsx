@@ -3,12 +3,13 @@ import ReactApexChart from 'react-apexcharts';
 import SimpleBar from 'simplebar-react';
 import 'simplebar-react/dist/simplebar.min.css';
 import { SHARED_STYLES } from '../utils/gridLayerConfig';
+import { METRIC_CONFIG, formatRegionName } from '../utils/formatters';
 
-const METRICS = [
-  { id: 'mean_cpue', label: 'CPUE (kg/hour)', unit: 'kg/hour' },
-  { id: 'mean_rpue', label: 'RPUE ($/hour)', unit: '$/hour' },
-  { id: 'mean_price_kg', label: 'Price ($/kg)', unit: '$/kg' }
-];
+const METRICS = Object.entries(METRIC_CONFIG).map(([id, config]) => ({
+  id,
+  label: `${config.label} (${config.unit})`,
+  unit: config.unit
+}));
 
 const Sidebar = memo(({
   isDarkTheme,
@@ -96,10 +97,12 @@ const Sidebar = memo(({
   // Memoized region values for charts
   const regionValues = useMemo(() => {
     if (!boundaries || !boundaries.features) return [];
-    return boundaries.features.map(f => ({
-      name: f.properties.region || 'Unknown',
-      value: f.properties[selectedMetric] || 0
-    }));
+    return boundaries.features
+      .filter(f => f.properties[selectedMetric] !== null && f.properties[selectedMetric] !== undefined)
+      .map(f => ({
+        name: formatRegionName(f.properties),
+        value: f.properties[selectedMetric]
+      }));
   }, [boundaries, selectedMetric]);
 
   return (
@@ -243,7 +246,7 @@ const Sidebar = memo(({
               <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                 <div style={{ background: isDarkTheme ? 'rgba(255,255,255,0.05)' : '#ffffff', borderRadius: '12px', padding: '18px 20px', boxShadow: isDarkTheme ? '0 2px 8px rgba(0,0,0,0.4)' : '0 2px 8px rgba(0,0,0,0.06)' }}>
                   <h3 style={{ margin: 0, marginBottom: 12, fontSize: '15px', color: isDarkTheme ? '#e2e8f0' : '#2d3748' }}>Distribution by Region</h3>
-                  <ReactApexChart options={barOptions} series={[{ name: selectedMetric, data: regionValues.map(d=>d.value) }]} type="bar" height={Math.max(200, regionValues.length * 38)} />
+                  <ReactApexChart options={barOptions} series={[{ name: METRIC_CONFIG[selectedMetric]?.label || selectedMetric, data: regionValues.map(d=>d.value) }]} type="bar" height={Math.max(200, regionValues.length * 38)} />
                 </div>
 
                 <div style={{ background: isDarkTheme ? 'rgba(255,255,255,0.05)' : '#ffffff', borderRadius: '12px', padding: '18px 20px', boxShadow: isDarkTheme ? '0 2px 8px rgba(0,0,0,0.4)' : '0 2px 8px rgba(0,0,0,0.06)' }}>

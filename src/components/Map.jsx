@@ -17,6 +17,8 @@ import {
   calculateGridStats
 } from '../utils/gridLayerConfig';
 import GridInfoPanel from './map/GridInfoPanel';
+import DistributionHistogram from './map/DistributionHistogram';
+import { getMetricInfo, formatRegionName, formatCountryName } from '../utils/formatters';
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
@@ -24,7 +26,9 @@ const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 const COLORS = ['#eff3ff', '#c6dbef', '#9ecae1', '#6baed6', '#3182bd', '#08519c'];
 
 // Legend now receives dynamic grade thresholds
-const Legend = ({ isDarkTheme, grades }) => {
+const Legend = ({ isDarkTheme, grades, selectedMetric }) => {
+  const metricInfo = getMetricInfo(selectedMetric);
+  
   return (
     <div style={{
       padding: '10px',
@@ -32,7 +36,7 @@ const Legend = ({ isDarkTheme, grades }) => {
       borderRadius: '4px',
       color: isDarkTheme ? '#fff' : '#000'
     }}>
-      <h4 style={{ margin: '0 0 10px 0' }}>Metric value</h4>
+      <h4 style={{ margin: '0 0 10px 0' }}>{metricInfo.label} ({metricInfo.unit})</h4>
       {grades.map((grade, i) => {
         return (
           <div 
@@ -51,7 +55,7 @@ const Legend = ({ isDarkTheme, grades }) => {
               marginRight: '8px',
               border: `1px solid ${isDarkTheme ? '#fff' : '#000'}`
             }}></span>
-            <span>{grade.toFixed(0)}{i < grades.length - 1 ? ` - ${grades[i + 1].toFixed(0)}` : '+'}</span>
+            <span>{grade.toFixed(1)}{i < grades.length - 1 ? ` - ${grades[i + 1].toFixed(1)}` : '+'}</span>
           </div>
         );
       })}
@@ -112,6 +116,9 @@ const MapComponent = () => {
 
   // Add PDS grid layer visibility state - REMOVED isPdsGridVisible as it's no longer needed
   const [selectedRanges, setSelectedRanges] = useState(TIME_BREAKS);
+
+  // Add selected region state for histogram
+  const [selectedRegion, setSelectedRegion] = useState(null);
 
   // Time range constants
   const minDate = new Date('2023-01-01').getTime();
@@ -186,6 +193,13 @@ const MapComponent = () => {
     });
   }, []);
 
+  // Handle region click for histogram
+  const handleRegionClick = useCallback((info) => {
+    if (info.object && info.layer.id === 'wio-regions') {
+      setSelectedRegion(info.object);
+    }
+  }, []);
+
   // Transform PDS grid data - MATCH REFERENCE EXACTLY
   const transformedPdsData = useMemo(() => {
     const filtered = FILTERED_PDS_DATA.filter(d => 
@@ -208,13 +222,14 @@ const MapComponent = () => {
     if (layer.id === 'wio-regions') {
       const props = object.properties;
       const metricValue = props[selectedMetric];
+      const metricInfo = getMetricInfo(selectedMetric);
       
       return {
         html: `
           <div style="padding: 8px">
-            <div style="font-weight: bold; margin-bottom: 4px">${props.region}</div>
-            <div>Country: ${props.country}</div>
-            <div>${selectedMetric}: ${metricValue != null ? metricValue.toFixed(2) : 'N/A'}</div>
+            <div style="font-weight: bold; margin-bottom: 4px">${formatRegionName(props)}</div>
+            <div>Country: ${formatCountryName(props.country)}</div>
+            <div>${metricInfo.label}: ${metricInfo.format(metricValue)}</div>
           </div>
         `,
         style: {
@@ -285,7 +300,7 @@ const MapComponent = () => {
       // Function to get color based on metric value
       const getColorForFeature = (feature) => {
         const value = feature.properties[selectedMetric];
-        if (value == null || isNaN(value)) return [200, 200, 200, 255 * opacity];
+        if (value === null || value === undefined || isNaN(value)) return [200, 200, 200, 255 * opacity];
         
         // Find which grade this value falls into
         const { grades } = metricStats;
@@ -428,7 +443,10 @@ const MapComponent = () => {
           onRemoveDistrict={(districtCode) => {
             setSelectedDistricts(prev => {
               const newDistricts = prev.filter(d => d.properties.ADM2_PCODE !== districtCode);
-              const newTotal = newDistricts.reduce((sum, d) => sum + (d.properties.value || 0), 0);
+              const newTotal = newDistricts.reduce((sum, d) => {
+                const value = d.properties.value;
+                return sum + (value !== null && value !== undefined ? value : 0);
+              }, 0);
               setSelectedTotal(newTotal);
               return newDistricts;
             });
@@ -465,6 +483,7 @@ const MapComponent = () => {
             getCursor={({isDragging, isHovering}) => 
               isDragging ? 'grabbing' : isHovering ? 'pointer' : 'grab'
             }
+            onClick={handleRegionClick}
           >
             <MapGL
               ref={mapRef}
@@ -493,6 +512,7 @@ const MapComponent = () => {
             <Legend 
               isDarkTheme={isDarkTheme}
               grades={metricStats.grades}
+              selectedMetric={selectedMetric}
             />
           </div>
 
@@ -556,6 +576,24 @@ const MapComponent = () => {
               <Satellite size={28} strokeWidth={1.5} />
             )}
           </button>
+
+          {/* Distribution Histogram - shows when region is selected */}
+          {selectedRegion && (
+            <DistributionHistogram
+              isDarkTheme={isDarkTheme}
+              boundaries={boundaries}
+              selectedMetric={selectedMetric}
+              selectedRegion={selectedRegion}
+              onClose={() => setSelectedRegion(null)}
+              style={{
+                position: 'absolute',
+                bottom: '24px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                zIndex: 1001
+              }}
+            />
+          )}
         </div>
 
         {/* Sidebar Toggle Button

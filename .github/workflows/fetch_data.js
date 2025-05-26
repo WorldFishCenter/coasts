@@ -20,7 +20,7 @@ async function fetchData() {
     await client.connect();
     console.log('Connected to MongoDB');
 
-    const db = client.db('wio_db');
+    const db = client.db('portal');
 
     // Fetch data from all collections
     const [mapData, timeSeriesData, pdsGridsData] = await Promise.all([
@@ -36,6 +36,11 @@ async function fetchData() {
     // Create a lookup map for time series data
     const timeSeriesMap = new Map();
     timeSeriesData.forEach(record => {
+      // Skip records without country or region
+      if (!record.country || !record.region) {
+        console.warn('Skipping time series record without country or region:', record);
+        return;
+      }
       const key = `${record.country}_${record.region}`;
       if (!timeSeriesMap.has(key)) {
         timeSeriesMap.set(key, []);
@@ -45,7 +50,16 @@ async function fetchData() {
 
     // Process map data and attach time series
     const processedFeatures = mapData.map(feature => {
-      const key = `${feature.properties.country}_${feature.properties.region}`;
+      // Handle features where country/region might be at root level or in properties
+      const country = feature.country || feature.properties?.country;
+      const region = feature.region || feature.properties?.region;
+      
+      if (!country || !region) {
+        console.warn('Skipping feature without country or region:', feature);
+        return null;
+      }
+      
+      const key = `${country}_${region}`;
       const timeSeries = timeSeriesMap.get(key) || [];
       
       // Sort time series by date
@@ -54,19 +68,26 @@ async function fetchData() {
       // Get the latest metrics
       const latestMetrics = timeSeries[timeSeries.length - 1] || {};
       
+      // Create properties object if it doesn't exist
+      const properties = feature.properties || {};
+      
       return {
-        ...feature,
+        type: 'Feature',
+        geometry: feature.geometry,
         properties: {
-          ...feature.properties,
+          ...properties,
+          country: country,
+          region: region,
           time_series: timeSeries,
-          mean_cpue: latestMetrics.mean_cpue || 0,
-          mean_cpua: latestMetrics.mean_cpua || 0,
-          mean_rpue: latestMetrics.mean_rpue || 0,
-          mean_rpua: latestMetrics.mean_rpua || 0,
-          mean_price_kg: latestMetrics.mean_price_kg || 0
+          // Don't use || 0 - let undefined values remain undefined
+          mean_cpue: latestMetrics.mean_cpue,
+          mean_cpua: latestMetrics.mean_cpua,
+          mean_rpue: latestMetrics.mean_rpue,
+          mean_rpua: latestMetrics.mean_rpua,
+          mean_price_kg: latestMetrics.mean_price_kg
         }
       };
-    });
+    }).filter(feature => feature !== null); // Remove null features
 
     // Create GeoJSON structure
     const geojson = {
@@ -77,6 +98,10 @@ async function fetchData() {
     // Create time series data structure
     const timeSeriesByRegion = {};
     timeSeriesData.forEach(record => {
+      // Skip records without country or region
+      if (!record.country || !record.region) {
+        return;
+      }
       const key = `${record.country}_${record.region}`;
       if (!timeSeriesByRegion[key]) {
         timeSeriesByRegion[key] = {
