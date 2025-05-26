@@ -82,6 +82,7 @@ const MapComponent = () => {
   
   // Map states
   const [hoverInfo, setHoverInfo] = useState(null);
+  const [hoveredFeatureIndex, setHoveredFeatureIndex] = useState(null);
   
   // Analysis states
   const [opacity, setOpacity] = useState(0.7);
@@ -177,8 +178,10 @@ const MapComponent = () => {
   const onHover = useCallback((info) => {
     if (info.object && info.layer.id === 'wio-regions') {
       setHoverInfo(info.object);
-    } else if (!info.object) {
+      setHoveredFeatureIndex(info.index);
+    } else {
       setHoverInfo(null);
+      setHoveredFeatureIndex(null);
     }
   }, []);
 
@@ -360,14 +363,25 @@ const MapComponent = () => {
           stroked: true,
           filled: true,
           getFillColor: getColorForFeature,
-          getLineColor: isSatellite ? [255, 255, 255, 230] : (isDarkTheme ? [255, 255, 255, 200] : [0, 0, 0, 200]),
-          getLineWidth: isSatellite ? 2 : 1,
+          getLineColor: (d, {index}) => {
+            const isHovered = hoveredFeatureIndex === index;
+            if (isHovered) {
+              // Use blue highlight for better visibility in both modes
+              return isDarkTheme ? [100, 180, 255, 255] : [0, 100, 200, 255]; // Light blue for dark mode, darker blue for light mode
+            }
+            return isSatellite ? [255, 255, 255, 230] : (isDarkTheme ? [255, 255, 255, 200] : [0, 0, 0, 200]);
+          },
+          getLineWidth: (d, {index}) => {
+            const isHovered = hoveredFeatureIndex === index;
+            return isHovered ? 4 : (isSatellite ? 2 : 1);
+          },
           lineWidthUnits: 'pixels',
-          autoHighlight: true,
-          highlightColor: [255, 126, 95, 200],
+          lineWidthMinPixels: 1,
+          lineWidthMaxPixels: 10,
           updateTriggers: {
             getFillColor: [selectedMetric, metricStats, opacity, isSatellite],
-            getLineColor: [isSatellite, isDarkTheme]
+            getLineColor: [isSatellite, isDarkTheme, hoveredFeatureIndex],
+            getLineWidth: [isSatellite, hoveredFeatureIndex]
           }
         })
       );
@@ -415,7 +429,7 @@ const MapComponent = () => {
     }
 
     return allLayers;
-  }, [transformedPdsData, selectedRanges, boundaries, selectedMetric, metricStats, opacity, isSatellite, isDarkTheme]);
+  }, [transformedPdsData, selectedRanges, boundaries, selectedMetric, metricStats, opacity, isSatellite, isDarkTheme, hoveredFeatureIndex]);
 
   // Add satellite toggle callback
   const handleMapStyleToggle = useCallback(() => {
