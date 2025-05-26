@@ -70,7 +70,7 @@ const MapComponent = () => {
   const [isDarkTheme, setIsDarkTheme] = useState(true);
   
   // Satellite mode state
-  const [isSatellite, setIsSatellite] = useState(false);
+  const [isSatellite, setIsSatellite] = useState(true);
   
   // Panel states
   const [activeTab, setActiveTab] = useState('analysis'); // 'analysis' | 'charts' | 'selection'

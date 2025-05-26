@@ -2,6 +2,7 @@ import { memo, useMemo } from 'react';
 import ReactApexChart from 'react-apexcharts';
 import SimpleBar from 'simplebar-react';
 import 'simplebar-react/dist/simplebar.min.css';
+import { SHARED_STYLES } from '../utils/gridLayerConfig';
 
 const METRICS = [
   { id: 'mean_cpue', label: 'CPUE (kg/hour)', unit: 'kg/hour' },
@@ -50,16 +51,7 @@ const Sidebar = memo(({
     height: '100%',
     minHeight: 0,
     transform: isOpen ? 'translateX(0)' : `translateX(${isMobile ? '-100%' : '-380px'})`,
-    background: isDarkTheme 
-      ? 'linear-gradient(180deg, rgba(49,54,63,0.95) 0%, rgba(28,28,30,0.95) 100%)' 
-      : 'linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(245,245,245,0.95) 100%)',
-    backdropFilter: 'blur(16px)',
-    borderRight: isDarkTheme 
-      ? '1px solid rgba(255,255,255,0.08)' 
-      : '1px solid rgba(0,0,0,0.06)',
-    boxShadow: isDarkTheme 
-      ? '4px 0 12px rgba(0,0,0,0.4)' 
-      : '4px 0 12px rgba(0,0,0,0.08)',
+    ...SHARED_STYLES.glassPanel(isDarkTheme),
     display: 'flex',
     flexDirection: 'column',
     transition: 'transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -125,17 +117,18 @@ const Sidebar = memo(({
         <div style={{ display: 'flex', gap: '10px' }}>
           {['analysis', 'charts', 'selection'].map(tabId => {
             const active = activeTab === tabId;
-            const colorActive = isDarkTheme ? '#3498db' : '#3182ce';
             return (
               <button
                 key={tabId}
                 onClick={() => onTabChange(tabId)}
                 style={{
-                  ...tabButtonBase,
-                  backgroundColor: active ? colorActive : 'transparent',
-                  color: active ? '#fff' : isDarkTheme ? '#cbd5e0' : '#4a5568',
-                  border: active ? `1px solid ${colorActive}` : isDarkTheme ? '1px solid rgba(255,255,255,0.12)' : '1px solid rgba(0,0,0,0.05)',
-                  boxShadow: active ? (isDarkTheme ? '0 2px 6px rgba(0,0,0,0.4)' : '0 2px 6px rgba(0,0,0,0.15)') : 'none'
+                  ...SHARED_STYLES.button.primary(isDarkTheme, active),
+                  flex: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  textTransform: 'capitalize'
                 }}
               >
                 {/* Simple inline svg icons for visual cue */}
@@ -162,22 +155,20 @@ const Sidebar = memo(({
 
         {/* Metric Selector */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-          <span style={{ fontSize: '13px', fontWeight: 600, color: isDarkTheme ? '#e2e8f0' : '#2d3748' }}>Metric</span>
+          <span style={SHARED_STYLES.text.label(isDarkTheme)}>METRIC</span>
           <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
             {METRICS.map(metric => {
               const active = selectedMetric === metric.id;
-              const bg = active ? (isDarkTheme ? '#3498db' : '#3182ce') : isDarkTheme ? 'rgba(255,255,255,0.05)' : '#edf2f7';
-              const color = active ? '#fff' : isDarkTheme ? '#cbd5e0' : '#4a5568';
               return (
                 <button
                   key={metric.id}
                   onClick={() => onMetricChange(metric.id)}
                   style={{
-                    ...metricButtonBase,
-                    backgroundColor: bg,
-                    color,
-                    border: active ? `1px solid ${bg}` : '1px solid transparent',
-                    boxShadow: active ? (isDarkTheme ? '0 2px 6px rgba(0,0,0,0.4)' : '0 2px 6px rgba(0,0,0,0.15)') : 'none'
+                    ...SHARED_STYLES.button.primary(isDarkTheme, active),
+                    flex: 1,
+                    minWidth: 'fit-content',
+                    fontSize: '12px',
+                    padding: '6px 12px'
                   }}
                 >
                   {metric.label}
@@ -190,8 +181,8 @@ const Sidebar = memo(({
         {/* Time Range Slider */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: '13px', fontWeight: 600, color: isDarkTheme ? '#e2e8f0' : '#2d3748' }}>Time Range</span>
-            <span style={{ fontSize: '12px', color: isDarkTheme ? '#a0aec0' : '#4a5568' }}>{formatDate(timeRange[0])} - {formatDate(timeRange[1])}</span>
+            <span style={SHARED_STYLES.text.label(isDarkTheme)}>TIME RANGE</span>
+            <span style={SHARED_STYLES.text.muted(isDarkTheme)}>{formatDate(timeRange[0])} - {formatDate(timeRange[1])}</span>
           </div>
           <div style={{ position: 'relative', height: '6px', backgroundColor: isDarkTheme ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.1)', borderRadius: '3px' }}>
             <div style={{ position: 'absolute', left: `${((timeRange[0] - minDate) / (maxDate - minDate)) * 100}%`, right: `${100 - ((timeRange[1] - minDate) / (maxDate - minDate)) * 100}%`, background: isDarkTheme ? '#3498db' : '#3182ce', height: '100%', borderRadius: '3px' }} />

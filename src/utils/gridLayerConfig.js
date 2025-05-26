@@ -50,8 +50,8 @@ export const GRID_LAYER_SETTINGS = {
 // Shared styles for UI components
 export const SHARED_STYLES = {
   glassPanel: (isDark) => ({
-    backgroundColor: isDark ? 'rgba(28, 28, 28, 0.9)' : 'rgba(255, 255, 255, 0.9)',
-    backdropFilter: 'blur(10px)',
+    backgroundColor: isDark ? 'rgba(28, 28, 28, 0.5)' : 'rgba(255, 255, 255, 0.85)',
+    backdropFilter: 'blur(12px)',
     borderRadius: '8px',
     boxShadow: isDark 
       ? '0 4px 6px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2)' 
@@ -62,16 +62,63 @@ export const SHARED_STYLES = {
     heading: (isDark) => ({
       fontSize: '18px',
       fontWeight: '600',
-      color: isDark ? '#ffffff' : '#2c3e50'
+      color: isDark ? '#ffffff' : '#1a202c'
+    }),
+    subheading: (isDark) => ({
+      fontSize: '14px',
+      fontWeight: '600',
+      color: isDark ? '#e2e8f0' : '#2d3748'
     }),
     label: (isDark) => ({
       fontSize: '11px',
       fontWeight: '600',
       letterSpacing: '0.5px',
       textTransform: 'uppercase',
+      color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)'
+    }),
+    body: (isDark) => ({
+      fontSize: '14px',
+      fontWeight: '400',
+      color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)'
+    }),
+    muted: (isDark) => ({
+      fontSize: '12px',
+      fontWeight: '400',
       color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)'
     })
   },
+  button: {
+    primary: (isDark, active = false) => ({
+      backgroundColor: active ? '#3182ce' : 'transparent',
+      color: active ? '#ffffff' : (isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)'),
+      border: active 
+        ? '1px solid #3182ce' 
+        : `1px solid ${isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)'}`,
+      fontSize: '13px',
+      fontWeight: '500',
+      padding: '8px 16px',
+      borderRadius: '6px',
+      cursor: 'pointer',
+      transition: 'all 0.2s ease-in-out'
+    }),
+    secondary: (isDark) => ({
+      backgroundColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)',
+      color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+      border: 'none',
+      fontSize: '13px',
+      fontWeight: '500',
+      padding: '8px 16px',
+      borderRadius: '6px',
+      cursor: 'pointer',
+      transition: 'all 0.2s ease-in-out'
+    })
+  },
+  card: (isDark) => ({
+    backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
+    borderRadius: '6px',
+    padding: '12px',
+    border: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`
+  }),
   transitions: {
     default: 'all 0.2s ease-in-out'
   }

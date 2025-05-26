@@ -12,14 +12,17 @@ const TimeRangeButton = ({ range, index, isSelected, colorRange, isDarkTheme, on
     style={{
       display: 'flex',
       alignItems: 'center',
-      padding: '4px 8px',
+      padding: '6px 10px',
       cursor: 'pointer',
       backgroundColor: isSelected ? 
-        (isDarkTheme ? 'rgba(59, 130, 246, 0.15)' : 'rgba(59, 130, 246, 0.1)') : 
+        (isDarkTheme ? 'rgba(59, 130, 246, 0.2)' : 'rgba(59, 130, 246, 0.15)') : 
         'transparent',
       borderRadius: '4px',
-      opacity: isSelected ? 1 : 0.6,
-      transition: SHARED_STYLES.transitions.default
+      opacity: isSelected ? 1 : 0.7,
+      transition: SHARED_STYLES.transitions.default,
+      border: `1px solid ${isSelected 
+        ? (isDarkTheme ? 'rgba(59, 130, 246, 0.4)' : 'rgba(59, 130, 246, 0.3)') 
+        : 'transparent'}`
     }}
   >
     <div
@@ -32,8 +35,8 @@ const TimeRangeButton = ({ range, index, isSelected, colorRange, isDarkTheme, on
       }}
     />
     <span style={{ 
-      fontSize: '12px',
-      color: isDarkTheme ? '#ffffff' : '#000000'
+      ...SHARED_STYLES.text.body(isDarkTheme),
+      fontSize: '12px'
     }}>
       {range.label}
     </span>
@@ -43,10 +46,7 @@ const TimeRangeButton = ({ range, index, isSelected, colorRange, isDarkTheme, on
 // Info Panel for grid statistics
 const GridInfoPanel = ({ isDarkTheme, data, colorRange, selectedRanges, onRangeToggle, style }) => {
   const stats = useMemo(() => {
-    console.log('GridInfoPanel - data:', data);
     const calculatedStats = calculateGridStats(data);
-    console.log('GridInfoPanel - stats:', calculatedStats);
-    // Return default stats if no data
     return calculatedStats || {
       totalVisits: '0',
       avgTime: '0.0',
@@ -55,8 +55,6 @@ const GridInfoPanel = ({ isDarkTheme, data, colorRange, selectedRanges, onRangeT
       avgSpeed: '0.0'
     };
   }, [data]);
-
-  console.log('GridInfoPanel - rendering with stats:', stats);
 
   return (
     <div
@@ -69,7 +67,7 @@ const GridInfoPanel = ({ isDarkTheme, data, colorRange, selectedRanges, onRangeT
         zIndex: 1000,
         pointerEvents: 'auto',
         ...SHARED_STYLES.glassPanel(isDarkTheme),
-        ...style // allow parent to override position and other styles
+        ...style
       }}
     >
       <h3 style={{ 
@@ -82,18 +80,16 @@ const GridInfoPanel = ({ isDarkTheme, data, colorRange, selectedRanges, onRangeT
       {/* Grid Info */}
       <div style={{ 
         marginBottom: '20px',
-        padding: '8px 12px',
-        backgroundColor: isDarkTheme ? 'rgba(0, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.05)',
-        borderRadius: '4px',
-        fontSize: '13px'
+        ...SHARED_STYLES.card(isDarkTheme)
       }}>
-        <div style={{ marginBottom: '4px' }}>
-          <strong>Grid Resolution:</strong> 1 × 1 km
+        <div style={{ 
+          marginBottom: '4px',
+          ...SHARED_STYLES.text.subheading(isDarkTheme)
+        }}>
+          Grid Resolution: 1 × 1 km
         </div>
         <div style={{ 
-          color: isDarkTheme ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)',
-          fontSize: '12px',
-          lineHeight: '1.4'
+          ...SHARED_STYLES.text.muted(isDarkTheme)
         }}>
           Each cell represents a 1 square kilometer area where fishing activity has been recorded
         </div>
@@ -123,7 +119,7 @@ const GridInfoPanel = ({ isDarkTheme, data, colorRange, selectedRanges, onRangeT
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
-          ...SHARED_STYLES.text.label(isDarkTheme)
+          ...SHARED_STYLES.text.muted(isDarkTheme)
         }}>
           <span>Fewer Hours</span>
           <span>More Hours</span>
@@ -136,7 +132,7 @@ const GridInfoPanel = ({ isDarkTheme, data, colorRange, selectedRanges, onRangeT
           marginBottom: '8px',
           ...SHARED_STYLES.text.label(isDarkTheme)
         }}>
-          TIME RANGES (select to filter)
+          TIME RANGES (SELECT TO FILTER)
         </div>
         <div style={{ 
           display: 'grid',
@@ -159,32 +155,40 @@ const GridInfoPanel = ({ isDarkTheme, data, colorRange, selectedRanges, onRangeT
 
       {/* Statistics */}
       <div style={{ 
-        fontSize: '14px', 
-        lineHeight: '1.6',
         display: 'grid',
-        gap: '12px'
+        gap: '16px'
       }}>
         <div>
           <div style={{ 
-            marginBottom: '4px',
+            marginBottom: '8px',
             ...SHARED_STYLES.text.label(isDarkTheme)
           }}>
             ACTIVITY
           </div>
-          <div><strong>{stats.totalVisits}</strong> total visits recorded</div>
-          <div><strong>{stats.gridCells}</strong> active grid cells</div>
+          <div style={SHARED_STYLES.text.body(isDarkTheme)}>
+            <strong>{stats.totalVisits}</strong> total visits recorded
+          </div>
+          <div style={SHARED_STYLES.text.body(isDarkTheme)}>
+            <strong>{stats.gridCells}</strong> active grid cells
+          </div>
         </div>
 
         <div>
           <div style={{ 
-            marginBottom: '4px',
+            marginBottom: '8px',
             ...SHARED_STYLES.text.label(isDarkTheme)
           }}>
             TIME & SPEED
           </div>
-          <div><strong>{stats.avgTime}h</strong> average time per visit</div>
-          <div><strong>{stats.maxTime}h</strong> maximum time recorded</div>
-          <div><strong>{stats.avgSpeed} km/h</strong> average speed</div>
+          <div style={SHARED_STYLES.text.body(isDarkTheme)}>
+            <strong>{stats.avgTime}h</strong> average time per visit
+          </div>
+          <div style={SHARED_STYLES.text.body(isDarkTheme)}>
+            <strong>{stats.maxTime}h</strong> maximum time recorded
+          </div>
+          <div style={SHARED_STYLES.text.body(isDarkTheme)}>
+            <strong>{stats.avgSpeed} km/h</strong> average speed
+          </div>
         </div>
       </div>
     </div>
