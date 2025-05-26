@@ -14,6 +14,7 @@
     "@deck.gl/core": "^9.1.12",
     "@deck.gl/layers": "^9.1.12",
     "@deck.gl/react": "^9.1.12",
+    "@deck.gl/widgets": "^9.1.12",
     "@radix-ui/react-slot": "^1.2.3",
     "apexcharts": "^4.0.0",
     "class-variance-authority": "^0.7.1",
