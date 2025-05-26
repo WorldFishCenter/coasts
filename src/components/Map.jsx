@@ -257,7 +257,7 @@ const MapComponent = () => {
         // Size - 1km = 1000m, but we need to adjust for visualization
         radius: 500, // Half of cell size for better visualization
         // Elevation
-        elevationScale: GRID_LAYER_SETTINGS.elevationScale * 1000, // Scale up for visibility
+        elevationScale: 2500, // or 1000, experiment for best effect
         getElevation: d => d.avgTimeHours,
         // Color
         getFillColor: d => {

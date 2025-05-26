@@ -334,24 +334,27 @@ const Map = memo(({ theme }) => {
   }, []);
 
   // Memoize layers
-  const layers = useMemo(() => [
-    new GridLayer({
-      id: 'grid-layer',
-      data: transformedData,
-      pickable: true,
-      extruded: true,
-      getPosition: d => d.position,
-      getElevationWeight: d => d.avgTimeHours,
-      colorRange: COLOR_RANGE,
-      ...GRID_LAYER_SETTINGS,
-      colorScaleType: 'ordinal',
-      colorDomain: [0, 1, 2, 3, 4, 5],
-      getColorWeight: d => d ? getColorForValue(d.avgTimeHours) : 0,
-      updateTriggers: {
-        getColorWeight: [selectedRanges]
-      }
-    })
-  ], [transformedData, selectedRanges]);
+  const layers = useMemo(() => {
+    if (!isPdsGridVisible || transformedPdsData.length === 0) return [];
+    return [
+      new GridLayer({
+        id: 'grid-layer',
+        data: transformedData,
+        pickable: true,
+        extruded: true,
+        getPosition: d => d.position,
+        getElevationWeight: d => d.avgTimeHours,
+        colorRange: COLOR_RANGE,
+        ...GRID_LAYER_SETTINGS,
+        colorScaleType: 'ordinal',
+        colorDomain: [0, 1, 2, 3, 4, 5],
+        getColorWeight: d => d ? getColorForValue(d.avgTimeHours) : 0,
+        updateTriggers: {
+          getColorWeight: [selectedRanges]
+        }
+      })
+    ];
+  }, [transformedData, selectedRanges, isPdsGridVisible]);
 
   if (!process.env.REACT_APP_MAPBOX_TOKEN) {
     console.error('Mapbox token is missing. Please check your environment variables.');
