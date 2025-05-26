@@ -138,7 +138,16 @@ export const getColorForValue = (value) => {
 
 // Calculate statistics from PDS grid data
 export const calculateGridStats = (data) => {
-  if (!data || data.length === 0) return null;
+  if (!data || data.length === 0) {
+    return {
+      totalCells: 0,
+      totalVisits: 0,
+      avgTime: 0,
+      maxTime: 0,
+      gridCells: 0,
+      avgSpeed: 0
+    };
+  }
   
   const totalVisits = data.reduce((sum, d) => sum + (d.totalVisits || d.total_visits || 0), 0);
   const avgTime = data.reduce((sum, d) => sum + (d.avgTimeHours || d.avg_time_hours || 0), 0) / data.length;
@@ -146,10 +155,11 @@ export const calculateGridStats = (data) => {
   const avgSpeed = data.reduce((sum, d) => sum + (d.avgSpeed || d.avg_speed || 0), 0) / data.length;
   
   return {
-    totalVisits: totalVisits.toLocaleString(),
-    avgTime: avgTime.toFixed(1),
-    maxTime: maxTime.toFixed(1),
-    gridCells: data.length.toLocaleString(),
-    avgSpeed: avgSpeed.toFixed(1)
+    totalCells: data.length,
+    totalVisits: totalVisits,
+    avgTime: avgTime,
+    maxTime: maxTime,
+    gridCells: data.length,
+    avgSpeed: avgSpeed
   };
 }; 

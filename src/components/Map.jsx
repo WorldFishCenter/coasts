@@ -14,9 +14,9 @@ import {
   COLOR_RANGE, 
   GRID_LAYER_SETTINGS,
   getColorForValue,
-  calculateGridStats
+  calculateGridStats,
+  SHARED_STYLES
 } from '../utils/gridLayerConfig';
-import GridInfoPanel from './map/GridInfoPanel';
 import DistributionHistogram from './map/DistributionHistogram';
 import { getMetricInfo, formatRegionName, formatCountryName } from '../utils/formatters';
 
@@ -26,40 +26,105 @@ const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 // YlGnBu-8 palette from https://loading.io/color/feature/YlGnBu-8/
 const COLORS = ['#ffffd9', '#edf8b1', '#c7e9b4', '#7fcdbb', '#41b6c4', '#1d91c0', '#225ea8', '#0c2c84'];
 
-// Legend now receives dynamic grade thresholds
-const Legend = ({ isDarkTheme, grades, selectedMetric }) => {
+// Unified Legend Component that combines metric and fishing activity legends
+const UnifiedLegend = ({ isDarkTheme, grades, selectedMetric, colorRange, hasGridData }) => {
   const metricInfo = getMetricInfo(selectedMetric);
   
   return (
     <div style={{
-      padding: '10px',
-      backgroundColor: isDarkTheme ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.9)',
-      borderRadius: '4px',
-      color: isDarkTheme ? '#fff' : '#000'
+      ...SHARED_STYLES.glassPanel(isDarkTheme),
+      padding: '16px',
+      minWidth: '220px'
     }}>
-      <h4 style={{ margin: '0 0 10px 0' }}>{metricInfo.label} ({metricInfo.unit})</h4>
-      {grades.map((grade, i) => {
-        return (
-          <div 
-            key={i} 
-            style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              marginBottom: '5px'
-            }}
-          >
-            <span style={{
-              width: '20px',
-              height: '20px',
-              backgroundColor: COLORS[i],
-              display: 'inline-block',
-              marginRight: '8px',
-              border: `1px solid ${isDarkTheme ? '#fff' : '#000'}`
-            }}></span>
-            <span>{grade.toFixed(1)}{i < grades.length - 1 ? ` - ${grades[i + 1].toFixed(1)}` : '+'}</span>
+      {/* Metric Legend Section */}
+      <div style={{ marginBottom: hasGridData ? '16px' : '0' }}>
+        <h4 style={{
+          ...SHARED_STYLES.text.subheading(isDarkTheme),
+          margin: '0 0 10px 0',
+          fontSize: '13px'
+        }}>
+          {metricInfo.label}
+        </h4>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+          {grades.map((grade, i) => (
+            <div 
+              key={i} 
+              style={{ 
+                display: 'flex', 
+                alignItems: 'center',
+                gap: '8px'
+              }}
+            >
+              <span style={{
+                width: '18px',
+                height: '18px',
+                backgroundColor: COLORS[i],
+                display: 'inline-block',
+                borderRadius: '3px',
+                border: `1px solid ${isDarkTheme ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)'}`
+              }} />
+              <span style={{
+                ...SHARED_STYLES.text.body(isDarkTheme),
+                fontSize: '12px'
+              }}>
+                {grade.toFixed(1)}{i < grades.length - 1 ? ` - ${grades[i + 1].toFixed(1)}` : '+'} {metricInfo.unit}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Fishing Activity Legend Section */}
+      {hasGridData && (
+        <>
+          <div style={{
+            borderTop: `1px solid ${isDarkTheme ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
+            marginBottom: '12px'
+          }} />
+          <div>
+            <h4 style={{
+              ...SHARED_STYLES.text.subheading(isDarkTheme),
+              margin: '0 0 10px 0',
+              fontSize: '13px'
+            }}>
+              Fishing Activity (Hours)
+            </h4>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              {TIME_BREAKS.map((range, index) => {
+                const timeValue = range.min + (range.max === Infinity ? 8 : range.max - range.min) / 2;
+                const normalizedValue = Math.min(timeValue / 12, 1);
+                const opacity = 0.3 + (normalizedValue * 0.6);
+                
+                return (
+                  <div 
+                    key={index}
+                    style={{ 
+                      display: 'flex', 
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}
+                  >
+                    <span style={{
+                      width: '18px',
+                      height: '18px',
+                      backgroundColor: `rgba(${colorRange[index].join(',')}, ${opacity})`,
+                      display: 'inline-block',
+                      borderRadius: '3px',
+                      border: `1px solid ${isDarkTheme ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)'}`
+                    }} />
+                    <span style={{
+                      ...SHARED_STYLES.text.body(isDarkTheme),
+                      fontSize: '12px'
+                    }}>
+                      {range.label}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        );
-      })}
+        </>
+      )}
     </div>
   );
 };
@@ -108,6 +173,10 @@ const MapComponent = () => {
   // Add selection state
   const [selectedDistricts, setSelectedDistricts] = useState([]);
   const [selectedTotal, setSelectedTotal] = useState(0);
+
+  // Add comparison and filter states
+  const [selectedRegionsForComparison, setSelectedRegionsForComparison] = useState([]);
+  const [selectedCountries, setSelectedCountries] = useState([]);
 
   // Add metric and time range state
   const [selectedMetric, setSelectedMetric] = useState('mean_cpue');
@@ -197,12 +266,45 @@ const MapComponent = () => {
     });
   }, []);
 
-  // Handle region click for histogram
-  const handleRegionClick = useCallback((info) => {
-    if (info.object && info.layer.id === 'wio-regions') {
-      setSelectedRegion(info.object);
-    }
+  // Handle country filter toggle
+  const handleCountryToggle = useCallback((country) => {
+    setSelectedCountries(prev => {
+      const isSelected = prev.includes(country);
+      if (isSelected) {
+        return prev.filter(c => c !== country);
+      }
+      return [...prev, country];
+    });
   }, []);
+
+  // Handle region comparison
+  const handleRegionSelect = useCallback((region) => {
+    setSelectedRegionsForComparison(prev => {
+      const exists = prev.some(r => 
+        r.properties.ADM2_PCODE === region.properties.ADM2_PCODE
+      );
+      if (exists) return prev;
+      return [...prev, region];
+    });
+  }, []);
+
+  const handleRegionRemove = useCallback((region) => {
+    setSelectedRegionsForComparison(prev => 
+      prev.filter(r => r.properties.ADM2_PCODE !== region.properties.ADM2_PCODE)
+    );
+  }, []);
+
+  // Filter boundaries by selected countries
+  const filteredBoundaries = useMemo(() => {
+    if (!boundaries || selectedCountries.length === 0) return boundaries;
+    
+    return {
+      ...boundaries,
+      features: boundaries.features.filter(f => 
+        selectedCountries.includes(f.properties.country)
+      )
+    };
+  }, [boundaries, selectedCountries]);
 
   // Transform PDS grid data - MATCH REFERENCE EXACTLY
   const transformedPdsData = useMemo(() => {
@@ -327,8 +429,8 @@ const MapComponent = () => {
   const layers = useMemo(() => {
     const allLayers = [];
 
-    // Add choropleth layer
-    if (boundaries) {
+    // Add choropleth layer with filtered boundaries
+    if (filteredBoundaries) {
       // Function to get color based on metric value
       const getColorForFeature = (feature) => {
         const value = feature.properties[selectedMetric];
@@ -358,7 +460,7 @@ const MapComponent = () => {
       allLayers.push(
         new GeoJsonLayer({
           id: 'wio-regions',
-          data: boundaries,
+          data: filteredBoundaries,
           pickable: true,
           stroked: true,
           filled: true,
@@ -429,7 +531,7 @@ const MapComponent = () => {
     }
 
     return allLayers;
-  }, [transformedPdsData, selectedRanges, boundaries, selectedMetric, metricStats, opacity, isSatellite, isDarkTheme, hoveredFeatureIndex]);
+  }, [transformedPdsData, selectedRanges, filteredBoundaries, selectedMetric, metricStats, opacity, isSatellite, isDarkTheme, hoveredFeatureIndex]);
 
   // Add satellite toggle callback
   const handleMapStyleToggle = useCallback(() => {
@@ -443,6 +545,14 @@ const MapComponent = () => {
     }
     return getMapStyles(isDarkTheme);
   }, [isSatellite, isDarkTheme]);
+
+  // Handle region click for histogram and comparison
+  const handleRegionClick = useCallback((info) => {
+    if (info.object && info.layer.id === 'wio-regions') {
+      setSelectedRegion(info.object);
+      handleRegionSelect(info.object);
+    }
+  }, [handleRegionSelect]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -475,43 +585,22 @@ const MapComponent = () => {
           isDarkTheme={isDarkTheme}
           isMobile={isMobile}
           isOpen={isSidebarOpen}
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-          // Analysis props
-          totalValue={totalValue}
-          opacity={opacity}
-          onOpacityChange={setOpacity}
-          // Selection props
-          selectedDistricts={selectedDistricts}
-          onClearSelection={() => {
-            setSelectedDistricts([]);
-            setSelectedTotal(0);
-          }}
-          selectedTotal={selectedTotal}
-          onRemoveDistrict={(districtCode) => {
-            setSelectedDistricts(prev => {
-              const newDistricts = prev.filter(d => d.properties.ADM2_PCODE !== districtCode);
-              const newTotal = newDistricts.reduce((sum, d) => {
-                const value = d.properties.value;
-                return sum + (value !== null && value !== undefined ? value : 0);
-              }, 0);
-              setSelectedTotal(newTotal);
-              return newDistricts;
-            });
-          }}
-          onExportSelection={() => {
-            // Implement export functionality
-            console.log('Exporting selection:', selectedDistricts);
-          }}
-          // Charts props
           boundaries={boundaries}
-          // New props
           selectedMetric={selectedMetric}
           onMetricChange={setSelectedMetric}
-          timeRange={timeRange}
-          onTimeRangeChange={setTimeRange}
-          minDate={minDate}
-          maxDate={maxDate}
+          opacity={opacity}
+          onOpacityChange={setOpacity}
+          // Grid data props
+          transformedPdsData={transformedPdsData}
+          selectedRanges={selectedRanges}
+          onRangeToggle={handleRangeToggle}
+          // Comparison props
+          selectedRegions={selectedRegionsForComparison}
+          onRegionSelect={handleRegionSelect}
+          onRegionRemove={handleRegionRemove}
+          // Filter props
+          selectedCountries={selectedCountries}
+          onCountryToggle={handleCountryToggle}
         />
 
         {/* Map Container - Best practice: DeckGL as parent with MapGL as child */}
@@ -543,41 +632,21 @@ const MapComponent = () => {
             </MapGL>
           </DeckGL>
 
-          {/* Legend - always visible */}
+          {/* Unified Legend - positioned bottom-right */}
           <div style={{
             position: 'absolute',
-            bottom: '20px',
-            right: '20px',
-            padding: '15px',
-            backgroundColor: isDarkTheme ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.9)',
-            color: isDarkTheme ? '#fff' : '#2c3e50',
-            borderRadius: '8px',
-            boxShadow: isDarkTheme ? '0 4px 6px rgba(255,255,255,0.1)' : '0 4px 6px rgba(0,0,0,0.1)',
-            zIndex: 1000,
-            maxWidth: '200px',
-            backdropFilter: 'blur(10px)'
+            bottom: '24px',
+            right: '24px',
+            zIndex: 1000
           }}>
-            <Legend 
+            <UnifiedLegend 
               isDarkTheme={isDarkTheme}
               grades={metricStats.grades}
               selectedMetric={selectedMetric}
+              colorRange={COLOR_RANGE}
+              hasGridData={transformedPdsData.length > 0}
             />
           </div>
-
-          {/* PDS Grid Info Panel - always visible */}
-          <GridInfoPanel
-            isDarkTheme={isDarkTheme}
-            data={transformedPdsData}
-            colorRange={COLOR_RANGE}
-            selectedRanges={selectedRanges}
-            onRangeToggle={handleRangeToggle}
-            style={{
-              position: 'absolute',
-              top: 24,
-              left: 24,
-              zIndex: 1000
-            }}
-          />
 
           {/* Map Style Toggle Button */}
           <button
