@@ -13,13 +13,14 @@ export const TIME_BREAKS = [
 ];
 
 // Color range for the grid layer (from light to dark)
+// RdPu-6 palette from https://loading.io/color/feature/RdPu-6/
 export const COLOR_RANGE = [
-  [237, 248, 233],  // Very light green
-  [186, 228, 179],  // Light green
-  [116, 196, 118],  // Medium green
-  [65, 171, 93],    // Dark green
-  [35, 139, 69],    // Darker green
-  [0, 109, 44]      // Very dark green
+  [254, 235, 226],  // #feebe2 - lightest
+  [252, 197, 192],  // #fcc5c0
+  [250, 159, 181],  // #fa9fb5
+  [247, 104, 161],  // #f768a1
+  [221, 52, 151],   // #dd3497
+  [174, 1, 126]     // #ae017e - darkest
 ];
 
 // Initial view state for the map

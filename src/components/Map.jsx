@@ -23,7 +23,8 @@ import { getMetricInfo, formatRegionName, formatCountryName } from '../utils/for
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
 // Color palette (fixed), numeric stops will be computed dynamically per metric
-const COLORS = ['#eff3ff', '#c6dbef', '#9ecae1', '#6baed6', '#3182bd', '#08519c'];
+// YlGnBu-8 palette from https://loading.io/color/feature/YlGnBu-8/
+const COLORS = ['#ffffd9', '#edf8b1', '#c7e9b4', '#7fcdbb', '#41b6c4', '#1d91c0', '#225ea8', '#0c2c84'];
 
 // Legend now receives dynamic grade thresholds
 const Legend = ({ isDarkTheme, grades, selectedMetric }) => {
@@ -90,9 +91,9 @@ const MapComponent = () => {
   
   // Viewport state - only used for updates, not initial
   const [viewState, setViewState] = useState({
-    longitude: 40.0,
-    latitude: -8.0,
-    zoom: isMobile ? 5 : 7,
+    longitude: 39,
+    latitude: -5.25,
+    zoom: isMobile ? 5.5 : 7,
     bearing: 0,
     pitch: 45
   });
@@ -214,6 +215,23 @@ const MapComponent = () => {
     return filtered;
   }, [selectedRanges, pdsDataLoaded]);
 
+  // Compute dynamic grades & color stops for current metric
+  const metricStats = useMemo(() => {
+    if (!boundaries || !boundaries.features) {
+      return { grades: [0,1,2,3,4,5,6,7], stops: Array.from({length: 8}, (_, i) => [i, COLORS[i]]).flat() };
+    }
+    const values = boundaries.features.map(f => Number(f.properties[selectedMetric])).filter(v => !Number.isNaN(v));
+    if (values.length === 0) {
+      return { grades: [0,1,2,3,4,5,6,7], stops: Array.from({length: 8}, (_, i) => [i, COLORS[i]]).flat() };
+    }
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const step = (max - min) / (COLORS.length - 1 || 1);
+    const grades = COLORS.map((_, idx) => min + idx * step);
+    const stops = grades.flatMap((g, idx) => [g, COLORS[idx]]);
+    return { grades, stops };
+  }, [boundaries, selectedMetric]);
+
   // Tooltip for PDS grid
   const getTooltip = useCallback(({object, layer}) => {
     if (!object) return null;
@@ -224,6 +242,34 @@ const MapComponent = () => {
       const metricValue = props[selectedMetric];
       const metricInfo = getMetricInfo(selectedMetric);
       
+      // Get the color for this value (same logic as in the layer)
+      let backgroundColor = 'rgba(200, 200, 200, 0.95)'; // Default gray for NA
+      let textColor = '#000000';
+      
+      if (metricValue !== null && metricValue !== undefined && !isNaN(metricValue)) {
+        // Find which grade this value falls into
+        const { grades } = metricStats;
+        let colorIndex = 0;
+        for (let i = 0; i < grades.length - 1; i++) {
+          if (metricValue >= grades[i] && metricValue < grades[i + 1]) {
+            colorIndex = i;
+            break;
+          } else if (metricValue >= grades[grades.length - 1]) {
+            colorIndex = grades.length - 1;
+          }
+        }
+        
+        // Convert hex color to RGB
+        const hexColor = COLORS[colorIndex];
+        const r = parseInt(hexColor.slice(1, 3), 16);
+        const g = parseInt(hexColor.slice(3, 5), 16);
+        const b = parseInt(hexColor.slice(5, 7), 16);
+        backgroundColor = `rgba(${r}, ${g}, ${b}, 0.95)`;
+        
+        // Use white text for darker colors (last 3 colors in YlGnBu-8)
+        textColor = colorIndex > 4 ? '#ffffff' : '#000000';
+      }
+      
       return {
         html: `
           <div style="padding: 8px">
@@ -233,8 +279,8 @@ const MapComponent = () => {
           </div>
         `,
         style: {
-          backgroundColor: isDarkTheme ? 'rgba(28, 28, 28, 0.95)' : 'rgba(255, 255, 255, 0.95)',
-          color: isDarkTheme ? '#ffffff' : '#000000',
+          backgroundColor,
+          color: textColor,
           fontSize: '12px',
           borderRadius: '4px',
           boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
@@ -263,7 +309,7 @@ const MapComponent = () => {
         `,
         style: {
           backgroundColor: `rgba(${cellColor.join(',')}, 0.95)`,
-          color: breakIndex > COLOR_RANGE.length / 2 ? '#ffffff' : '#000000',
+          color: breakIndex > 2 ? '#ffffff' : '#000000',
           fontSize: '12px',
           borderRadius: '4px',
           boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
@@ -272,24 +318,7 @@ const MapComponent = () => {
     }
 
     return null;
-  }, [selectedMetric, isDarkTheme]);
-
-  // Compute dynamic grades & color stops for current metric - MOVED BEFORE LAYERS
-  const metricStats = useMemo(() => {
-    if (!boundaries || !boundaries.features) {
-      return { grades: [0,1,2,3,4,5], stops: [0,COLORS[0],1,COLORS[1],2,COLORS[2],3,COLORS[3],4,COLORS[4],5,COLORS[5]] };
-    }
-    const values = boundaries.features.map(f => Number(f.properties[selectedMetric])).filter(v => !Number.isNaN(v));
-    if (values.length === 0) {
-      return { grades: [0,1,2,3,4,5], stops: [0,COLORS[0],1,COLORS[1],2,COLORS[2],3,COLORS[3],4,COLORS[4],5,COLORS[5]] };
-    }
-    const min = Math.min(...values);
-    const max = Math.max(...values);
-    const step = (max - min) / (COLORS.length - 1 || 1);
-    const grades = COLORS.map((_, idx) => min + idx * step);
-    const stops = grades.flatMap((g, idx) => [g, COLORS[idx]]);
-    return { grades, stops };
-  }, [boundaries, selectedMetric]);
+  }, [selectedMetric, isDarkTheme, metricStats]);
 
   // Create layers - Use ColumnLayer for pre-aggregated data
   const layers = useMemo(() => {
@@ -358,13 +387,18 @@ const MapComponent = () => {
           // Elevation
           elevationScale: 2500, // or 1000, experiment for best effect
           getElevation: d => d.avgTimeHours,
-          // Color
+          // Color with variable opacity based on effort
           getFillColor: d => {
             const colorIndex = getColorForValue(d.avgTimeHours);
-            return COLOR_RANGE[colorIndex];
+            const baseColor = COLOR_RANGE[colorIndex];
+            // Calculate opacity: minimum 0.3 (30%) for lowest values, maximum 0.9 (90%) for highest
+            // Normalize avgTimeHours to 0-1 range (assuming max ~12 hours)
+            const normalizedValue = Math.min(d.avgTimeHours / 12, 1);
+            const opacity = 0.3 + (normalizedValue * 0.6); // Range from 0.3 to 0.9
+            return [...baseColor, 255 * opacity];
           },
           // Style
-          opacity: 0.8, // Always visible with 0.8 opacity
+          opacity: 1, // Set to 1 since we're controlling opacity in getFillColor
           // Optimization
           material: {
             ambient: 0.64,

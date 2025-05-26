@@ -6,42 +6,50 @@ import {
 } from '../../utils/gridLayerConfig';
 
 // Time Range Button Component
-const TimeRangeButton = ({ range, index, isSelected, colorRange, isDarkTheme, onToggle }) => (
-  <div
-    onClick={() => onToggle(range)}
-    style={{
-      display: 'flex',
-      alignItems: 'center',
-      padding: '6px 10px',
-      cursor: 'pointer',
-      backgroundColor: isSelected ? 
-        (isDarkTheme ? 'rgba(59, 130, 246, 0.2)' : 'rgba(59, 130, 246, 0.15)') : 
-        'transparent',
-      borderRadius: '4px',
-      opacity: isSelected ? 1 : 0.7,
-      transition: SHARED_STYLES.transitions.default,
-      border: `1px solid ${isSelected 
-        ? (isDarkTheme ? 'rgba(59, 130, 246, 0.4)' : 'rgba(59, 130, 246, 0.3)') 
-        : 'transparent'}`
-    }}
-  >
+const TimeRangeButton = ({ range, index, isSelected, colorRange, isDarkTheme, onToggle }) => {
+  // Calculate opacity for this time range (matching Map.jsx logic)
+  const timeValue = range.min + (range.max === Infinity ? 8 : range.max - range.min) / 2;
+  const normalizedValue = Math.min(timeValue / 12, 1);
+  const opacity = 0.3 + (normalizedValue * 0.6);
+  
+  return (
     <div
+      onClick={() => onToggle(range)}
       style={{
-        width: '10px',
-        height: '10px',
-        backgroundColor: `rgb(${colorRange[index].join(',')})`,
-        marginRight: '6px',
-        borderRadius: '2px'
+        display: 'flex',
+        alignItems: 'center',
+        padding: '6px 10px',
+        cursor: 'pointer',
+        backgroundColor: isSelected ? 
+          (isDarkTheme ? 'rgba(59, 130, 246, 0.2)' : 'rgba(59, 130, 246, 0.15)') : 
+          'transparent',
+        borderRadius: '4px',
+        opacity: isSelected ? 1 : 0.7,
+        transition: SHARED_STYLES.transitions.default,
+        border: `1px solid ${isSelected 
+          ? (isDarkTheme ? 'rgba(59, 130, 246, 0.4)' : 'rgba(59, 130, 246, 0.3)') 
+          : 'transparent'}`
       }}
-    />
-    <span style={{ 
-      ...SHARED_STYLES.text.body(isDarkTheme),
-      fontSize: '12px'
-    }}>
-      {range.label}
-    </span>
-  </div>
-);
+    >
+      <div
+        style={{
+          width: '10px',
+          height: '10px',
+          backgroundColor: `rgba(${colorRange[index].join(',')}, ${opacity})`,
+          marginRight: '6px',
+          borderRadius: '2px',
+          border: `1px solid ${isDarkTheme ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)'}`
+        }}
+      />
+      <span style={{ 
+        ...SHARED_STYLES.text.body(isDarkTheme),
+        fontSize: '12px'
+      }}>
+        {range.label}
+      </span>
+    </div>
+  );
+};
 
 // Info Panel for grid statistics
 const GridInfoPanel = ({ isDarkTheme, data, colorRange, selectedRanges, onRangeToggle, style }) => {
@@ -112,7 +120,13 @@ const GridInfoPanel = ({ isDarkTheme, data, colorRange, selectedRanges, onRangeT
           <div style={{
             height: '8px',
             flex: 1,
-            background: `linear-gradient(to right, ${colorRange.map(c => `rgb(${c.join(',')})`).join(', ')})`,
+            background: `linear-gradient(to right, ${colorRange.map((c, i) => {
+              // Calculate opacity for each color stop (matching Map.jsx logic)
+              const timeValue = TIME_BREAKS[i].min + (TIME_BREAKS[i].max === Infinity ? 8 : TIME_BREAKS[i].max - TIME_BREAKS[i].min) / 2;
+              const normalizedValue = Math.min(timeValue / 12, 1);
+              const opacity = 0.3 + (normalizedValue * 0.6);
+              return `rgba(${c.join(',')}, ${opacity})`;
+            }).join(', ')})`,
             borderRadius: '4px'
           }} />
         </div>
@@ -123,6 +137,15 @@ const GridInfoPanel = ({ isDarkTheme, data, colorRange, selectedRanges, onRangeT
         }}>
           <span>Fewer Hours</span>
           <span>More Hours</span>
+        </div>
+        <div style={{
+          textAlign: 'center',
+          marginTop: '4px',
+          ...SHARED_STYLES.text.muted(isDarkTheme),
+          fontSize: '11px',
+          fontStyle: 'italic'
+        }}>
+          Column opacity increases with fishing effort
         </div>
       </div>
 
