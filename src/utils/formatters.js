@@ -2,38 +2,38 @@
 export const METRIC_CONFIG = {
   mean_cpue: {
     label: 'CPUE',
-    unit: 'kg/boat/day',
+    unit: 'kg/fisher/day',
     description: 'Catch Per Unit Effort',
     format: (value) => {
       if (value === null || value === undefined) return 'N/A';
-      return value === 0 ? '0.00 kg/boat/day' : `${value.toFixed(2)} kg/boat/day`;
+      return value === 0 ? '0.00 kg/fisher/day' : `${value.toFixed(2)} kg/fisher/day`;
     }
   },
   mean_cpua: {
     label: 'CPUA',
-    unit: 'kg/boat/area',
+    unit: 'kg/fisher/area',
     description: 'Catch Per Unit Area',
     format: (value) => {
       if (value === null || value === undefined) return 'N/A';
-      return value === 0 ? '0.00 kg/boat/area' : `${value.toFixed(2)} kg/boat/area`;
+      return value === 0 ? '0.00 kg/fisher/area' : `${value.toFixed(2)} kg/fisher/area`;
     }
   },
   mean_rpue: {
     label: 'RPUE',
-    unit: '$/boat/day',
+    unit: '$/fisher/day',
     description: 'Revenue Per Unit Effort',
     format: (value) => {
       if (value === null || value === undefined) return 'N/A';
-      return value === 0 ? '$0.00/boat/day' : `$${value.toFixed(2)}/boat/day`;
+      return value === 0 ? '$0.00/fisher/day' : `$${value.toFixed(2)}/fisher/day`;
     }
   },
   mean_rpua: {
     label: 'RPUA',
-    unit: '$/boat/area',
+    unit: '$/fisher/area',
     description: 'Revenue Per Unit Area',
     format: (value) => {
       if (value === null || value === undefined) return 'N/A';
-      return value === 0 ? '$0.00/boat/area' : `$${value.toFixed(2)}/boat/area`;
+      return value === 0 ? '$0.00/fisher/area' : `$${value.toFixed(2)}/fisher/area`;
     }
   },
   mean_price_kg: {

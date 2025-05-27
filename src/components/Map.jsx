@@ -44,7 +44,7 @@ const UnifiedLegend = ({ isDarkTheme, grades, selectedMetric, colorRange, hasGri
           margin: '0 0 10px 0',
           fontSize: '13px'
         }}>
-          {metricInfo.label}
+          {metricInfo.label} {metricInfo.unit && `(${metricInfo.unit})`}
         </h4>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
           {grades.map((grade, i) => (
@@ -68,7 +68,7 @@ const UnifiedLegend = ({ isDarkTheme, grades, selectedMetric, colorRange, hasGri
                 ...SHARED_STYLES.text.body(isDarkTheme),
                 fontSize: '12px'
               }}>
-                {grade.toFixed(1)}{i < grades.length - 1 ? ` - ${grades[i + 1].toFixed(1)}` : '+'} {metricInfo.unit}
+                {grade.toFixed(1)}{i < grades.length - 1 ? ` - ${grades[i + 1].toFixed(1)}` : '+'}
               </span>
             </div>
           ))}
