@@ -27,13 +27,11 @@ jobs:
       - name: Install script dependencies
         run: npm install mongodb dotenv
       
-      - name: Create .env file
-        run: |
-          echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" > .env
-          echo "VITE_MAPBOX_TOKEN=${{ secrets.VITE_MAPBOX_TOKEN }}" >> .env
-      
       - name: Fetch MongoDB data
         run: node scripts/data/fetchMongoData.js
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          VITE_MAPBOX_TOKEN: ${{ secrets.VITE_MAPBOX_TOKEN }}
       
       - name: Commit changes
         run: |
