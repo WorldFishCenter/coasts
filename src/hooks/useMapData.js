@@ -1,33 +1,76 @@
 import { useState, useEffect } from 'react';
-import { loadBoundaries, loadFisheryData, mergeBoundaryAndFisheryData } from '../services/dataService';
+import { loadMapData, loadTimeSeriesData, loadPdsGridsData, getLatestMetrics } from '../services/dataService';
 
 export const useMapData = () => {
   const [boundaries, setBoundaries] = useState(null);
+  const [timeSeriesData, setTimeSeriesData] = useState(null);
+  const [pdsGridsData, setPdsGridsData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [totalValue, setTotalValue] = useState(0);
 
-  // Fetch data
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [boundaryData, fisheryValues] = await Promise.all([
-          loadBoundaries(),
-          loadFisheryData()
+        setError(null);
+
+        // Load all data sources
+        const [mapData, timeSeries, pdsGrids] = await Promise.all([
+          loadMapData(),
+          loadTimeSeriesData(),
+          loadPdsGridsData()
         ]);
 
-        if (boundaryData && fisheryValues) {
-          const mergedData = mergeBoundaryAndFisheryData(boundaryData, fisheryValues);
-          setBoundaries(mergedData);
-          
-          // Calculate total value
-          const total = Object.values(fisheryValues).reduce((sum, value) => sum + value, 0);
-          setTotalValue(total);
+        if (!mapData) {
+          throw new Error('Failed to load map data');
         }
+
+        if (!timeSeries) {
+          throw new Error('Failed to load time series data');
+        }
+
+        // PDS grids data is optional, so we don't throw error if it's missing
+        if (!pdsGrids) {
+          console.warn('PDS grids data not available');
+        }
+
+        // Add latest metrics to each feature from time series data
+        const enrichedMapData = {
+          ...mapData,
+          features: mapData.features.map(feature => {
+            const country = feature.properties.country;
+            const region = feature.properties.region;
+            const latestMetrics = getLatestMetrics(timeSeries, country, region);
+            
+            return {
+              ...feature,
+              properties: {
+                ...feature.properties,
+                // Add metrics if they exist, otherwise they'll be undefined
+                mean_cpue: latestMetrics?.mean_cpue,
+                mean_cpua: latestMetrics?.mean_cpua,
+                mean_rpue: latestMetrics?.mean_rpue,
+                mean_rpua: latestMetrics?.mean_rpua,
+                mean_price_kg: latestMetrics?.mean_price_kg
+              }
+            };
+          })
+        };
+
+        // Calculate total value from the enriched map data
+        const total = enrichedMapData.features.reduce((sum, feature) => {
+          const value = feature.properties.mean_cpue;
+          return sum + (value !== null && value !== undefined ? value : 0);
+        }, 0);
+
+        setBoundaries(enrichedMapData);
+        setTimeSeriesData(timeSeries);
+        setPdsGridsData(pdsGrids);
+        setTotalValue(total);
       } catch (err) {
-        setError('Error loading map data');
-        console.error(err);
+        console.error('Error fetching data:', err);
+        setError(err.message);
       } finally {
         setLoading(false);
       }
@@ -38,6 +81,8 @@ export const useMapData = () => {
 
   return {
     boundaries,
+    timeSeriesData,
+    pdsGridsData,
     loading,
     error,
     totalValue

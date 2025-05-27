@@ -1,5 +1,5 @@
 {
-  "name": "coasts.map",
+  "name": "coasts",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,21 +10,45 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@deck.gl/aggregation-layers": "^9.1.12",
+    "@deck.gl/core": "^9.1.12",
+    "@deck.gl/layers": "^9.1.12",
+    "@deck.gl/react": "^9.1.12",
+    "@deck.gl/widgets": "^9.1.12",
+    "@radix-ui/react-slot": "^1.2.3",
+    "apexcharts": "^4.0.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "d3": "^7.8.5",
+    "date-fns": "^3.3.1",
+    "dotenv": "^16.5.0",
+    "lucide-react": "^0.344.0",
+    "mapbox-gl": "^3.1.2",
+    "mongodb": "^6.16.0",
     "react": "^18.2.0",
+    "react-apexcharts": "^1.4.1",
     "react-dom": "^18.2.0",
     "react-map-gl": "^7.1.7",
-    "mapbox-gl": "^3.1.2",
-    "react-apexcharts": "^1.4.1",
-    "apexcharts": "^4.0.0"
+    "recharts": "^2.15.3",
+    "simplebar": "^6.3.1",
+    "simplebar-react": "^3.3.1",
+    "tailwind-merge": "^2.6.0"
   },
   "devDependencies": {
-    "@types/react": "^18.2.43",
-    "@types/react-dom": "^18.2.17",
+    "@tailwindcss/postcss": "^4.1.7",
+    "@tailwindcss/vite": "^4.1.7",
+    "@types/node": "^22.15.21",
+    "@types/react": "^18.2.55",
+    "@types/react-dom": "^18.2.19",
     "@vitejs/plugin-react": "^4.2.1",
-    "eslint": "^8.55.0",
+    "autoprefixer": "^10.4.17",
+    "eslint": "^8.56.0",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
-    "vite": "^5.0.8"
+    "postcss": "^8.4.35",
+    "tailwindcss": "^4.1.7",
+    "tw-animate-css": "^1.3.0",
+    "vite": "^5.1.0"
   }
 }

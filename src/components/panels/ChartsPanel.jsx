@@ -5,13 +5,82 @@ const ChartsPanel = memo(({
   isDarkTheme, 
   showPanel, 
   onTogglePanel,
-  selectedDistricts,
   totalValue,
-  isMobile
+  isMobile,
+  boundaries
 }) => {
-  const districtValues = selectedDistricts.map(d => ({
-    name: d.properties.ADM2_PT || d.properties.ADM2_EN,
-    value: d.properties.value || 0
+  // If no boundaries data, show empty state
+  if (!boundaries || !boundaries.features) {
+    return (
+      <div style={{
+        backgroundColor: isDarkTheme ? 'rgba(0, 0, 0, 0.8)' : 'white',
+        color: isDarkTheme ? '#fff' : '#2c3e50',
+        borderRadius: isMobile ? '12px' : '8px',
+        boxShadow: isDarkTheme ? '0 2px 10px rgba(255,255,255,0.1)' : '0 2px 10px rgba(0,0,0,0.1)',
+        width: isMobile ? '100%' : '300px',
+        transition: 'all 0.3s ease',
+        overflow: 'hidden',
+        marginBottom: isMobile ? '10px' : '0'
+      }}>
+        <div 
+          onClick={onTogglePanel}
+          style={{
+            padding: isMobile ? '15px' : '15px 20px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            cursor: 'pointer',
+            borderBottom: showPanel ? `1px solid ${isDarkTheme ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}` : 'none',
+            userSelect: 'none',
+            WebkitTapHighlightColor: 'transparent',
+            outline: 'none'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M18 20V10M12 20V4M6 20v-6"/>
+            </svg>
+            <span style={{ fontWeight: 'bold' }}>WIO Charts</span>
+          </div>
+          <div style={{ 
+            transform: `rotate(${showPanel ? 180 : 0}deg)`,
+            transition: 'transform 0.3s ease',
+            userSelect: 'none',
+            WebkitTapHighlightColor: 'transparent',
+            outline: 'none'
+          }}>
+            ▼
+          </div>
+        </div>
+        
+        <div style={{
+          maxHeight: showPanel ? '500px' : '0',
+          opacity: showPanel ? 1 : 0,
+          transition: 'all 0.3s ease',
+          overflow: 'hidden'
+        }}>
+          <div style={{ 
+            padding: '20px',
+            overflowY: 'auto',
+            maxHeight: '480px'
+          }}>
+            <div style={{ 
+              color: '#95a5a6',
+              textAlign: 'center',
+              padding: '20px 0',
+              fontSize: '16px'
+            }}>
+              Loading data...
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const regionValues = boundaries.features.map(feature => ({
+    name: feature.properties.region || 'Unknown Region',
+    value: feature.properties.mean_cpue || 0
   }));
 
   const barChartOptions = {
@@ -31,13 +100,13 @@ const ChartsPanel = memo(({
     colors: ['#3498db'],
     dataLabels: {
       enabled: true,
-      formatter: (val) => val.toLocaleString(),
+      formatter: (val) => val.toFixed(2),
       style: {
         colors: [isDarkTheme ? '#fff' : '#2c3e50']
       }
     },
     xaxis: {
-      categories: districtValues.map(d => d.name),
+      categories: regionValues.map(d => d.name),
       labels: {
         style: {
           colors: isDarkTheme ? '#fff' : '#2c3e50'
@@ -58,7 +127,7 @@ const ChartsPanel = memo(({
       type: 'donut',
       background: isDarkTheme ? '#1a1a1a' : '#ffffff'
     },
-    labels: districtValues.map(d => d.name),
+    labels: regionValues.map(d => d.name),
     colors: ['#3498db', '#e74c3c', '#2ecc71', '#f1c40f', '#9b59b6', '#1abc9c'],
     legend: {
       position: 'bottom',
@@ -72,7 +141,7 @@ const ChartsPanel = memo(({
     },
     tooltip: {
       y: {
-        formatter: (val) => val.toLocaleString()
+        formatter: (val) => val.toFixed(2)
       }
     }
   };
@@ -106,7 +175,7 @@ const ChartsPanel = memo(({
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M18 20V10M12 20V4M6 20v-6"/>
           </svg>
-          <span style={{ fontWeight: 'bold' }}>District Charts</span>
+          <span style={{ fontWeight: 'bold' }}>WIO Charts</span>
         </div>
         <div style={{ 
           transform: `rotate(${showPanel ? 180 : 0}deg)`,
@@ -130,14 +199,14 @@ const ChartsPanel = memo(({
           overflowY: 'auto',
           maxHeight: '480px'
         }}>
-          {selectedDistricts.length === 0 ? (
+          {regionValues.length === 0 ? (
             <div style={{ 
               color: '#95a5a6',
               textAlign: 'center',
               padding: '20px 0',
               fontSize: '16px'
             }}>
-              Select districts to view charts
+              No data available
             </div>
           ) : (
             <div style={{ 
@@ -151,16 +220,16 @@ const ChartsPanel = memo(({
                   marginBottom: '10px',
                   color: isDarkTheme ? '#fff' : '#2c3e50'
                 }}>
-                  Value Distribution
+                  Mean CPUE Distribution
                 </h3>
                 <ReactApexChart
                   options={barChartOptions}
                   series={[{
-                    name: 'Value',
-                    data: districtValues.map(d => d.value)
+                    name: 'Mean CPUE (kg/hour)',
+                    data: regionValues.map(d => d.value)
                   }]}
                   type="bar"
-                  height={Math.max(150, districtValues.length * 40)}
+                  height={Math.max(150, regionValues.length * 40)}
                 />
               </div>
 
@@ -174,7 +243,7 @@ const ChartsPanel = memo(({
                 </h3>
                 <ReactApexChart
                   options={pieChartOptions}
-                  series={districtValues.map(d => d.value)}
+                  series={regionValues.map(d => d.value)}
                   type="donut"
                   height={300}
                 />
