@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import DeckGL from '@deck.gl/react';
 import { Map as MapGL, NavigationControl, Popup } from 'react-map-gl';
 import { ColumnLayer, GeoJsonLayer } from '@deck.gl/layers';
+import { HeatmapLayer } from '@deck.gl/aggregation-layers';
 import { MapView } from '@deck.gl/core';
 import { Satellite, Map as MapIcon } from 'lucide-react';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -27,7 +28,7 @@ const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 const COLORS = ['#ffffd9', '#edf8b1', '#c7e9b4', '#7fcdbb', '#41b6c4', '#1d91c0', '#225ea8', '#0c2c84'];
 
 // Unified Legend Component that combines metric and fishing activity legends
-const UnifiedLegend = ({ isDarkTheme, grades, selectedMetric, colorRange, hasGridData }) => {
+const UnifiedLegend = ({ isDarkTheme, grades, selectedMetric, colorRange, hasGridData, visualizationMode }) => {
   const metricInfo = getMetricInfo(selectedMetric);
   
   return (
@@ -87,41 +88,81 @@ const UnifiedLegend = ({ isDarkTheme, grades, selectedMetric, colorRange, hasGri
               margin: '0 0 10px 0',
               fontSize: '13px'
             }}>
-              Fishing Activity (Hours)
+              Fishing Activity {visualizationMode === 'heatmap' ? '(Heatmap)' : '(Hours)'}
             </h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              {TIME_BREAKS.map((range, index) => {
-                const timeValue = range.min + (range.max === Infinity ? 8 : range.max - range.min) / 2;
-                const normalizedValue = Math.min(timeValue / 12, 1);
-                const opacity = 0.3 + (normalizedValue * 0.6);
-                
-                return (
-                  <div 
-                    key={index}
-                    style={{ 
-                      display: 'flex', 
-                      alignItems: 'center',
-                      gap: '8px'
-                    }}
-                  >
-                    <span style={{
-                      width: '18px',
-                      height: '18px',
-                      backgroundColor: `rgba(${colorRange[index].join(',')}, ${opacity})`,
-                      display: 'inline-block',
-                      borderRadius: '3px',
-                      border: `1px solid ${isDarkTheme ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)'}`
-                    }} />
-                    <span style={{
-                      ...SHARED_STYLES.text.body(isDarkTheme),
-                      fontSize: '12px'
-                    }}>
-                      {range.label}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
+            {visualizationMode === 'column' ? (
+              // Show time ranges for column view
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                {TIME_BREAKS.map((range, index) => {
+                  const timeValue = range.min + (range.max === Infinity ? 8 : range.max - range.min) / 2;
+                  const normalizedValue = Math.min(timeValue / 12, 1);
+                  const opacity = 0.3 + (normalizedValue * 0.6);
+                  
+                  return (
+                    <div 
+                      key={index}
+                      style={{ 
+                        display: 'flex', 
+                        alignItems: 'center',
+                        gap: '8px'
+                      }}
+                    >
+                      <span style={{
+                        width: '18px',
+                        height: '18px',
+                        backgroundColor: `rgba(${colorRange[index].join(',')}, ${opacity})`,
+                        display: 'inline-block',
+                        borderRadius: '3px',
+                        border: `1px solid ${isDarkTheme ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)'}`
+                      }} />
+                      <span style={{
+                        ...SHARED_STYLES.text.body(isDarkTheme),
+                        fontSize: '12px'
+                      }}>
+                        {range.label}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              // Show heatmap gradient for heatmap view
+              <div>
+                <div style={{
+                  height: '20px',
+                  background: `linear-gradient(to right, 
+                    rgba(254, 235, 226, 0.1), 
+                    rgba(254, 235, 226, 0.5),
+                    rgba(252, 197, 192, 0.7),
+                    rgba(250, 159, 181, 0.8),
+                    rgba(247, 104, 161, 0.9),
+                    rgba(221, 52, 151, 1),
+                    rgba(174, 1, 126, 1)
+                  )`,
+                  borderRadius: '4px',
+                  marginBottom: '8px',
+                  border: `1px solid ${isDarkTheme ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)'}`
+                }} />
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  ...SHARED_STYLES.text.muted(isDarkTheme),
+                  fontSize: '11px'
+                }}>
+                  <span>Low Activity</span>
+                  <span>High Activity</span>
+                </div>
+                <div style={{
+                  textAlign: 'center',
+                  marginTop: '4px',
+                  ...SHARED_STYLES.text.muted(isDarkTheme),
+                  fontSize: '10px',
+                  fontStyle: 'italic'
+                }}>
+                  Intensity based on fishing effort (hours)
+                </div>
+              </div>
+            )}
           </div>
         </>
       )}
@@ -140,7 +181,7 @@ const MapComponent = () => {
   const [isDarkTheme, setIsDarkTheme] = useState(true);
   
   // Satellite mode state
-  const [isSatellite, setIsSatellite] = useState(true);
+  const [isSatellite, setIsSatellite] = useState(false);
   
   // Panel states
   const [activeTab, setActiveTab] = useState('analysis'); // 'analysis' | 'charts' | 'selection'
@@ -150,25 +191,25 @@ const MapComponent = () => {
   const [hoveredFeatureIndex, setHoveredFeatureIndex] = useState(null);
   
   // Analysis states
-  const [opacity, setOpacity] = useState(0.7);
+  const [opacity] = useState(0.9); // Fixed at 90% opacity
   
   // Force update state to trigger re-renders when PDS data loads
   const [pdsDataLoaded, setPdsDataLoaded] = useState(false);
   
   // Viewport state - only used for updates, not initial
   const [viewState, setViewState] = useState({
-    longitude: 39,
-    latitude: -5.25,
-    zoom: isMobile ? 5.5 : 7,
-    bearing: 0,
-    pitch: 45
+    longitude: 39.0,
+    latitude: -5.5,
+    zoom: 7.2,
+    pitch: 40,
+    bearing: 0
   });
 
   // Load map data including PDS grids
   const { boundaries, pdsGridsData, loading, error, totalValue } = useMapData();
 
   // Add sidebar state
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(!isMobile);
 
   // Add selection state
   const [selectedDistricts, setSelectedDistricts] = useState([]);
@@ -198,6 +239,9 @@ const MapComponent = () => {
   // Ref for Map instance
   const mapRef = useRef(null);
   const deckRef = useRef(null);
+
+  // New state for visualization mode
+  const [visualizationMode, setVisualizationMode] = useState('column');
 
   // Pre-process PDS data once when it loads (like reference)
   useEffect(() => {
@@ -232,6 +276,15 @@ const MapComponent = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Adjust pitch when switching visualization modes
+  useEffect(() => {
+    setViewState(prev => ({
+      ...prev,
+      pitch: visualizationMode === 'heatmap' ? 0 : 40,
+      transitionDuration: 1000
+    }));
+  }, [visualizationMode]);
 
   // Callbacks
   const handleThemeChange = useCallback((isDark) => {
@@ -308,6 +361,11 @@ const MapComponent = () => {
 
   // Transform PDS grid data - MATCH REFERENCE EXACTLY
   const transformedPdsData = useMemo(() => {
+    if (!FILTERED_PDS_DATA || !Array.isArray(FILTERED_PDS_DATA)) {
+      console.log('No filtered PDS data available');
+      return [];
+    }
+    
     const filtered = FILTERED_PDS_DATA.filter(d => 
       selectedRanges.some(range => 
         d.avgTimeHours >= range.min && (
@@ -317,7 +375,7 @@ const MapComponent = () => {
     );
     console.log('Transformed PDS data length:', filtered.length);
     console.log('Sample data:', filtered[0]);
-    return filtered;
+    return filtered || [];
   }, [selectedRanges, pdsDataLoaded]);
 
   // Compute dynamic grades & color stops for current metric
@@ -395,35 +453,52 @@ const MapComponent = () => {
     }
 
     // Handle ColumnLayer (PDS grid) tooltips
-    if (layer.id === 'pds-grid-layer') {
+    if (layer.id === 'pds-grid-column-layer' || layer.id === 'pds-grid-heatmap-layer') {
+      // For heatmap, we still have access to the data point
       const avgTime = object.avgTimeHours;
-      const breakIndex = TIME_BREAKS.findIndex(range => 
-        avgTime >= range.min && (range.max === Infinity ? true : avgTime < range.max)
-      );
-      const cellColor = COLOR_RANGE[breakIndex >= 0 ? breakIndex : 0];
       const totalVisits = object.totalVisits;
+      
+      // Determine appropriate styling based on visualization mode
+      let backgroundColor;
+      let textColor;
+      
+      if (visualizationMode === 'column') {
+        const breakIndex = TIME_BREAKS.findIndex(range => 
+          avgTime >= range.min && (range.max === Infinity ? true : avgTime < range.max)
+        );
+        const cellColor = COLOR_RANGE[breakIndex >= 0 ? breakIndex : 0];
+        backgroundColor = `rgba(${cellColor.join(',')}, 0.95)`;
+        textColor = breakIndex > 2 ? '#ffffff' : '#000000';
+      } else {
+        // For heatmap, use a consistent style
+        backgroundColor = isDarkTheme ? 'rgba(30, 30, 30, 0.95)' : 'rgba(255, 255, 255, 0.95)';
+        textColor = isDarkTheme ? '#ffffff' : '#000000';
+      }
       
       return {
         html: `
           <div style="padding: 8px">
-            <div><strong>Time spent</strong></div>
+            <div><strong>Fishing Activity</strong></div>
             <div>Average time: ${avgTime.toFixed(2)} hours</div>
-            <div><strong>Activity</strong></div>
             <div>Total visits: ${totalVisits}</div>
+            <div style="font-size: 11px; margin-top: 4px; opacity: 0.8">
+              Location: ${object.position[1].toFixed(3)}°, ${object.position[0].toFixed(3)}°
+            </div>
           </div>
         `,
         style: {
-          backgroundColor: `rgba(${cellColor.join(',')}, 0.95)`,
-          color: breakIndex > 2 ? '#ffffff' : '#000000',
+          backgroundColor,
+          color: textColor,
           fontSize: '12px',
           borderRadius: '4px',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+          boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+          border: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`
         }
       };
     }
 
     return null;
-  }, [selectedMetric, isDarkTheme, metricStats]);
+  }, [selectedMetric, isDarkTheme, metricStats, visualizationMode]);
 
   // Create layers - Use ColumnLayer for pre-aggregated data
   const layers = useMemo(() => {
@@ -491,47 +566,83 @@ const MapComponent = () => {
 
     // Add PDS grid columns if data exists
     if (transformedPdsData.length > 0) {
-      allLayers.push(
-        new ColumnLayer({
-          id: 'pds-grid-layer',
-          data: transformedPdsData,
-          pickable: true,
-          // Position
-          getPosition: d => d.position,
-          // Size - 1km = 1000m, but we need to adjust for visualization
-          radius: 500, // Half of cell size for better visualization
-          // Elevation
-          elevationScale: 2500, // or 1000, experiment for best effect
-          getElevation: d => d.avgTimeHours,
-          // Color with variable opacity based on effort
-          getFillColor: d => {
-            const colorIndex = getColorForValue(d.avgTimeHours);
-            const baseColor = COLOR_RANGE[colorIndex];
-            // Calculate opacity: minimum 0.3 (30%) for lowest values, maximum 0.9 (90%) for highest
-            // Normalize avgTimeHours to 0-1 range (assuming max ~12 hours)
-            const normalizedValue = Math.min(d.avgTimeHours / 12, 1);
-            const opacity = 0.3 + (normalizedValue * 0.6); // Range from 0.3 to 0.9
-            return [...baseColor, 255 * opacity];
-          },
-          // Style
-          opacity: 1, // Set to 1 since we're controlling opacity in getFillColor
-          // Optimization
-          material: {
-            ambient: 0.64,
-            diffuse: 0.6,
-            shininess: 32,
-            specularColor: [51, 51, 51]
-          },
-          updateTriggers: {
-            getFillColor: [selectedRanges],
-            opacity: [] // Removed isPdsGridVisible from update triggers
-          }
-        })
-      );
+      if (visualizationMode === 'column') {
+        // Existing ColumnLayer
+        allLayers.push(
+          new ColumnLayer({
+            id: 'pds-grid-column-layer',
+            data: transformedPdsData,
+            pickable: true,
+            // Position
+            getPosition: d => d.position,
+            // Size - 1km = 1000m, but we need to adjust for visualization
+            radius: 500, // Half of cell size for better visualization
+            // Elevation
+            elevationScale: 2500, // or 1000, experiment for best effect
+            getElevation: d => d.avgTimeHours,
+            // Color with variable opacity based on effort
+            getFillColor: d => {
+              const colorIndex = getColorForValue(d.avgTimeHours);
+              const baseColor = COLOR_RANGE[colorIndex];
+              // Calculate opacity: minimum 0.3 (30%) for lowest values, maximum 0.9 (90%) for highest
+              // Normalize avgTimeHours to 0-1 range (assuming max ~12 hours)
+              const normalizedValue = Math.min(d.avgTimeHours / 12, 1);
+              const opacity = 0.3 + (normalizedValue * 0.6); // Range from 0.3 to 0.9
+              return [...baseColor, 255 * opacity];
+            },
+            // Style
+            opacity: 1, // Set to 1 since we're controlling opacity in getFillColor
+            // Optimization
+            material: {
+              ambient: 0.64,
+              diffuse: 0.6,
+              shininess: 32,
+              specularColor: [51, 51, 51]
+            },
+            updateTriggers: {
+              getFillColor: [selectedRanges],
+              opacity: [] // Removed isPdsGridVisible from update triggers
+            }
+          })
+        );
+      } else {
+        // New HeatmapLayer
+        allLayers.push(
+          new HeatmapLayer({
+            id: 'pds-grid-heatmap-layer',
+            data: transformedPdsData || [], // Ensure data is never undefined
+            pickable: true,
+            getPosition: d => d.position,
+            getWeight: d => {
+              // Add validation to prevent errors
+              if (!d || typeof d.avgTimeHours !== 'number') return 0;
+              return Math.max(0, d.avgTimeHours); // Ensure non-negative weights
+            },
+            radiusPixels: 40, // Slightly larger radius for better blending
+            intensity: 1.2, // Slightly higher intensity
+            threshold: 0.03,
+            colorRange: [
+              [255, 255, 255, 0],
+              [254, 235, 226, 255],  // Lightest color from COLOR_RANGE
+              [252, 197, 192, 255],
+              [250, 159, 181, 255],
+              [247, 104, 161, 255],
+              [221, 52, 151, 255],
+              [174, 1, 126, 255]     // Darkest color from COLOR_RANGE
+            ],
+            aggregation: 'SUM',
+            weightsTextureSize: 1024, // Performance optimization for large datasets
+            updateTriggers: {
+              getWeight: [selectedRanges],
+              data: [transformedPdsData] // Add data to update triggers
+            }
+          })
+        );
+      }
     }
 
     return allLayers;
-  }, [transformedPdsData, selectedRanges, filteredBoundaries, selectedMetric, metricStats, opacity, isSatellite, isDarkTheme, hoveredFeatureIndex]);
+  }, [transformedPdsData, selectedRanges, filteredBoundaries, selectedMetric, metricStats, opacity, isSatellite, isDarkTheme, hoveredFeatureIndex, visualizationMode]);
 
   // Add satellite toggle callback
   const handleMapStyleToggle = useCallback(() => {
@@ -588,8 +699,6 @@ const MapComponent = () => {
           boundaries={boundaries}
           selectedMetric={selectedMetric}
           onMetricChange={setSelectedMetric}
-          opacity={opacity}
-          onOpacityChange={setOpacity}
           // Grid data props
           transformedPdsData={transformedPdsData}
           selectedRanges={selectedRanges}
@@ -601,6 +710,9 @@ const MapComponent = () => {
           // Filter props
           selectedCountries={selectedCountries}
           onCountryToggle={handleCountryToggle}
+          // Visualization mode props
+          visualizationMode={visualizationMode}
+          onVisualizationModeChange={setVisualizationMode}
           style={{
             position: 'absolute',
             top: 0,
@@ -651,6 +763,7 @@ const MapComponent = () => {
               selectedMetric={selectedMetric}
               colorRange={COLOR_RANGE}
               hasGridData={transformedPdsData.length > 0}
+              visualizationMode={visualizationMode}
             />
           </div>
 

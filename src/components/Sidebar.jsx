@@ -16,7 +16,9 @@ import {
   ChevronRight,
   Info,
   Globe,
-  Activity
+  Activity,
+  Box,
+  Flame
 } from 'lucide-react';
 
 const METRICS = Object.entries(METRIC_CONFIG).map(([id, config]) => ({
@@ -195,8 +197,6 @@ const Sidebar = memo(({
   boundaries,
   selectedMetric,
   onMetricChange,
-  opacity,
-  onOpacityChange,
   // Grid data props
   transformedPdsData,
   selectedRanges,
@@ -209,7 +209,10 @@ const Sidebar = memo(({
   selectedCountries = [],
   onCountryToggle,
   // Style prop
-  style = {}
+  style = {},
+  // New visualization mode props
+  visualizationMode,
+  onVisualizationModeChange
 }) => {
   // Section expansion states
   const [expandedSections, setExpandedSections] = useState({
@@ -326,8 +329,7 @@ const Sidebar = memo(({
                 <div style={{ 
                   display: 'grid', 
                   gridTemplateColumns: '1fr 1fr',
-                  gap: '10px',
-                  marginBottom: '20px'
+                  gap: '10px'
                 }}>
                   {METRICS.map(metric => {
                     const isActive = selectedMetric === metric.id;
@@ -417,84 +419,6 @@ const Sidebar = memo(({
                     );
                   })}
                 </div>
-
-                {/* Divider */}
-                <div style={{
-                  height: '1px',
-                  backgroundColor: isDarkTheme ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)',
-                  margin: '0 -20px 20px'
-                }} />
-
-                {/* Opacity Control */}
-                <div>
-                  <div style={{ 
-                    display: 'flex', 
-                    justifyContent: 'space-between', 
-                    alignItems: 'center', 
-                    marginBottom: '12px' 
-                  }}>
-                    <div>
-                      <label style={{
-                        ...SHARED_STYLES.text.body(isDarkTheme),
-                        fontSize: '13px',
-                        fontWeight: 500,
-                        display: 'block'
-                      }}>
-                        Layer Opacity
-                      </label>
-                      <span style={{
-                        ...SHARED_STYLES.text.muted(isDarkTheme),
-                        fontSize: '11px'
-                      }}>
-                        Adjust choropleth transparency
-                      </span>
-                    </div>
-                    <span style={{
-                      ...SHARED_STYLES.text.body(isDarkTheme),
-                      fontSize: '14px',
-                      fontWeight: 600,
-                      padding: '4px 10px',
-                      backgroundColor: isDarkTheme ? 'rgba(59, 130, 246, 0.1)' : 'rgba(59, 130, 246, 0.08)',
-                      borderRadius: '16px',
-                      color: isDarkTheme ? '#60a5fa' : '#3b82f6'
-                    }}>
-                      {(opacity * 100).toFixed(0)}%
-                    </span>
-                  </div>
-                  <div style={{
-                    position: 'relative',
-                    height: '32px',
-                    display: 'flex',
-                    alignItems: 'center'
-                  }}>
-                    <div style={{
-                      position: 'absolute',
-                      left: 0,
-                      right: 0,
-                      height: '4px',
-                      backgroundColor: isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
-                      borderRadius: '2px'
-                    }} />
-                    <input 
-                      type="range" 
-                      min={0} 
-                      max={100} 
-                      value={opacity * 100} 
-                      onChange={(e) => onOpacityChange(Number(e.target.value) / 100)} 
-                      style={{ 
-                        position: 'relative',
-                        width: '100%', 
-                        height: '4px',
-                        WebkitAppearance: 'none',
-                        appearance: 'none',
-                        background: 'transparent',
-                        outline: 'none',
-                        cursor: 'pointer'
-                      }}
-                      className="custom-slider"
-                    />
-                  </div>
-                </div>
               </div>
             )}
           </div>
@@ -521,6 +445,101 @@ const Sidebar = memo(({
                 backgroundColor: isDarkTheme ? 'rgba(0, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.5)',
                 borderTop: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)'}`
               }}>
+                {/* Visualization Mode Selector - First Element */}
+                <div style={{
+                  marginBottom: '20px',
+                  padding: '4px',
+                  backgroundColor: isDarkTheme ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)',
+                  borderRadius: '12px',
+                  display: 'flex',
+                  gap: '4px'
+                }}>
+                  <button
+                    onClick={() => onVisualizationModeChange?.('column')}
+                    style={{
+                      flex: 1,
+                      padding: '10px 16px',
+                      border: 'none',
+                      borderRadius: '8px',
+                      backgroundColor: visualizationMode === 'column' 
+                        ? (isDarkTheme ? 'rgba(59, 130, 246, 0.15)' : 'rgba(59, 130, 246, 0.12)')
+                        : 'transparent',
+                      color: visualizationMode === 'column'
+                        ? (isDarkTheme ? '#60a5fa' : '#3b82f6')
+                        : (isDarkTheme ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)'),
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      fontSize: '13px',
+                      fontWeight: visualizationMode === 'column' ? 600 : 500,
+                      letterSpacing: '0.02em',
+                      boxShadow: visualizationMode === 'column' 
+                        ? '0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06)'
+                        : 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (visualizationMode !== 'column') {
+                        e.currentTarget.style.backgroundColor = isDarkTheme 
+                          ? 'rgba(255, 255, 255, 0.05)' 
+                          : 'rgba(0, 0, 0, 0.03)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (visualizationMode !== 'column') {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                      }
+                    }}
+                  >
+                    <Box size={16} strokeWidth={2} />
+                    <span>3D Columns</span>
+                  </button>
+                  <button
+                    onClick={() => onVisualizationModeChange?.('heatmap')}
+                    style={{
+                      flex: 1,
+                      padding: '10px 16px',
+                      border: 'none',
+                      borderRadius: '8px',
+                      backgroundColor: visualizationMode === 'heatmap' 
+                        ? (isDarkTheme ? 'rgba(59, 130, 246, 0.15)' : 'rgba(59, 130, 246, 0.12)')
+                        : 'transparent',
+                      color: visualizationMode === 'heatmap'
+                        ? (isDarkTheme ? '#60a5fa' : '#3b82f6')
+                        : (isDarkTheme ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)'),
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      fontSize: '13px',
+                      fontWeight: visualizationMode === 'heatmap' ? 600 : 500,
+                      letterSpacing: '0.02em',
+                      boxShadow: visualizationMode === 'heatmap' 
+                        ? '0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06)'
+                        : 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (visualizationMode !== 'heatmap') {
+                        e.currentTarget.style.backgroundColor = isDarkTheme 
+                          ? 'rgba(255, 255, 255, 0.05)' 
+                          : 'rgba(0, 0, 0, 0.03)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (visualizationMode !== 'heatmap') {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                      }
+                    }}
+                  >
+                    <Flame size={16} strokeWidth={2} />
+                    <span>Heatmap</span>
+                  </button>
+                </div>
+
                 {/* Statistics Cards */}
                 <div style={{
                   display: 'grid',

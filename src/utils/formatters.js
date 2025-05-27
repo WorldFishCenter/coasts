@@ -53,7 +53,10 @@ export const getMetricInfo = (metricId) => {
     label: metricId,
     unit: '',
     description: metricId,
-    format: (value) => value.toFixed(2)
+    format: (value) => {
+      if (value === null || value === undefined) return 'N/A';
+      return value.toFixed(2);
+    }
   };
 };
 
