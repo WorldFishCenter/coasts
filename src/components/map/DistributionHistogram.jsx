@@ -1,95 +1,127 @@
 import React, { useMemo } from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { X } from 'lucide-react';
 import { SHARED_STYLES } from '../../utils/gridLayerConfig';
 import { getMetricInfo, formatRegionName } from '../../utils/formatters';
+import { getTimeSeriesForRegion } from '../../services/dataService';
 
 const DistributionHistogram = ({ 
   isDarkTheme, 
   boundaries, 
   selectedMetric, 
   selectedRegion,
+  timeSeriesData,
   onClose,
   style 
 }) => {
-  // Calculate density plot data
+  // Calculate density plot data for time series
   const densityData = useMemo(() => {
-    if (!boundaries || !boundaries.features) return null;
+    if (!boundaries || !boundaries.features || !timeSeriesData || !selectedRegion) return null;
 
-    // Extract all values for the selected metric
-    const allValues = boundaries.features
-      .map(f => f.properties[selectedMetric])
-      .filter(v => v !== null && v !== undefined && !isNaN(v));
+    const selectedCountry = selectedRegion.properties.country;
+    const selectedRegionName = selectedRegion.properties.region;
+    
+    // Get time series for selected region
+    const selectedTimeSeries = getTimeSeriesForRegion(timeSeriesData, selectedCountry, selectedRegionName);
+    if (!selectedTimeSeries || !selectedTimeSeries.data) return null;
 
-    if (allValues.length === 0) return null;
+    // Collect all time series data for other regions
+    const otherRegionsData = [];
+    boundaries.features.forEach(feature => {
+      if (feature.properties.country === selectedCountry && 
+          feature.properties.region === selectedRegionName) {
+        // Skip selected region
+        return;
+      }
+      
+      const regionTimeSeries = getTimeSeriesForRegion(
+        timeSeriesData, 
+        feature.properties.country, 
+        feature.properties.region
+      );
+      
+      if (regionTimeSeries && regionTimeSeries.data) {
+        regionTimeSeries.data.forEach(entry => {
+          if (entry[selectedMetric] != null && !isNaN(entry[selectedMetric])) {
+            otherRegionsData.push(entry[selectedMetric]);
+          }
+        });
+      }
+    });
 
-    // Get selected region's value
-    const selectedValue = selectedRegion?.properties[selectedMetric];
+    // Extract values for selected region
+    const selectedValues = selectedTimeSeries.data
+      .map(entry => entry[selectedMetric])
+      .filter(v => v != null && !isNaN(v));
 
-    // Calculate statistics
+    if (selectedValues.length === 0 || otherRegionsData.length === 0) return null;
+
+    // Calculate range from all data
+    const allValues = [...selectedValues, ...otherRegionsData];
     const min = Math.min(...allValues);
     const max = Math.max(...allValues);
     const range = max - min;
     
-    // Create more points for smooth curve
+    // Create density points
     const numPoints = 50;
-    const bandwidth = range * 0.1; // Bandwidth for kernel density estimation
+    const bandwidth = range * 0.15; // Bandwidth for kernel density estimation
     
-    // Calculate density using Gaussian kernel
     const points = [];
     for (let i = 0; i <= numPoints; i++) {
       const x = min + (i / numPoints) * range;
-      let density = 0;
       
-      // Gaussian kernel density estimation
-      allValues.forEach(value => {
+      // Calculate density for selected region
+      let selectedDensity = 0;
+      selectedValues.forEach(value => {
         const u = (x - value) / bandwidth;
-        density += Math.exp(-0.5 * u * u) / Math.sqrt(2 * Math.PI);
+        selectedDensity += Math.exp(-0.5 * u * u) / Math.sqrt(2 * Math.PI);
       });
+      selectedDensity = selectedDensity / (selectedValues.length * bandwidth);
       
-      density = density / (allValues.length * bandwidth);
+      // Calculate density for other regions
+      let otherDensity = 0;
+      otherRegionsData.forEach(value => {
+        const u = (x - value) / bandwidth;
+        otherDensity += Math.exp(-0.5 * u * u) / Math.sqrt(2 * Math.PI);
+      });
+      otherDensity = otherDensity / (otherRegionsData.length * bandwidth);
       
       points.push({
         value: x,
-        density: density,
+        selectedDensity: selectedDensity * 100, // Scale for visibility
+        otherDensity: otherDensity * 100,
         label: x.toFixed(1)
       });
     }
 
-    // Find max density for scaling
-    const maxDensity = Math.max(...points.map(p => p.density));
+    // Normalize densities
+    const maxSelectedDensity = Math.max(...points.map(p => p.selectedDensity));
+    const maxOtherDensity = Math.max(...points.map(p => p.otherDensity));
+    const maxDensity = Math.max(maxSelectedDensity, maxOtherDensity);
     
-    // Normalize densities to percentage
     points.forEach(p => {
-      p.density = (p.density / maxDensity) * 100;
+      p.selectedDensity = (p.selectedDensity / maxDensity) * 100;
+      p.otherDensity = (p.otherDensity / maxDensity) * 100;
     });
-
-    // Add selected value density
-    if (selectedValue != null) {
-      let selectedDensity = 0;
-      allValues.forEach(value => {
-        const u = (selectedValue - value) / bandwidth;
-        selectedDensity += Math.exp(-0.5 * u * u) / Math.sqrt(2 * Math.PI);
-      });
-      selectedDensity = (selectedDensity / (allValues.length * bandwidth) / maxDensity) * 100;
-      
-      // Find closest point to insert selected value info
-      const closestIndex = points.findIndex(p => p.value >= selectedValue);
-      if (closestIndex >= 0) {
-        points[closestIndex].isSelected = true;
-        points[closestIndex].selectedDensity = selectedDensity;
-      }
-    }
 
     return {
       points,
-      selectedValue,
-      totalRegions: allValues.length,
-      metricName: selectedMetric,
+      selectedStats: {
+        mean: selectedValues.reduce((a, b) => a + b, 0) / selectedValues.length,
+        min: Math.min(...selectedValues),
+        max: Math.max(...selectedValues),
+        count: selectedValues.length
+      },
+      otherStats: {
+        mean: otherRegionsData.reduce((a, b) => a + b, 0) / otherRegionsData.length,
+        min: Math.min(...otherRegionsData),
+        max: Math.max(...otherRegionsData),
+        count: otherRegionsData.length
+      },
       min,
       max
     };
-  }, [boundaries, selectedMetric, selectedRegion]);
+  }, [boundaries, selectedMetric, selectedRegion, timeSeriesData]);
 
   if (!densityData) return null;
 
@@ -106,9 +138,14 @@ const DistributionHistogram = ({
           <div style={SHARED_STYLES.text.body(isDarkTheme)}>
             Value: {metricInfo.format(parseFloat(data.value))}
           </div>
-          <div style={SHARED_STYLES.text.muted(isDarkTheme)}>
-            Density: {data.density.toFixed(1)}%
-          </div>
+          {payload.map((entry, index) => (
+            <div key={index} style={{
+              ...SHARED_STYLES.text.muted(isDarkTheme),
+              color: entry.color
+            }}>
+              {entry.name}: {entry.value.toFixed(1)}%
+            </div>
+          ))}
         </div>
       );
     }
@@ -119,8 +156,8 @@ const DistributionHistogram = ({
     <div style={{
       ...SHARED_STYLES.glassPanel(isDarkTheme),
       padding: '20px',
-      width: '600px',
-      height: '280px',
+      width: '700px',
+      height: '320px',
       ...style
     }}>
       {/* Header */}
@@ -131,17 +168,11 @@ const DistributionHistogram = ({
         marginBottom: '16px'
       }}>
         <div>
-          <h3 style={{
-            ...SHARED_STYLES.text.heading(isDarkTheme),
-            margin: 0
-          }}>
-            Distribution Analysis
-          </h3>
           <p style={{
             ...SHARED_STYLES.text.muted(isDarkTheme),
             margin: '4px 0 0 0'
           }}>
-            {formatRegionName(selectedRegion?.properties)} compared to all regions
+            {formatRegionName(selectedRegion?.properties)} vs all other districts
           </p>
         </div>
         <button
@@ -168,55 +199,9 @@ const DistributionHistogram = ({
         </button>
       </div>
 
-      {/* Legend */}
-      <div style={{
-        display: 'flex',
-        gap: '20px',
-        marginBottom: '12px',
-        ...SHARED_STYLES.text.muted(isDarkTheme)
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <div style={{
-            width: '24px',
-            height: '12px',
-            background: isDarkTheme 
-              ? 'linear-gradient(to right, rgba(147, 197, 253, 0.2), rgba(147, 197, 253, 0.6))' 
-              : 'linear-gradient(to right, rgba(59, 130, 246, 0.2), rgba(59, 130, 246, 0.6))',
-            borderRadius: '2px'
-          }} />
-          <span>Density distribution</span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <div style={{
-            width: '4px',
-            height: '12px',
-            backgroundColor: '#ef4444',
-            borderStyle: 'dashed',
-            borderWidth: '0 1px',
-            borderColor: '#ef4444'
-          }} />
-          <span>Selected value</span>
-        </div>
-      </div>
-
       {/* Chart */}
       <ResponsiveContainer width="100%" height={160}>
-        <AreaChart data={densityData.points} margin={{ top: 10, right: 10, left: 10, bottom: 30 }}>
-          <defs>
-            <linearGradient id="densityGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop 
-                offset="5%" 
-                stopColor={isDarkTheme ? '#93c5fd' : '#3b82f6'} 
-                stopOpacity={0.8}
-              />
-              <stop 
-                offset="95%" 
-                stopColor={isDarkTheme ? '#93c5fd' : '#3b82f6'} 
-                stopOpacity={0.1}
-              />
-            </linearGradient>
-          </defs>
-          
+        <LineChart data={densityData.points} margin={{ top: 5, right: 10, left: 10, bottom: 25 }}>
           <CartesianGrid 
             strokeDasharray="3 3" 
             stroke={isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'} 
@@ -230,7 +215,7 @@ const DistributionHistogram = ({
             tickFormatter={(value) => value.toFixed(1)}
             tick={{ 
               fill: isDarkTheme ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
-              fontSize: 11
+              fontSize: 10
             }}
             label={{
               value: metricInfo.unit,
@@ -238,24 +223,24 @@ const DistributionHistogram = ({
               offset: -5,
               style: {
                 fill: isDarkTheme ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
-                fontSize: 11
+                fontSize: 10
               }
             }}
           />
           
           <YAxis 
             label={{ 
-              value: 'Density', 
+              value: 'Density (%)', 
               angle: -90, 
               position: 'insideLeft',
               style: { 
                 fill: isDarkTheme ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
-                fontSize: 11
+                fontSize: 10
               }
             }}
             tick={{ 
               fill: isDarkTheme ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
-              fontSize: 11
+              fontSize: 10
             }}
           />
           
@@ -264,56 +249,206 @@ const DistributionHistogram = ({
             cursor={false}
           />
           
-          {/* Density curve */}
-          <Area 
-            type="monotone" 
-            dataKey="density" 
-            stroke={isDarkTheme ? '#93c5fd' : '#3b82f6'}
-            strokeWidth={2}
-            fill="url(#densityGradient)"
+          <Legend 
+            wrapperStyle={{
+              paddingTop: '5px',
+              fontSize: '11px'
+            }}
+            iconType="line"
           />
-
-          {/* Reference line for selected value */}
-          {densityData.selectedValue != null && (
-            <ReferenceLine 
-              x={densityData.selectedValue}
-              stroke="#ef4444"
-              strokeDasharray="5 5"
-              strokeWidth={2}
-              label={{
-                value: metricInfo.format(densityData.selectedValue),
-                position: "top",
-                fill: "#ef4444",
-                fontSize: 11,
-                offset: 10
-              }}
-            />
-          )}
-        </AreaChart>
+          
+          {/* Selected district line */}
+          <Line 
+            name="Selected District"
+            type="monotone" 
+            dataKey="selectedDensity" 
+            stroke={isDarkTheme ? '#60a5fa' : '#3b82f6'}
+            strokeWidth={2.5}
+            dot={false}
+            activeDot={{ r: 4 }}
+          />
+          
+          {/* Other districts line */}
+          <Line 
+            name="Other Districts" 
+            type="monotone" 
+            dataKey="otherDensity" 
+            stroke={isDarkTheme ? '#f87171' : '#ef4444'}
+            strokeWidth={2}
+            strokeDasharray="5 5"
+            dot={false}
+            activeDot={{ r: 4 }}
+          />
+        </LineChart>
       </ResponsiveContainer>
 
-      {/* Stats */}
+      {/* Stats - Horizontal Layout */}
       <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        marginTop: '12px',
-        paddingTop: '12px',
-        borderTop: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: '12px',
+        marginTop: '16px'
       }}>
-        <div style={SHARED_STYLES.text.muted(isDarkTheme)}>
-          Selected value: <span style={SHARED_STYLES.text.body(isDarkTheme)}>
-            {densityData.selectedValue !== null && densityData.selectedValue !== undefined ? metricInfo.format(densityData.selectedValue) : 'N/A'}
-          </span>
+        {/* Selected District Stats */}
+        <div style={{
+          backgroundColor: isDarkTheme ? 'rgba(59, 130, 246, 0.08)' : 'rgba(59, 130, 246, 0.06)',
+          border: `1px solid ${isDarkTheme ? 'rgba(59, 130, 246, 0.2)' : 'rgba(59, 130, 246, 0.15)'}`,
+          borderRadius: '8px',
+          padding: '12px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '16px'
+        }}>
+          <div style={{ flex: '0 0 auto' }}>
+            <div style={{
+              ...SHARED_STYLES.text.label(isDarkTheme),
+              fontSize: '10px',
+              marginBottom: '6px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              opacity: 0.8,
+              color: isDarkTheme ? '#60a5fa' : '#3b82f6'
+            }}>
+              Selected
+            </div>
+            <div style={{
+              ...SHARED_STYLES.text.body(isDarkTheme),
+              fontSize: '18px',
+              fontWeight: 700,
+              color: isDarkTheme ? '#60a5fa' : '#3b82f6'
+            }}>
+              {metricInfo.format(densityData.selectedStats.mean).split(' ')[0]}
+              <span style={{
+                fontSize: '11px',
+                fontWeight: 400,
+                marginLeft: '3px',
+                opacity: 0.7
+              }}>
+                {metricInfo.unit}
+              </span>
+            </div>
+          </div>
+          <div style={{ 
+            flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            paddingLeft: '12px',
+            borderLeft: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)'}`
+          }}>
+            <div style={{ flex: 1 }}>
+              <div style={{
+                ...SHARED_STYLES.text.muted(isDarkTheme),
+                fontSize: '9px',
+                marginBottom: '2px'
+              }}>
+                Range
+              </div>
+              <div style={{
+                ...SHARED_STYLES.text.body(isDarkTheme),
+                fontSize: '11px'
+              }}>
+                {metricInfo.format(densityData.selectedStats.min).split(' ')[0]} - {metricInfo.format(densityData.selectedStats.max).split(' ')[0]}
+              </div>
+            </div>
+            <div>
+              <div style={{
+                ...SHARED_STYLES.text.muted(isDarkTheme),
+                fontSize: '9px',
+                marginBottom: '2px'
+              }}>
+                Samples
+              </div>
+              <div style={{
+                ...SHARED_STYLES.text.body(isDarkTheme),
+                fontSize: '14px',
+                fontWeight: 600
+              }}>
+                {densityData.selectedStats.count}
+              </div>
+            </div>
+          </div>
         </div>
-        <div style={SHARED_STYLES.text.muted(isDarkTheme)}>
-          Range: <span style={SHARED_STYLES.text.body(isDarkTheme)}>
-            {metricInfo.format(densityData.min)} - {metricInfo.format(densityData.max)}
-          </span>
-        </div>
-        <div style={SHARED_STYLES.text.muted(isDarkTheme)}>
-          Total regions: <span style={SHARED_STYLES.text.body(isDarkTheme)}>
-            {densityData.totalRegions}
-          </span>
+        
+        {/* Other Districts Stats */}
+        <div style={{
+          backgroundColor: isDarkTheme ? 'rgba(239, 68, 68, 0.08)' : 'rgba(239, 68, 68, 0.06)',
+          border: `1px solid ${isDarkTheme ? 'rgba(239, 68, 68, 0.2)' : 'rgba(239, 68, 68, 0.15)'}`,
+          borderRadius: '8px',
+          padding: '12px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '16px'
+        }}>
+          <div style={{ flex: '0 0 auto' }}>
+            <div style={{
+              ...SHARED_STYLES.text.label(isDarkTheme),
+              fontSize: '10px',
+              marginBottom: '6px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              opacity: 0.8,
+              color: isDarkTheme ? '#f87171' : '#ef4444'
+            }}>
+              Others
+            </div>
+            <div style={{
+              ...SHARED_STYLES.text.body(isDarkTheme),
+              fontSize: '18px',
+              fontWeight: 700,
+              color: isDarkTheme ? '#f87171' : '#ef4444'
+            }}>
+              {metricInfo.format(densityData.otherStats.mean).split(' ')[0]}
+              <span style={{
+                fontSize: '11px',
+                fontWeight: 400,
+                marginLeft: '3px',
+                opacity: 0.7
+              }}>
+                {metricInfo.unit}
+              </span>
+            </div>
+          </div>
+          <div style={{ 
+            flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            paddingLeft: '12px',
+            borderLeft: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)'}`
+          }}>
+            <div style={{ flex: 1 }}>
+              <div style={{
+                ...SHARED_STYLES.text.muted(isDarkTheme),
+                fontSize: '9px',
+                marginBottom: '2px'
+              }}>
+                Range
+              </div>
+              <div style={{
+                ...SHARED_STYLES.text.body(isDarkTheme),
+                fontSize: '11px'
+              }}>
+                {metricInfo.format(densityData.otherStats.min).split(' ')[0]} - {metricInfo.format(densityData.otherStats.max).split(' ')[0]}
+              </div>
+            </div>
+            <div>
+              <div style={{
+                ...SHARED_STYLES.text.muted(isDarkTheme),
+                fontSize: '9px',
+                marginBottom: '2px'
+              }}>
+                Samples
+              </div>
+              <div style={{
+                ...SHARED_STYLES.text.body(isDarkTheme),
+                fontSize: '14px',
+                fontWeight: 600
+              }}>
+                {densityData.otherStats.count}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

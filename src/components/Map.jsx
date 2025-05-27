@@ -181,7 +181,7 @@ const MapComponent = () => {
   const [isDarkTheme, setIsDarkTheme] = useState(true);
   
   // Satellite mode state
-  const [isSatellite, setIsSatellite] = useState(false);
+  const [isSatellite, setIsSatellite] = useState(true);
   
   // Panel states
   const [activeTab, setActiveTab] = useState('analysis'); // 'analysis' | 'charts' | 'selection'
@@ -206,7 +206,7 @@ const MapComponent = () => {
   });
 
   // Load map data including PDS grids
-  const { boundaries, pdsGridsData, loading, error, totalValue } = useMapData();
+  const { boundaries, pdsGridsData, timeSeriesData, loading, error, totalValue } = useMapData();
 
   // Add sidebar state
   const [isSidebarOpen, setIsSidebarOpen] = useState(!isMobile);
@@ -820,6 +820,7 @@ const MapComponent = () => {
               boundaries={boundaries}
               selectedMetric={selectedMetric}
               selectedRegion={selectedRegion}
+              timeSeriesData={timeSeriesData}
               onClose={() => setSelectedRegion(null)}
               style={{
                 position: 'absolute',
