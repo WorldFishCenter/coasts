@@ -1,11 +1,11 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, memo } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { X } from 'lucide-react';
 import { SHARED_STYLES } from '../../utils/gridLayerConfig';
 import { getMetricInfo, formatRegionName } from '../../utils/formatters';
 import { getTimeSeriesForRegion } from '../../services/dataService';
 
-const DistributionHistogram = ({ 
+const DistributionHistogram = memo(({ 
   isDarkTheme, 
   boundaries, 
   selectedMetric, 
@@ -14,6 +14,14 @@ const DistributionHistogram = ({
   onClose,
   style 
 }) => {
+  // Helper function to extract numeric value from formatted metric string
+  const extractNumericValue = (formattedValue) => {
+    if (!formattedValue || formattedValue === 'N/A') return 'N/A';
+    // Remove currency symbols, units, and extract just the number
+    const match = formattedValue.match(/[\d.]+/);
+    return match ? match[0] : formattedValue;
+  };
+
   // Calculate density plot data for time series
   const densityData = useMemo(() => {
     if (!boundaries || !boundaries.features || !timeSeriesData || !selectedRegion) return null;
@@ -246,16 +254,16 @@ const DistributionHistogram = ({
           
           <Tooltip 
             content={<CustomTooltip />}
-            cursor={false}
+            cursor={true}
           />
           
-          <Legend 
+          {/* <Legend 
             wrapperStyle={{
               paddingTop: '5px',
               fontSize: '11px'
             }}
             iconType="line"
-          />
+          /> */}
           
           {/* Selected district line */}
           <Line 
@@ -287,7 +295,7 @@ const DistributionHistogram = ({
         display: 'grid',
         gridTemplateColumns: '1fr 1fr',
         gap: '12px',
-        marginTop: '16px'
+        marginTop: '1px'
       }}>
         {/* Selected District Stats */}
         <div style={{
@@ -302,14 +310,14 @@ const DistributionHistogram = ({
           <div style={{ flex: '0 0 auto' }}>
             <div style={{
               ...SHARED_STYLES.text.label(isDarkTheme),
-              fontSize: '10px',
+              fontSize: '12px',
               marginBottom: '6px',
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
               opacity: 0.8,
               color: isDarkTheme ? '#60a5fa' : '#3b82f6'
             }}>
-              Selected
+              {formatRegionName(selectedRegion?.properties)}
             </div>
             <div style={{
               ...SHARED_STYLES.text.body(isDarkTheme),
@@ -317,7 +325,7 @@ const DistributionHistogram = ({
               fontWeight: 700,
               color: isDarkTheme ? '#60a5fa' : '#3b82f6'
             }}>
-              {metricInfo.format(densityData.selectedStats.mean).split(' ')[0]}
+              {extractNumericValue(metricInfo.format(densityData.selectedStats.mean))}
               <span style={{
                 fontSize: '11px',
                 fontWeight: 400,
@@ -348,7 +356,7 @@ const DistributionHistogram = ({
                 ...SHARED_STYLES.text.body(isDarkTheme),
                 fontSize: '11px'
               }}>
-                {metricInfo.format(densityData.selectedStats.min).split(' ')[0]} - {metricInfo.format(densityData.selectedStats.max).split(' ')[0]}
+                {extractNumericValue(metricInfo.format(densityData.selectedStats.min))} - {extractNumericValue(metricInfo.format(densityData.selectedStats.max))}
               </div>
             </div>
             <div>
@@ -383,7 +391,7 @@ const DistributionHistogram = ({
           <div style={{ flex: '0 0 auto' }}>
             <div style={{
               ...SHARED_STYLES.text.label(isDarkTheme),
-              fontSize: '10px',
+              fontSize: '12px',
               marginBottom: '6px',
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
@@ -398,7 +406,7 @@ const DistributionHistogram = ({
               fontWeight: 700,
               color: isDarkTheme ? '#f87171' : '#ef4444'
             }}>
-              {metricInfo.format(densityData.otherStats.mean).split(' ')[0]}
+              {extractNumericValue(metricInfo.format(densityData.otherStats.mean))}
               <span style={{
                 fontSize: '11px',
                 fontWeight: 400,
@@ -429,7 +437,7 @@ const DistributionHistogram = ({
                 ...SHARED_STYLES.text.body(isDarkTheme),
                 fontSize: '11px'
               }}>
-                {metricInfo.format(densityData.otherStats.min).split(' ')[0]} - {metricInfo.format(densityData.otherStats.max).split(' ')[0]}
+                {extractNumericValue(metricInfo.format(densityData.otherStats.min))} - {extractNumericValue(metricInfo.format(densityData.otherStats.max))}
               </div>
             </div>
             <div>
@@ -453,6 +461,6 @@ const DistributionHistogram = ({
       </div>
     </div>
   );
-};
+});
 
 export default DistributionHistogram; 
