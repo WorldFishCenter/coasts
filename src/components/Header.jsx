@@ -122,15 +122,15 @@ const Header = ({
               fontWeight: 700,
               letterSpacing: '-0.02em'
             }}>
-              SSFs explorer
+              COASTS
             </h1>
             <div style={{ 
               ...SHARED_STYLES.text.muted(isDarkTheme),
               fontSize: '12px',
-              marginTop: '2px',
-              letterSpacing: '0.02em'
+              marginTop: '-2px',
+              letterSpacing: '0.01em'
             }}>
-              Interactive Analysis Tool
+              Small Scale Fisheries Analysis Platform
             </div>
           </div>
         </div>
@@ -320,7 +320,7 @@ const Header = ({
                 fontSize: '24px',
                 fontWeight: 700
               }}>
-                About SSFs Explorer
+                About COASTS
               </h2>
             </div>
             
@@ -330,7 +330,7 @@ const Header = ({
                 marginBottom: '20px',
                 fontSize: '14px'
               }}>
-                The <strong>Small Scale Fisheries (SSFs) Explorer</strong> is a research platform that transforms GPS tracking data and fisheries surveys into actionable insights for coastal communities, researchers, and policymakers across the Western Indian Ocean region.
+                <strong>COASTS</strong> is a research platform that transforms GPS tracking data and fisheries surveys into actionable insights for coastal communities, researchers, and policymakers across the Western Indian Ocean region.
               </p>
 
               {/* What you can discover section */}
@@ -546,7 +546,7 @@ const Header = ({
                     ...SHARED_STYLES.text.muted(isDarkTheme),
                     fontSize: '12px'
                   }}>
-                    PESKAS SSFs Explorer v1.0.0
+                    PESKAS | COASTS v1.0.0
                   </span>
                   <span style={{
                     ...SHARED_STYLES.text.muted(isDarkTheme),
