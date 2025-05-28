@@ -230,6 +230,9 @@ const MapComponent = () => {
       <Header 
         isDarkTheme={isDarkTheme} 
         onThemeChange={handleThemeChange}
+        boundaries={boundaries}
+        timeSeriesData={timeSeriesData}
+        pdsGridsData={pdsGridsData}
       />
       
       <div style={{

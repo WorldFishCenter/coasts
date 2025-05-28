@@ -1,16 +1,53 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Info, Sun, Moon } from 'lucide-react';
 import { SHARED_STYLES } from '../utils/gridLayerConfig';
+import { getLatestDate, getUniqueCountries } from '../services/dataService';
 
 const Header = ({ 
   isDarkTheme,
-  onThemeChange
+  onThemeChange,
+  // Dynamic data props
+  boundaries,
+  timeSeriesData,
+  pdsGridsData
 }) => {
   const [showAbout, setShowAbout] = useState(false);
 
   const handleThemeToggle = () => {
     onThemeChange(!isDarkTheme);
   };
+
+  // Calculate dynamic statistics
+  const dynamicStats = useMemo(() => {
+    const stats = {
+      totalRegions: 0,
+      totalCountries: 0,
+      lastSyncDate: 'Loading...',
+      totalGridCells: 0
+    };
+
+    if (boundaries?.features) {
+      stats.totalRegions = boundaries.features.length;
+      stats.totalCountries = getUniqueCountries(boundaries).length;
+    }
+
+    if (timeSeriesData) {
+      const latestDate = getLatestDate(timeSeriesData);
+      if (latestDate) {
+        const date = new Date(latestDate);
+        stats.lastSyncDate = date.toLocaleDateString('en-US', { 
+          year: 'numeric', 
+          month: 'long' 
+        });
+      }
+    }
+
+    if (pdsGridsData?.length) {
+      stats.totalGridCells = pdsGridsData.length;
+    }
+
+    return stats;
+  }, [boundaries, timeSeriesData, pdsGridsData]);
 
   return (
     <>
@@ -290,29 +327,31 @@ const Header = ({
             <div style={{ lineHeight: '1.6' }}>
               <p style={{
                 ...SHARED_STYLES.text.body(isDarkTheme),
-                marginBottom: '16px'
+                marginBottom: '20px',
+                fontSize: '14px'
               }}>
-                The SSFs explorer is an interactive mapping tool designed to visualize and analyze small scale fisheries data in coastal regions. This tool is part of a broader initiative to understand and monitor coastal development, resource distribution, and demographic patterns.
+                The <strong>Small Scale Fisheries (SSFs) Explorer</strong> is a research platform that transforms GPS tracking data and fisheries surveys into actionable insights for coastal communities, researchers, and policymakers across the Western Indian Ocean region.
               </p>
 
-              {/* Features section */}
+              {/* What you can discover section */}
               <div style={{
-                backgroundColor: isDarkTheme ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)',
-                borderRadius: '10px',
+                backgroundColor: isDarkTheme ? 'rgba(59, 130, 246, 0.08)' : 'rgba(59, 130, 246, 0.05)',
+                borderRadius: '12px',
                 padding: '20px',
                 marginBottom: '20px',
-                border: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)'}`
+                border: `1px solid ${isDarkTheme ? 'rgba(59, 130, 246, 0.2)' : 'rgba(59, 130, 246, 0.15)'}`
               }}>
                 <h3 style={{ 
                   ...SHARED_STYLES.text.subheading(isDarkTheme),
                   fontSize: '16px',
                   marginTop: 0,
-                  marginBottom: '12px',
+                  marginBottom: '14px',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '8px'
+                  gap: '8px',
+                  color: isDarkTheme ? '#60a5fa' : '#3b82f6'
                 }}>
-                  <span style={{ fontSize: '20px' }}>✨</span> Key Features
+                  <span style={{ fontSize: '20px' }}>🎯</span> What You Can Discover
                 </h3>
                 <ul style={{ 
                   margin: 0,
@@ -320,38 +359,85 @@ const Header = ({
                   ...SHARED_STYLES.text.body(isDarkTheme),
                   fontSize: '13px'
                 }}>
-                  <li style={{ marginBottom: '8px' }}>Interactive district selection and comparison</li>
-                  <li style={{ marginBottom: '8px' }}>Real-time data visualization with customizable parameters</li>
-                  <li style={{ marginBottom: '8px' }}>Advanced filtering and analysis tools</li>
-                  <li>Export capabilities for further analysis</li>
+                  <li style={{ marginBottom: '8px' }}><strong>Fishing Hotspots:</strong> Identify where fishers spend the most time and effort using GPS heat maps</li>
+                  <li style={{ marginBottom: '8px' }}><strong>Catch Efficiency:</strong> Compare CPUE (Catch Per Unit Effort) across different coastal regions</li>
+                  <li style={{ marginBottom: '8px' }}><strong>Economic Patterns:</strong> Analyze fish prices and revenue trends over time</li>
+                  <li><strong>Regional Comparisons:</strong> Benchmark fishing performance between Western Indian Ocean districts</li>
                 </ul>
               </div>
 
-              {/* Data sources section */}
+              {/* Interactive tools section */}
               <div style={{
-                backgroundColor: isDarkTheme ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)',
-                borderRadius: '10px',
+                backgroundColor: isDarkTheme ? 'rgba(34, 197, 94, 0.08)' : 'rgba(34, 197, 94, 0.05)',
+                borderRadius: '12px',
                 padding: '20px',
                 marginBottom: '20px',
-                border: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)'}`
+                border: `1px solid ${isDarkTheme ? 'rgba(34, 197, 94, 0.2)' : 'rgba(34, 197, 94, 0.15)'}`
               }}>
                 <h3 style={{ 
                   ...SHARED_STYLES.text.subheading(isDarkTheme),
                   fontSize: '16px',
                   marginTop: 0,
-                  marginBottom: '12px',
+                  marginBottom: '14px',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '8px'
+                  gap: '8px',
+                  color: isDarkTheme ? '#4ade80' : '#22c55e'
                 }}>
-                  <span style={{ fontSize: '20px' }}>📊</span> Data Sources
+                  <span style={{ fontSize: '20px' }}>🛠️</span> Interactive Analysis Tools
+                </h3>
+                <div style={{ 
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '12px',
+                  ...SHARED_STYLES.text.body(isDarkTheme),
+                  fontSize: '13px'
+                }}>
+                  <div>
+                    <strong>3D Fishing Effort Visualization</strong><br/>
+                    <span style={{ opacity: 0.8 }}>Column heights show time spent fishing in 1km² grid cells</span>
+                  </div>
+                  <div>
+                    <strong>Time-based Filtering</strong><br/>
+                    <span style={{ opacity: 0.8 }}>Filter by fishing duration (0.5h to 8+ hours)</span>
+                  </div>
+                  <div>
+                    <strong>Metric Comparison</strong><br/>
+                    <span style={{ opacity: 0.8 }}>Switch between CPUE, CPUA, RPUE, and price data</span>
+                  </div>
+                  <div>
+                    <strong>Regional Selection</strong><br/>
+                    <span style={{ opacity: 0.8 }}>Click districts to view detailed statistics</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Data insights section */}
+              <div style={{
+                backgroundColor: isDarkTheme ? 'rgba(168, 85, 247, 0.08)' : 'rgba(168, 85, 247, 0.05)',
+                borderRadius: '12px',
+                padding: '20px',
+                marginBottom: '20px',
+                border: `1px solid ${isDarkTheme ? 'rgba(168, 85, 247, 0.2)' : 'rgba(168, 85, 247, 0.15)'}`
+              }}>
+                <h3 style={{ 
+                  ...SHARED_STYLES.text.subheading(isDarkTheme),
+                  fontSize: '16px',
+                  marginTop: 0,
+                  marginBottom: '14px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  color: isDarkTheme ? '#a855f7' : '#8b5cf6'
+                }}>
+                  <span style={{ fontSize: '20px' }}>📈</span> Real-Time Data Sources
                 </h3>
                 <p style={{
                   ...SHARED_STYLES.text.body(isDarkTheme),
                   fontSize: '13px',
                   marginBottom: '12px'
                 }}>
-                  The map utilizes district-level data collected from various sources:
+                  Our platform integrates multiple data streams updated every 2 days:
                 </p>
                 <ul style={{ 
                   margin: 0,
@@ -359,33 +445,124 @@ const Header = ({
                   ...SHARED_STYLES.text.body(isDarkTheme),
                   fontSize: '13px'
                 }}>
-                  <li style={{ marginBottom: '8px' }}>Administrative boundaries from national mapping agencies</li>
-                  <li style={{ marginBottom: '8px' }}>Demographic data from recent census</li>
-                  <li style={{ marginBottom: '8px' }}>Economic indicators from regional development reports</li>
-                  <li>Environmental metrics from coastal monitoring stations</li>
+                  <li style={{ marginBottom: '8px' }}><strong>GPS Tracking Data:</strong> {dynamicStats.totalGridCells.toLocaleString()} vessel movement patterns aggregated into 1km grids</li>
+                  <li style={{ marginBottom: '8px' }}><strong>Fisheries Surveys:</strong> Catch, effort, and economic data from {dynamicStats.totalRegions} coastal communities</li>
+                  <li style={{ marginBottom: '8px' }}><strong>Administrative Boundaries:</strong> Official district boundaries for {dynamicStats.totalCountries} countries</li>
+                  <li><strong>Market Data:</strong> Fish price trends and revenue calculations across all regions</li>
                 </ul>
               </div>
 
-              {/* Version info */}
+              {/* Use cases section */}
+              <div style={{
+                backgroundColor: isDarkTheme ? 'rgba(245, 158, 11, 0.08)' : 'rgba(245, 158, 11, 0.05)',
+                borderRadius: '12px',
+                padding: '20px',
+                marginBottom: '20px',
+                border: `1px solid ${isDarkTheme ? 'rgba(245, 158, 11, 0.2)' : 'rgba(245, 158, 11, 0.15)'}`
+              }}>
+                <h3 style={{ 
+                  ...SHARED_STYLES.text.subheading(isDarkTheme),
+                  fontSize: '16px',
+                  marginTop: 0,
+                  marginBottom: '14px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  color: isDarkTheme ? '#fbbf24' : '#f59e0b'
+                }}>
+                  <span style={{ fontSize: '20px' }}>🎓</span> Who Uses This Tool
+                </h3>
+                <div style={{ 
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '12px',
+                  ...SHARED_STYLES.text.body(isDarkTheme),
+                  fontSize: '13px'
+                }}>
+                  <div>
+                    <strong>Marine Researchers</strong><br/>
+                    <span style={{ opacity: 0.8 }}>Study fishing patterns and ecosystem impacts</span>
+                  </div>
+                  <div>
+                    <strong>Policy Makers</strong><br/>
+                    <span style={{ opacity: 0.8 }}>Design evidence-based fisheries management</span>
+                  </div>
+                  <div>
+                    <strong>Conservation Groups</strong><br/>
+                    <span style={{ opacity: 0.8 }}>Monitor fishing pressure in protected areas</span>
+                  </div>
+                  <div>
+                    <strong>Fishing Communities</strong><br/>
+                    <span style={{ opacity: 0.8 }}>Understand local fishing dynamics</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Quick start guide */}
+              <div style={{
+                backgroundColor: isDarkTheme ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)',
+                borderRadius: '12px',
+                padding: '20px',
+                marginBottom: '20px',
+                border: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)'}`
+              }}>
+                <h3 style={{ 
+                  ...SHARED_STYLES.text.subheading(isDarkTheme),
+                  fontSize: '16px',
+                  marginTop: 0,
+                  marginBottom: '14px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}>
+                  <span style={{ fontSize: '20px' }}>🚀</span> Quick Start Guide
+                </h3>
+                <ol style={{ 
+                  margin: 0,
+                  paddingLeft: '20px',
+                  ...SHARED_STYLES.text.body(isDarkTheme),
+                  fontSize: '13px'
+                }}>
+                  <li style={{ marginBottom: '8px' }}>Click any district on the map to view detailed fisheries data</li>
+                  <li style={{ marginBottom: '8px' }}>Toggle between satellite and street view using the map style button</li>
+                  <li style={{ marginBottom: '8px' }}>Switch visualization modes between 3D columns and heat maps</li>
+                  <li style={{ marginBottom: '8px' }}>Use the legend panel to filter fishing effort by time ranges</li>
+                  <li>Compare different metrics (CPUE, prices) using the dropdown selector</li>
+                </ol>
+              </div>
+
+              {/* Footer with version and credits */}
               <div style={{
                 borderTop: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)'}`,
                 paddingTop: '16px',
                 display: 'flex',
                 justifyContent: 'space-between',
-                alignItems: 'center'
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: '8px'
               }}>
-                <span style={{
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <span style={{
+                    ...SHARED_STYLES.text.muted(isDarkTheme),
+                    fontSize: '12px'
+                  }}>
+                    PESKAS SSFs Explorer v1.0.0
+                  </span>
+                  <span style={{
+                    ...SHARED_STYLES.text.muted(isDarkTheme),
+                    fontSize: '11px'
+                  }}>
+                    Data updated every 2 days • Last sync: {dynamicStats.lastSyncDate}
+                  </span>
+                </div>
+                <div style={{
                   ...SHARED_STYLES.text.muted(isDarkTheme),
-                  fontSize: '12px'
+                  fontSize: '11px',
+                  textAlign: 'right'
                 }}>
-                  Version 1.0.0
-                </span>
-                <span style={{
-                  ...SHARED_STYLES.text.muted(isDarkTheme),
-                  fontSize: '12px'
-                }}>
-                  Last Updated: February 2024
-                </span>
+                  Covering {dynamicStats.totalCountries} countries<br/>
+                  {dynamicStats.totalRegions} regions • {dynamicStats.totalGridCells.toLocaleString()} GPS grid cells
+                </div>
               </div>
             </div>
           </div>
