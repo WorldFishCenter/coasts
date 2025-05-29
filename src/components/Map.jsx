@@ -1,14 +1,16 @@
-import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+import { useState, useCallback, useEffect, useMemo, useRef, lazy, Suspense } from 'react';
 import DeckGL from '@deck.gl/react';
 import { Map as MapGL } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
-// Components
+// Components - Lazy load heavy components
 import Header from './Header';
 import Sidebar from './Sidebar';
-import DistributionHistogram from './map/DistributionHistogram';
 import UnifiedLegend from './map/UnifiedLegend';
 import MapStyleToggle from './map/MapStyleToggle';
+
+// Lazy loaded components
+const DistributionHistogram = lazy(() => import('./map/DistributionHistogram'));
 
 // Hooks
 import { useMapData } from '../hooks/useMapData';
@@ -46,7 +48,7 @@ const MapComponent = () => {
   const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
   
   // Analysis states
-  const [opacity] = useState(0.9);
+  const [opacity, setOpacity] = useState(0.7);
   const [selectedMetric, setSelectedMetric] = useState('mean_cpue');
   const [selectedRanges, setSelectedRanges] = useState(TIME_BREAKS);
   const [selectedRegion, setSelectedRegion] = useState(null);
@@ -237,7 +239,7 @@ const MapComponent = () => {
       
       <div style={{
         position: 'relative',
-        flexGrow: 1,
+        flex: '1 1 auto',
         marginTop: '64px',
         display: 'flex',
         height: 'calc(100vh - 64px)',
@@ -315,21 +317,23 @@ const MapComponent = () => {
           />
 
           {selectedRegion && (
-            <DistributionHistogram
-              isDarkTheme={isDarkTheme}
-              boundaries={boundaries}
-              selectedMetric={selectedMetric}
-              selectedRegion={selectedRegion}
-              timeSeriesData={timeSeriesData}
-              onClose={() => setSelectedRegion(null)}
-              style={{
-                position: 'absolute',
-                bottom: '24px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                zIndex: 1001
-              }}
-            />
+            <Suspense fallback={<div>Loading distribution histogram...</div>}>
+              <DistributionHistogram
+                isDarkTheme={isDarkTheme}
+                boundaries={boundaries}
+                selectedMetric={selectedMetric}
+                selectedRegion={selectedRegion}
+                timeSeriesData={timeSeriesData}
+                onClose={() => setSelectedRegion(null)}
+                style={{
+                  position: 'absolute',
+                  bottom: '24px',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  zIndex: 1001
+                }}
+              />
+            </Suspense>
           )}
         </div>
       </div>

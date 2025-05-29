@@ -6,16 +6,16 @@ import { getMetricInfo } from '../../utils/formatters';
 // YlGnBu-8 palette from https://loading.io/color/feature/YlGnBu-8/
 export const COLORS = ['#ffffd9', '#edf8b1', '#c7e9b4', '#7fcdbb', '#41b6c4', '#1d91c0', '#225ea8', '#0c2c84'];
 
-const UnifiedLegend = memo(({ 
-  isDarkTheme, 
-  grades, 
-  selectedMetric, 
-  colorRange, 
-  hasGridData, 
-  visualizationMode 
+const UnifiedLegend = memo(({
+  isDarkTheme,
+  grades,
+  selectedMetric,
+  colorRange,
+  hasGridData,
+  visualizationMode
 }) => {
   const metricInfo = getMetricInfo(selectedMetric);
-  
+
   return (
     <div style={{
       ...SHARED_STYLES.glassPanel(isDarkTheme),
@@ -31,12 +31,13 @@ const UnifiedLegend = memo(({
         }}>
           {metricInfo.label} {metricInfo.unit && `(${metricInfo.unit})`}
         </h4>
+
         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
           {grades.map((grade, i) => (
-            <div 
-              key={i} 
-              style={{ 
-                display: 'flex', 
+            <div
+              key={i}
+              style={{
+                display: 'flex',
                 alignItems: 'center',
                 gap: '8px'
               }}
@@ -53,8 +54,7 @@ const UnifiedLegend = memo(({
                 ...SHARED_STYLES.text.body(isDarkTheme),
                 fontSize: '12px'
               }}>
-                {grade.toFixed(1)}{i < grades.length - 1 ? ` - ${grades[i + 1].toFixed(1)}` : '+'}
-              </span>
+                {grade.toFixed(1)}{i < grades.length - 1 ? ` - ${grades[i + 1].toFixed(1)}` : '+'}                </span>
             </div>
           ))}
         </div>
@@ -82,12 +82,12 @@ const UnifiedLegend = memo(({
                   const timeValue = range.min + (range.max === Infinity ? 8 : range.max - range.min) / 2;
                   const normalizedValue = Math.min(timeValue / 12, 1);
                   const opacity = 0.3 + (normalizedValue * 0.6);
-                  
+
                   return (
-                    <div 
+                    <div
                       key={index}
-                      style={{ 
-                        display: 'flex', 
+                      style={{
+                        display: 'flex',
                         alignItems: 'center',
                         gap: '8px'
                       }}
