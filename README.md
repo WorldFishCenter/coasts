@@ -15,7 +15,6 @@ Interactive map visualization for coastal regions using React and Mapbox GL JS.
 
 - React
 - Mapbox GL JS
-- ApexCharts for data visualization
 - Vite for build tooling
 - MongoDB for data storage
 - GitHub Actions for automated data updates
