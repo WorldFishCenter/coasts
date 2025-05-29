@@ -5,12 +5,12 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 
 // Components - Lazy load heavy components
 import Header from './Header';
-import Sidebar from './Sidebar';
 import UnifiedLegend from './map/UnifiedLegend';
 import MapStyleToggle from './map/MapStyleToggle';
 
 // Lazy loaded components
 const DistributionHistogram = lazy(() => import('./map/DistributionHistogram'));
+const Sidebar = lazy(() => import('./Sidebar'));
 
 // Hooks
 import { useMapData } from '../hooks/useMapData';
@@ -245,30 +245,32 @@ const MapComponent = () => {
         height: 'calc(100vh - 64px)',
         minHeight: 0
       }}>
-        <Sidebar
-          isDarkTheme={isDarkTheme}
-          isMobile={isMobile}
-          isOpen={true}
-          boundaries={boundaries}
-          selectedMetric={selectedMetric}
-          onMetricChange={setSelectedMetric}
-          transformedPdsData={transformedPdsData}
-          selectedRanges={selectedRanges}
-          onRangeToggle={handleRangeToggle}
-          selectedRegions={selectedRegionsForComparison}
-          onRegionSelect={handleRegionSelect}
-          onRegionRemove={handleRegionRemove}
-          selectedCountries={selectedCountries}
-          onCountryToggle={handleCountryToggle}
-          visualizationMode={visualizationMode}
-          onVisualizationModeChange={setVisualizationMode}
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            height: '100%'
-          }}
-        />
+        <Suspense fallback={<div>Loading Sidebar...</div>}>
+          <Sidebar
+            isDarkTheme={isDarkTheme}
+            isMobile={isMobile}
+            isOpen={true}
+            boundaries={boundaries}
+            selectedMetric={selectedMetric}
+            onMetricChange={setSelectedMetric}
+            transformedPdsData={transformedPdsData}
+            selectedRanges={selectedRanges}
+            onRangeToggle={handleRangeToggle}
+            selectedRegions={selectedRegionsForComparison}
+            onRegionSelect={handleRegionSelect}
+            onRegionRemove={handleRegionRemove}
+            selectedCountries={selectedCountries}
+            onCountryToggle={handleCountryToggle}
+            visualizationMode={visualizationMode}
+            onVisualizationModeChange={setVisualizationMode}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              height: '100%'
+            }}
+          />
+        </Suspense>
 
         <div style={{
           flexGrow: 1,
