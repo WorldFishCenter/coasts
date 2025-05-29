@@ -10,9 +10,6 @@ Interactive map visualization for coastal regions using React and Mapbox GL JS.
 - Dark/Light theme support
 - Mobile responsive design
 - Daily data updates from MongoDB via GitHub Actions
-- Deck.gl overlays for advanced data visualization
-- Recharts for statistical data visualization
-- MongoDB integration for data persistence
 
 ## Technologies
 
