@@ -42,4 +42,5 @@ jobs:
           git config --local user.name "GitHub Action"
           git add public/data/*.json
           git commit -m "Update MongoDB data (automated)" || echo "No changes to commit"
+          git pull --rebase origin ${{ github.ref_name }}
           git push 
