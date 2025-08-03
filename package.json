@@ -46,7 +46,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
     "postcss": "^8.4.35",
-    "rollup": "^4.9.6",
+    "rollup": "^4.46.2",
     "tailwindcss": "^4.1.7",
     "tw-animate-css": "^1.3.0",
     "vite": "^5.1.0"

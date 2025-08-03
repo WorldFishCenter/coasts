@@ -14,13 +14,6 @@ export default defineConfig({
   build: {
     chunkSizeWarningLimit: 1600,
     rollupOptions: {
-      external: (id) => {
-        // Handle Rollup native binary resolution issues
-        if (id.includes('@rollup/rollup-')) {
-          return false;
-        }
-        return false;
-      },
       output: {
         manualChunks: {
           'deck.gl': ['@deck.gl/core', '@deck.gl/layers', '@deck.gl/react', '@deck.gl/aggregation-layers'],
