@@ -286,6 +286,38 @@ const getFormattedMetrics = (metrics) => {
   };
 };
 
+/**
+ * Get average metrics for a region within a date range
+ * @param {Object} timeSeriesData - The time series data
+ * @param {string} country - Country name
+ * @param {string} region - Region name
+ * @param {string} startDate - Start date (inclusive, ISO string)
+ * @param {string} endDate - End date (inclusive, ISO string)
+ * @returns {Object|null} Average metrics or null if no data in range
+ */
+const getAverageMetricsInRange = (timeSeriesData, country, region, startDate, endDate) => {
+  const regionData = getTimeSeriesForRegion(timeSeriesData, country, region);
+  if (!regionData || !regionData.data || regionData.data.length === 0) {
+    return null;
+  }
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  // Filter entries within the range
+  const filtered = regionData.data.filter(entry => {
+    const d = new Date(entry.date);
+    return d >= start && d <= end;
+  });
+  if (filtered.length === 0) return null;
+  // Compute averages for each metric
+  const metrics = ['mean_cpue', 'mean_cpua', 'mean_rpue', 'mean_rpua', 'mean_price_kg'];
+  const avg = {};
+  metrics.forEach(metric => {
+    const vals = filtered.map(e => e[metric]).filter(v => typeof v === 'number' && !isNaN(v));
+    avg[metric] = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
+  });
+  return avg;
+};
+
 export const loadMapData = loadWioMapData;
 
 export {
@@ -302,5 +334,6 @@ export {
   getColorScale,
   getFormattedMetrics,
   validateGeoJSON,
-  validateTimeSeries
+  validateTimeSeries,
+  getAverageMetricsInRange
 }; 

@@ -12,8 +12,7 @@ import {
   Filter, 
   BarChart3, 
   Layers, 
-  ChevronDown, 
-  ChevronRight,
+  ChevronDown,
   Info,
   Globe,
   Activity,
@@ -197,20 +196,15 @@ const Sidebar = memo(({
   boundaries,
   selectedMetric,
   onMetricChange,
-  // Grid data props
   transformedPdsData,
   selectedRanges,
   onRangeToggle,
-  // New comparison props
   selectedRegions = [],
   onRegionSelect,
   onRegionRemove,
-  // Filter props
   selectedCountries = [],
   onCountryToggle,
-  // Style prop
   style = {},
-  // New visualization mode props
   visualizationMode,
   onVisualizationModeChange
 }) => {
@@ -722,29 +716,29 @@ const Sidebar = memo(({
             )}
           </div>
 
-          {/* Country Filter Section */}
-          <div style={{
+          {/* Filters Section (was Country Filter) */}
+          {/* <div style={{
             backgroundColor: isDarkTheme ? 'rgba(255, 255, 255, 0.02)' : 'rgba(0, 0, 0, 0.01)',
             borderRadius: '8px',
             border: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)'}`,
             overflow: 'hidden'
           }}>
             <SectionHeader
-              title="Country Filter"
+              title="Filters"
               subtitle={selectedCountries.length > 0 ? `${selectedCountries.length} selected` : 'All countries'}
               icon={Globe}
               isDarkTheme={isDarkTheme}
               isExpanded={expandedSections.filters}
               onToggle={() => toggleSection('filters')}
             />
-            
             {expandedSections.filters && (
               <div style={{
                 padding: '20px',
                 backgroundColor: isDarkTheme ? 'rgba(0, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.5)',
                 borderTop: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)'}`
               }}>
-                <div style={{ 
+                {/* Country checkboxes */}
+                {/* <div style={{ 
                   display: 'grid',
                   gridTemplateColumns: '1fr 1fr',
                   gap: '8px'
@@ -815,7 +809,7 @@ const Sidebar = memo(({
                 </div>
               </div>
             )}
-          </div>
+          </div> */} 
 
           {/* District Comparison Section */}
           <div style={{

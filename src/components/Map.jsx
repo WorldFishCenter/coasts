@@ -6,8 +6,9 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 // Components - Lazy load heavy components
 import Header from './Header';
 import Sidebar from './Sidebar';
-import UnifiedLegend from './map/UnifiedLegend';
+import EnhancedLegend from './map/EnhancedLegend';
 import MapStyleToggle from './map/MapStyleToggle';
+import TimeRangeControl from './map/TimeRangeControl';
 
 // Lazy loaded components
 const DistributionHistogram = lazy(() => import('./map/DistributionHistogram'));
@@ -22,6 +23,7 @@ import { getMapStyles } from '../styles/mapStyles';
 import { TIME_BREAKS, COLOR_RANGE } from '../utils/gridLayerConfig';
 import { processPdsData, transformPdsData } from '../utils/pdsDataProcessor';
 import { calculateMetricStats } from '../utils/metricCalculations';
+import { getAverageMetricsInRange } from '../services/dataService';
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
@@ -60,12 +62,74 @@ const MapComponent = () => {
   // Data loading states
   const [pdsDataLoaded, setPdsDataLoaded] = useState(false);
   
+  // Add state for date range (indices)
+  const [dateRange, setDateRange] = useState([0, 0]); // [startIdx, endIdx]
+  
   // Refs
   const mapRef = useRef(null);
   const deckRef = useRef(null);
+  const didSetDefault = useRef(false);
 
   // Load map data
   const { boundaries, pdsGridsData, timeSeriesData, loading, error } = useMapData();
+
+  // Extract all unique sorted dates from timeSeriesData
+  const allDates = useMemo(() => {
+    if (!timeSeriesData) return [];
+    const dates = Object.values(timeSeriesData)
+      .flatMap(region => region.data.map(d => d.date))
+      .filter(Boolean);
+    return Array.from(new Set(dates)).sort((a, b) => new Date(a) - new Date(b));
+  }, [timeSeriesData]);
+
+  // Set default date range when data loads
+  useEffect(() => {
+    if (
+      allDates.length > 1 &&
+      !didSetDefault.current
+    ) {
+      setDateRange([0, allDates.length - 1]);
+      didSetDefault.current = true;
+    }
+  }, [allDates]);
+
+  // Handler to clamp date range
+  const handleDateRangeChange = (range) => {
+    const [min, max] = range;
+    const clampedMin = Math.max(0, Math.min(min, allDates.length - 1));
+    const clampedMax = Math.max(clampedMin, Math.min(max, allDates.length - 1));
+    setDateRange([clampedMin, clampedMax]);
+  };
+
+  // Helper to enrich boundaries with average metrics in range
+  const getBoundariesWithAveragedMetrics = useCallback(() => {
+    if (!boundaries || !timeSeriesData || allDates.length === 0) return boundaries;
+    const [startIdx, endIdx] = dateRange;
+    const startDate = allDates[startIdx];
+    const endDate = allDates[endIdx];
+    return {
+      ...boundaries,
+      features: boundaries.features.map(feature => {
+        const country = feature.properties.country;
+        const region = feature.properties.region;
+        const avgMetrics = getAverageMetricsInRange(timeSeriesData, country, region, startDate, endDate);
+        return {
+          ...feature,
+          properties: {
+            ...feature.properties,
+            mean_cpue: avgMetrics?.mean_cpue ?? null,
+            mean_cpua: avgMetrics?.mean_cpua ?? null,
+            mean_rpue: avgMetrics?.mean_rpue ?? null,
+            mean_rpua: avgMetrics?.mean_rpua ?? null,
+            mean_price_kg: avgMetrics?.mean_price_kg ?? null
+          }
+        };
+      })
+    };
+  }, [boundaries, timeSeriesData, allDates, dateRange]);
+
+  // Use enriched boundaries for map and sidebar
+  const enrichedBoundaries = useMemo(() => getBoundariesWithAveragedMetrics(), [getBoundariesWithAveragedMetrics]);
 
   // Process PDS data when it loads
   useEffect(() => {
@@ -93,27 +157,26 @@ const MapComponent = () => {
     }));
   }, [visualizationMode]);
 
-  // Filter boundaries by selected countries
+  // Filter enriched boundaries by selected countries
   const filteredBoundaries = useMemo(() => {
-    if (!boundaries || selectedCountries.length === 0) return boundaries;
-    
+    if (!enrichedBoundaries || selectedCountries.length === 0) return enrichedBoundaries;
     return {
-      ...boundaries,
-      features: boundaries.features.filter(f => 
+      ...enrichedBoundaries,
+      features: enrichedBoundaries.features.filter(f => 
         selectedCountries.includes(f.properties.country)
       )
     };
-  }, [boundaries, selectedCountries]);
+  }, [enrichedBoundaries, selectedCountries]);
 
   // Transform PDS data based on selected ranges
   const transformedPdsData = useMemo(() => {
     return transformPdsData(selectedRanges);
   }, [selectedRanges, pdsDataLoaded]);
 
-  // Calculate metric statistics
+  // Calculate metric statistics based on enriched boundaries
   const metricStats = useMemo(() => {
-    return calculateMetricStats(boundaries, selectedMetric);
-  }, [boundaries, selectedMetric]);
+    return calculateMetricStats(enrichedBoundaries, selectedMetric);
+  }, [enrichedBoundaries, selectedMetric]);
 
   // Create map layers
   const layers = useMapLayers({
@@ -232,7 +295,7 @@ const MapComponent = () => {
       <Header 
         isDarkTheme={isDarkTheme} 
         onThemeChange={handleThemeChange}
-        boundaries={boundaries}
+        boundaries={enrichedBoundaries}
         timeSeriesData={timeSeriesData}
         pdsGridsData={pdsGridsData}
       />
@@ -249,7 +312,7 @@ const MapComponent = () => {
           isDarkTheme={isDarkTheme}
           isMobile={isMobile}
           isOpen={true}
-          boundaries={boundaries}
+          boundaries={enrichedBoundaries}
           selectedMetric={selectedMetric}
           onMetricChange={setSelectedMetric}
           transformedPdsData={transformedPdsData}
@@ -300,7 +363,7 @@ const MapComponent = () => {
             right: '24px',
             zIndex: 1000
           }}>
-            <UnifiedLegend 
+            <EnhancedLegend 
               isDarkTheme={isDarkTheme}
               grades={metricStats.grades}
               selectedMetric={selectedMetric}
@@ -314,6 +377,14 @@ const MapComponent = () => {
             isDarkTheme={isDarkTheme}
             isSatellite={isSatellite}
             onToggle={handleMapStyleToggle}
+          />
+
+          <TimeRangeControl
+            timeSeriesData={timeSeriesData}
+            dateRange={dateRange}
+            onDateRangeChange={handleDateRangeChange}
+            isDarkTheme={isDarkTheme}
+            isMobile={isMobile}
           />
 
           {selectedRegion && (
