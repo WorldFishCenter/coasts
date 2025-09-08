@@ -25,7 +25,7 @@ export const useMapLayers = ({
       const getColorForFeature = (feature) => {
         const value = feature.properties[selectedMetric];
         if (value === null || value === undefined || isNaN(value)) {
-          return [200, 200, 200, 255 * opacity];
+          return [0, 0, 0, 0]; // Transparent for NA values
         }
         
         // Find which grade this value falls into

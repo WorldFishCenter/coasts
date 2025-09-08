@@ -19,8 +19,8 @@ export const useMapTooltip = ({
       const metricInfo = getMetricInfo(selectedMetric);
       
       // Get the color for this value
-      let backgroundColor = 'rgba(200, 200, 200, 0.95)'; // Default gray for NA
-      let textColor = '#000000';
+      let backgroundColor = isDarkTheme ? 'rgba(60, 60, 60, 0.95)' : 'rgba(240, 240, 240, 0.95)'; // Neutral background for NA
+      let textColor = isDarkTheme ? '#ffffff' : '#000000';
       
       if (metricValue !== null && metricValue !== undefined && !isNaN(metricValue)) {
         // Find which grade this value falls into
