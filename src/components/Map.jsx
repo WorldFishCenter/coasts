@@ -73,12 +73,13 @@ const MapComponent = () => {
   // Load map data
   const { boundaries, pdsGridsData, timeSeriesData, loading, error } = useMapData();
 
-  // Extract all unique sorted dates from timeSeriesData
+  // Extract all unique sorted dates from timeSeriesData (from 2020 onwards)
   const allDates = useMemo(() => {
     if (!timeSeriesData) return [];
     const dates = Object.values(timeSeriesData)
       .flatMap(region => region.data.map(d => d.date))
-      .filter(Boolean);
+      .filter(Boolean)
+      .filter(date => new Date(date).getFullYear() >= 2020);
     return Array.from(new Set(dates)).sort((a, b) => new Date(a) - new Date(b));
   }, [timeSeriesData]);
 
