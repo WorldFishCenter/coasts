@@ -30,8 +30,8 @@ const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 // Initial viewport configuration
 const INITIAL_VIEW_STATE = {
   longitude: 39.0,
-  latitude: -5.5,
-  zoom: 7.2,
+  latitude: -7,
+  zoom: 5.7,
   pitch: 40,
   bearing: 0
 };
