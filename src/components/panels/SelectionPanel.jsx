@@ -1,5 +1,9 @@
 import { memo } from 'react';
 
+// Selection key: ADM2_PCODE if present, else GAUL key (country_gaul1_gaul2)
+const getDistrictKey = (props) =>
+  props.ADM2_PCODE ?? `${props.country}_${props.gaul1_name}_${props.gaul2_name}`;
+
 const SelectionPanel = memo(({ 
   isDarkTheme, 
   showPanel, 
@@ -114,7 +118,7 @@ const SelectionPanel = memo(({
               }}>
                 {selectedDistricts.map((district, index) => (
                   <div
-                    key={district.properties.ADM2_PCODE}
+                    key={getDistrictKey(district.properties)}
                     style={{
                       padding: isMobile ? '8px' : '10px',
                       backgroundColor: isDarkTheme 
@@ -130,14 +134,14 @@ const SelectionPanel = memo(({
                   >
                     <div>
                       <div style={{ fontWeight: 'bold', color: isDarkTheme ? '#fff' : '#2c3e50' }}>
-                        {district.properties.ADM2_PT || district.properties.ADM2_EN}
+                        {district.properties.gaul2_name || district.properties.ADM2_PT || district.properties.ADM2_EN}
                       </div>
                       <div style={{ fontSize: isMobile ? '11px' : '12px', color: isDarkTheme ? '#bbb' : '#7f8c8d' }}>
                         Value: {district.properties.value?.toLocaleString() || 0}
                       </div>
                     </div>
                     <button
-                      onClick={() => onRemoveDistrict(district.properties.ADM2_PCODE)}
+                      onClick={() => onRemoveDistrict(district)}
                       style={{
                         background: 'none',
                         border: 'none',

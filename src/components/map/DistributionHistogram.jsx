@@ -3,7 +3,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { X } from 'lucide-react';
 import { SHARED_STYLES } from '../../utils/gridLayerConfig';
 import { getMetricInfo, formatRegionName } from '../../utils/formatters';
-import { getTimeSeriesForRegion } from '../../services/dataService';
+import { getTimeSeriesForGaul, getTimeSeriesKey } from '../../services/dataService';
 
 const DistributionHistogram = memo(({ 
   isDarkTheme, 
@@ -26,29 +26,32 @@ const DistributionHistogram = memo(({
   const densityData = useMemo(() => {
     if (!boundaries || !boundaries.features || !timeSeriesData || !selectedRegion) return null;
 
-    const selectedCountry = selectedRegion.properties.country;
-    const selectedRegionName = selectedRegion.properties.region;
-    
-    // Get time series for selected region
-    const selectedTimeSeries = getTimeSeriesForRegion(timeSeriesData, selectedCountry, selectedRegionName);
+    const { country: selectedCountry, gaul1_name: selectedGaul1, gaul2_name: selectedGaul2 } = selectedRegion.properties;
+    const selectedKey = getTimeSeriesKey(selectedCountry, selectedGaul1, selectedGaul2);
+
+    // Get time series for selected region (same key logic as fetch pipeline)
+    const selectedTimeSeries = getTimeSeriesForGaul(timeSeriesData, selectedCountry, selectedGaul1, selectedGaul2);
     if (!selectedTimeSeries || !selectedTimeSeries.data) return null;
 
-    // Collect all time series data for other regions
+    // Extract values for selected region
+    const selectedValues = selectedTimeSeries.data
+      .map(entry => entry[selectedMetric])
+      .filter(v => v != null && !isNaN(v));
+    if (selectedValues.length === 0) return null;
+
+    // Collect all time series data for other regions (use same key for skip check)
     const otherRegionsData = [];
     boundaries.features.forEach(feature => {
-      if (feature.properties.country === selectedCountry && 
-          feature.properties.region === selectedRegionName) {
-        // Skip selected region
-        return;
-      }
-      
-      const regionTimeSeries = getTimeSeriesForRegion(
-        timeSeriesData, 
-        feature.properties.country, 
-        feature.properties.region
+      const { country, gaul1_name, gaul2_name } = feature.properties;
+      if (getTimeSeriesKey(country, gaul1_name, gaul2_name) === selectedKey) return;
+
+      const regionTimeSeries = getTimeSeriesForGaul(
+        timeSeriesData,
+        country,
+        gaul1_name,
+        gaul2_name
       );
-      
-      if (regionTimeSeries && regionTimeSeries.data) {
+      if (regionTimeSeries?.data) {
         regionTimeSeries.data.forEach(entry => {
           if (entry[selectedMetric] != null && !isNaN(entry[selectedMetric])) {
             otherRegionsData.push(entry[selectedMetric]);
@@ -57,56 +60,44 @@ const DistributionHistogram = memo(({
       }
     });
 
-    // Extract values for selected region
-    const selectedValues = selectedTimeSeries.data
-      .map(entry => entry[selectedMetric])
-      .filter(v => v != null && !isNaN(v));
-
-    if (selectedValues.length === 0 || otherRegionsData.length === 0) return null;
-
-    // Calculate range from all data
-    const allValues = [...selectedValues, ...otherRegionsData];
+    // Build range from selected + other (allow other to be empty)
+    const allValues = otherRegionsData.length > 0 ? [...selectedValues, ...otherRegionsData] : selectedValues;
     const min = Math.min(...allValues);
     const max = Math.max(...allValues);
-    const range = max - min;
-    
-    // Create density points
+    const range = max - min || 1;
+    const bandwidth = range * 0.15;
+
     const numPoints = 50;
-    const bandwidth = range * 0.15; // Bandwidth for kernel density estimation
-    
     const points = [];
     for (let i = 0; i <= numPoints; i++) {
       const x = min + (i / numPoints) * range;
-      
-      // Calculate density for selected region
       let selectedDensity = 0;
       selectedValues.forEach(value => {
         const u = (x - value) / bandwidth;
         selectedDensity += Math.exp(-0.5 * u * u) / Math.sqrt(2 * Math.PI);
       });
       selectedDensity = selectedDensity / (selectedValues.length * bandwidth);
-      
-      // Calculate density for other regions
+
       let otherDensity = 0;
-      otherRegionsData.forEach(value => {
-        const u = (x - value) / bandwidth;
-        otherDensity += Math.exp(-0.5 * u * u) / Math.sqrt(2 * Math.PI);
-      });
-      otherDensity = otherDensity / (otherRegionsData.length * bandwidth);
-      
+      if (otherRegionsData.length > 0) {
+        otherRegionsData.forEach(value => {
+          const u = (x - value) / bandwidth;
+          otherDensity += Math.exp(-0.5 * u * u) / Math.sqrt(2 * Math.PI);
+        });
+        otherDensity = otherDensity / (otherRegionsData.length * bandwidth);
+      }
+
       points.push({
         value: x,
-        selectedDensity: selectedDensity * 100, // Scale for visibility
+        selectedDensity: selectedDensity * 100,
         otherDensity: otherDensity * 100,
         label: x.toFixed(1)
       });
     }
 
-    // Normalize densities
     const maxSelectedDensity = Math.max(...points.map(p => p.selectedDensity));
     const maxOtherDensity = Math.max(...points.map(p => p.otherDensity));
-    const maxDensity = Math.max(maxSelectedDensity, maxOtherDensity);
-    
+    const maxDensity = Math.max(maxSelectedDensity, maxOtherDensity, 1);
     points.forEach(p => {
       p.selectedDensity = (p.selectedDensity / maxDensity) * 100;
       p.otherDensity = (p.otherDensity / maxDensity) * 100;
@@ -120,12 +111,14 @@ const DistributionHistogram = memo(({
         max: Math.max(...selectedValues),
         count: selectedValues.length
       },
-      otherStats: {
-        mean: otherRegionsData.reduce((a, b) => a + b, 0) / otherRegionsData.length,
-        min: Math.min(...otherRegionsData),
-        max: Math.max(...otherRegionsData),
-        count: otherRegionsData.length
-      },
+      otherStats: otherRegionsData.length > 0
+        ? {
+            mean: otherRegionsData.reduce((a, b) => a + b, 0) / otherRegionsData.length,
+            min: Math.min(...otherRegionsData),
+            max: Math.max(...otherRegionsData),
+            count: otherRegionsData.length
+          }
+        : { mean: 0, min: 0, max: 0, count: 0 },
       min,
       max
     };

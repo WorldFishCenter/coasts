@@ -39,9 +39,8 @@ export const useMapData = () => {
         const enrichedMapData = {
           ...mapData,
           features: mapData.features.map(feature => {
-            const country = feature.properties.country;
-            const region = feature.properties.region;
-            const latestMetrics = getLatestMetrics(timeSeries, country, region);
+            const { country, gaul1_name, gaul2_name } = feature.properties;
+            const latestMetrics = getLatestMetrics(timeSeries, country, gaul1_name, gaul2_name);
             
             return {
               ...feature,

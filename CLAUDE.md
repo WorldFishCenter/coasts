@@ -37,6 +37,16 @@ The application uses three main data sources:
 2. **Time Series Data** (`public/data/time_series.json`) - Historical fisheries metrics by region
 3. **PDS Grids Data** (`public/data/pds_grids.json`) - GPS movement data in 1km grid cells
 
+### GAUL Schema
+The app uses FAO GAUL (Global Administrative Unit Layers) for region identity:
+- **country** - Country name (lowercase, e.g. `kenya`, `tanzania`)
+- **gaul1_name** - Admin level 1 (state/province, e.g. `Tana River`, `Kilifi`)
+- **gaul2_name** - Admin level 2 (district, e.g. `Garsen`, `Kilifi North`)
+
+**Lookup key format**: `country_gaul1_name_gaul2_name` (e.g. `kenya_Tana River_Garsen`)
+
+MongoDB may use `gaul_2_name` (underscore before 2); fetch scripts normalize to `gaul2_name`. Map features may have `iso3_code` (e.g. KEN) instead of `country`; scripts map ISO3 to country.
+
 ### Key Components Structure
 - **Map.jsx** - Main map container with state management for all visualizations
 - **Sidebar.jsx** - Left panel with controls, filters, and analysis panels
@@ -66,6 +76,7 @@ MONGODB_URI=your_mongodb_connection_string
 ### Key State Management Patterns
 - Date range filtering uses start/end indices into sorted date arrays
 - Metrics are averaged over selected date ranges using `getAverageMetricsInRange()`
+- Region lookups use `getTimeSeriesForGaul(timeSeriesData, country, gaul1_name, gaul2_name)`
 - PDS grid data is transformed based on time range filters
 - All data processing uses memoization for performance
 

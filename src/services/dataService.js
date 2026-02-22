@@ -17,7 +17,7 @@ const validateGeoJSON = (data) => {
     if (!feature || typeof feature !== 'object') return false;
     if (feature.type !== 'Feature') return false;
     if (!feature.geometry || !feature.properties) return false;
-    if (!feature.properties.country || !feature.properties.region) return false;
+    if (!feature.properties.country || !feature.properties.gaul1_name || !feature.properties.gaul2_name) return false;
     return true;
   });
 };
@@ -152,27 +152,38 @@ const getUniqueCountries = (mapData) => {
 };
 
 /**
- * Get unique regions from WIO map data, optionally filtered by country
+ * Build canonical GAUL key for lookups
+ */
+const gaulKey = (country, gaul1Name, gaul2Name) =>
+  `${country}_${gaul1Name}_${gaul2Name}`;
+
+/** Country key aliases so map and time series join (e.g. zanzibar → tanzania for TZA polygons) */
+const COUNTRY_KEY_ALIASES = { zanzibar: 'tanzania' };
+const countryForKey = (country) =>
+  COUNTRY_KEY_ALIASES[country?.toLowerCase()] ?? country;
+
+/**
+ * Get unique GAUL2 regions from WIO map data, optionally filtered by country
  * @param {Object} mapData - The WIO map data
  * @param {string} [country] - Optional country to filter by
- * @returns {Array<string>} Array of unique regions
+ * @returns {Array<string>} Array of unique gaul2_name values
  */
-const getUniqueRegions = (mapData, country = null) => {
+const getUniqueGaul2Regions = (mapData, country = null) => {
   if (!mapData || !mapData.features || mapData.features.length === 0) {
     return [];
   }
 
   let features = mapData.features;
   if (country) {
-    features = features.filter(feature => 
+    features = features.filter(feature =>
       feature.properties.country === country
     );
   }
 
   const regions = features
-    .map(feature => feature.properties.region)
+    .map(feature => feature.properties.gaul2_name)
     .filter(Boolean);
-  
+
   return [...new Set(regions)];
 };
 
@@ -214,36 +225,43 @@ const getPdsGridsMinMax = (pdsGrids, field) => {
 };
 
 /**
- * Get time series for a specific region
+ * Get time series for a specific GAUL region
  * @param {Object} timeSeriesData - The time series data
  * @param {string} country - Country name
- * @param {string} region - Region name
+ * @param {string} gaul1Name - GAUL Admin 1 name
+ * @param {string} gaul2Name - GAUL Admin 2 name
  * @returns {Object|null} Time series data for the region or null if not found
  */
-const getTimeSeriesForRegion = (timeSeriesData, country, region) => {
-  const key = `${country}_${region}`;
-  return timeSeriesData[key] || null;
+const getTimeSeriesForGaul = (timeSeriesData, country, gaul1Name, gaul2Name) => {
+  const key = getTimeSeriesKey(country, gaul1Name, gaul2Name);
+  return timeSeriesData[key] ?? null;
 };
 
+/** Canonical key for time series lookup (same as fetch pipeline; exported for comparison logic) */
+const getTimeSeriesKey = (country, gaul1Name, gaul2Name) =>
+  gaulKey(countryForKey(country), gaul1Name, gaul2Name);
+
 /**
- * Get latest metrics for a region
+ * Get latest metrics for a GAUL region
  * @param {Object} timeSeriesData - The time series data
  * @param {string} country - Country name
- * @param {string} region - Region name
+ * @param {string} gaul1Name - GAUL Admin 1 name
+ * @param {string} gaul2Name - GAUL Admin 2 name
  * @returns {Object|null} Latest metrics for the region or null if not found
  */
-const getLatestMetrics = (timeSeriesData, country, region) => {
-  const regionData = getTimeSeriesForRegion(timeSeriesData, country, region);
+const METRIC_KEYS = ['mean_cpue', 'mean_cpua', 'mean_rpue', 'mean_rpua', 'mean_price_kg'];
+
+const hasMetric = (entry) =>
+  METRIC_KEYS.some((k) => typeof entry?.[k] === 'number' && !isNaN(entry[k]));
+
+const getLatestMetrics = (timeSeriesData, country, gaul1Name, gaul2Name) => {
+  const regionData = getTimeSeriesForGaul(timeSeriesData, country, gaul1Name, gaul2Name);
   if (!regionData || !regionData.data || regionData.data.length === 0) {
     return null;
   }
-  
-  // Sort by date and get the latest
-  const sortedData = [...regionData.data].sort((a, b) => 
-    new Date(b.date) - new Date(a.date)
-  );
-  
-  return sortedData[0];
+  const sorted = [...regionData.data].sort((a, b) => new Date(b.date) - new Date(a.date));
+  const withMetrics = sorted.find(hasMetric);
+  return withMetrics ?? sorted[0] ?? null;
 };
 
 /**
@@ -287,16 +305,17 @@ const getFormattedMetrics = (metrics) => {
 };
 
 /**
- * Get average metrics for a region within a date range
+ * Get average metrics for a GAUL region within a date range
  * @param {Object} timeSeriesData - The time series data
  * @param {string} country - Country name
- * @param {string} region - Region name
+ * @param {string} gaul1Name - GAUL Admin 1 name
+ * @param {string} gaul2Name - GAUL Admin 2 name
  * @param {string} startDate - Start date (inclusive, ISO string)
  * @param {string} endDate - End date (inclusive, ISO string)
  * @returns {Object|null} Average metrics or null if no data in range
  */
-const getAverageMetricsInRange = (timeSeriesData, country, region, startDate, endDate) => {
-  const regionData = getTimeSeriesForRegion(timeSeriesData, country, region);
+const getAverageMetricsInRange = (timeSeriesData, country, gaul1Name, gaul2Name, startDate, endDate) => {
+  const regionData = getTimeSeriesForGaul(timeSeriesData, country, gaul1Name, gaul2Name);
   if (!regionData || !regionData.data || regionData.data.length === 0) {
     return null;
   }
@@ -326,10 +345,11 @@ export {
   loadTimeSeriesData,
   getLatestDate,
   getUniqueCountries,
-  getUniqueRegions,
+  getUniqueGaul2Regions,
+  getTimeSeriesKey,
   formatPdsGridsForHeatmap,
   getPdsGridsMinMax,
-  getTimeSeriesForRegion,
+  getTimeSeriesForGaul,
   getLatestMetrics,
   getColorScale,
   getFormattedMetrics,

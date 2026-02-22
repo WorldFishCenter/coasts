@@ -111,9 +111,8 @@ const MapComponent = () => {
     return {
       ...boundaries,
       features: boundaries.features.map(feature => {
-        const country = feature.properties.country;
-        const region = feature.properties.region;
-        const avgMetrics = getAverageMetricsInRange(timeSeriesData, country, region, startDate, endDate);
+        const { country, gaul1_name, gaul2_name } = feature.properties;
+        const avgMetrics = getAverageMetricsInRange(timeSeriesData, country, gaul1_name, gaul2_name, startDate, endDate);
         return {
           ...feature,
           properties: {
@@ -244,21 +243,26 @@ const MapComponent = () => {
     });
   }, []);
 
+  // Selection key: ADM2_PCODE if present, else GAUL key (country_gaul1_gaul2)
+  const getRegionKey = useCallback((props) =>
+    props.ADM2_PCODE ?? `${props.country}_${props.gaul1_name}_${props.gaul2_name}`,
+  []);
+
   const handleRegionSelect = useCallback((region) => {
+    const key = getRegionKey(region.properties);
     setSelectedRegionsForComparison(prev => {
-      const exists = prev.some(r => 
-        r.properties.ADM2_PCODE === region.properties.ADM2_PCODE
-      );
+      const exists = prev.some(r => getRegionKey(r.properties) === key);
       if (exists) return prev;
       return [...prev, region];
     });
-  }, []);
+  }, [getRegionKey]);
 
   const handleRegionRemove = useCallback((region) => {
-    setSelectedRegionsForComparison(prev => 
-      prev.filter(r => r.properties.ADM2_PCODE !== region.properties.ADM2_PCODE)
+    const key = getRegionKey(region.properties);
+    setSelectedRegionsForComparison(prev =>
+      prev.filter(r => getRegionKey(r.properties) !== key)
     );
-  }, []);
+  }, [getRegionKey]);
 
   const handleRegionClick = useCallback((info) => {
     if (info.object && info.layer.id === 'wio-regions') {
