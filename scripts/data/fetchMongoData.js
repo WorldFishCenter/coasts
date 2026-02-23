@@ -7,7 +7,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const MONGODB_URI = process.env.MONGODB_URI;
-const DB_NAME = 'portal-dev';
+const DB_NAME = 'portal';
 const OUTPUT_DIR = path.join(process.cwd(), 'public', 'data');
 
 /** GAUL metric columns - pass through if present, default to null if missing */
