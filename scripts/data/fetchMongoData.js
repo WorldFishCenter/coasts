@@ -49,10 +49,15 @@ const normalizeGaulFields = (obj) => {
 };
 
 /**
- * Build canonical GAUL key
+ * Build canonical GAUL key (GAUL2: country_gaul1_gaul2)
  */
 const gaulKey = (country, gaul1Name, gaul2Name) =>
   `${country}_${gaul1Name}_${gaul2Name}`;
+
+/**
+ * Build canonical GAUL1 key (country_gaul1_name only)
+ */
+const gaul1Key = (country, gaul1Name) => `${country}_${gaul1Name}`;
 
 /**
  * Extract metric value from record, with optional fallback
@@ -101,6 +106,31 @@ const validateTimeSeriesRecord = (record) => {
 };
 
 /**
+ * Validate GAUL1 map feature (country, gaul1_name, geometry; no gaul2_name)
+ * @param {Object} feature - The feature to validate (may have iso3_code)
+ * @returns {boolean} Whether the feature is valid
+ */
+const validateMapFeatureGaul1 = (feature) => {
+  if (!feature || typeof feature !== 'object') return false;
+  const f = normalizeGaulFields(feature);
+  if (!f.country || !f.gaul1_name) return false;
+  if (!f.geometry || !f.geometry.type || !f.geometry.coordinates) return false;
+  return true;
+};
+
+/**
+ * Validate GAUL1 time series record (country, gaul1_name, date; no gaul2_name)
+ * @param {Object} record - The record to validate
+ * @returns {boolean} Whether the record is valid
+ */
+const validateTimeSeriesRecordGaul1 = (record) => {
+  if (!record || typeof record !== 'object') return false;
+  const r = normalizeGaulFields(record);
+  if (!r.country || !r.gaul1_name || !r.date) return false;
+  return true;
+};
+
+/**
  * Validate PDS grid record structure
  * @param {Object} grid - The grid to validate
  * @returns {boolean} Whether the grid is valid
@@ -127,16 +157,32 @@ async function main() {
     // Ensure output directory exists
     await fs.mkdir(OUTPUT_DIR, { recursive: true });
     
-    // Fetch data from all collections
-    const [mapData, timeSeriesData, pdsGridsData] = await Promise.all([
+    // Fetch data from all collections (existing + GAUL1/GAUL2)
+    const [
+      mapData,
+      timeSeriesData,
+      pdsGridsData,
+      mapGaul1Data,
+      mapGaul2Data,
+      metricsGaul1Data,
+      metricsGaul2Data
+    ] = await Promise.all([
       db.collection('wio_map').find({}).toArray(),
       db.collection('regional_metrics').find({}).toArray(),
-      db.collection('pds_grids').find({}).toArray()
+      db.collection('pds_grids').find({}).toArray(),
+      db.collection('wio_gaul1').find({}).toArray(),
+      db.collection('wio_gaul2').find({}).toArray(),
+      db.collection('metrics_gaul1').find({}).toArray(),
+      db.collection('metrics_gaul2').find({}).toArray()
     ]);
 
     console.log(`Fetched ${mapData.length} map features`);
     console.log(`Fetched ${timeSeriesData.length} time series records`);
     console.log(`Fetched ${pdsGridsData.length} pds grids records`);
+    console.log(`Fetched ${mapGaul1Data.length} GAUL1 map features`);
+    console.log(`Fetched ${mapGaul2Data.length} GAUL2 map features`);
+    console.log(`Fetched ${metricsGaul1Data.length} GAUL1 metrics records`);
+    console.log(`Fetched ${metricsGaul2Data.length} GAUL2 metrics records`);
 
     // Normalize GAUL fields for validation
     const normalizedMapForValidation = mapData.map(normalizeGaulFields);
@@ -163,6 +209,36 @@ async function main() {
       console.error(`Found ${invalidPdsGrids.length} invalid PDS grids`);
       console.error('First invalid grid:', JSON.stringify(invalidPdsGrids[0], null, 2));
     }
+
+    // Normalize and validate GAUL1/GAUL2 data
+    const normalizedMapGaul1 = mapGaul1Data.map(normalizeGaulFields);
+    const normalizedMapGaul2 = mapGaul2Data.map(normalizeGaulFields);
+    const normalizedMetricsGaul1 = metricsGaul1Data.map(normalizeGaulFields);
+    const normalizedMetricsGaul2 = metricsGaul2Data.map(normalizeGaulFields);
+    const invalidMapGaul1 = normalizedMapGaul1.filter((f) => !validateMapFeatureGaul1(f));
+    const invalidMapGaul2 = normalizedMapGaul2.filter((f) => !validateMapFeature(f));
+    const invalidMetricsGaul1 = normalizedMetricsGaul1.filter(
+      (r) => !validateTimeSeriesRecordGaul1(r)
+    );
+    const invalidMetricsGaul2 = normalizedMetricsGaul2.filter(
+      (r) => !validateTimeSeriesRecord(r)
+    );
+    if (invalidMapGaul1.length > 0) {
+      console.error(`Found ${invalidMapGaul1.length} invalid GAUL1 map features`);
+    }
+    if (invalidMapGaul2.length > 0) {
+      console.error(`Found ${invalidMapGaul2.length} invalid GAUL2 map features`);
+    }
+    if (invalidMetricsGaul1.length > 0) {
+      console.error(`Found ${invalidMetricsGaul1.length} invalid GAUL1 metrics records`);
+    }
+    if (invalidMetricsGaul2.length > 0) {
+      console.error(`Found ${invalidMetricsGaul2.length} invalid GAUL2 metrics records`);
+    }
+    const validMapGaul1 = normalizedMapGaul1.filter(validateMapFeatureGaul1);
+    const validMapGaul2 = normalizedMapGaul2.filter(validateMapFeature);
+    const validMetricsGaul1 = normalizedMetricsGaul1.filter(validateTimeSeriesRecordGaul1);
+    const validMetricsGaul2 = normalizedMetricsGaul2.filter(validateTimeSeriesRecord);
 
     // Normalize GAUL fields and filter invalid data
     const normalizedMapData = mapData.map(normalizeGaulFields);
@@ -233,7 +309,97 @@ async function main() {
       });
     });
 
-    // Save all files
+    // --- GAUL1 map: GeoJSON FeatureCollection (no gaul2_name, no time_series) ---
+    const geojsonGaul1 = {
+      type: 'FeatureCollection',
+      features: validMapGaul1.map((feature) => ({
+        type: 'Feature',
+        geometry: feature.geometry,
+        properties: {
+          country: feature.country,
+          gaul1_name: feature.gaul1_name
+        }
+      }))
+    };
+
+    // --- GAUL1 time series: keyed by country_gaul1_name ---
+    const timeSeriesByRegionGaul1 = {};
+    validMetricsGaul1.forEach((record) => {
+      const keyCountry = countryForKey(record.country);
+      const key = gaul1Key(keyCountry, record.gaul1_name);
+      if (!timeSeriesByRegionGaul1[key]) {
+        timeSeriesByRegionGaul1[key] = {
+          country: record.country,
+          gaul1_name: record.gaul1_name,
+          data: []
+        };
+      }
+      timeSeriesByRegionGaul1[key].data.push({
+        date: record.date,
+        ...Object.fromEntries(
+          METRIC_COLUMNS.map((col) => [col, getMetric(record, col)])
+        )
+      });
+    });
+
+    // --- GAUL2 map: same shape as wio_map (with time_series from metrics_gaul2) ---
+    const timeSeriesMapGaul2 = new Map();
+    validMetricsGaul2.forEach((record) => {
+      const keyCountry = countryForKey(record.country);
+      const key = gaulKey(keyCountry, record.gaul1_name, record.gaul2_name);
+      if (!timeSeriesMapGaul2.has(key)) {
+        timeSeriesMapGaul2.set(key, []);
+      }
+      timeSeriesMapGaul2.get(key).push(record);
+    });
+    const processedFeaturesGaul2 = validMapGaul2.map((feature) => {
+      const keyCountry = countryForKey(feature.country);
+      const key = gaulKey(keyCountry, feature.gaul1_name, feature.gaul2_name);
+      const timeSeries = timeSeriesMapGaul2.get(key) || [];
+      timeSeries.sort((a, b) => new Date(a.date) - new Date(b.date));
+      const latestMetrics = getLatestMetricsFromSeries(timeSeries);
+      const props = {
+        country: feature.country,
+        gaul1_name: feature.gaul1_name,
+        gaul2_name: feature.gaul2_name,
+        time_series: timeSeries,
+        ...Object.fromEntries(
+          METRIC_COLUMNS.map((col) => [col, getMetric(latestMetrics, col) ?? 0])
+        )
+      };
+      return {
+        type: 'Feature',
+        geometry: feature.geometry,
+        properties: props
+      };
+    });
+    const geojsonGaul2 = {
+      type: 'FeatureCollection',
+      features: processedFeaturesGaul2
+    };
+
+    // --- GAUL2 time series: same structure as time_series.json ---
+    const timeSeriesByRegionGaul2 = {};
+    validMetricsGaul2.forEach((record) => {
+      const keyCountry = countryForKey(record.country);
+      const key = gaulKey(keyCountry, record.gaul1_name, record.gaul2_name);
+      if (!timeSeriesByRegionGaul2[key]) {
+        timeSeriesByRegionGaul2[key] = {
+          country: record.country,
+          gaul1_name: record.gaul1_name,
+          gaul2_name: record.gaul2_name,
+          data: []
+        };
+      }
+      timeSeriesByRegionGaul2[key].data.push({
+        date: record.date,
+        ...Object.fromEntries(
+          METRIC_COLUMNS.map((col) => [col, getMetric(record, col)])
+        )
+      });
+    });
+
+    // Save all files (existing + GAUL1/GAUL2)
     await Promise.all([
       fs.writeFile(
         path.join(OUTPUT_DIR, 'wio_map.json'),
@@ -246,6 +412,22 @@ async function main() {
       fs.writeFile(
         path.join(OUTPUT_DIR, 'pds_grids.json'),
         JSON.stringify(validPdsGridsData, null, 2)
+      ),
+      fs.writeFile(
+        path.join(OUTPUT_DIR, 'map_gaul1.json'),
+        JSON.stringify(geojsonGaul1, null, 2)
+      ),
+      fs.writeFile(
+        path.join(OUTPUT_DIR, 'map_gaul2.json'),
+        JSON.stringify(geojsonGaul2, null, 2)
+      ),
+      fs.writeFile(
+        path.join(OUTPUT_DIR, 'ts_gaul1.json'),
+        JSON.stringify(timeSeriesByRegionGaul1, null, 2)
+      ),
+      fs.writeFile(
+        path.join(OUTPUT_DIR, 'ts_gaul2.json'),
+        JSON.stringify(timeSeriesByRegionGaul2, null, 2)
       )
     ]);
 

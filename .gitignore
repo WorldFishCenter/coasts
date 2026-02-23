@@ -57,3 +57,10 @@ dist-ssr
 .env.development.local
 .env.test.local
 .env.production.local
+
+# AI / agent config (local or synced elsewhere)
+.agents/
+.cursor/
+.claude/
+AGENTS.md
+CLAUDE.md

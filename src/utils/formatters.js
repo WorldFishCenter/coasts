@@ -47,6 +47,9 @@ export const METRIC_CONFIG = {
   }
 };
 
+/** Metric IDs shown in the metric selector (CPUA and RPUA are hidden from selection) */
+export const SELECTABLE_METRIC_IDS = ['mean_cpue', 'mean_rpue', 'mean_price_kg'];
+
 // Get metric info with fallback
 export const getMetricInfo = (metricId) => {
   return METRIC_CONFIG[metricId] || {

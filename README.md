@@ -23,7 +23,7 @@ Interactive map visualization for coastal regions using React and Mapbox GL JS.
 
 1. Clone the repository
 2. Install dependencies: `npm install`
-3. Create a `.env` file with your Mapbox token and MongoDB URI:
+3. Create a `.env` file with your Mapbox token and MongoDB URI (see `.env.example`). The map requires `VITE_MAPBOX_TOKEN` for local development; `.env` is gitignored and is not committed.
    ```
    VITE_MAPBOX_TOKEN=your_token_here
    MONGODB_URI=your_mongodb_uri_here

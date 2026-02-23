@@ -7,7 +7,7 @@ import {
   COLOR_RANGE,
   calculateGridStats 
 } from '../utils/gridLayerConfig';
-import { METRIC_CONFIG, formatRegionName, formatCountryName } from '../utils/formatters';
+import { METRIC_CONFIG, SELECTABLE_METRIC_IDS, formatRegionName, formatCountryName } from '../utils/formatters';
 import { 
   Filter, 
   BarChart3, 
@@ -20,12 +20,15 @@ import {
   Flame
 } from 'lucide-react';
 
-const METRICS = Object.entries(METRIC_CONFIG).map(([id, config]) => ({
-  id,
-  label: config.label,
-  unit: config.unit,
-  description: config.description || `${config.label} measurement`
-}));
+const METRICS = SELECTABLE_METRIC_IDS.map((id) => {
+  const config = METRIC_CONFIG[id];
+  return {
+    id,
+    label: config?.label ?? id,
+    unit: config?.unit ?? '',
+    description: config?.description ?? `${config?.label ?? id} measurement`
+  };
+});
 
 // Section Header Component
 const SectionHeader = ({ title, icon: Icon, isDarkTheme, isExpanded, onToggle, subtitle }) => (
@@ -204,10 +207,15 @@ const Sidebar = memo(({
   onRegionRemove,
   selectedCountries = [],
   onCountryToggle,
+  gaulLevel = 'gaul2',
+  onGaulLevelChange,
   style = {},
   visualizationMode,
   onVisualizationModeChange
 }) => {
+  const isGaul1 = gaulLevel === 'gaul1';
+  const regionLabel = isGaul1 ? 'regions' : 'districts';
+  const regionLabelSingular = isGaul1 ? 'region' : 'district';
   // Section expansion states
   const [expandedSections, setExpandedSections] = useState({
     metrics: true,
@@ -296,7 +304,65 @@ const Sidebar = memo(({
       {/* Scrollable Content */}
       <SimpleBar style={{ flex: 1, minHeight: 0, padding: '16px' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          
+          {/* Admin level switch */}
+          {onGaulLevelChange && (
+            <div style={{
+              backgroundColor: isDarkTheme ? 'rgba(255, 255, 255, 0.02)' : 'rgba(0, 0, 0, 0.01)',
+              borderRadius: '8px',
+              border: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)'}`,
+              overflow: 'hidden',
+              padding: '12px 14px'
+            }}>
+              <div style={{
+                ...SHARED_STYLES.text.muted(isDarkTheme),
+                fontSize: '11px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
+                marginBottom: '8px'
+              }}>
+                Administrative level
+              </div>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button
+                  type="button"
+                  onClick={() => onGaulLevelChange('gaul1')}
+                  style={{
+                    flex: 1,
+                    padding: '10px 12px',
+                    borderRadius: '8px',
+                    border: `1.5px solid ${gaulLevel === 'gaul1' ? (isDarkTheme ? 'rgba(59, 130, 246, 0.5)' : 'rgba(59, 130, 246, 0.6)') : (isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)')}`,
+                    backgroundColor: gaulLevel === 'gaul1' ? (isDarkTheme ? 'rgba(59, 130, 246, 0.15)' : 'rgba(59, 130, 246, 0.1)') : 'transparent',
+                    color: gaulLevel === 'gaul1' ? (isDarkTheme ? '#60a5fa' : '#2563eb') : (isDarkTheme ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)'),
+                    fontSize: '13px',
+                    fontWeight: gaulLevel === 'gaul1' ? 600 : 400,
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  Admin 1 (provinces)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onGaulLevelChange('gaul2')}
+                  style={{
+                    flex: 1,
+                    padding: '10px 12px',
+                    borderRadius: '8px',
+                    border: `1.5px solid ${gaulLevel === 'gaul2' ? (isDarkTheme ? 'rgba(59, 130, 246, 0.5)' : 'rgba(59, 130, 246, 0.6)') : (isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)')}`,
+                    backgroundColor: gaulLevel === 'gaul2' ? (isDarkTheme ? 'rgba(59, 130, 246, 0.15)' : 'rgba(59, 130, 246, 0.1)') : 'transparent',
+                    color: gaulLevel === 'gaul2' ? (isDarkTheme ? '#60a5fa' : '#2563eb') : (isDarkTheme ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)'),
+                    fontSize: '13px',
+                    fontWeight: gaulLevel === 'gaul2' ? 600 : 400,
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  Admin 2 (districts)
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Metrics Section */}
           <div style={{
             backgroundColor: isDarkTheme ? 'rgba(255, 255, 255, 0.02)' : 'rgba(0, 0, 0, 0.01)',
@@ -811,7 +877,7 @@ const Sidebar = memo(({
             )}
           </div> */} 
 
-          {/* District Comparison Section */}
+          {/* Region/District Comparison Section */}
           <div style={{
             backgroundColor: isDarkTheme ? 'rgba(255, 255, 255, 0.02)' : 'rgba(0, 0, 0, 0.01)',
             borderRadius: '8px',
@@ -819,8 +885,8 @@ const Sidebar = memo(({
             overflow: 'hidden'
           }}>
             <SectionHeader
-              title="District Comparison"
-              subtitle={selectedRegions.length > 0 ? `${selectedRegions.length} districts` : 'Click districts to compare'}
+              title={isGaul1 ? 'Region Comparison' : 'District Comparison'}
+              subtitle={selectedRegions.length > 0 ? `${selectedRegions.length} ${regionLabel}` : `Click ${regionLabel} to compare`}
               icon={Filter}
               isDarkTheme={isDarkTheme}
               isExpanded={expandedSections.comparison}
@@ -855,13 +921,13 @@ const Sidebar = memo(({
                       fontWeight: 500,
                       marginBottom: '4px'
                     }}>
-                      No districts selected
+                      No {regionLabel} selected
                     </div>
                     <div style={{
                       ...SHARED_STYLES.text.muted(isDarkTheme),
                       fontSize: '12px'
                     }}>
-                      Click on districts in the map to compare
+                      Click on {regionLabel} in the map to compare
                     </div>
                   </div>
                 ) : (

@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+**Cursor users:** Use `.cursor/` and root `AGENTS.md` for the same setup (rules, agents, commands, skills, memory). Same depth and accuracy as this Claude Code setup.
+
 ## Development Commands
 
 ```bash
@@ -32,10 +34,12 @@ This is a React-based interactive map application for visualizing coastal fisher
 - **Data**: Static JSON files updated daily from MongoDB via GitHub Actions
 
 ### Data Architecture
-The application uses three main data sources:
-1. **WIO Map Data** (`public/data/wio_map.json`) - GeoJSON features for coastal regions in Kenya/Zanzibar
-2. **Time Series Data** (`public/data/time_series.json`) - Historical fisheries metrics by region
-3. **PDS Grids Data** (`public/data/pds_grids.json`) - GPS movement data in 1km grid cells
+The application loads GAUL-level data and lets users switch between Admin 1 (provinces) and Admin 2 (districts). Primary data sources:
+1. **Map data**: `map_gaul1.json` (Admin 1), `map_gaul2.json` (Admin 2) — GeoJSON features for coastal regions
+2. **Time series**: `ts_gaul1.json` (Admin 1), `ts_gaul2.json` (Admin 2) — Historical fisheries metrics by region
+3. **PDS Grids** (`public/data/pds_grids.json`) — GPS movement data in 1km grid cells
+
+The fetch script also writes `wio_map.json` and `time_series.json` (legacy). See `.cursor/memory/data-models.md` for formats and dataService GAUL1/GAUL2 API.
 
 ### GAUL Schema
 The app uses FAO GAUL (Global Administrative Unit Layers) for region identity:
@@ -83,3 +87,12 @@ MONGODB_URI=your_mongodb_connection_string
 ### Testing and Linting
 - ESLint configuration in `eslint.config.js`
 - No specific test framework configured - check with maintainer before adding tests
+
+## Claude Code setup
+
+This project includes a Claude Code configuration in `.claude/` for consistent AI-assisted development.
+
+- **Quick start**: Read [.claude/QUICK_START.md](.claude/QUICK_START.md) for commands, paths, and workflow.
+- **Implementation guide**: See [.claude/FEATURE_IMPLEMENTATION_GUIDE.md](.claude/FEATURE_IMPLEMENTATION_GUIDE.md) for pre-edit checklist and where to put code.
+- **Commands**: `/plan` (implementation plan), `/code-review` (quality review), `/build-fix` (ESLint/build), `/document` (update architecture and context).
+- **Token optimization**: Check `.claude/memory/session-context.json` and `.claude/skills/` for patterns instead of re-reading the codebase.

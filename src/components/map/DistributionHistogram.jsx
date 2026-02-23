@@ -3,7 +3,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { X } from 'lucide-react';
 import { SHARED_STYLES } from '../../utils/gridLayerConfig';
 import { getMetricInfo, formatRegionName } from '../../utils/formatters';
-import { getTimeSeriesForGaul, getTimeSeriesKey } from '../../services/dataService';
+import { getTimeSeriesForGaul, getTimeSeriesKey, getTimeSeriesForGaul1, getTimeSeriesKeyGaul1 } from '../../services/dataService';
 
 const DistributionHistogram = memo(({ 
   isDarkTheme, 
@@ -11,9 +11,11 @@ const DistributionHistogram = memo(({
   selectedMetric, 
   selectedRegion,
   timeSeriesData,
+  gaulLevel = 'gaul2',
   onClose,
   style 
 }) => {
+  const isGaul1 = gaulLevel === 'gaul1';
   // Helper function to extract numeric value from formatted metric string
   const extractNumericValue = (formattedValue) => {
     if (!formattedValue || formattedValue === 'N/A') return 'N/A';
@@ -22,35 +24,35 @@ const DistributionHistogram = memo(({
     return match ? match[0] : formattedValue;
   };
 
-  // Calculate density plot data for time series
+  // Calculate density plot data for time series (GAUL level–aware)
   const densityData = useMemo(() => {
     if (!boundaries || !boundaries.features || !timeSeriesData || !selectedRegion) return null;
 
     const { country: selectedCountry, gaul1_name: selectedGaul1, gaul2_name: selectedGaul2 } = selectedRegion.properties;
-    const selectedKey = getTimeSeriesKey(selectedCountry, selectedGaul1, selectedGaul2);
-
-    // Get time series for selected region (same key logic as fetch pipeline)
-    const selectedTimeSeries = getTimeSeriesForGaul(timeSeriesData, selectedCountry, selectedGaul1, selectedGaul2);
+    const selectedKey = isGaul1
+      ? getTimeSeriesKeyGaul1(selectedCountry, selectedGaul1)
+      : getTimeSeriesKey(selectedCountry, selectedGaul1, selectedGaul2);
+    const selectedTimeSeries = isGaul1
+      ? getTimeSeriesForGaul1(timeSeriesData, selectedCountry, selectedGaul1)
+      : getTimeSeriesForGaul(timeSeriesData, selectedCountry, selectedGaul1, selectedGaul2);
     if (!selectedTimeSeries || !selectedTimeSeries.data) return null;
 
-    // Extract values for selected region
     const selectedValues = selectedTimeSeries.data
       .map(entry => entry[selectedMetric])
       .filter(v => v != null && !isNaN(v));
     if (selectedValues.length === 0) return null;
 
-    // Collect all time series data for other regions (use same key for skip check)
     const otherRegionsData = [];
     boundaries.features.forEach(feature => {
       const { country, gaul1_name, gaul2_name } = feature.properties;
-      if (getTimeSeriesKey(country, gaul1_name, gaul2_name) === selectedKey) return;
+      const featureKey = isGaul1
+        ? getTimeSeriesKeyGaul1(country, gaul1_name)
+        : getTimeSeriesKey(country, gaul1_name, gaul2_name);
+      if (featureKey === selectedKey) return;
 
-      const regionTimeSeries = getTimeSeriesForGaul(
-        timeSeriesData,
-        country,
-        gaul1_name,
-        gaul2_name
-      );
+      const regionTimeSeries = isGaul1
+        ? getTimeSeriesForGaul1(timeSeriesData, country, gaul1_name)
+        : getTimeSeriesForGaul(timeSeriesData, country, gaul1_name, gaul2_name);
       if (regionTimeSeries?.data) {
         regionTimeSeries.data.forEach(entry => {
           if (entry[selectedMetric] != null && !isNaN(entry[selectedMetric])) {
@@ -122,7 +124,7 @@ const DistributionHistogram = memo(({
       min,
       max
     };
-  }, [boundaries, selectedMetric, selectedRegion, timeSeriesData]);
+  }, [boundaries, selectedMetric, selectedRegion, timeSeriesData, isGaul1]);
 
   if (!densityData) return null;
 
@@ -173,7 +175,7 @@ const DistributionHistogram = memo(({
             ...SHARED_STYLES.text.muted(isDarkTheme),
             margin: '4px 0 0 0'
           }}>
-            {formatRegionName(selectedRegion?.properties)} vs all other districts
+            {formatRegionName(selectedRegion?.properties)} vs all other {isGaul1 ? 'regions' : 'districts'}
           </p>
         </div>
         <button
@@ -258,9 +260,9 @@ const DistributionHistogram = memo(({
             iconType="line"
           /> */}
           
-          {/* Selected district line */}
+          {/* Selected region/district line */}
           <Line 
-            name="Selected District"
+            name={isGaul1 ? 'Selected Region' : 'Selected District'}
             type="monotone" 
             dataKey="selectedDensity" 
             stroke={isDarkTheme ? '#60a5fa' : '#3b82f6'}
@@ -269,9 +271,9 @@ const DistributionHistogram = memo(({
             activeDot={{ r: 4 }}
           />
           
-          {/* Other districts line */}
+          {/* Other regions/districts line */}
           <Line 
-            name="Other Districts" 
+            name={isGaul1 ? 'Other Regions' : 'Other Districts'} 
             type="monotone" 
             dataKey="otherDensity" 
             stroke={isDarkTheme ? '#f87171' : '#ef4444'}

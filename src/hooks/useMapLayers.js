@@ -68,7 +68,7 @@ export const useMapLayers = ({
           },
           getLineWidth: (d, {index}) => {
             const isHovered = hoveredFeatureIndex === index;
-            return isHovered ? 4 : (isSatellite ? 2 : 1);
+            return isHovered ? 4 : (isSatellite ? 1 : 1);
           },
           lineWidthUnits: 'pixels',
           lineWidthMinPixels: 1,
