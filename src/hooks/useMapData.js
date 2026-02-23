@@ -1,13 +1,24 @@
 import { useState, useEffect } from 'react';
-import { loadMapData, loadTimeSeriesData, loadPdsGridsData, getLatestMetrics } from '../services/dataService';
+import {
+  loadMapDataGaul1,
+  loadMapDataGaul2,
+  loadTimeSeriesGaul1,
+  loadTimeSeriesGaul2,
+  loadPdsGridsData,
+  getLatestMetrics,
+  getLatestMetricsGaul1
+} from '../services/dataService';
 
 export const useMapData = () => {
-  const [boundaries, setBoundaries] = useState(null);
-  const [timeSeriesData, setTimeSeriesData] = useState(null);
+  const [boundariesGaul1, setBoundariesGaul1] = useState(null);
+  const [boundariesGaul2, setBoundariesGaul2] = useState(null);
+  const [timeSeriesGaul1, setTimeSeriesGaul1] = useState(null);
+  const [timeSeriesGaul2, setTimeSeriesGaul2] = useState(null);
   const [pdsGridsData, setPdsGridsData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [totalValue, setTotalValue] = useState(0);
+  const [totalValueGaul1, setTotalValueGaul1] = useState(0);
+  const [totalValueGaul2, setTotalValueGaul2] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -15,39 +26,41 @@ export const useMapData = () => {
         setLoading(true);
         setError(null);
 
-        // Load all data sources
-        const [mapData, timeSeries, pdsGrids] = await Promise.all([
-          loadMapData(),
-          loadTimeSeriesData(),
+        const [mapGaul1, mapGaul2, tsGaul1, tsGaul2, pdsGrids] = await Promise.all([
+          loadMapDataGaul1(),
+          loadMapDataGaul2(),
+          loadTimeSeriesGaul1(),
+          loadTimeSeriesGaul2(),
           loadPdsGridsData()
         ]);
 
-        if (!mapData) {
-          throw new Error('Failed to load map data');
+        if (!mapGaul2) {
+          throw new Error('Failed to load GAUL2 map data');
+        }
+        if (!tsGaul2) {
+          throw new Error('Failed to load GAUL2 time series data');
+        }
+        if (!mapGaul1) {
+          throw new Error('Failed to load GAUL1 map data');
+        }
+        if (!tsGaul1) {
+          throw new Error('Failed to load GAUL1 time series data');
         }
 
-        if (!timeSeries) {
-          throw new Error('Failed to load time series data');
-        }
-
-        // PDS grids data is optional, so we don't throw error if it's missing
         if (!pdsGrids) {
           console.warn('PDS grids data not available');
         }
 
-        // Add latest metrics to each feature from time series data
-        const enrichedMapData = {
-          ...mapData,
-          features: mapData.features.map(feature => {
-            const country = feature.properties.country;
-            const region = feature.properties.region;
-            const latestMetrics = getLatestMetrics(timeSeries, country, region);
-            
+        // Enrich GAUL1 map with latest metrics
+        const enrichedGaul1 = {
+          ...mapGaul1,
+          features: mapGaul1.features.map((feature) => {
+            const { country, gaul1_name } = feature.properties;
+            const latestMetrics = getLatestMetricsGaul1(tsGaul1, country, gaul1_name);
             return {
               ...feature,
               properties: {
                 ...feature.properties,
-                // Add metrics if they exist, otherwise they'll be undefined
                 mean_cpue: latestMetrics?.mean_cpue,
                 mean_cpua: latestMetrics?.mean_cpua,
                 mean_rpue: latestMetrics?.mean_rpue,
@@ -58,16 +71,42 @@ export const useMapData = () => {
           })
         };
 
-        // Calculate total value from the enriched map data
-        const total = enrichedMapData.features.reduce((sum, feature) => {
-          const value = feature.properties.mean_cpue;
-          return sum + (value !== null && value !== undefined ? value : 0);
-        }, 0);
+        // Enrich GAUL2 map with latest metrics
+        const enrichedGaul2 = {
+          ...mapGaul2,
+          features: mapGaul2.features.map((feature) => {
+            const { country, gaul1_name, gaul2_name } = feature.properties;
+            const latestMetrics = getLatestMetrics(tsGaul2, country, gaul1_name, gaul2_name);
+            return {
+              ...feature,
+              properties: {
+                ...feature.properties,
+                mean_cpue: latestMetrics?.mean_cpue,
+                mean_cpua: latestMetrics?.mean_cpua,
+                mean_rpue: latestMetrics?.mean_rpue,
+                mean_rpua: latestMetrics?.mean_rpua,
+                mean_price_kg: latestMetrics?.mean_price_kg
+              }
+            };
+          })
+        };
 
-        setBoundaries(enrichedMapData);
-        setTimeSeriesData(timeSeries);
+        const total1 = enrichedGaul1.features.reduce(
+          (sum, f) => sum + (f.properties.mean_cpue != null ? f.properties.mean_cpue : 0),
+          0
+        );
+        const total2 = enrichedGaul2.features.reduce(
+          (sum, f) => sum + (f.properties.mean_cpue != null ? f.properties.mean_cpue : 0),
+          0
+        );
+
+        setBoundariesGaul1(enrichedGaul1);
+        setBoundariesGaul2(enrichedGaul2);
+        setTimeSeriesGaul1(tsGaul1);
+        setTimeSeriesGaul2(tsGaul2);
         setPdsGridsData(pdsGrids);
-        setTotalValue(total);
+        setTotalValueGaul1(total1);
+        setTotalValueGaul2(total2);
       } catch (err) {
         console.error('Error fetching data:', err);
         setError(err.message);
@@ -80,11 +119,14 @@ export const useMapData = () => {
   }, []);
 
   return {
-    boundaries,
-    timeSeriesData,
+    boundariesGaul1,
+    boundariesGaul2,
+    timeSeriesGaul1,
+    timeSeriesGaul2,
     pdsGridsData,
     loading,
     error,
-    totalValue
+    totalValueGaul1,
+    totalValueGaul2
   };
-}; 
+};

@@ -47,6 +47,9 @@ export const METRIC_CONFIG = {
   }
 };
 
+/** Metric IDs shown in the metric selector (CPUA and RPUA are hidden from selection) */
+export const SELECTABLE_METRIC_IDS = ['mean_cpue', 'mean_rpue', 'mean_price_kg'];
+
 // Get metric info with fallback
 export const getMetricInfo = (metricId) => {
   return METRIC_CONFIG[metricId] || {
@@ -70,9 +73,9 @@ export const capitalizeWords = (str) => {
     .join(' ');
 };
 
-// Format region name (handle different property names)
+// Format region name (GAUL: prefer gaul2_name, fallback to gaul1_name or legacy)
 export const formatRegionName = (properties) => {
-  const name = properties.region || properties.ADM2_PT || properties.ADM2_EN || 'Unknown';
+  const name = properties.gaul2_name || properties.gaul1_name || properties.region || properties.ADM2_PT || properties.ADM2_EN || 'Unknown';
   return capitalizeWords(name);
 };
 

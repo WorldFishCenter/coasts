@@ -23,7 +23,7 @@ import { getMapStyles } from '../styles/mapStyles';
 import { TIME_BREAKS, COLOR_RANGE } from '../utils/gridLayerConfig';
 import { processPdsData, transformPdsData } from '../utils/pdsDataProcessor';
 import { calculateMetricStats } from '../utils/metricCalculations';
-import { getAverageMetricsInRange } from '../services/dataService';
+import { getAverageMetricsInRange, getAverageMetricsInRangeGaul1, getRegionKey as getRegionKeyFromService } from '../services/dataService';
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
@@ -59,6 +59,9 @@ const MapComponent = () => {
   const [selectedRegionsForComparison, setSelectedRegionsForComparison] = useState([]);
   const [selectedCountries, setSelectedCountries] = useState([]);
   
+  // Admin level: gaul1 = Admin 1 (provinces), gaul2 = Admin 2 (districts)
+  const [gaulLevel, setGaulLevel] = useState('gaul2');
+  
   // Data loading states
   const [pdsDataLoaded, setPdsDataLoaded] = useState(false);
   
@@ -70,8 +73,26 @@ const MapComponent = () => {
   const deckRef = useRef(null);
   const didSetDefault = useRef(false);
 
-  // Load map data
-  const { boundaries, pdsGridsData, timeSeriesData, loading, error } = useMapData();
+  // Load map data (both GAUL levels)
+  const {
+    boundariesGaul1,
+    boundariesGaul2,
+    timeSeriesGaul1,
+    timeSeriesGaul2,
+    pdsGridsData,
+    loading,
+    error
+  } = useMapData();
+
+  // Active data based on selected admin level
+  const boundaries = gaulLevel === 'gaul1' ? boundariesGaul1 : boundariesGaul2;
+  const timeSeriesData = gaulLevel === 'gaul1' ? timeSeriesGaul1 : timeSeriesGaul2;
+
+  // Clear selection when switching admin level
+  useEffect(() => {
+    setSelectedRegion(null);
+    setSelectedRegionsForComparison([]);
+  }, [gaulLevel]);
 
   // Extract all unique sorted dates from timeSeriesData (from 2020 onwards)
   const allDates = useMemo(() => {
@@ -102,7 +123,7 @@ const MapComponent = () => {
     setDateRange([clampedMin, clampedMax]);
   };
 
-  // Helper to enrich boundaries with average metrics in range
+  // Helper to enrich boundaries with average metrics in range (GAUL level–aware)
   const getBoundariesWithAveragedMetrics = useCallback(() => {
     if (!boundaries || !timeSeriesData || allDates.length === 0) return boundaries;
     const [startIdx, endIdx] = dateRange;
@@ -110,10 +131,12 @@ const MapComponent = () => {
     const endDate = allDates[endIdx];
     return {
       ...boundaries,
-      features: boundaries.features.map(feature => {
-        const country = feature.properties.country;
-        const region = feature.properties.region;
-        const avgMetrics = getAverageMetricsInRange(timeSeriesData, country, region, startDate, endDate);
+      features: boundaries.features.map((feature) => {
+        const { country, gaul1_name, gaul2_name } = feature.properties;
+        const avgMetrics =
+          gaulLevel === 'gaul1'
+            ? getAverageMetricsInRangeGaul1(timeSeriesData, country, gaul1_name, startDate, endDate)
+            : getAverageMetricsInRange(timeSeriesData, country, gaul1_name, gaul2_name, startDate, endDate);
         return {
           ...feature,
           properties: {
@@ -127,7 +150,7 @@ const MapComponent = () => {
         };
       })
     };
-  }, [boundaries, timeSeriesData, allDates, dateRange]);
+  }, [boundaries, timeSeriesData, allDates, dateRange, gaulLevel]);
 
   // Use enriched boundaries for map and sidebar
   const enrichedBoundaries = useMemo(() => getBoundariesWithAveragedMetrics(), [getBoundariesWithAveragedMetrics]);
@@ -244,21 +267,27 @@ const MapComponent = () => {
     });
   }, []);
 
+  // Selection key: level-aware (GAUL1 = country_gaul1, GAUL2 = ADM2_PCODE or country_gaul1_gaul2)
+  const getRegionKey = useCallback(
+    (props) => getRegionKeyFromService(props, gaulLevel),
+    [gaulLevel]
+  );
+
   const handleRegionSelect = useCallback((region) => {
+    const key = getRegionKey(region.properties);
     setSelectedRegionsForComparison(prev => {
-      const exists = prev.some(r => 
-        r.properties.ADM2_PCODE === region.properties.ADM2_PCODE
-      );
+      const exists = prev.some(r => getRegionKey(r.properties) === key);
       if (exists) return prev;
       return [...prev, region];
     });
-  }, []);
+  }, [getRegionKey]);
 
   const handleRegionRemove = useCallback((region) => {
-    setSelectedRegionsForComparison(prev => 
-      prev.filter(r => r.properties.ADM2_PCODE !== region.properties.ADM2_PCODE)
+    const key = getRegionKey(region.properties);
+    setSelectedRegionsForComparison(prev =>
+      prev.filter(r => getRegionKey(r.properties) !== key)
     );
-  }, []);
+  }, [getRegionKey]);
 
   const handleRegionClick = useCallback((info) => {
     if (info.object && info.layer.id === 'wio-regions') {
@@ -267,10 +296,10 @@ const MapComponent = () => {
     }
   }, [handleRegionSelect]);
 
-  // Get map style
+  // Get map style (satellite-v9 = bare imagery, no roads/labels)
   const getMapStyle = useCallback(() => {
     if (isSatellite) {
-      return "mapbox://styles/mapbox/satellite-v9";
+      return 'mapbox://styles/mapbox/satellite-v9';
     }
     return getMapStyles(isDarkTheme);
   }, [isSatellite, isDarkTheme]);
@@ -283,6 +312,23 @@ const MapComponent = () => {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
   if (!boundaries) return <div>No data available</div>;
+  if (!MAPBOX_TOKEN?.trim()) {
+    return (
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+        backgroundColor: '#1a1a1a',
+        color: '#e0e0e0',
+        fontFamily: 'system-ui, sans-serif',
+        padding: '1rem',
+        textAlign: 'center'
+      }}>
+        Map unavailable: missing Mapbox token. Set VITE_MAPBOX_TOKEN in .env for local development.
+      </div>
+    );
+  }
 
   return (
     <div style={{
@@ -324,6 +370,8 @@ const MapComponent = () => {
           onRegionRemove={handleRegionRemove}
           selectedCountries={selectedCountries}
           onCountryToggle={handleCountryToggle}
+          gaulLevel={gaulLevel}
+          onGaulLevelChange={setGaulLevel}
           visualizationMode={visualizationMode}
           onVisualizationModeChange={setVisualizationMode}
           style={{
@@ -392,10 +440,11 @@ const MapComponent = () => {
             <Suspense fallback={<div>Loading distribution histogram...</div>}>
               <DistributionHistogram
                 isDarkTheme={isDarkTheme}
-                boundaries={boundaries}
+                boundaries={enrichedBoundaries}
                 selectedMetric={selectedMetric}
                 selectedRegion={selectedRegion}
                 timeSeriesData={timeSeriesData}
+                gaulLevel={gaulLevel}
                 onClose={() => setSelectedRegion(null)}
                 style={{
                   position: 'absolute',

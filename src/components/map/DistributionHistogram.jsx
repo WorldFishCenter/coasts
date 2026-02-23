@@ -3,7 +3,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { X } from 'lucide-react';
 import { SHARED_STYLES } from '../../utils/gridLayerConfig';
 import { getMetricInfo, formatRegionName } from '../../utils/formatters';
-import { getTimeSeriesForRegion } from '../../services/dataService';
+import { getTimeSeriesForGaul, getTimeSeriesKey, getTimeSeriesForGaul1, getTimeSeriesKeyGaul1 } from '../../services/dataService';
 
 const DistributionHistogram = memo(({ 
   isDarkTheme, 
@@ -11,9 +11,11 @@ const DistributionHistogram = memo(({
   selectedMetric, 
   selectedRegion,
   timeSeriesData,
+  gaulLevel = 'gaul2',
   onClose,
   style 
 }) => {
+  const isGaul1 = gaulLevel === 'gaul1';
   // Helper function to extract numeric value from formatted metric string
   const extractNumericValue = (formattedValue) => {
     if (!formattedValue || formattedValue === 'N/A') return 'N/A';
@@ -22,33 +24,36 @@ const DistributionHistogram = memo(({
     return match ? match[0] : formattedValue;
   };
 
-  // Calculate density plot data for time series
+  // Calculate density plot data for time series (GAUL level–aware)
   const densityData = useMemo(() => {
     if (!boundaries || !boundaries.features || !timeSeriesData || !selectedRegion) return null;
 
-    const selectedCountry = selectedRegion.properties.country;
-    const selectedRegionName = selectedRegion.properties.region;
-    
-    // Get time series for selected region
-    const selectedTimeSeries = getTimeSeriesForRegion(timeSeriesData, selectedCountry, selectedRegionName);
+    const { country: selectedCountry, gaul1_name: selectedGaul1, gaul2_name: selectedGaul2 } = selectedRegion.properties;
+    const selectedKey = isGaul1
+      ? getTimeSeriesKeyGaul1(selectedCountry, selectedGaul1)
+      : getTimeSeriesKey(selectedCountry, selectedGaul1, selectedGaul2);
+    const selectedTimeSeries = isGaul1
+      ? getTimeSeriesForGaul1(timeSeriesData, selectedCountry, selectedGaul1)
+      : getTimeSeriesForGaul(timeSeriesData, selectedCountry, selectedGaul1, selectedGaul2);
     if (!selectedTimeSeries || !selectedTimeSeries.data) return null;
 
-    // Collect all time series data for other regions
+    const selectedValues = selectedTimeSeries.data
+      .map(entry => entry[selectedMetric])
+      .filter(v => v != null && !isNaN(v));
+    if (selectedValues.length === 0) return null;
+
     const otherRegionsData = [];
     boundaries.features.forEach(feature => {
-      if (feature.properties.country === selectedCountry && 
-          feature.properties.region === selectedRegionName) {
-        // Skip selected region
-        return;
-      }
-      
-      const regionTimeSeries = getTimeSeriesForRegion(
-        timeSeriesData, 
-        feature.properties.country, 
-        feature.properties.region
-      );
-      
-      if (regionTimeSeries && regionTimeSeries.data) {
+      const { country, gaul1_name, gaul2_name } = feature.properties;
+      const featureKey = isGaul1
+        ? getTimeSeriesKeyGaul1(country, gaul1_name)
+        : getTimeSeriesKey(country, gaul1_name, gaul2_name);
+      if (featureKey === selectedKey) return;
+
+      const regionTimeSeries = isGaul1
+        ? getTimeSeriesForGaul1(timeSeriesData, country, gaul1_name)
+        : getTimeSeriesForGaul(timeSeriesData, country, gaul1_name, gaul2_name);
+      if (regionTimeSeries?.data) {
         regionTimeSeries.data.forEach(entry => {
           if (entry[selectedMetric] != null && !isNaN(entry[selectedMetric])) {
             otherRegionsData.push(entry[selectedMetric]);
@@ -57,56 +62,44 @@ const DistributionHistogram = memo(({
       }
     });
 
-    // Extract values for selected region
-    const selectedValues = selectedTimeSeries.data
-      .map(entry => entry[selectedMetric])
-      .filter(v => v != null && !isNaN(v));
-
-    if (selectedValues.length === 0 || otherRegionsData.length === 0) return null;
-
-    // Calculate range from all data
-    const allValues = [...selectedValues, ...otherRegionsData];
+    // Build range from selected + other (allow other to be empty)
+    const allValues = otherRegionsData.length > 0 ? [...selectedValues, ...otherRegionsData] : selectedValues;
     const min = Math.min(...allValues);
     const max = Math.max(...allValues);
-    const range = max - min;
-    
-    // Create density points
+    const range = max - min || 1;
+    const bandwidth = range * 0.15;
+
     const numPoints = 50;
-    const bandwidth = range * 0.15; // Bandwidth for kernel density estimation
-    
     const points = [];
     for (let i = 0; i <= numPoints; i++) {
       const x = min + (i / numPoints) * range;
-      
-      // Calculate density for selected region
       let selectedDensity = 0;
       selectedValues.forEach(value => {
         const u = (x - value) / bandwidth;
         selectedDensity += Math.exp(-0.5 * u * u) / Math.sqrt(2 * Math.PI);
       });
       selectedDensity = selectedDensity / (selectedValues.length * bandwidth);
-      
-      // Calculate density for other regions
+
       let otherDensity = 0;
-      otherRegionsData.forEach(value => {
-        const u = (x - value) / bandwidth;
-        otherDensity += Math.exp(-0.5 * u * u) / Math.sqrt(2 * Math.PI);
-      });
-      otherDensity = otherDensity / (otherRegionsData.length * bandwidth);
-      
+      if (otherRegionsData.length > 0) {
+        otherRegionsData.forEach(value => {
+          const u = (x - value) / bandwidth;
+          otherDensity += Math.exp(-0.5 * u * u) / Math.sqrt(2 * Math.PI);
+        });
+        otherDensity = otherDensity / (otherRegionsData.length * bandwidth);
+      }
+
       points.push({
         value: x,
-        selectedDensity: selectedDensity * 100, // Scale for visibility
+        selectedDensity: selectedDensity * 100,
         otherDensity: otherDensity * 100,
         label: x.toFixed(1)
       });
     }
 
-    // Normalize densities
     const maxSelectedDensity = Math.max(...points.map(p => p.selectedDensity));
     const maxOtherDensity = Math.max(...points.map(p => p.otherDensity));
-    const maxDensity = Math.max(maxSelectedDensity, maxOtherDensity);
-    
+    const maxDensity = Math.max(maxSelectedDensity, maxOtherDensity, 1);
     points.forEach(p => {
       p.selectedDensity = (p.selectedDensity / maxDensity) * 100;
       p.otherDensity = (p.otherDensity / maxDensity) * 100;
@@ -120,16 +113,18 @@ const DistributionHistogram = memo(({
         max: Math.max(...selectedValues),
         count: selectedValues.length
       },
-      otherStats: {
-        mean: otherRegionsData.reduce((a, b) => a + b, 0) / otherRegionsData.length,
-        min: Math.min(...otherRegionsData),
-        max: Math.max(...otherRegionsData),
-        count: otherRegionsData.length
-      },
+      otherStats: otherRegionsData.length > 0
+        ? {
+            mean: otherRegionsData.reduce((a, b) => a + b, 0) / otherRegionsData.length,
+            min: Math.min(...otherRegionsData),
+            max: Math.max(...otherRegionsData),
+            count: otherRegionsData.length
+          }
+        : { mean: 0, min: 0, max: 0, count: 0 },
       min,
       max
     };
-  }, [boundaries, selectedMetric, selectedRegion, timeSeriesData]);
+  }, [boundaries, selectedMetric, selectedRegion, timeSeriesData, isGaul1]);
 
   if (!densityData) return null;
 
@@ -180,7 +175,7 @@ const DistributionHistogram = memo(({
             ...SHARED_STYLES.text.muted(isDarkTheme),
             margin: '4px 0 0 0'
           }}>
-            {formatRegionName(selectedRegion?.properties)} vs all other districts
+            {formatRegionName(selectedRegion?.properties)} vs all other {isGaul1 ? 'regions' : 'districts'}
           </p>
         </div>
         <button
@@ -265,9 +260,9 @@ const DistributionHistogram = memo(({
             iconType="line"
           /> */}
           
-          {/* Selected district line */}
+          {/* Selected region/district line */}
           <Line 
-            name="Selected District"
+            name={isGaul1 ? 'Selected Region' : 'Selected District'}
             type="monotone" 
             dataKey="selectedDensity" 
             stroke={isDarkTheme ? '#60a5fa' : '#3b82f6'}
@@ -276,9 +271,9 @@ const DistributionHistogram = memo(({
             activeDot={{ r: 4 }}
           />
           
-          {/* Other districts line */}
+          {/* Other regions/districts line */}
           <Line 
-            name="Other Districts" 
+            name={isGaul1 ? 'Other Regions' : 'Other Districts'} 
             type="monotone" 
             dataKey="otherDensity" 
             stroke={isDarkTheme ? '#f87171' : '#ef4444'}

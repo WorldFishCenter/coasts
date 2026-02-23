@@ -1,3 +1,8 @@
+import { getRegionKey } from '../services/dataService';
+
+/** Selection key: level-aware (GAUL1 = country_gaul1, GAUL2 = ADM2_PCODE or country_gaul1_gaul2) */
+const getDistrictKey = (props, gaulLevel = 'gaul2') => getRegionKey(props, gaulLevel);
+
 export const getDistrictColor = (value) => {
   return value > 900 ? '#08519c' :
          value > 700 ? '#3182bd' :
@@ -11,10 +16,11 @@ export const getElevation = (value) => {
   return value * 100;
 };
 
-export const getDistrictStyle = (feature, { isDarkTheme, opacity, selectedDistricts }) => {
+export const getDistrictStyle = (feature, { isDarkTheme, opacity, selectedDistricts, gaulLevel = 'gaul2' }) => {
   const value = feature.properties.value || 0;
   const elevation = getElevation(value);
-  const isSelected = selectedDistricts.some(d => d.properties.ADM2_PCODE === feature.properties.ADM2_PCODE);
+  const featureKey = getDistrictKey(feature.properties, gaulLevel);
+  const isSelected = selectedDistricts.some(d => getDistrictKey(d.properties, gaulLevel) === featureKey);
   
   return {
     fillColor: isSelected ? '#ff4757' : getDistrictColor(value),
@@ -43,40 +49,47 @@ export const getColor = (d) => {
 
 export const getMapStyles = (isDarkTheme) => {
   return isDarkTheme 
-    ? 'mapbox://styles/mapbox/dark-v10'
-    : 'mapbox://styles/mapbox/light-v10';
+    ? 'mapbox://styles/mapbox/dark-v11'
+    : 'mapbox://styles/mapbox/light-v11';
 };
 
-// Mapbox layer styles
-export const getDistrictLayer = (selectedDistricts, isDarkTheme, opacity = 0.7, coverage = 75) => ({
-  id: 'districts',
-  type: 'fill',
-  paint: {
-    'fill-color': [
-      'case',
-      ['in', ['get', 'ADM2_PCODE'], ['literal', selectedDistricts.map(d => d.properties.ADM2_PCODE)]],
-      isDarkTheme ? '#3498db' : '#2980b9',
-      [
-        'interpolate',
-        ['linear'],
-        ['get', 'value'],
-        0, '#eff3ff',
-        coverage * 1, '#c6dbef',
-        coverage * 3, '#9ecae1',
-        coverage * 5, '#6baed6',
-        coverage * 7, '#3182bd',
-        coverage * 9, '#08519c'
-      ]
-    ],
-    'fill-opacity': [
-      'case',
-      ['in', ['get', 'ADM2_PCODE'], ['literal', selectedDistricts.map(d => d.properties.ADM2_PCODE)]],
-      0.8,
-      opacity
-    ],
-    'fill-outline-color': isDarkTheme ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.3)'
-  }
-});
+// Mapbox layer styles (gaulLevel: 'gaul1' = Admin 1 key, 'gaul2' = Admin 2 key)
+export const getDistrictLayer = (selectedDistricts, isDarkTheme, opacity = 0.7, coverage = 75, gaulLevel = 'gaul2') => {
+  const selectedKeys = selectedDistricts.map(d => getDistrictKey(d.properties, gaulLevel));
+  // GAUL1: key = country_gaul1_name; GAUL2: ADM2_PCODE or country_gaul1_gaul2
+  const keyExpression = gaulLevel === 'gaul1'
+    ? ['concat', ['get', 'country'], '_', ['get', 'gaul1_name']]
+    : ['coalesce', ['get', 'ADM2_PCODE'], ['concat', ['get', 'country'], '_', ['get', 'gaul1_name'], '_', ['get', 'gaul2_name']]];
+  return {
+    id: 'districts',
+    type: 'fill',
+    paint: {
+      'fill-color': [
+        'case',
+        ['in', keyExpression, ['literal', selectedKeys]],
+        isDarkTheme ? '#3498db' : '#2980b9',
+        [
+          'interpolate',
+          ['linear'],
+          ['get', 'value'],
+          0, '#eff3ff',
+          coverage * 1, '#c6dbef',
+          coverage * 3, '#9ecae1',
+          coverage * 5, '#6baed6',
+          coverage * 7, '#3182bd',
+          coverage * 9, '#08519c'
+        ]
+      ],
+      'fill-opacity': [
+        'case',
+        ['in', keyExpression, ['literal', selectedKeys]],
+        0.8,
+        opacity
+      ],
+      'fill-outline-color': isDarkTheme ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.3)'
+    }
+  };
+};
 
 export const getHoverLayer = (isDarkTheme, radius = 2) => ({
   id: 'districts-hover',

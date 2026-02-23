@@ -1,4 +1,6 @@
 import { memo } from 'react';
+import { getRegionKey } from '../../services/dataService';
+import { formatRegionName } from '../../utils/formatters';
 
 const SelectionPanel = memo(({ 
   isDarkTheme, 
@@ -10,8 +12,11 @@ const SelectionPanel = memo(({
   totalValue,
   onRemoveDistrict,
   onExportSelection,
-  isMobile
+  isMobile,
+  gaulLevel = 'gaul2'
 }) => {
+  const getDistrictKey = (props) => getRegionKey(props, gaulLevel);
+  const panelTitle = gaulLevel === 'gaul1' ? 'Selected Provinces' : 'Selected Districts';
   return (
     <div style={{
       backgroundColor: isDarkTheme ? 'rgba(0, 0, 0, 0.8)' : 'white',
@@ -43,7 +48,7 @@ const SelectionPanel = memo(({
             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
             <polyline points="22 4 12 14.01 9 11.01"/>
           </svg>
-          <span style={{ fontWeight: 'bold' }}>Selected Districts</span>
+          <span style={{ fontWeight: 'bold' }}>{panelTitle}</span>
         </div>
         <div style={{ 
           transform: `rotate(${showPanel ? 180 : 0}deg)`,
@@ -75,7 +80,7 @@ const SelectionPanel = memo(({
               padding: isMobile ? '15px 0' : '20px 0',
               fontSize: isMobile ? '14px' : '16px'
             }}>
-              Click on districts to select them
+              {gaulLevel === 'gaul1' ? 'Click on regions to select them' : 'Click on districts to select them'}
             </div>
           ) : (
             <div style={{ 
@@ -114,7 +119,7 @@ const SelectionPanel = memo(({
               }}>
                 {selectedDistricts.map((district, index) => (
                   <div
-                    key={district.properties.ADM2_PCODE}
+                    key={getDistrictKey(district.properties)}
                     style={{
                       padding: isMobile ? '8px' : '10px',
                       backgroundColor: isDarkTheme 
@@ -130,14 +135,14 @@ const SelectionPanel = memo(({
                   >
                     <div>
                       <div style={{ fontWeight: 'bold', color: isDarkTheme ? '#fff' : '#2c3e50' }}>
-                        {district.properties.ADM2_PT || district.properties.ADM2_EN}
+                        {formatRegionName(district.properties)}
                       </div>
                       <div style={{ fontSize: isMobile ? '11px' : '12px', color: isDarkTheme ? '#bbb' : '#7f8c8d' }}>
                         Value: {district.properties.value?.toLocaleString() || 0}
                       </div>
                     </div>
                     <button
-                      onClick={() => onRemoveDistrict(district.properties.ADM2_PCODE)}
+                      onClick={() => onRemoveDistrict(district)}
                       style={{
                         background: 'none',
                         border: 'none',
