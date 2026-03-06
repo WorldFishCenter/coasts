@@ -1,7 +1,8 @@
-import { memo, useMemo, useState, useCallback } from 'react';
+import React, { memo, useMemo, useState, useCallback } from 'react';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import { Calendar, ChevronDown, Clock } from 'lucide-react';
+import { cn } from '../../lib/utils';
 
 const TimeRangeControl = memo(({
   timeSeriesData,
@@ -26,9 +27,9 @@ const TimeRangeControl = memo(({
   // Format date for display
   const formatDateLabel = useCallback((dateStr) => {
     const d = new Date(dateStr);
-    return d.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'short', 
+    return d.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
       day: 'numeric'
     });
   }, []);
@@ -36,8 +37,8 @@ const TimeRangeControl = memo(({
   // Format date for compact display
   const formatDateCompact = useCallback((dateStr) => {
     const d = new Date(dateStr);
-    return d.toLocaleDateString('en-US', { 
-      year: '2-digit', 
+    return d.toLocaleDateString('en-US', {
+      year: '2-digit',
       month: 'short'
     });
   }, []);
@@ -54,26 +55,26 @@ const TimeRangeControl = memo(({
   // Generate slider marks for key dates
   const marks = useMemo(() => {
     if (allDates.length === 0) return {};
-    
+
     const obj = {};
     const step = Math.max(1, Math.floor(allDates.length / 6)); // Show ~6 marks max
-    
+
     // Always include first and last
     obj[0] = {
-      label: <span style={{ 
-        fontSize: '10px', 
+      label: <span style={{
+        fontSize: '10px',
         color: isDarkTheme ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)',
         fontWeight: 500
       }}>
         {formatDateCompact(allDates[0])}
       </span>
     };
-    
+
     // Add intermediate marks
     for (let i = step; i < allDates.length - 1; i += step) {
       obj[i] = {
-        label: <span style={{ 
-          fontSize: '10px', 
+        label: <span style={{
+          fontSize: '10px',
           color: isDarkTheme ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)',
           fontWeight: 500
         }}>
@@ -81,11 +82,11 @@ const TimeRangeControl = memo(({
         </span>
       };
     }
-    
+
     if (allDates.length > 1) {
       obj[allDates.length - 1] = {
-        label: <span style={{ 
-          fontSize: '10px', 
+        label: <span style={{
+          fontSize: '10px',
           color: isDarkTheme ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)',
           fontWeight: 500
         }}>
@@ -93,7 +94,7 @@ const TimeRangeControl = memo(({
         </span>
       };
     }
-    
+
     return obj;
   }, [allDates, isDarkTheme, formatDateCompact]);
 
@@ -116,55 +117,21 @@ const TimeRangeControl = memo(({
   const endDate = allDates[clampedDateRange[1]];
 
   return (
-    <>
-      {/* Add CSS animations inline */}
-      <style>
-        {`
-          @keyframes slideDown {
-            from {
-              opacity: 0;
-              transform: translateY(-10px);
-              max-height: 0;
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0);
-              max-height: 300px;
-            }
-          }
-        `}
-      </style>
-      <div
-        style={{
-          position: 'absolute',
-          top: isMobile ? '24px' : '84px', // 24px (MapStyleToggle top) + 48px (height) + 12px (gap)
-          right: '24px',
-          zIndex: 1000,
-          width: isMobile ? 'auto' : '300px',
-          left: isMobile ? '16px' : 'auto',
-          ...style
-        }}
-      >
+    <div className={cn(
+      "transition-all duration-300 relative group",
+      isMobile ? "w-full" : "w-[300px]"
+    )} style={style}>
       {/* Single collapsible panel */}
-      <div style={{
-        backgroundColor: isDarkTheme ? 'rgba(15, 23, 42, 0.6)' : 'rgba(255, 255, 255, 0.7)',
-        backdropFilter: 'blur(12px)',
-        borderRadius: '6px',
-        border: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)'}`,
-        boxShadow: isDarkTheme 
-          ? '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' 
-          : '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-        overflow: 'hidden'
-      }}>
+      <div className="glass-panel overflow-hidden rounded-2xl">
         {/* Header - always visible */}
-        <div 
+        <div
           onClick={toggleExpanded}
           style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '10px 12px',
-            backgroundColor: isExpanded 
+            backgroundColor: isExpanded
               ? (isDarkTheme ? 'rgba(59, 130, 246, 0.08)' : 'rgba(59, 130, 246, 0.06)')
               : 'transparent',
             borderRadius: isExpanded ? '6px 6px 0 0' : '6px',
@@ -178,39 +145,29 @@ const TimeRangeControl = memo(({
           }}
           onMouseEnter={(e) => {
             if (!isExpanded) {
-              e.currentTarget.style.backgroundColor = isDarkTheme 
-                ? 'rgba(255, 255, 255, 0.04)' 
+              e.currentTarget.style.backgroundColor = isDarkTheme
+                ? 'rgba(255, 255, 255, 0.04)'
                 : 'rgba(0, 0, 0, 0.03)';
             }
           }}
           onMouseLeave={(e) => {
             if (!isExpanded) {
-              e.currentTarget.style.backgroundColor = isDarkTheme 
-                ? 'rgba(255, 255, 255, 0.02)' 
+              e.currentTarget.style.backgroundColor = isDarkTheme
+                ? 'rgba(255, 255, 255, 0.02)'
                 : 'rgba(0, 0, 0, 0.01)';
             }
           }}
         >
+          {/* Hover and Active glows */}
+          <div className="absolute inset-0 bg-primary/10 mix-blend-overlay opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+
           {/* Active indicator bar */}
           {isExpanded && (
-            <div style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              height: '3px',
-              background: 'linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%)',
-              borderRadius: '8px 8px 0 0'
-            }} />
+            <div className="absolute top-0 left-0 right-0 h-[2px] bg-primary/80 blur-[1px]" />
           )}
-          
+
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Calendar size={16} style={{ 
-              color: isExpanded 
-                ? (isDarkTheme ? '#60a5fa' : '#3b82f6')
-                : (isDarkTheme ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)'),
-              flexShrink: 0
-            }} />
+            <Calendar size={16} className={cn("transition-colors flex-shrink-0", isExpanded ? "text-primary" : "text-foreground/70")} />
             <div>
               <h3 style={{
                 margin: 0,
@@ -281,7 +238,7 @@ const TimeRangeControl = memo(({
             </div>
 
             {/* Slider */}
-            <div style={{ 
+            <div style={{
               padding: '0 6px',
               marginBottom: '8px'
             }}>
@@ -293,20 +250,20 @@ const TimeRangeControl = memo(({
                 marks={marks}
                 onChange={handleRangeChange}
                 allowCross={false}
-                trackStyle={[{ 
+                trackStyle={[{
                   backgroundColor: isDarkTheme ? '#60a5fa' : '#3b82f6'
                 }]}
                 handleStyle={[
-                  { 
-                    borderColor: isDarkTheme ? '#60a5fa' : '#3b82f6', 
+                  {
+                    borderColor: isDarkTheme ? '#60a5fa' : '#3b82f6',
                     backgroundColor: isDarkTheme ? '#1e293b' : '#fff'
                   },
-                  { 
-                    borderColor: isDarkTheme ? '#60a5fa' : '#3b82f6', 
+                  {
+                    borderColor: isDarkTheme ? '#60a5fa' : '#3b82f6',
                     backgroundColor: isDarkTheme ? '#1e293b' : '#fff'
                   }
                 ]}
-                railStyle={{ 
+                railStyle={{
                   backgroundColor: isDarkTheme ? '#334155' : '#cbd5e1'
                 }}
               />
@@ -315,7 +272,6 @@ const TimeRangeControl = memo(({
         )}
       </div>
     </div>
-    </>
   );
 });
 

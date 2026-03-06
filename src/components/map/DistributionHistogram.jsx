@@ -5,15 +5,15 @@ import { SHARED_STYLES } from '../../utils/gridLayerConfig';
 import { getMetricInfo, formatRegionName } from '../../utils/formatters';
 import { getTimeSeriesForGaul, getTimeSeriesKey, getTimeSeriesForGaul1, getTimeSeriesKeyGaul1 } from '../../services/dataService';
 
-const DistributionHistogram = memo(({ 
-  isDarkTheme, 
-  boundaries, 
-  selectedMetric, 
+const DistributionHistogram = memo(({
+  isDarkTheme,
+  boundaries,
+  selectedMetric,
   selectedRegion,
   timeSeriesData,
   gaulLevel = 'gaul2',
   onClose,
-  style 
+  style
 }) => {
   const isGaul1 = gaulLevel === 'gaul1';
   // Helper function to extract numeric value from formatted metric string
@@ -115,11 +115,11 @@ const DistributionHistogram = memo(({
       },
       otherStats: otherRegionsData.length > 0
         ? {
-            mean: otherRegionsData.reduce((a, b) => a + b, 0) / otherRegionsData.length,
-            min: Math.min(...otherRegionsData),
-            max: Math.max(...otherRegionsData),
-            count: otherRegionsData.length
-          }
+          mean: otherRegionsData.reduce((a, b) => a + b, 0) / otherRegionsData.length,
+          min: Math.min(...otherRegionsData),
+          max: Math.max(...otherRegionsData),
+          count: otherRegionsData.length
+        }
         : { mean: 0, min: 0, max: 0, count: 0 },
       min,
       max
@@ -156,13 +156,7 @@ const DistributionHistogram = memo(({
   };
 
   return (
-    <div style={{
-      ...SHARED_STYLES.glassPanel(isDarkTheme),
-      padding: '20px',
-      width: '700px',
-      height: '320px',
-      ...style
-    }}>
+    <div className="glass-panel p-6 w-[700px] rounded-2xl overflow-hidden relative">
       {/* Header */}
       <div style={{
         display: 'flex',
@@ -190,8 +184,8 @@ const DistributionHistogram = memo(({
             color: isDarkTheme ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)'
           }}
           onMouseEnter={(e) => {
-            e.target.style.backgroundColor = isDarkTheme 
-              ? 'rgba(255, 255, 255, 0.1)' 
+            e.target.style.backgroundColor = isDarkTheme
+              ? 'rgba(255, 255, 255, 0.1)'
               : 'rgba(0, 0, 0, 0.05)';
           }}
           onMouseLeave={(e) => {
@@ -205,18 +199,18 @@ const DistributionHistogram = memo(({
       {/* Chart */}
       <ResponsiveContainer width="100%" height={160}>
         <LineChart data={densityData.points} margin={{ top: 5, right: 10, left: 10, bottom: 25 }}>
-          <CartesianGrid 
-            strokeDasharray="3 3" 
-            stroke={isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'} 
+          <CartesianGrid
+            strokeDasharray="3 3"
+            stroke={isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}
             vertical={false}
           />
-          
-          <XAxis 
-            dataKey="value" 
+
+          <XAxis
+            dataKey="value"
             type="number"
             domain={[densityData.min, densityData.max]}
             tickFormatter={(value) => value.toFixed(1)}
-            tick={{ 
+            tick={{
               fill: isDarkTheme ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
               fontSize: 10
             }}
@@ -230,28 +224,28 @@ const DistributionHistogram = memo(({
               }
             }}
           />
-          
-          <YAxis 
-            label={{ 
-              value: 'Density (%)', 
-              angle: -90, 
+
+          <YAxis
+            label={{
+              value: 'Density (%)',
+              angle: -90,
               position: 'insideLeft',
-              style: { 
+              style: {
                 fill: isDarkTheme ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
                 fontSize: 10
               }
             }}
-            tick={{ 
+            tick={{
               fill: isDarkTheme ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
               fontSize: 10
             }}
           />
-          
-          <Tooltip 
+
+          <Tooltip
             content={<CustomTooltip />}
             cursor={true}
           />
-          
+
           {/* <Legend 
             wrapperStyle={{
               paddingTop: '5px',
@@ -259,23 +253,23 @@ const DistributionHistogram = memo(({
             }}
             iconType="line"
           /> */}
-          
+
           {/* Selected region/district line */}
-          <Line 
+          <Line
             name={isGaul1 ? 'Selected Region' : 'Selected District'}
-            type="monotone" 
-            dataKey="selectedDensity" 
+            type="monotone"
+            dataKey="selectedDensity"
             stroke={isDarkTheme ? '#60a5fa' : '#3b82f6'}
             strokeWidth={2.5}
             dot={false}
             activeDot={{ r: 4 }}
           />
-          
+
           {/* Other regions/districts line */}
-          <Line 
-            name={isGaul1 ? 'Other Regions' : 'Other Districts'} 
-            type="monotone" 
-            dataKey="otherDensity" 
+          <Line
+            name={isGaul1 ? 'Other Regions' : 'Other Districts'}
+            type="monotone"
+            dataKey="otherDensity"
             stroke={isDarkTheme ? '#f87171' : '#ef4444'}
             strokeWidth={2}
             strokeDasharray="5 5"
@@ -331,7 +325,7 @@ const DistributionHistogram = memo(({
               </span>
             </div>
           </div>
-          <div style={{ 
+          <div style={{
             flex: 1,
             display: 'flex',
             alignItems: 'center',
@@ -372,7 +366,7 @@ const DistributionHistogram = memo(({
             </div>
           </div>
         </div>
-        
+
         {/* Other Districts Stats */}
         <div style={{
           backgroundColor: isDarkTheme ? 'rgba(239, 68, 68, 0.08)' : 'rgba(239, 68, 68, 0.06)',
@@ -412,7 +406,7 @@ const DistributionHistogram = memo(({
               </span>
             </div>
           </div>
-          <div style={{ 
+          <div style={{
             flex: 1,
             display: 'flex',
             alignItems: 'center',

@@ -1,10 +1,18 @@
-import Map from './components/Map'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import MapComponent from './components/Map'
+import CountryView from './components/CountryView'
+import { ThemeProvider } from './components/ThemeProvider'
 
 function App() {
   return (
-    <div style={{ width: '100%', height: '100%' }}>
-      <Map />
-    </div>
+    <ThemeProvider defaultTheme="dark" storageKey="coasts-ui-theme">
+      <Router>
+        <Routes>
+          <Route path="/" element={<MapComponent />} />
+          <Route path="/country" element={<CountryView />} />
+        </Routes>
+      </Router>
+    </ThemeProvider>
   )
 }
 

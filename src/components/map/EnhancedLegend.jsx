@@ -43,8 +43,8 @@ const EnhancedLegend = memo(({
         transition: 'all 0.2s ease'
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.backgroundColor = isDarkTheme 
-          ? 'rgba(255, 255, 255, 0.03)' 
+        e.currentTarget.style.backgroundColor = isDarkTheme
+          ? 'rgba(255, 255, 255, 0.03)'
           : 'rgba(0, 0, 0, 0.02)';
       }}
       onMouseLeave={(e) => {
@@ -64,8 +64,8 @@ const EnhancedLegend = memo(({
           {title}
         </h4>
       </div>
-      <ChevronDown 
-        size={14} 
+      <ChevronDown
+        size={14}
         style={{
           transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
           transition: 'transform 0.2s ease',
@@ -93,7 +93,7 @@ const EnhancedLegend = memo(({
   const GradientBar = ({ colors, height = '8px' }) => (
     <div style={{
       height,
-      background: `linear-gradient(to right, ${colors.map(color => 
+      background: `linear-gradient(to right, ${colors.map(color =>
         typeof color === 'string' ? color : `rgba(${color.join(',')}, 0.8)`
       ).join(', ')})`,
       borderRadius: '4px',
@@ -104,39 +104,17 @@ const EnhancedLegend = memo(({
 
   if (isMinimized) {
     return (
-      <div style={{
-        backgroundColor: isDarkTheme ? 'rgba(15, 23, 42, 0.8)' : 'rgba(255, 255, 255, 0.9)',
-        backdropFilter: 'blur(12px)',
-        borderRadius: '6px',
-        border: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`,
-        boxShadow: isDarkTheme 
-          ? '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' 
-          : '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-        padding: '8px',
-        cursor: 'pointer'
-      }}
-      onClick={() => setIsMinimized(false)}
+      <div
+        className="glass-panel p-2.5 rounded-xl cursor-pointer hover:bg-white/10 transition-colors backdrop-blur-xl border border-border/50 group"
+        onClick={() => setIsMinimized(false)}
       >
-        <Eye size={16} style={{ 
-          color: isDarkTheme ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)' 
-        }} />
+        <Eye size={16} className="text-foreground/70 group-hover:text-primary transition-colors" />
       </div>
     );
   }
 
   return (
-    <div style={{
-      backgroundColor: isDarkTheme ? 'rgba(15, 23, 42, 0.85)' : 'rgba(255, 255, 255, 0.9)',
-      backdropFilter: 'blur(12px)',
-      borderRadius: '8px',
-      border: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`,
-      boxShadow: isDarkTheme 
-        ? '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' 
-        : '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-      padding: '12px',
-      minWidth: '200px',
-      maxWidth: '220px'
-    }}>
+    <div className="glass-panel p-4 rounded-2xl min-w-[200px] max-w-[220px]">
       {/* Header with minimize button */}
       <div style={{
         display: 'flex',
@@ -164,8 +142,8 @@ const EnhancedLegend = memo(({
             transition: 'all 0.2s ease'
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = isDarkTheme 
-              ? 'rgba(255, 255, 255, 0.1)' 
+            e.currentTarget.style.backgroundColor = isDarkTheme
+              ? 'rgba(255, 255, 255, 0.1)'
               : 'rgba(0, 0, 0, 0.1)';
           }}
           onMouseLeave={(e) => {
@@ -182,18 +160,13 @@ const EnhancedLegend = memo(({
           title={`${metricInfo.label} ${metricInfo.unit ? `(${metricInfo.unit})` : ''}`}
           isExpanded={expandedSections.metrics}
           onToggle={() => toggleSection('metrics')}
-          icon={<div style={{
-            width: '8px',
-            height: '8px',
-            borderRadius: '50%',
-            backgroundColor: '#3b82f6'
-          }} />}
+          icon={<div className="w-2 h-2 rounded-full bg-primary" />}
         />
 
         {expandedSections.metrics && (
-          <div style={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
             gap: '6px',
             paddingLeft: '2px'
           }}>
@@ -225,8 +198,8 @@ const EnhancedLegend = memo(({
                   transition: 'all 0.2s ease'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = isDarkTheme 
-                    ? 'rgba(255, 255, 255, 0.05)' 
+                  e.currentTarget.style.backgroundColor = isDarkTheme
+                    ? 'rgba(255, 255, 255, 0.05)'
                     : 'rgba(0, 0, 0, 0.03)';
                 }}
                 onMouseLeave={(e) => {
@@ -268,9 +241,9 @@ const EnhancedLegend = memo(({
                 <div>
                   {/* Gradient overview for column view */}
                   <div style={{ marginBottom: '8px' }}>
-                    <GradientBar 
-                      colors={COLOR_RANGE.map(color => `rgba(${color.join(',')}, 0.8)`)} 
-                      height="8px" 
+                    <GradientBar
+                      colors={COLOR_RANGE.map(color => `rgba(${color.join(',')}, 0.8)`)}
+                      height="8px"
                     />
                     <div style={{
                       display: 'flex',
@@ -303,17 +276,17 @@ const EnhancedLegend = memo(({
                             transition: 'all 0.2s ease'
                           }}
                           onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = isDarkTheme 
-                              ? 'rgba(255, 255, 255, 0.05)' 
+                            e.currentTarget.style.backgroundColor = isDarkTheme
+                              ? 'rgba(255, 255, 255, 0.05)'
                               : 'rgba(0, 0, 0, 0.03)';
                           }}
                           onMouseLeave={(e) => {
                             e.currentTarget.style.backgroundColor = 'transparent';
                           }}
                         >
-                          <ColorSwatch 
-                            color={`rgba(${colorRange[index].join(',')}, ${opacity})`} 
-                            size="small" 
+                          <ColorSwatch
+                            color={`rgba(${colorRange[index].join(',')}, ${opacity})`}
+                            size="small"
                           />
                           <span style={{
                             fontSize: '11px',
@@ -331,17 +304,17 @@ const EnhancedLegend = memo(({
                 // Heatmap view
                 <div>
                   <div style={{ marginBottom: '6px' }}>
-                    <GradientBar 
+                    <GradientBar
                       colors={[
-                        'rgba(254, 235, 226, 0.2)', 
+                        'rgba(254, 235, 226, 0.2)',
                         'rgba(254, 235, 226, 0.5)',
                         'rgba(252, 197, 192, 0.7)',
                         'rgba(250, 159, 181, 0.8)',
                         'rgba(247, 104, 161, 0.9)',
                         'rgba(221, 52, 151, 1)',
                         'rgba(174, 1, 126, 1)'
-                      ]} 
-                      height="8px" 
+                      ]}
+                      height="8px"
                     />
                   </div>
                   <div style={{
