@@ -103,6 +103,51 @@ const loadPdsGridsData = async () => {
 };
 
 /**
+ * Load PDS fishing grounds GeoJSON from GCP-exported static file
+ * @returns {Promise<Object|null>} GeoJSON object or null if error
+ */
+const loadPdsFishingGroundsData = async () => {
+  try {
+    const response = await fetch('/data/pds-fishing-grounds.geojson');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    if (!data || typeof data !== 'object' || data.type !== 'FeatureCollection') {
+      throw new Error('Invalid PDS fishing grounds GeoJSON format');
+    }
+    if (!Array.isArray(data.features)) {
+      throw new Error('Invalid PDS fishing grounds features format');
+    }
+    return data;
+  } catch (error) {
+    console.error('Error loading PDS fishing grounds data:', error);
+    return null;
+  }
+};
+
+/**
+ * Load PDS H3 effort JSON from GCP-exported static file
+ * @returns {Promise<Object|Array|null>} Parsed JSON payload or null if error
+ */
+const loadPdsH3EffortData = async () => {
+  try {
+    const response = await fetch('/data/pds-h3-effort-r9.json');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    if (!Array.isArray(data)) {
+      throw new Error('Invalid PDS H3 effort data format');
+    }
+    return data;
+  } catch (error) {
+    console.error('Error loading PDS H3 effort data:', error);
+    return null;
+  }
+};
+
+/**
  * Load WIO map data - Fisheries data in GeoJSON format
  * @returns {Promise<Object|null>} GeoJSON object or null if error
  */
@@ -561,6 +606,8 @@ export const loadMapData = loadWioMapData;
 
 export {
   loadPdsGridsData,
+  loadPdsFishingGroundsData,
+  loadPdsH3EffortData,
   loadWioMapData,
   loadTimeSeriesData,
   loadMapDataGaul1,

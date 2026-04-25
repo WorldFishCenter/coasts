@@ -57,7 +57,15 @@ const CountryTimeSeriesChart = ({ data, selectedCountry, selectedMetric = 'mean_
 
     const regions = useMemo(() => {
         if (chartData.length === 0) return [];
-        return Object.keys(chartData[0]).filter(k => k !== 'date' && k !== 'timestamp');
+        const seriesKeys = new Set();
+        chartData.forEach((point) => {
+            Object.keys(point).forEach((key) => {
+                if (key !== 'date' && key !== 'timestamp') {
+                    seriesKeys.add(key);
+                }
+            });
+        });
+        return Array.from(seriesKeys);
     }, [chartData]);
 
 

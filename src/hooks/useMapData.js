@@ -5,6 +5,8 @@ import {
   loadTimeSeriesGaul1,
   loadTimeSeriesGaul2,
   loadPdsGridsData,
+  loadPdsFishingGroundsData,
+  loadPdsH3EffortData,
   getLatestMetrics,
   getLatestMetricsGaul1
 } from '../services/dataService';
@@ -15,6 +17,8 @@ export const useMapData = () => {
   const [timeSeriesGaul1, setTimeSeriesGaul1] = useState(null);
   const [timeSeriesGaul2, setTimeSeriesGaul2] = useState(null);
   const [pdsGridsData, setPdsGridsData] = useState(null);
+  const [pdsFishingGroundsData, setPdsFishingGroundsData] = useState(null);
+  const [pdsH3EffortData, setPdsH3EffortData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [totalValueGaul1, setTotalValueGaul1] = useState(0);
@@ -26,12 +30,15 @@ export const useMapData = () => {
         setLoading(true);
         setError(null);
 
-        const [mapGaul1, mapGaul2, tsGaul1, tsGaul2, pdsGrids] = await Promise.all([
+        const [mapGaul1, mapGaul2, tsGaul1, tsGaul2, pdsGrids, fishingGrounds, h3EffortData] =
+          await Promise.all([
           loadMapDataGaul1(),
           loadMapDataGaul2(),
           loadTimeSeriesGaul1(),
           loadTimeSeriesGaul2(),
-          loadPdsGridsData()
+          loadPdsGridsData(),
+          loadPdsFishingGroundsData(),
+          loadPdsH3EffortData()
         ]);
 
         if (!mapGaul2) {
@@ -49,6 +56,12 @@ export const useMapData = () => {
 
         if (!pdsGrids) {
           console.warn('PDS grids data not available');
+        }
+        if (!fishingGrounds) {
+          console.warn('PDS fishing grounds data not available');
+        }
+        if (!h3EffortData) {
+          console.warn('PDS H3 effort data not available');
         }
 
         // Enrich GAUL1 map with latest metrics
@@ -105,6 +118,8 @@ export const useMapData = () => {
         setTimeSeriesGaul1(tsGaul1);
         setTimeSeriesGaul2(tsGaul2);
         setPdsGridsData(pdsGrids);
+        setPdsFishingGroundsData(fishingGrounds);
+        setPdsH3EffortData(Array.isArray(h3EffortData) ? h3EffortData : null);
         setTotalValueGaul1(total1);
         setTotalValueGaul2(total2);
       } catch (err) {
@@ -124,6 +139,8 @@ export const useMapData = () => {
     timeSeriesGaul1,
     timeSeriesGaul2,
     pdsGridsData,
+    pdsFishingGroundsData,
+    pdsH3EffortData,
     loading,
     error,
     totalValueGaul1,

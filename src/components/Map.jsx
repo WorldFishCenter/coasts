@@ -1,11 +1,11 @@
 import { useState, useCallback, useEffect, useMemo, useRef, lazy, Suspense } from 'react';
-import DeckGL from '@deck.gl/react';
-import { Map as MapGL } from 'react-map-gl';
+import { Map as MapGL, useControl } from 'react-map-gl';
+import { MapboxOverlay } from '@deck.gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 // Components - Lazy load heavy components
-import AppLayout from './AppLayout';
-import { useTheme } from './ThemeProvider';
+import Header from './Header';
+import Sidebar from './Sidebar';
 import EnhancedLegend from './map/EnhancedLegend';
 import MapStyleToggle from './map/MapStyleToggle';
 import TimeRangeControl from './map/TimeRangeControl';
@@ -24,54 +24,54 @@ import { TIME_BREAKS, COLOR_RANGE } from '../utils/gridLayerConfig';
 import { processPdsData, transformPdsData } from '../utils/pdsDataProcessor';
 import { calculateMetricStats } from '../utils/metricCalculations';
 import { getAverageMetricsInRange, getAverageMetricsInRangeGaul1, getRegionKey as getRegionKeyFromService } from '../services/dataService';
+import { KEPLER_INITIAL_VIEW_STATE } from '../utils/pdsOverlayConfig';
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
 // Initial viewport configuration
 const INITIAL_VIEW_STATE = {
-  longitude: 39.0,
-  latitude: -7,
-  zoom: 5.7,
-  pitch: 40,
-  bearing: 0
+  ...KEPLER_INITIAL_VIEW_STATE
+};
+
+const DeckGLOverlay = (props) => {
+  const overlay = useControl(() => new MapboxOverlay(props));
+  overlay.setProps(props);
+  return null;
 };
 
 const MapComponent = () => {
   // Device detection
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-
+  
   // Theme and visualization states
-  const { theme } = useTheme();
-  const isDarkTheme = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const [isDarkTheme, setIsDarkTheme] = useState(true);
   const [isSatellite, setIsSatellite] = useState(true);
   const [visualizationMode, setVisualizationMode] = useState('column');
-
+  
   // Map interaction states
   const [hoveredFeatureIndex, setHoveredFeatureIndex] = useState(null);
-  const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
-
+  
   // Analysis states
   const [opacity, setOpacity] = useState(0.7);
   const [selectedMetric, setSelectedMetric] = useState('mean_cpue');
   const [selectedRanges, setSelectedRanges] = useState(TIME_BREAKS);
   const [selectedRegion, setSelectedRegion] = useState(null);
-
+  
   // Selection and filter states
   const [selectedRegionsForComparison, setSelectedRegionsForComparison] = useState([]);
   const [selectedCountries, setSelectedCountries] = useState([]);
-
+  
   // Admin level: gaul1 = Admin 1 (provinces), gaul2 = Admin 2 (districts)
   const [gaulLevel, setGaulLevel] = useState('gaul2');
-
+  
   // Data loading states
   const [pdsDataLoaded, setPdsDataLoaded] = useState(false);
-
+  
   // Add state for date range (indices)
   const [dateRange, setDateRange] = useState([0, 0]); // [startIdx, endIdx]
-
+  
   // Refs
   const mapRef = useRef(null);
-  const deckRef = useRef(null);
   const didSetDefault = useRef(false);
 
   // Load map data (both GAUL levels)
@@ -81,6 +81,8 @@ const MapComponent = () => {
     timeSeriesGaul1,
     timeSeriesGaul2,
     pdsGridsData,
+    pdsFishingGroundsData,
+    pdsH3EffortData,
     loading,
     error
   } = useMapData();
@@ -175,11 +177,11 @@ const MapComponent = () => {
 
   // Adjust pitch when switching visualization modes
   useEffect(() => {
-    setViewState(prev => ({
-      ...prev,
-      pitch: visualizationMode === 'heatmap' ? 0 : 40,
-      transitionDuration: 1000
-    }));
+    const map = mapRef.current?.getMap?.();
+    if (!map) return;
+    const targetPitch = visualizationMode === 'heatmap' ? 0 : KEPLER_INITIAL_VIEW_STATE.pitch;
+    map.setPitch(targetPitch);
+    map.triggerRepaint();
   }, [visualizationMode]);
 
   // Filter enriched boundaries by selected countries
@@ -187,7 +189,7 @@ const MapComponent = () => {
     if (!enrichedBoundaries || selectedCountries.length === 0) return enrichedBoundaries;
     return {
       ...enrichedBoundaries,
-      features: enrichedBoundaries.features.filter(f =>
+      features: enrichedBoundaries.features.filter(f => 
         selectedCountries.includes(f.properties.country)
       )
     };
@@ -206,7 +208,6 @@ const MapComponent = () => {
   // Create map layers
   const layers = useMapLayers({
     filteredBoundaries,
-    transformedPdsData,
     selectedMetric,
     metricStats,
     opacity,
@@ -214,7 +215,8 @@ const MapComponent = () => {
     isDarkTheme,
     hoveredFeatureIndex,
     visualizationMode,
-    selectedRanges
+    pdsFishingGroundsData,
+    pdsH3EffortData
   });
 
   // Create tooltip handler
@@ -226,8 +228,8 @@ const MapComponent = () => {
   });
 
   // Event handlers
-  const onViewStateChange = useCallback(({ viewState }) => {
-    setViewState(viewState);
+  const handleThemeChange = useCallback((isDark) => {
+    setIsDarkTheme(isDark);
   }, []);
 
   const onHover = useCallback((info) => {
@@ -242,12 +244,22 @@ const MapComponent = () => {
     setIsSatellite(prev => !prev);
   }, []);
 
+  const handleMapLoad = useCallback(() => {
+    const map = mapRef.current?.getMap?.();
+    if (!map) return;
+    map.dragPan.enable();
+    map.dragRotate.enable();
+    map.touchZoomRotate.enable();
+    map.touchZoomRotate.disableRotation();
+    map.keyboard.enable();
+  }, []);
+
   // Selection handlers
   const handleRangeToggle = useCallback((range) => {
     setSelectedRanges(current => {
       const isSelected = current.some(r => r.min === range.min && r.max === range.max);
       if (isSelected) {
-        return current.length === 1 ? current :
+        return current.length === 1 ? current : 
           current.filter(r => r.min !== range.min || r.max !== range.max);
       }
       return [...current, range];
@@ -301,9 +313,9 @@ const MapComponent = () => {
     return getMapStyles(isDarkTheme);
   }, [isSatellite, isDarkTheme]);
 
-  const getCursor = useCallback(({ isDragging, isHovering }) =>
+  const getCursor = useCallback(({isDragging, isHovering}) => 
     isDragging ? 'grabbing' : isHovering ? 'pointer' : 'grab'
-    , []);
+  , []);
 
   // Loading and error states
   if (loading) return <div>Loading...</div>;
@@ -328,94 +340,89 @@ const MapComponent = () => {
   }
 
   return (
-    <AppLayout
-      boundaries={enrichedBoundaries}
-      timeSeriesData={timeSeriesData}
-      pdsGridsData={pdsGridsData}
-      isMobile={isMobile}
-      isSidebarOpen={true}
-      selectedMetric={selectedMetric}
-      onMetricChange={setSelectedMetric}
-      transformedPdsData={transformedPdsData}
-      selectedRanges={selectedRanges}
-      onRangeToggle={handleRangeToggle}
-      selectedRegions={selectedRegionsForComparison}
-      onRegionSelect={handleRegionSelect}
-      onRegionRemove={handleRegionRemove}
-      selectedCountries={selectedCountries}
-      onCountryToggle={handleCountryToggle}
-      gaulLevel={gaulLevel}
-      onGaulLevelChange={setGaulLevel}
-      visualizationMode={visualizationMode}
-      onVisualizationModeChange={setVisualizationMode}
-    >
-      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}>
-        <DeckGL
-          ref={deckRef}
-          viewState={viewState}
-          onViewStateChange={onViewStateChange}
-          controller={true}
-          layers={layers}
-          getTooltip={getTooltip}
-          onHover={onHover}
-          getCursor={getCursor}
-          onClick={handleRegionClick}
-          style={{ position: 'absolute', width: '100%', height: '100%' }}
-        >
+    <div style={{
+      position: 'relative',
+      height: '100vh',
+      width: '100%',
+      backgroundColor: isDarkTheme ? '#1a1a1a' : '#f8f9fa',
+      display: 'flex',
+      flexDirection: 'column'
+    }}>
+      <Header 
+        isDarkTheme={isDarkTheme} 
+        onThemeChange={handleThemeChange}
+        boundaries={enrichedBoundaries}
+        timeSeriesData={timeSeriesData}
+        pdsGridsData={pdsGridsData}
+      />
+      
+      <div style={{
+        position: 'relative',
+        flex: '1 1 auto',
+        display: 'flex',
+        minHeight: 0
+      }}>
+        <Sidebar
+          isDarkTheme={isDarkTheme}
+          isMobile={isMobile}
+          isOpen={!isMobile}
+          boundaries={enrichedBoundaries}
+          selectedMetric={selectedMetric}
+          onMetricChange={setSelectedMetric}
+          transformedPdsData={transformedPdsData}
+          selectedRanges={selectedRanges}
+          onRangeToggle={handleRangeToggle}
+          selectedRegions={selectedRegionsForComparison}
+          onRegionSelect={handleRegionSelect}
+          onRegionRemove={handleRegionRemove}
+          selectedCountries={selectedCountries}
+          onCountryToggle={handleCountryToggle}
+          gaulLevel={gaulLevel}
+          onGaulLevelChange={setGaulLevel}
+          visualizationMode={visualizationMode}
+          onVisualizationModeChange={setVisualizationMode}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            height: '100%'
+          }}
+        />
+
+        <div style={{
+          flexGrow: 1,
+          position: 'relative',
+          transition: 'margin-left 0.3s ease'
+        }}>
           <MapGL
             ref={mapRef}
+            initialViewState={INITIAL_VIEW_STATE}
+            projection="mercator"
+            // Default bearingSnap is 7°: small non-zero bearings (e.g. Kepler ~-2°) get eased to north
+            // after zoom/pan inertia ends. Disable so zoom never "corrects" bearing unexpectedly.
+            bearingSnap={0}
             mapStyle={getMapStyle()}
             mapboxAccessToken={MAPBOX_TOKEN}
-            style={{ width: '100%', height: '100%' }}
-          />
-        </DeckGL>
-      </div>
-
-      <MapStyleToggle
-        isDarkTheme={isDarkTheme}
-        isSatellite={isSatellite}
-        onToggle={handleMapStyleToggle}
-      />
-
-      {/* Central Command Dock Overlay */}
-      <div className="absolute bottom-6 left-0 right-0 pointer-events-none flex flex-col items-center gap-4 z-[1000] px-6">
-
-        {/* Top Row: Histogram */}
-        {selectedRegion && (
-          <div className="pointer-events-auto transition-all duration-500 ease-out animate-in slide-in-from-bottom-5 w-full flex justify-center">
-            <Suspense fallback={<div className="glass-panel px-6 py-4 rounded-xl text-primary font-bold text-sm">Loading distribution histogram...</div>}>
-              <DistributionHistogram
-                isDarkTheme={isDarkTheme}
-                boundaries={enrichedBoundaries}
-                selectedMetric={selectedMetric}
-                selectedRegion={selectedRegion}
-                timeSeriesData={timeSeriesData}
-                gaulLevel={gaulLevel}
-                onClose={() => setSelectedRegion(null)}
-              />
-            </Suspense>
-          </div>
-        )}
-
-        {/* Bottom Row: Controls */}
-        <div className="w-full flex justify-between items-end pointer-events-none max-w-[1400px] mx-auto">
-          {/* Left slot (Empty for now) */}
-          <div className="flex-1" />
-
-          {/* Center slot: Time Slider */}
-          <div className="pointer-events-auto flex justify-center flex-1">
-            <TimeRangeControl
-              timeSeriesData={timeSeriesData}
-              dateRange={dateRange}
-              onDateRangeChange={handleDateRangeChange}
-              isDarkTheme={isDarkTheme}
-              isMobile={isMobile}
+            onLoad={handleMapLoad}
+            style={{ position: 'absolute', width: '100%', height: '100%' }}
+          >
+            <DeckGLOverlay
+              interleaved={true}
+              layers={layers}
+              getTooltip={getTooltip}
+              onHover={onHover}
+              onClick={handleRegionClick}
+              getCursor={getCursor}
             />
-          </div>
+          </MapGL>
 
-          {/* Right slot: Legend */}
-          <div className="pointer-events-auto flex-1 flex justify-end">
-            <EnhancedLegend
+          <div style={{
+            position: 'absolute',
+            bottom: '24px',
+            right: '24px',
+            zIndex: 1000
+          }}>
+            <EnhancedLegend 
               isDarkTheme={isDarkTheme}
               grades={metricStats.grades}
               selectedMetric={selectedMetric}
@@ -424,9 +431,45 @@ const MapComponent = () => {
               visualizationMode={visualizationMode}
             />
           </div>
+
+          <MapStyleToggle
+            isDarkTheme={isDarkTheme}
+            isSatellite={isSatellite}
+            onToggle={handleMapStyleToggle}
+          />
+
+
+          <TimeRangeControl
+            timeSeriesData={timeSeriesData}
+            dateRange={dateRange}
+            onDateRangeChange={handleDateRangeChange}
+            isDarkTheme={isDarkTheme}
+            isMobile={isMobile}
+          />
+
+          {selectedRegion && (
+            <Suspense fallback={<div>Loading distribution histogram...</div>}>
+              <DistributionHistogram
+                isDarkTheme={isDarkTheme}
+                boundaries={enrichedBoundaries}
+                selectedMetric={selectedMetric}
+                selectedRegion={selectedRegion}
+                timeSeriesData={timeSeriesData}
+                gaulLevel={gaulLevel}
+                onClose={() => setSelectedRegion(null)}
+                style={{
+                  position: 'absolute',
+                  bottom: '24px',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  zIndex: 1001
+                }}
+              />
+            </Suspense>
+          )}
         </div>
       </div>
-    </AppLayout>
+    </div>
   );
 };
 

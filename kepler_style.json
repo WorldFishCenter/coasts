@@ -1,0 +1,395 @@
+{
+  "version": "v1",
+  "config": {
+    "visState": {
+      "filters": [
+        {
+          "dataId": [
+            "mw032v"
+          ],
+          "id": "guxgo5g7q",
+          "name": [
+            "unique_trips"
+          ],
+          "type": "range",
+          "value": [
+            4,
+            3055
+          ],
+          "plotType": {
+            "type": "histogram"
+          },
+          "animationWindow": "free",
+          "yAxis": null,
+          "view": "side",
+          "speed": 1,
+          "enabled": true
+        }
+      ],
+      "layers": [
+        {
+          "id": "pf9kca8",
+          "type": "hexagonId",
+          "config": {
+            "dataId": "-x4r7me",
+            "label": "effort.json",
+            "color": [
+              30,
+              150,
+              190
+            ],
+            "highlightColor": [
+              252,
+              242,
+              26,
+              255
+            ],
+            "columns": {
+              "hex_id": "h3_index"
+            },
+            "isVisible": true,
+            "visConfig": {
+              "colorRange": {
+                "colors": [
+                  "#184E77",
+                  "#1584A8",
+                  "#59C09C",
+                  "#D9ED92"
+                ],
+                "name": "SummerSky",
+                "type": "sequential",
+                "category": "Uber"
+              },
+              "filled": true,
+              "opacity": 0.51,
+              "outline": false,
+              "strokeColor": null,
+              "strokeColorRange": {
+                "name": "Global Warming",
+                "type": "sequential",
+                "category": "Uber",
+                "colors": [
+                  "#4C0035",
+                  "#880030",
+                  "#B72F15",
+                  "#D6610A",
+                  "#EF9100",
+                  "#FFC300"
+                ]
+              },
+              "strokeOpacity": 0.8,
+              "thickness": 2,
+              "coverage": 0.5,
+              "enable3d": true,
+              "sizeRange": [
+                0,
+                500
+              ],
+              "coverageRange": [
+                0,
+                1
+              ],
+              "elevationScale": 54.8,
+              "enableElevationZoomFactor": true,
+              "fixedHeight": false
+            },
+            "hidden": false,
+            "textLabel": [
+              {
+                "field": null,
+                "color": [
+                  255,
+                  255,
+                  255
+                ],
+                "size": 18,
+                "offset": [
+                  0,
+                  0
+                ],
+                "anchor": "middle",
+                "alignment": "center",
+                "outlineWidth": 0,
+                "outlineColor": [
+                  255,
+                  0,
+                  0,
+                  255
+                ],
+                "background": false,
+                "backgroundColor": [
+                  0,
+                  0,
+                  200,
+                  255
+                ]
+              }
+            ]
+          },
+          "visualChannels": {
+            "colorField": {
+              "name": "avg_hours_per_day",
+              "type": "real"
+            },
+            "colorScale": "quantile",
+            "strokeColorField": null,
+            "strokeColorScale": "quantile",
+            "sizeField": {
+              "name": "avg_hours_per_day",
+              "type": "real"
+            },
+            "sizeScale": "linear",
+            "coverageField": null,
+            "coverageScale": "linear"
+          }
+        },
+        {
+          "id": "wmvefm",
+          "type": "geojson",
+          "config": {
+            "dataId": "mw032v",
+            "columnMode": "geojson",
+            "label": "grounds",
+            "color": [
+              137,
+              218,
+              193
+            ],
+            "highlightColor": [
+              252,
+              242,
+              26,
+              255
+            ],
+            "columns": {
+              "geojson": "_geojson"
+            },
+            "isVisible": true,
+            "visConfig": {
+              "opacity": 0.8,
+              "strokeOpacity": 0.8,
+              "thickness": 0,
+              "strokeColor": [
+                179,
+                173,
+                158
+              ],
+              "colorRange": {
+                "colors": [
+                  "#00939C",
+                  "#8BC6C9",
+                  "#EB9373",
+                  "#C22E00"
+                ],
+                "name": "Uber Viz Diverging",
+                "type": "diverging",
+                "category": "Uber"
+              },
+              "strokeColorRange": {
+                "colors": [
+                  "#00939C",
+                  "#6BB5B9",
+                  "#AAD7D9",
+                  "#F4B198",
+                  "#DF744E",
+                  "#C22E00"
+                ],
+                "name": "Uber Viz Diverging",
+                "type": "diverging",
+                "category": "Uber"
+              },
+              "radius": 10,
+              "sizeRange": [
+                0,
+                10
+              ],
+              "radiusRange": [
+                0,
+                50
+              ],
+              "heightRange": [
+                0,
+                500
+              ],
+              "elevationScale": 5,
+              "stroked": false,
+              "filled": true,
+              "enable3d": false,
+              "wireframe": false,
+              "fixedHeight": false,
+              "allowHover": true
+            },
+            "hidden": false,
+            "textLabel": [
+              {
+                "field": null,
+                "color": [
+                  255,
+                  255,
+                  255
+                ],
+                "size": 18,
+                "offset": [
+                  0,
+                  0
+                ],
+                "anchor": "start",
+                "alignment": "center",
+                "outlineWidth": 0,
+                "outlineColor": [
+                  255,
+                  0,
+                  0,
+                  255
+                ],
+                "background": false,
+                "backgroundColor": [
+                  0,
+                  0,
+                  200,
+                  255
+                ]
+              }
+            ]
+          },
+          "visualChannels": {
+            "colorField": {
+              "name": "avg_hours_per_day",
+              "type": "real"
+            },
+            "colorScale": "quantile",
+            "strokeColorField": {
+              "name": "avg_hours_per_day",
+              "type": "real"
+            },
+            "strokeColorScale": "quantile",
+            "sizeField": null,
+            "sizeScale": "linear",
+            "heightField": null,
+            "heightScale": "linear",
+            "radiusField": null,
+            "radiusScale": "linear"
+          }
+        }
+      ],
+      "effects": [],
+      "interactionConfig": {
+        "tooltip": {
+          "fieldsToShow": {
+            "-x4r7me": [
+              {
+                "name": "h3_index",
+                "format": null
+              },
+              {
+                "name": "year",
+                "format": null
+              },
+              {
+                "name": "fishing_hours",
+                "format": null
+              },
+              {
+                "name": "unique_trips",
+                "format": null
+              },
+              {
+                "name": "n_active_days",
+                "format": null
+              }
+            ],
+            "mw032v": [
+              {
+                "name": "ground_id",
+                "format": null
+              },
+              {
+                "name": "area_km2",
+                "format": null
+              },
+              {
+                "name": "fishing_hours",
+                "format": null
+              },
+              {
+                "name": "unique_trips",
+                "format": null
+              },
+              {
+                "name": "n_active_days",
+                "format": null
+              }
+            ]
+          },
+          "compareMode": false,
+          "compareType": "absolute",
+          "enabled": true
+        },
+        "brush": {
+          "size": 0.5,
+          "enabled": false
+        },
+        "geocoder": {
+          "enabled": false
+        },
+        "coordinate": {
+          "enabled": false
+        }
+      },
+      "layerBlending": "additive",
+      "overlayBlending": "normal",
+      "splitMaps": [],
+      "animationConfig": {
+        "currentTime": null,
+        "speed": 1
+      },
+      "editor": {
+        "features": [],
+        "visible": true
+      }
+    },
+    "mapState": {
+      "bearing": -2.1198738170347013,
+      "dragRotate": true,
+      "latitude": -6.240651321759819,
+      "longitude": 39.20268284002571,
+      "pitch": 56.337196916920675,
+      "zoom": 8.972491655516384,
+      "isSplit": false,
+      "isViewportSynced": true,
+      "isZoomLocked": false,
+      "splitMapViewports": []
+    },
+    "mapStyle": {
+      "styleType": "satellite",
+      "topLayerGroups": {},
+      "visibleLayerGroups": {
+        "label": true,
+        "road": false,
+        "border": false,
+        "building": false,
+        "water": false,
+        "land": false,
+        "3d building": false
+      },
+      "threeDBuildingColor": [
+        4.179000818945631,
+        7.370237807958659,
+        14.816457448989057
+      ],
+      "backgroundColor": [
+        0,
+        0,
+        0
+      ],
+      "mapStyles": {}
+    },
+    "uiState": {
+      "mapControls": {
+        "mapLegend": {
+          "active": true
+        }
+      }
+    }
+  }
+}

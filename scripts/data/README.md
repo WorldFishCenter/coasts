@@ -2,6 +2,8 @@
 
 This directory contains scripts to fetch data from MongoDB and store it as static JSON files in the repository.
 
+It also includes a Google Cloud Storage fetcher for versioned PDS datasets.
+
 ## Process Overview
 
 1. A GitHub Actions workflow runs daily at midnight UTC
@@ -17,6 +19,17 @@ If you need to fetch data manually:
 1. Make sure your `.env` file is set up with the `MONGODB_URI` variable
 2. Run the command: `npm run fetch-data`
 
+### Google Cloud PDS fetch
+
+If you need to fetch the latest versioned PDS files from Google Cloud Storage:
+
+1. Ensure your `.env` includes:
+   - `GCP_SA_KEY` (service account JSON, single line)
+   - `GCP_BUCKET_NAME`
+   - Optional: `GCP_PDS_GROUNDS_PREFIX` (default: `pds-fishing-grounds__`)
+   - Optional: `GCP_PDS_EFFORT_PREFIX` (default: `pds-h3-effort-r9__`)
+2. Run: `npm run fetch-gcp-data`
+
 ## Data Files
 
 The script generates these files:
@@ -28,6 +41,8 @@ The script generates these files:
 - `/public/data/map_gaul2.json` - GAUL2 boundaries GeoJSON (from `wio_gaul2`)
 - `/public/data/ts_gaul1.json` - Time series keyed by GAUL1 region (from `metrics_gaul1`)
 - `/public/data/ts_gaul2.json` - Time series keyed by GAUL2 region (from `metrics_gaul2`)
+- `/public/data/pds-fishing-grounds.geojson` - Latest versioned fishing grounds GeoJSON from GCS
+- `/public/data/pds-h3-effort-r9.json` - Latest versioned H3 effort JSON from GCS
 
 ## Data Structure
 

@@ -145,7 +145,7 @@ const Sidebar = memo(({
           <span className="text-[10px] font-bold tracking-widest uppercase text-muted-foreground">Systems Online</span>
         </div>
         <div className="text-[10px] tracking-widest uppercase text-muted-foreground opacity-50 font-bold">
-          Coasts v2.5
+          Coasts v2.6
         </div>
       </div>
     </div>

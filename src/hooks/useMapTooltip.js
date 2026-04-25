@@ -109,6 +109,52 @@ export const useMapTooltip = ({
       };
     }
 
+    if (layer.id === 'pds-fishing-grounds-layer') {
+      const props = object.properties || {};
+      return {
+        html: `
+          <div style="padding: 8px">
+            <div><strong>Fishing Ground ${props.ground_id ?? 'N/A'}</strong></div>
+            <div>Area: ${(props.area_km2 ?? 0).toFixed?.(2) ?? '0.00'} km²</div>
+            <div>Fishing hours: ${(props.fishing_hours ?? 0).toLocaleString?.() ?? props.fishing_hours ?? '0'}</div>
+            <div>Unique trips: ${(props.unique_trips ?? 0).toLocaleString?.() ?? props.unique_trips ?? '0'}</div>
+            <div>Active days: ${(props.n_active_days ?? 0).toLocaleString?.() ?? props.n_active_days ?? '0'}</div>
+          </div>
+        `,
+        style: {
+          backgroundColor: isDarkTheme ? 'rgba(30, 30, 30, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+          color: isDarkTheme ? '#ffffff' : '#000000',
+          fontSize: '12px',
+          borderRadius: '4px',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+          border: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`
+        }
+      };
+    }
+
+    if (layer.id === 'pds-h3-effort-layer') {
+      return {
+        html: `
+          <div style="padding: 8px">
+            <div><strong>PDS H3 Effort</strong></div>
+            <div>H3: ${object.h3_index ?? 'N/A'}</div>
+            <div>Year: ${object.year ?? 'N/A'}</div>
+            <div>Fishing hours: ${(object.fishing_hours ?? 0).toLocaleString?.() ?? object.fishing_hours ?? '0'}</div>
+            <div>Unique trips: ${(object.unique_trips ?? 0).toLocaleString?.() ?? object.unique_trips ?? '0'}</div>
+            <div>Active days: ${(object.n_active_days ?? 0).toLocaleString?.() ?? object.n_active_days ?? '0'}</div>
+          </div>
+        `,
+        style: {
+          backgroundColor: isDarkTheme ? 'rgba(30, 30, 30, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+          color: isDarkTheme ? '#ffffff' : '#000000',
+          fontSize: '12px',
+          borderRadius: '4px',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+          border: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`
+        }
+      };
+    }
+
     return null;
   }, [selectedMetric, isDarkTheme, metricStats, visualizationMode]);
 }; 
