@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useMemo, useRef, lazy, Suspense } from 'react';
 import { Map as MapGL, useControl } from 'react-map-gl';
 import { MapboxOverlay } from '@deck.gl/mapbox';
+import { Waves } from 'lucide-react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 // Components - Lazy load heavy components
@@ -32,6 +33,10 @@ const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 const INITIAL_VIEW_STATE = {
   ...KEPLER_INITIAL_VIEW_STATE
 };
+const BATHYMETRY_SOURCE_ID = 'bathymetry-source';
+const BATHYMETRY_LINE_LAYER_ID = 'bathymetry-lines';
+const BATHYMETRY_LABEL_LAYER_ID = 'bathymetry-labels';
+const BATHYMETRY_DATA_PATH = '/data/bathymetry_contours_wio.geojson';
 
 const DeckGLOverlay = (props) => {
   const overlay = useControl(() => new MapboxOverlay(props));
@@ -47,6 +52,8 @@ const MapComponent = () => {
   const [isDarkTheme, setIsDarkTheme] = useState(true);
   const [isSatellite, setIsSatellite] = useState(true);
   const [visualizationMode, setVisualizationMode] = useState('column');
+  const [showBathymetry, setShowBathymetry] = useState(false);
+  const [bathymetryLoading, setBathymetryLoading] = useState(false);
   
   // Map interaction states
   const [hoveredFeatureIndex, setHoveredFeatureIndex] = useState(null);
@@ -244,6 +251,112 @@ const MapComponent = () => {
     setIsSatellite(prev => !prev);
   }, []);
 
+  const removeBathymetryLayers = useCallback((map) => {
+    if (!map) return;
+    if (map.getLayer(BATHYMETRY_LABEL_LAYER_ID)) {
+      map.removeLayer(BATHYMETRY_LABEL_LAYER_ID);
+    }
+    if (map.getLayer(BATHYMETRY_LINE_LAYER_ID)) {
+      map.removeLayer(BATHYMETRY_LINE_LAYER_ID);
+    }
+    if (map.getSource(BATHYMETRY_SOURCE_ID)) {
+      map.removeSource(BATHYMETRY_SOURCE_ID);
+    }
+  }, []);
+
+  const ensureBathymetryLayers = useCallback(async (map) => {
+    if (!map || !map.isStyleLoaded()) return;
+    setBathymetryLoading(true);
+    try {
+      if (!map.getSource(BATHYMETRY_SOURCE_ID)) {
+        map.addSource(BATHYMETRY_SOURCE_ID, {
+          type: 'geojson',
+          data: BATHYMETRY_DATA_PATH
+        });
+      }
+
+      if (!map.getLayer(BATHYMETRY_LINE_LAYER_ID)) {
+        map.addLayer({
+          id: BATHYMETRY_LINE_LAYER_ID,
+          type: 'line',
+          source: BATHYMETRY_SOURCE_ID,
+          minzoom: 4,
+          paint: {
+            'line-color': [
+              'interpolate',
+              ['linear'],
+              ['get', 'depth_m'],
+              5, '#84d2f6',
+              40, '#55a9df',
+              120, '#2f7eb8',
+              300, '#255c95',
+              1000, '#1e3f72',
+              2000, '#172f58'
+            ],
+            'line-width': [
+              'match',
+              ['get', 'depth_m'],
+              [5, 10, 20, 40, 60, 90, 120, 150, 200, 300, 500, 1000, 2000], 1.5,
+              1
+            ],
+            'line-opacity': isDarkTheme ? 0.65 : 0.5
+          },
+          layout: {
+            'line-join': 'round',
+            'line-cap': 'round'
+          }
+        });
+      }
+
+      if (!map.getLayer(BATHYMETRY_LABEL_LAYER_ID)) {
+        map.addLayer({
+          id: BATHYMETRY_LABEL_LAYER_ID,
+          type: 'symbol',
+          source: BATHYMETRY_SOURCE_ID,
+          minzoom: 8,
+          filter: [
+            'in',
+            ['get', 'depth_m'],
+            ['literal', [10, 40, 90, 200, 500, 1000, 2000]]
+          ],
+          layout: {
+            'text-field': ['get', 'depth_label'],
+            'text-font': ['Open Sans Regular', 'Arial Unicode MS Regular'],
+            'text-size': 11,
+            'text-anchor': 'center',
+            'symbol-placement': 'line',
+            'symbol-spacing': 180,
+            'text-max-angle': 45
+          },
+          paint: {
+            'text-color': isDarkTheme ? '#d9f2ff' : '#154368',
+            'text-halo-color': isDarkTheme ? 'rgba(0,0,0,0.65)' : 'rgba(255,255,255,0.8)',
+            'text-halo-width': 1.5
+          }
+        });
+      }
+    } finally {
+      setBathymetryLoading(false);
+    }
+  }, [isDarkTheme]);
+
+  useEffect(() => {
+    const map = mapRef.current?.getMap?.();
+    if (!map) return;
+    if (showBathymetry) {
+      ensureBathymetryLayers(map);
+    } else {
+      removeBathymetryLayers(map);
+      setBathymetryLoading(false);
+    }
+  }, [showBathymetry, ensureBathymetryLayers, removeBathymetryLayers]);
+
+  const handleStyleData = useCallback(() => {
+    const map = mapRef.current?.getMap?.();
+    if (!map || !showBathymetry) return;
+    ensureBathymetryLayers(map);
+  }, [showBathymetry, ensureBathymetryLayers]);
+
   const handleMapLoad = useCallback(() => {
     const map = mapRef.current?.getMap?.();
     if (!map) return;
@@ -252,7 +365,10 @@ const MapComponent = () => {
     map.touchZoomRotate.enable();
     map.touchZoomRotate.disableRotation();
     map.keyboard.enable();
-  }, []);
+    if (showBathymetry) {
+      ensureBathymetryLayers(map);
+    }
+  }, [showBathymetry, ensureBathymetryLayers]);
 
   // Selection handlers
   const handleRangeToggle = useCallback((range) => {
@@ -404,6 +520,7 @@ const MapComponent = () => {
             mapStyle={getMapStyle()}
             mapboxAccessToken={MAPBOX_TOKEN}
             onLoad={handleMapLoad}
+            onStyleData={handleStyleData}
             style={{ position: 'absolute', width: '100%', height: '100%' }}
           >
             <DeckGLOverlay
@@ -437,6 +554,29 @@ const MapComponent = () => {
             isSatellite={isSatellite}
             onToggle={handleMapStyleToggle}
           />
+
+          <button
+            onClick={() => setShowBathymetry((prev) => !prev)}
+            title={showBathymetry ? 'Hide bathymetry contours' : 'Show bathymetry contours'}
+            className="absolute top-20 right-6 w-12 h-12 p-2 glass-panel rounded-xl z-[1000] flex items-center justify-center transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/10 group cursor-pointer"
+            aria-label={showBathymetry ? 'Hide bathymetry contours' : 'Show bathymetry contours'}
+          >
+            <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl pointer-events-none" />
+            <Waves
+              size={22}
+              strokeWidth={2}
+              className={`${showBathymetry ? 'text-primary' : 'text-foreground/70'} group-hover:text-primary transition-colors relative z-10`}
+            />
+          </button>
+
+          {bathymetryLoading && (
+            <div
+              className="px-3 py-1.5 rounded-lg glass-panel z-[1000] text-xs text-foreground/80"
+              style={{ position: 'absolute', top: '132px', right: '24px' }}
+            >
+              Loading bathymetry...
+            </div>
+          )}
 
 
           <TimeRangeControl
