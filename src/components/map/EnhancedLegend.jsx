@@ -12,11 +12,13 @@ const EnhancedLegend = memo(({
   selectedMetric,
   colorRange,
   hasGridData,
-  visualizationMode
+  visualizationMode,
+  showBathymetry = false
 }) => {
   const [expandedSections, setExpandedSections] = useState({
     metrics: true,
-    activity: true
+    activity: true,
+    bathymetry: true
   });
   const [isMinimized, setIsMinimized] = useState(false);
 
@@ -337,6 +339,70 @@ const EnhancedLegend = memo(({
                   </div>
                 </div>
               )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Bathymetry Legend Section */}
+      {showBathymetry && (
+        <div style={{ marginTop: (hasGridData ? '10px' : '0') }}>
+          <SectionHeader
+            title="Bathymetry (Depth m)"
+            isExpanded={expandedSections.bathymetry}
+            onToggle={() => toggleSection('bathymetry')}
+            icon={<div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#55a9df' }} />}
+          />
+
+          {expandedSections.bathymetry && (
+            <div style={{ paddingLeft: '2px' }}>
+              <div style={{ marginBottom: '8px' }}>
+                <GradientBar
+                  colors={['#84d2f6', '#55a9df', '#2f7eb8', '#255c95', '#1e3f72', '#172f58']}
+                  height="8px"
+                />
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  marginTop: '3px',
+                  fontSize: '10px',
+                  color: isDarkTheme ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)'
+                }}>
+                  <span>10m</span>
+                  <span>2000m</span>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                {[
+                  { color: '#84d2f6', label: 'Very Shallow (0-10m)' },
+                  { color: '#55a9df', label: 'Shallow (10-40m)' },
+                  { color: '#2f7eb8', label: 'Medium (40-90m)' },
+                  { color: '#255c95', label: 'Deep Shelf (90-150m)' },
+                  { color: '#1e3f72', label: 'Shelf Break (150-300m)' },
+                  { color: '#172f58', label: 'Deep / Very Deep (>300m)' }
+                ].map((item) => (
+                  <div
+                    key={item.label}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      padding: '2px 4px',
+                      borderRadius: '4px'
+                    }}
+                  >
+                    <ColorSwatch color={item.color} size="small" />
+                    <span style={{
+                      fontSize: '11px',
+                      fontWeight: 500,
+                      color: isDarkTheme ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)'
+                    }}>
+                      {item.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>

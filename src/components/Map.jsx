@@ -546,6 +546,7 @@ const MapComponent = () => {
               colorRange={COLOR_RANGE}
               hasGridData={transformedPdsData.length > 0}
               visualizationMode={visualizationMode}
+              showBathymetry={showBathymetry}
             />
           </div>
 
