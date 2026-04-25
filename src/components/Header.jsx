@@ -3,7 +3,7 @@ import { Info, Sun, Moon, Map, BarChart3 } from 'lucide-react';
 import { getLatestDate, getUniqueCountries } from '../services/dataService';
 import { cn } from '../lib/utils';
 import { Button } from './ui/button';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import AboutModal from './AboutModal';
 
 const Header = ({
@@ -64,12 +64,12 @@ const Header = ({
       )}>
         {/* Left section with logo and title */}
         <div className="flex items-center gap-5">
-          <div className="h-11 px-4 rounded-xl flex items-center justify-center relative overflow-hidden bg-primary/10 border border-primary/20 shadow-inner group cursor-default transition-all duration-300 hover:bg-primary/20">
+          <Link to="/" className="h-11 px-4 rounded-xl flex items-center justify-center relative overflow-hidden bg-primary/10 border border-primary/20 shadow-inner group cursor-pointer transition-all duration-300 hover:bg-primary/20 no-underline">
             <div className="absolute inset-0 bg-primary/20 mix-blend-overlay opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             <span className="font-display font-extrabold text-[15px] tracking-[0.15em] text-primary relative z-10 drop-shadow-[0_0_8px_#00f5ff66]">
               PESKAS
             </span>
-          </div>
+          </Link>
 
           <div className="h-10 flex flex-col justify-center pl-5 border-l border-border/40">
             <h1 className="m-0 text-[22px] font-display font-bold tracking-tight text-foreground leading-none">

@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { cn } from '../lib/utils';
-import { getFormattedMetrics } from '../services/dataService';
+import { METRIC_CONFIG } from '../utils/formatters';
 
 // Extract the exact distinct colors from our theme
 const CHART_COLORS = [
@@ -13,20 +13,24 @@ const CHART_COLORS = [
     '#8b5cf6', // purple
 ];
 
-const CountryTimeSeriesChart = ({ data, selectedCountry, isDarkTheme }) => {
+const CountryTimeSeriesChart = ({ data, selectedCountry, selectedMetric = 'mean_cpue', selectedDistrict = 'all', isDarkTheme }) => {
 
     const chartData = useMemo(() => {
         if (!data || !selectedCountry) return [];
 
         // Filter regions belonging to selected country
-        const countryRegions = Object.entries(data).filter(([key, region]) =>
+        let countryRegions = Object.entries(data).filter(([key, region]) =>
             region.country?.toLowerCase() === selectedCountry.toLowerCase()
         );
 
-        if (countryRegions.length === 0) return [];
+        // Filter by district if not 'all'
+        if (selectedDistrict !== 'all') {
+            countryRegions = countryRegions.filter(([key, regionDesc]) =>
+                regionDesc.gaul1_name === selectedDistrict
+            );
+        }
 
-        // We need to pivot the data from {region1: {data: [{date, cpue}, ...]}, region2: ...}
-        // to an array of [{date: '2023-01', region1_cpue: 10, region2_cpue: 15}, ...]
+        if (countryRegions.length === 0) return [];
 
         const dateMap = new Map();
 
@@ -34,16 +38,22 @@ const CountryTimeSeriesChart = ({ data, selectedCountry, isDarkTheme }) => {
             const regionName = regionDesc.gaul1_name || key;
 
             regionDesc.data.forEach(entry => {
-                if (!entry.date || typeof entry.mean_cpue !== 'number') return;
+                const metricValue = entry[selectedMetric];
+                if (!entry.date || typeof metricValue !== 'number') return;
 
-                let point = dateMap.get(entry.date) || { date: entry.date, timestamp: new Date(entry.date).getTime() };
-                point[regionName] = entry.mean_cpue;
+                let point = dateMap.get(entry.date) || {
+                    date: entry.date,
+                    timestamp: new Date(entry.date).getTime()
+                };
+                point[regionName] = metricValue;
                 dateMap.set(entry.date, point);
             });
         });
 
         return Array.from(dateMap.values()).sort((a, b) => a.timestamp - b.timestamp);
-    }, [data, selectedCountry]);
+    }, [data, selectedCountry, selectedMetric, selectedDistrict]);
+
+    const metricConfig = useMemo(() => METRIC_CONFIG[selectedMetric] || { label: 'Metric', unit: '' }, [selectedMetric]);
 
     const regions = useMemo(() => {
         if (chartData.length === 0) return [];
@@ -56,7 +66,7 @@ const CountryTimeSeriesChart = ({ data, selectedCountry, isDarkTheme }) => {
     if (chartData.length === 0) {
         return (
             <div className="w-full h-[400px] flex items-center justify-center bg-black/5 rounded-xl border border-dashed border-border/50">
-                <span className="text-muted-foreground">No CPUE data available for {selectedCountry}</span>
+                <span className="text-muted-foreground">No {metricConfig.label} data available for {selectedDistrict === 'all' ? selectedCountry : selectedDistrict}</span>
             </div>
         );
     }
@@ -77,7 +87,7 @@ const CountryTimeSeriesChart = ({ data, selectedCountry, isDarkTheme }) => {
                                 <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: entry.color }} />
                                 <span className="text-muted-foreground">{entry.name}</span>
                             </div>
-                            <span className="font-mono font-medium text-foreground">{entry.value.toFixed(2)}</span>
+                            <span className="font-mono font-medium text-foreground">{entry.value.toFixed(2)} <span className="text-[10px] opacity-70 ml-1">{metricConfig.unit}</span></span>
                         </div>
                     ))}
                 </div>
