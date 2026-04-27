@@ -19,6 +19,7 @@ export const useMapTooltip = ({
 
   return useCallback(({object, layer}) => {
     if (!object) return null;
+    const selectedActivityLabel = ACTIVITY_METRIC_METADATA[selectedActivityMetric]?.label ?? selectedActivityMetric;
     const formatActivityValue = (value) => {
       if (value === null || value === undefined || Number.isNaN(Number(value))) return 'N/A';
       const formatter = ACTIVITY_METRIC_METADATA[selectedActivityMetric]?.format;
@@ -93,7 +94,7 @@ export const useMapTooltip = ({
         html: `
           <div style="padding: 8px">
             <div><strong>Designated Fishing Ground</strong></div>
-            <div style="margin-top: 4px;">Selected Metric: ${formatActivityValue(props[selectedActivityMetric])}</div>
+            <div style="margin-top: 4px;">${escapeHtml(selectedActivityLabel)}: ${formatActivityValue(props[selectedActivityMetric])}</div>
             <div>Area: ${(props.area_km2 ?? 0).toFixed?.(2) ?? '0.00'} km²</div>
             <div>Total Hours: ${(props.fishing_hours ?? 0).toLocaleString?.(undefined, {maximumFractionDigits: 1}) ?? props.fishing_hours ?? '0'}</div>
             <div>Unique Trips: ${(props.unique_trips ?? 0).toLocaleString?.() ?? props.unique_trips ?? '0'}</div>
@@ -116,7 +117,7 @@ export const useMapTooltip = ({
         html: `
           <div style="padding: 8px">
             <div><strong>Fishing Activity Cell</strong></div>
-            <div style="margin-top: 4px;">Selected Metric: ${formatActivityValue(object[selectedActivityMetric])}</div>
+            <div style="margin-top: 4px;">${escapeHtml(selectedActivityLabel)}: ${formatActivityValue(object[selectedActivityMetric])}</div>
             <div>Total Hours: ${(object.fishing_hours ?? 0).toLocaleString?.(undefined, {maximumFractionDigits: 1}) ?? object.fishing_hours ?? '0'}</div>
             <div>Unique Trips: ${(object.unique_trips ?? 0).toLocaleString?.() ?? object.unique_trips ?? '0'}</div>
             <div>Active Days: ${(object.n_active_days ?? 0).toLocaleString?.() ?? object.n_active_days ?? '0'}</div>
