@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Info, Sun, Moon, Map, BarChart3 } from 'lucide-react';
+import { Info, Sun, Moon, Map, BarChart3, BookOpen } from 'lucide-react';
 import { getLatestDate, getUniqueCountries } from '../services/dataService';
 import { cn } from '../lib/utils';
 import { Button } from './ui/button';
@@ -129,6 +129,18 @@ const Header = ({
           >
             <Info className="w-4 h-4 text-primary" />
             About System
+          </button>
+          <button
+            onClick={() => navigate('/docs')}
+            className={cn(
+              "h-10 px-4 flex items-center gap-2 rounded-full font-bold text-xs tracking-wide transition-all duration-300 border",
+              isDarkTheme
+                ? "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 text-foreground"
+                : "bg-black/5 border-black/10 hover:bg-black/10 hover:border-black/20 text-foreground"
+            )}
+          >
+            <BookOpen className="w-4 h-4 text-primary" />
+            Docs
           </button>
 
           <div className="w-px h-6 mx-2 bg-border/50" />

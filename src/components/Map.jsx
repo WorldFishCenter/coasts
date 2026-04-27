@@ -8,6 +8,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import EnhancedLegend from './map/EnhancedLegend';
+import MapClarityPanel from './map/MapClarityPanel';
 import MapStyleToggle from './map/MapStyleToggle';
 
 // Lazy loaded components
@@ -22,7 +23,6 @@ import { useMapTooltip } from '../hooks/useMapTooltip';
 
 // Utils
 import { getMapStyles } from '../styles/mapStyles';
-import { ACTIVITY_METRICS } from '../utils/gridLayerConfig';
 import { processH3EffortData } from '../utils/pdsDataProcessor';
 import { calculateMetricStats } from '../utils/metricCalculations';
 import { getAverageMetricsInRange, getAverageMetricsInRangeGaul1 } from '../services/dataService';
@@ -54,14 +54,14 @@ const MapComponent = () => {
   const isDarkTheme = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
   const [isSatellite, setIsSatellite] = useState(true);
   const [visualizationMode, setVisualizationMode] = useState('column');
-  const [showBathymetry, setShowBathymetry] = useState(false);
+  const [showBathymetry, setShowBathymetry] = useState(true);
   const [bathymetryLoading, setBathymetryLoading] = useState(false);
   
   // Map interaction states
   const [hoveredFeatureIndex, setHoveredFeatureIndex] = useState(null);
   
   // Analysis states
-  const [opacity, setOpacity] = useState(0.7);
+  const [opacity] = useState(0.7);
   const [selectedMetric, setSelectedMetric] = useState('mean_cpue');
   const [selectedFishersMetric, setSelectedFishersMetric] = useState('fishers_total');
   const [selectedYear, setSelectedYear] = useState('all');
@@ -109,6 +109,11 @@ const MapComponent = () => {
       .filter(date => new Date(date).getFullYear() >= 2020);
     return Array.from(new Set(dates)).sort((a, b) => new Date(a) - new Date(b));
   }, [timeSeriesData]);
+  const dataFreshnessLabel = useMemo(() => {
+    if (!allDates.length) return 'Unknown';
+    const latest = new Date(allDates[allDates.length - 1]);
+    return latest.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  }, [allDates]);
 
   // Helper to enrich boundaries with average metrics in range (GAUL level–aware)
   const getBoundariesWithAveragedMetrics = useCallback(() => {
@@ -210,6 +215,7 @@ const MapComponent = () => {
   // Create tooltip handler
   const getTooltip = useMapTooltip({
     selectedMetric,
+    selectedActivityMetric,
     isDarkTheme,
     metricStats,
     visualizationMode
@@ -516,33 +522,54 @@ const MapComponent = () => {
               activeActivityLayers={activeActivityLayers}
               visualizationMode={visualizationMode}
               showBathymetry={showBathymetry}
+              dataFreshnessLabel={dataFreshnessLabel}
             />
           </div>
 
-          <MapStyleToggle
-            isDarkTheme={isDarkTheme}
-            isSatellite={isSatellite}
-            onToggle={handleMapStyleToggle}
-          />
-
-          <button
-            onClick={() => setShowBathymetry((prev) => !prev)}
-            title={showBathymetry ? 'Hide bathymetry contours' : 'Show bathymetry contours'}
-            className="absolute top-20 right-6 w-12 h-12 p-2 glass-panel rounded-xl z-[1000] flex items-center justify-center transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/10 group cursor-pointer"
-            aria-label={showBathymetry ? 'Hide bathymetry contours' : 'Show bathymetry contours'}
+          <div
+            style={{
+              position: 'absolute',
+              top: '24px',
+              left: '24px',
+              zIndex: 1000,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px'
+            }}
           >
-            <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl pointer-events-none" />
-            <Waves
-              size={22}
-              strokeWidth={2}
-              className={`${showBathymetry ? 'text-primary' : 'text-foreground/70'} group-hover:text-primary transition-colors relative z-10`}
+            <MapStyleToggle
+              isDarkTheme={isDarkTheme}
+              isSatellite={isSatellite}
+              onToggle={handleMapStyleToggle}
             />
-          </button>
+
+            <button
+              onClick={() => setShowBathymetry((prev) => !prev)}
+              title={showBathymetry ? 'Hide bathymetry contours' : 'Show bathymetry contours'}
+              className="relative w-12 h-12 p-2 glass-panel rounded-xl flex items-center justify-center transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/10 group cursor-pointer"
+              aria-label={showBathymetry ? 'Hide bathymetry contours' : 'Show bathymetry contours'}
+            >
+              <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl pointer-events-none" />
+              <Waves
+                size={22}
+                strokeWidth={2}
+                className={`${showBathymetry ? 'text-primary' : 'text-foreground/70'} group-hover:text-primary transition-colors relative z-10`}
+              />
+            </button>
+
+            <MapClarityPanel
+              isDarkTheme={isDarkTheme}
+              selectedActivityMetric={selectedActivityMetric}
+              showBathymetry={showBathymetry}
+              h3Records={transformedH3Data?.length ?? 0}
+              groundsFeatures={pdsFishingGroundsData?.features?.length ?? 0}
+            />
+          </div>
 
           {bathymetryLoading && (
             <div
               className="px-3 py-1.5 rounded-lg glass-panel z-[1000] text-xs text-foreground/80"
-              style={{ position: 'absolute', top: '132px', right: '24px' }}
+              style={{ position: 'absolute', top: '132px', left: '24px' }}
             >
               Loading bathymetry...
             </div>

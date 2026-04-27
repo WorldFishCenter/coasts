@@ -1,3 +1,25 @@
+# coasts 0.4.0
+
+## New Features
+
+- **Whole-app clarity system**: Added shared metadata in `src/utils/metricMetadata.js` to define glossary terms, metric definitions, layer semantics, tooltip field standards, and data dictionary mappings from UI labels to source fields/transforms.
+- **In-app docs hub**: Added `/docs` route with anchored sections (Data Sources, Metric Definitions, Layer Interpretation, Methodology, Limitations, Glossary) and direct links from map UI.
+- **Map inline understanding panel**: Added `MapClarityPanel` with “What am I seeing?” context, layer encoding summaries, and deep links to docs.
+
+## Improvements
+
+- **Map help control redesign**: Replaced the persistent “What am I seeing?” panel with a compact help icon and dismissible popover to prevent map occlusion.
+- **Metric naming consistency hardening**: Normalized metadata display aliases so map/sidebar/country/docs consistently render human-readable metric labels and descriptions.
+- **Docs readability polish**: Updated docs hub data-source formatting and included metric cadence in definitions.
+- **Legend clarity upgrade**: Enhanced legend now explains quantile semantics for map and activity layers, exposes docs guide links, and shows a `Data as of` freshness label.
+- **Tooltip standardization**: H3 and grounds tooltips now consistently display selected activity metric first with unified formatting and clearer ordering.
+- **Naming consistency refactor**: Migrated metric formatter source-of-truth to shared metadata and aligned label/unit/formula usage across map, legend, and docs.
+
+## Trust and Validation
+
+- **QA guardrails command**: Added `npm run qa:clarity` (`scripts/qa/checkClarityGuardrails.js`) to verify metric unit metadata, tooltip-field coverage, required docs anchors, and docs-link integrity from map UI.
+- **Developer dictionary artifact**: Added `docs/data-dictionary.md` for human-readable glossary + source mapping reference.
+
 # coasts 0.3.0
 
 ## New Features

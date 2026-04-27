@@ -1,14 +1,14 @@
 import { BarChart3, Users } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { METRIC_CONFIG, SELECTABLE_METRIC_IDS } from '../../utils/formatters';
+import { getMetricInfo, SELECTABLE_METRIC_IDS } from '../../utils/formatters';
 
 const METRICS = SELECTABLE_METRIC_IDS.map((id) => {
-    const config = METRIC_CONFIG[id];
+    const config = getMetricInfo(id);
     return {
         id,
         label: config?.label ?? id,
         unit: config?.unit ?? '',
-        description: config?.description ?? `${config?.label ?? id} measurement`
+        description: config?.description ?? 'Metric'
     };
 });
 

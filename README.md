@@ -8,6 +8,7 @@ Interactive map visualization for coastal regions using React and Mapbox GL JS.
 - District selection and analysis
 - Data visualization with charts
 - Static census overlays (fishers and boats by GAUL region)
+- In-app documentation hub (`/docs`) with metric and layer methodology
 - Dark/Light theme support
 - Mobile responsive design
 - Daily data updates from MongoDB and Google Cloud via GitHub Actions
@@ -48,6 +49,9 @@ node scripts/data/fetchMongoData.js
 
 # Google Cloud versioned datasets refresh
 npm run fetch-gcp-data
+
+# Accuracy and clarity guardrails
+npm run qa:clarity
 ```
 
 ### GitHub Secrets Setup

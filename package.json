@@ -1,14 +1,15 @@
 {
   "name": "coasts",
   "private": true,
-  "version": "0.3.0",
+  "version": "0.4.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "fetch-gcp-data": "node scripts/data/fetchGcpPdsData.js"
+    "fetch-gcp-data": "node scripts/data/fetchGcpPdsData.js",
+    "qa:clarity": "node scripts/qa/checkClarityGuardrails.js"
   },
   "dependencies": {
     "@deck.gl/aggregation-layers": "^9.1.12",

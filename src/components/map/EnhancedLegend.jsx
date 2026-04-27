@@ -18,7 +18,8 @@ const EnhancedLegend = memo(({
   pdsFishingGroundsData,
   activeActivityLayers,
   visualizationMode,
-  showBathymetry = false
+  showBathymetry = false,
+  dataFreshnessLabel = 'Latest available export'
 }) => {
   const [expandedSections, setExpandedSections] = useState({
     metrics: true,
@@ -111,6 +112,15 @@ const EnhancedLegend = memo(({
     }} />
   );
 
+  const formatGradeValue = (value) => {
+    if (!Number.isFinite(value)) return '0';
+    const absValue = Math.abs(value);
+    if (absValue >= 100) return value.toFixed(0);
+    if (absValue >= 10) return value.toFixed(1);
+    if (absValue >= 1) return value.toFixed(2);
+    return value.toFixed(3);
+  };
+
   if (isMinimized) {
     return (
       <div
@@ -139,6 +149,12 @@ const EnhancedLegend = memo(({
         }}>
           Legend
         </h3>
+        <a
+          href="/docs#layer-interpretation"
+          style={{ fontSize: '10px', color: 'var(--primary)', textDecoration: 'none', marginRight: '6px' }}
+        >
+          Guide
+        </a>
         <button
           onClick={() => setIsMinimized(true)}
           style={{
@@ -179,6 +195,13 @@ const EnhancedLegend = memo(({
             gap: '6px',
             paddingLeft: '2px'
           }}>
+            <div style={{
+              fontSize: '10px',
+              color: isDarkTheme ? 'rgba(255,255,255,0.65)' : 'rgba(0,0,0,0.65)',
+              lineHeight: 1.4
+            }}>
+              Colors represent quantile classes for the selected metric and selected year filter.
+            </div>
             {/* Gradient bar for overall visualization */}
             <div style={{ marginBottom: '6px' }}>
               <GradientBar colors={COLORS.slice(0, grades.length)} height="8px" />
@@ -189,8 +212,8 @@ const EnhancedLegend = memo(({
                 fontSize: '10px',
                 color: isDarkTheme ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)'
               }}>
-                <span>{grades[0]?.toFixed(1) || '0'}</span>
-                <span>{grades[grades.length - 1]?.toFixed(1) || '0'}+</span>
+                <span>{formatGradeValue(grades[0])}</span>
+                <span>{formatGradeValue(grades[grades.length - 1])}+</span>
               </div>
             </div>
 
@@ -221,7 +244,7 @@ const EnhancedLegend = memo(({
                   fontWeight: 500,
                   color: isDarkTheme ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)'
                 }}>
-                  {grade.toFixed(1)}{i < grades.length - 1 ? ` - ${grades[i + 1].toFixed(1)}` : '+'}
+                  {formatGradeValue(grade)}{i < grades.length - 1 ? ` - ${formatGradeValue(grades[i + 1])}` : '+'}
                 </span>
               </div>
             ))}
@@ -253,6 +276,13 @@ const EnhancedLegend = memo(({
 
                 {expandedSections.activity && (
                   <div style={{ paddingLeft: '2px', marginBottom: '10px' }}>
+                    <div style={{
+                      fontSize: '10px',
+                      marginBottom: '4px',
+                      color: isDarkTheme ? 'rgba(255,255,255,0.65)' : 'rgba(0,0,0,0.65)'
+                    }}>
+                      H3 cells are colored by quantile and extruded in column mode.
+                    </div>
                     <div style={{ marginBottom: '8px' }}>
                       <div style={{
                         fontSize: '11px',
@@ -304,6 +334,13 @@ const EnhancedLegend = memo(({
 
                 {expandedSections.grounds && (
                   <div style={{ paddingLeft: '2px', marginBottom: '10px' }}>
+                    <div style={{
+                      fontSize: '10px',
+                      marginBottom: '4px',
+                      color: isDarkTheme ? 'rgba(255,255,255,0.65)' : 'rgba(0,0,0,0.65)'
+                    }}>
+                      Grounds polygons use the same metric with quantile bins after trips filtering.
+                    </div>
                     <div style={{ marginBottom: '8px' }}>
                       <div style={{
                         fontSize: '11px',
@@ -365,40 +402,17 @@ const EnhancedLegend = memo(({
                 </div>
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                {[
-                  { color: '#84d2f6', label: 'Very Shallow (0-10m)' },
-                  { color: '#55a9df', label: 'Shallow (10-40m)' },
-                  { color: '#2f7eb8', label: 'Medium (40-90m)' },
-                  { color: '#255c95', label: 'Deep Shelf (90-150m)' },
-                  { color: '#1e3f72', label: 'Shelf Break (150-300m)' },
-                  { color: '#172f58', label: 'Deep / Very Deep (>300m)' }
-                ].map((item) => (
-                  <div
-                    key={item.label}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                      padding: '2px 4px',
-                      borderRadius: '4px'
-                    }}
-                  >
-                    <ColorSwatch color={item.color} size="small" />
-                    <span style={{
-                      fontSize: '11px',
-                      fontWeight: 500,
-                      color: isDarkTheme ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)'
-                    }}>
-                      {item.label}
-                    </span>
-                  </div>
-                ))}
-              </div>
             </div>
           )}
         </div>
       )}
+      <div style={{
+        marginTop: '10px',
+        fontSize: '10px',
+        color: isDarkTheme ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)'
+      }}>
+        Data as of: {dataFreshnessLabel}
+      </div>
     </div>
   );
 });

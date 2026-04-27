@@ -5,7 +5,7 @@ import { loadFrameGearsData, loadTimeSeriesGaul2, getFrameGearInsights } from '.
 import { ChevronDown, BarChart3, MapPin, Layers, Users, Ship, Activity, TrendingUp, SlidersHorizontal, Globe2 } from 'lucide-react';
 import CountryTimeSeriesChart from './CountryTimeSeriesChart';
 import { useTheme } from './ThemeProvider';
-import { METRIC_CONFIG, formatCountryName } from '../utils/formatters';
+import { getMetricInfo, formatCountryName } from '../utils/formatters';
 
 const COUNTRY_VIEW_METRIC_IDS = ['mean_cpue', 'mean_rpue', 'mean_price_kg'];
 const MOZAMBIQUE_NO_GEAR = 'mozambique';
@@ -19,7 +19,7 @@ const toTitleCase = (value = '') =>
 
 const formatMetricValue = (metricId, value) => {
     if (typeof value !== 'number' || Number.isNaN(value)) return 'N/A';
-    const config = METRIC_CONFIG[metricId];
+    const config = getMetricInfo(metricId);
     if (!config?.format) return value.toFixed(2);
     return config.format(value);
 };
@@ -229,6 +229,13 @@ const CountryView = () => {
         return selectedFrameInsights.hasGearBreakdown && selectedFrameInsights.gearBreakdown.length > 0;
     }, [selectedCountry, selectedFrameInsights]);
 
+    const metricInfoById = useMemo(() => (
+        COUNTRY_VIEW_METRIC_IDS.reduce((acc, id) => {
+            acc[id] = getMetricInfo(id);
+            return acc;
+        }, {})
+    ), []);
+
     return (
         <div className={cn(
             "min-h-screen w-full flex flex-col font-sans transition-colors duration-300",
@@ -394,7 +401,7 @@ const CountryView = () => {
                                 </div>
                                 <div className="grid grid-cols-1 gap-2">
                                     {COUNTRY_VIEW_METRIC_IDS.map(id => {
-                                        const config = METRIC_CONFIG[id];
+                                        const config = metricInfoById[id];
                                         const isActive = selectedMetric === id;
                                         return (
                                             <button
@@ -432,7 +439,7 @@ const CountryView = () => {
 
                             <div className="glass-panel p-4 rounded-xl flex items-center justify-between border-l-2 border-primary">
                                 <div>
-                                    <div className="text-[10px] text-muted-foreground uppercase font-semibold">Avg. {METRIC_CONFIG[selectedMetric].label}</div>
+                                    <div className="text-[10px] text-muted-foreground uppercase font-semibold">Avg. {metricInfoById[selectedMetric].label}</div>
                                     <div className="text-xl font-display font-bold text-primary">{formatMetricValue(selectedMetric, countryMetricSummary.average)}</div>
                                 </div>
                                 <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -498,8 +505,8 @@ const CountryView = () => {
                                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
                                     <div className="glass-panel p-4 rounded-xl">
                                         <div className="text-[10px] uppercase text-muted-foreground tracking-widest font-bold mb-2">Selected Metric</div>
-                                        <div className="text-lg font-display font-bold text-primary">{METRIC_CONFIG[selectedMetric].label}</div>
-                                        <div className="text-xs text-muted-foreground mt-1">{METRIC_CONFIG[selectedMetric].description}</div>
+                                        <div className="text-lg font-display font-bold text-primary">{metricInfoById[selectedMetric].label}</div>
+                                        <div className="text-xs text-muted-foreground mt-1">{metricInfoById[selectedMetric].description}</div>
                                     </div>
                                     <div className="glass-panel p-4 rounded-xl">
                                         <div className="flex items-center gap-2 text-[10px] uppercase text-muted-foreground tracking-widest font-bold mb-2"><Users size={12} /> Fishers</div>
@@ -530,7 +537,7 @@ const CountryView = () => {
                                                 </div>
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                                     <div className="rounded-xl border border-border/20 p-3">
-                                                        <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">Latest {METRIC_CONFIG[selectedMetric].label}</div>
+                                                        <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">Latest {metricInfoById[selectedMetric].label}</div>
                                                         <div className="text-base font-semibold mt-1">{formatMetricValue(selectedMetric, selectedGaul2MetricSummary?.latestValue)}</div>
                                                         <div className="text-xs text-muted-foreground mt-1">{selectedGaul2MetricSummary?.latestDate ?? 'N/A'}</div>
                                                     </div>

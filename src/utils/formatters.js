@@ -1,112 +1,43 @@
+import { METRIC_METADATA, SELECTABLE_METRIC_IDS, getMetricDisplayInfo } from './metricMetadata';
+export { SELECTABLE_METRIC_IDS };
+
 // Metric definitions with units and display names
+const METRIC_METADATA_WITH_ALIASES = Object.fromEntries(
+  Object.entries(METRIC_METADATA).map(([id, metric]) => ([
+    id,
+    {
+      ...metric,
+      label: metric.shortLabel ?? metric.displayLabel ?? id,
+      description: metric.displayLabel ?? metric.shortLabel ?? id
+    }
+  ]))
+);
+
 export const METRIC_CONFIG = {
-  mean_cpue: {
-    label: 'CPUE',
-    unit: 'kg/fisher/day',
-    description: 'Catch Per Unit Effort',
-    format: (value) => {
-      if (value === null || value === undefined) return 'N/A';
-      return value === 0 ? '0.00 kg/fisher/day' : `${value.toFixed(2)} kg/fisher/day`;
-    }
-  },
-  mean_cpua: {
-    label: 'CPUA',
-    unit: 'kg/fisher/area',
-    description: 'Catch Per Unit Area',
-    format: (value) => {
-      if (value === null || value === undefined) return 'N/A';
-      return value === 0 ? '0.00 kg/fisher/area' : `${value.toFixed(2)} kg/fisher/area`;
-    }
-  },
-  mean_rpue: {
-    label: 'RPUE',
-    unit: '$/fisher/day',
-    description: 'Revenue Per Unit Effort',
-    format: (value) => {
-      if (value === null || value === undefined) return 'N/A';
-      return value === 0 ? '$0.00/fisher/day' : `$${value.toFixed(2)}/fisher/day`;
-    }
-  },
-  mean_rpua: {
-    label: 'RPUA',
-    unit: '$/fisher/area',
-    description: 'Revenue Per Unit Area',
-    format: (value) => {
-      if (value === null || value === undefined) return 'N/A';
-      return value === 0 ? '$0.00/fisher/area' : `$${value.toFixed(2)}/fisher/area`;
-    }
-  },
-  mean_price_kg: {
-    label: 'Price',
-    unit: '$/kg',
-    description: 'Price per Kilogram',
-    format: (value) => {
-      if (value === null || value === undefined) return 'N/A';
-      return value === 0 ? '$0.00/kg' : `$${value.toFixed(2)}/kg`;
-    }
-  },
-  fishers_total: {
-    label: 'Fishers (Total)',
-    unit: 'fishers',
-    description: 'Total fishers (male + female)',
-    format: (value) => {
-      if (value === null || value === undefined) return 'N/A';
-      return `${Math.round(value).toLocaleString()} fishers`;
-    }
-  },
-  fishers_male: {
-    label: 'Fishers (Male)',
-    unit: 'fishers',
-    description: 'Male fishers',
-    format: (value) => {
-      if (value === null || value === undefined) return 'N/A';
-      return `${Math.round(value).toLocaleString()} fishers`;
-    }
-  },
-  fishers_female: {
-    label: 'Fishers (Female)',
-    unit: 'fishers',
-    description: 'Female fishers',
-    format: (value) => {
-      if (value === null || value === undefined) return 'N/A';
-      return `${Math.round(value).toLocaleString()} fishers`;
-    }
-  },
-  boats_total: {
-    label: 'Boats',
-    unit: 'number of boats',
-    description: 'Total boats',
-    format: (value) => {
-      if (value === null || value === undefined) return 'N/A';
-      return `${Math.round(value).toLocaleString()} boats`;
-    }
-  },
+  ...METRIC_METADATA_WITH_ALIASES,
   fishers: {
     label: 'Fishers',
     unit: 'number of fishers',
     description: 'Fishers by sex and total',
-    format: (value) => {
-      if (value === null || value === undefined) return 'N/A';
-      return `${Math.round(value).toLocaleString()} fishers`;
-    }
+    format: METRIC_METADATA.fishers_total.format
   },
   boats: {
     label: 'Boats',
     unit: 'number of boats',
     description: 'Number of boats',
-    format: (value) => {
-      if (value === null || value === undefined) return 'N/A';
-      return `${Math.round(value).toLocaleString()} boats`;
-    }
+    format: METRIC_METADATA.boats_total.format
   }
 };
 
-/** Metric IDs shown in the metric selector (CPUA and RPUA are hidden from selection) */
-export const SELECTABLE_METRIC_IDS = ['mean_cpue', 'mean_rpue', 'mean_price_kg', 'fishers', 'boats'];
-
 // Get metric info with fallback
 export const getMetricInfo = (metricId) => {
-  return METRIC_CONFIG[metricId] || {
+  const displayInfo = getMetricDisplayInfo(metricId);
+  if (displayInfo) {
+    return displayInfo;
+  }
+  const metric = METRIC_CONFIG[metricId];
+  if (metric) return metric;
+  return {
     label: metricId,
     unit: '',
     description: metricId,

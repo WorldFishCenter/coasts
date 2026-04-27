@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import MapComponent from './components/Map'
 import CountryView from './components/CountryView'
+import DocsHub from './components/DocsHub'
 import { ThemeProvider } from './components/ThemeProvider'
 
 function App() {
@@ -10,6 +11,7 @@ function App() {
         <Routes>
           <Route path="/" element={<MapComponent />} />
           <Route path="/country" element={<CountryView />} />
+          <Route path="/docs" element={<DocsHub />} />
         </Routes>
       </Router>
     </ThemeProvider>
