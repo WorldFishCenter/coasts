@@ -156,7 +156,10 @@ const DistributionHistogram = memo(({
   };
 
   return (
-    <div className="glass-panel p-6 w-[700px] rounded-2xl overflow-hidden relative">
+    <div
+      className="glass-panel p-4 md:p-5 w-[min(92vw,560px)] md:w-[620px] rounded-2xl overflow-hidden relative"
+      style={style}
+    >
       {/* Header */}
       <div style={{
         display: 'flex',
@@ -197,7 +200,7 @@ const DistributionHistogram = memo(({
       </div>
 
       {/* Chart */}
-      <ResponsiveContainer width="100%" height={160}>
+      <ResponsiveContainer width="100%" height={140}>
         <LineChart data={densityData.points} margin={{ top: 5, right: 10, left: 10, bottom: 25 }}>
           <CartesianGrid
             strokeDasharray="3 3"

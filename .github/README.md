@@ -2,22 +2,32 @@
 
 This directory contains GitHub Actions workflows for various automated tasks in the repository.
 
-## MongoDB Data Fetching Workflow
+## Data Fetching Workflows
 
-The `fetch-mongodb-data.yml` workflow fetches data from MongoDB and stores it as static JSON files in the `public/data` directory.
+- `fetch-mongodb-data.yml` fetches GAUL boundaries/time series from MongoDB and writes static JSON into `public/data`.
+- `fetch-gcp-pds-data.yml` fetches latest versioned PDS files from Google Cloud Storage and writes static artifacts into `public/data`.
 
 ### Workflow Schedule
 
-The workflow runs:
+MongoDB workflow runs:
 - Daily at midnight UTC
+- On manual trigger (workflow_dispatch)
+
+GCP PDS workflow runs:
+- Daily at 00:15 UTC
 - On manual trigger (workflow_dispatch)
 
 ### Required Secrets
 
-To make this workflow function correctly, you need to add the following secrets to your GitHub repository:
+To make workflows function correctly, add these repository secrets:
 
-1. `MONGODB_URI` - The MongoDB connection string
-2. `VITE_MAPBOX_TOKEN` - Your Mapbox access token
+1. `MONGODB_URI` - MongoDB connection string
+2. `VITE_MAPBOX_TOKEN` - Mapbox access token (app build/runtime)
+3. `GCP_SA_KEY` - Google Cloud service account JSON
+4. `GCP_BUCKET_NAME` - Google Cloud bucket name
+5. `GCP_PDS_GROUNDS_PREFIX` - Optional grounds file prefix (default in script)
+6. `GCP_PDS_EFFORT_PREFIX` - Optional effort file prefix (default in script)
+7. `GCP_PDS_FRAME_GEARS_PREFIX` - Optional frame-gears prefix (default in script)
 
 ### How to Add Secrets
 
@@ -33,6 +43,11 @@ To make this workflow function correctly, you need to add the following secrets 
 
 ### Output Files
 
-The workflow produces the following files:
-- `/public/data/pds_grids.json`
-- `/public/data/wio_summaries_geo.json` 
+Workflows produce/update these files:
+- `/public/data/map_gaul1.json`
+- `/public/data/map_gaul2.json`
+- `/public/data/ts_gaul1.json`
+- `/public/data/ts_gaul2.json`
+- `/public/data/pds-fishing-grounds.geojson`
+- `/public/data/pds-h3-effort-r9.json`
+- `/public/data/frame-gears.json`

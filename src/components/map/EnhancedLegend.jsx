@@ -1,7 +1,8 @@
 import React, { memo, useState } from 'react';
 import { ChevronDown, Eye, EyeOff } from 'lucide-react';
-import { TIME_BREAKS, COLOR_RANGE } from '../../utils/gridLayerConfig';
+import { COLOR_RANGE, ACTIVITY_METRICS } from '../../utils/gridLayerConfig';
 import { getMetricInfo } from '../../utils/formatters';
+import { PDS_EFFORT_COLOR_HEX, PDS_GROUNDS_COLOR_HEX } from '../../utils/pdsOverlayConfig';
 
 // Modern color palette for metrics
 export const COLORS = ['#ffffd9', '#edf8b1', '#c7e9b4', '#7fcdbb', '#41b6c4', '#1d91c0', '#225ea8', '#0c2c84'];
@@ -10,19 +11,25 @@ const EnhancedLegend = memo(({
   isDarkTheme,
   grades,
   selectedMetric,
+  selectedActivityMetric,
   colorRange,
   hasGridData,
+  pdsH3EffortData,
+  pdsFishingGroundsData,
+  activeActivityLayers,
   visualizationMode,
   showBathymetry = false
 }) => {
   const [expandedSections, setExpandedSections] = useState({
     metrics: true,
     activity: true,
+    grounds: true,
     bathymetry: true
   });
   const [isMinimized, setIsMinimized] = useState(false);
 
   const metricInfo = getMetricInfo(selectedMetric);
+  const activeMetricConfig = ACTIVITY_METRICS.find(m => m.id === selectedActivityMetric) || ACTIVITY_METRICS[0];
 
   const toggleSection = (section) => {
     setExpandedSections(prev => ({
@@ -224,124 +231,109 @@ const EnhancedLegend = memo(({
 
       {/* Fishing Activity Legend Section */}
       {hasGridData && (
-        <div>
-          <SectionHeader
-            title={`Activity ${visualizationMode === 'heatmap' ? '(Heatmap)' : '(Hours)'}`}
-            isExpanded={expandedSections.activity}
-            onToggle={() => toggleSection('activity')}
-            icon={<div style={{
-              width: '8px',
-              height: '8px',
-              borderRadius: '50%',
-              backgroundColor: '#10b981'
-            }} />}
-          />
+        <>
+          {/* H3 Effort Legend */}
+          {activeActivityLayers?.hexagons !== false && pdsH3EffortData?.length > 0 && (() => {
+            const values = pdsH3EffortData.map(d => d[selectedActivityMetric]).filter(v => typeof v === 'number');
+            const min = values.length ? Math.min(...values) : 0;
+            const max = values.length ? Math.max(...values) : 0;
+            return (
+              <div>
+                <SectionHeader
+                  title="Local Fishing Activity"
+                  isExpanded={expandedSections.activity}
+                  onToggle={() => toggleSection('activity')}
+                  icon={<div style={{
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    backgroundColor: PDS_EFFORT_COLOR_HEX[PDS_EFFORT_COLOR_HEX.length - 1]
+                  }} />}
+                />
 
-          {expandedSections.activity && (
-            <div style={{ paddingLeft: '2px' }}>
-              {visualizationMode === 'column' ? (
-                <div>
-                  {/* Gradient overview for column view */}
-                  <div style={{ marginBottom: '8px' }}>
-                    <GradientBar
-                      colors={COLOR_RANGE.map(color => `rgba(${color.join(',')}, 0.8)`)}
-                      height="8px"
-                    />
-                    <div style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      marginTop: '3px',
-                      fontSize: '10px',
-                      color: isDarkTheme ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)'
-                    }}>
-                      <span>Low</span>
-                      <span>High</span>
+                {expandedSections.activity && (
+                  <div style={{ paddingLeft: '2px', marginBottom: '10px' }}>
+                    <div style={{ marginBottom: '8px' }}>
+                      <div style={{
+                        fontSize: '11px',
+                        fontWeight: 600,
+                        marginBottom: '4px',
+                        color: isDarkTheme ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.85)'
+                      }}>
+                        {activeMetricConfig.label}
+                      </div>
+                      <GradientBar
+                        colors={PDS_EFFORT_COLOR_HEX}
+                        height="8px"
+                      />
+                      <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        marginTop: '3px',
+                        fontSize: '10px',
+                        color: isDarkTheme ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)'
+                      }}>
+                        <span>{min > 1000 ? `${(min/1000).toFixed(1)}k` : min.toFixed(1)}</span>
+                        <span>{max > 1000 ? `${(max/1000).toFixed(1)}k` : max.toFixed(1)}</span>
+                      </div>
                     </div>
                   </div>
+                )}
+              </div>
+            );
+          })()}
 
-                  {/* Time ranges */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                    {TIME_BREAKS.map((range, index) => {
-                      const timeValue = range.min + (range.max === Infinity ? 8 : range.max - range.min) / 2;
-                      const normalizedValue = Math.min(timeValue / 12, 1);
-                      const opacity = 0.3 + (normalizedValue * 0.6);
+          {/* Fishing Grounds Legend */}
+          {activeActivityLayers?.grounds !== false && pdsFishingGroundsData?.features?.length > 0 && (() => {
+            const values = pdsFishingGroundsData.features.map(f => f.properties[selectedActivityMetric]).filter(v => typeof v === 'number');
+            const min = values.length ? Math.min(...values) : 0;
+            const max = values.length ? Math.max(...values) : 0;
+            return (
+              <div>
+                <SectionHeader
+                  title="Fishing Grounds"
+                  isExpanded={expandedSections.grounds}
+                  onToggle={() => toggleSection('grounds')}
+                  icon={<div style={{
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    backgroundColor: PDS_GROUNDS_COLOR_HEX[PDS_GROUNDS_COLOR_HEX.length - 1]
+                  }} />}
+                />
 
-                      return (
-                        <div
-                          key={index}
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '6px',
-                            padding: '2px 4px',
-                            borderRadius: '4px',
-                            transition: 'all 0.2s ease'
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = isDarkTheme
-                              ? 'rgba(255, 255, 255, 0.05)'
-                              : 'rgba(0, 0, 0, 0.03)';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = 'transparent';
-                          }}
-                        >
-                          <ColorSwatch
-                            color={`rgba(${colorRange[index].join(',')}, ${opacity})`}
-                            size="small"
-                          />
-                          <span style={{
-                            fontSize: '11px',
-                            fontWeight: 500,
-                            color: isDarkTheme ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)'
-                          }}>
-                            {range.label}
-                          </span>
-                        </div>
-                      );
-                    })}
+                {expandedSections.grounds && (
+                  <div style={{ paddingLeft: '2px', marginBottom: '10px' }}>
+                    <div style={{ marginBottom: '8px' }}>
+                      <div style={{
+                        fontSize: '11px',
+                        fontWeight: 600,
+                        marginBottom: '4px',
+                        color: isDarkTheme ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.85)'
+                      }}>
+                        {activeMetricConfig.label}
+                      </div>
+                      <GradientBar
+                        colors={PDS_GROUNDS_COLOR_HEX}
+                        height="8px"
+                      />
+                      <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        marginTop: '3px',
+                        fontSize: '10px',
+                        color: isDarkTheme ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)'
+                      }}>
+                        <span>{min > 1000 ? `${(min/1000).toFixed(1)}k` : min.toFixed(1)}</span>
+                        <span>{max > 1000 ? `${(max/1000).toFixed(1)}k` : max.toFixed(1)}</span>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ) : (
-                // Heatmap view
-                <div>
-                  <div style={{ marginBottom: '6px' }}>
-                    <GradientBar
-                      colors={[
-                        'rgba(254, 235, 226, 0.2)',
-                        'rgba(254, 235, 226, 0.5)',
-                        'rgba(252, 197, 192, 0.7)',
-                        'rgba(250, 159, 181, 0.8)',
-                        'rgba(247, 104, 161, 0.9)',
-                        'rgba(221, 52, 151, 1)',
-                        'rgba(174, 1, 126, 1)'
-                      ]}
-                      height="8px"
-                    />
-                  </div>
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    fontSize: '10px',
-                    color: isDarkTheme ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
-                    marginBottom: '4px'
-                  }}>
-                    <span>Low Activity</span>
-                    <span>High Activity</span>
-                  </div>
-                  <div style={{
-                    textAlign: 'center',
-                    fontSize: '9px',
-                    color: isDarkTheme ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
-                    fontStyle: 'italic'
-                  }}>
-                    Intensity based on fishing effort (hours)
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
+                )}
+              </div>
+            );
+          })()}
+        </>
       )}
 
       {/* Bathymetry Legend Section */}

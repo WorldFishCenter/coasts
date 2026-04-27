@@ -17,7 +17,7 @@ It also includes a Google Cloud Storage fetcher for versioned PDS datasets.
 If you need to fetch data manually:
 
 1. Make sure your `.env` file is set up with the `MONGODB_URI` variable
-2. Run the command: `npm run fetch-data`
+2. Run the command: `node scripts/data/fetchMongoData.js`
 
 ### Google Cloud PDS fetch
 
@@ -28,6 +28,7 @@ If you need to fetch the latest versioned PDS files from Google Cloud Storage:
    - `GCP_BUCKET_NAME`
    - Optional: `GCP_PDS_GROUNDS_PREFIX` (default: `pds-fishing-grounds__`)
    - Optional: `GCP_PDS_EFFORT_PREFIX` (default: `pds-h3-effort-r9__`)
+   - Optional: `GCP_PDS_FRAME_GEARS_PREFIX` (default: `frame-gears__`)
 2. Run: `npm run fetch-gcp-data`
 
 ## Data Files
@@ -43,6 +44,7 @@ The script generates these files:
 - `/public/data/ts_gaul2.json` - Time series keyed by GAUL2 region (from `metrics_gaul2`)
 - `/public/data/pds-fishing-grounds.geojson` - Latest versioned fishing grounds GeoJSON from GCS
 - `/public/data/pds-h3-effort-r9.json` - Latest versioned H3 effort JSON from GCS
+- `/public/data/frame-gears.json` - Latest versioned frame-gears JSON from GCS (e.g. `frame-gears__<version>.json`)
 
 ## Data Structure
 

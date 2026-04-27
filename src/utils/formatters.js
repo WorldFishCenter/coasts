@@ -44,11 +44,65 @@ export const METRIC_CONFIG = {
       if (value === null || value === undefined) return 'N/A';
       return value === 0 ? '$0.00/kg' : `$${value.toFixed(2)}/kg`;
     }
+  },
+  fishers_total: {
+    label: 'Fishers (Total)',
+    unit: 'fishers',
+    description: 'Total fishers (male + female)',
+    format: (value) => {
+      if (value === null || value === undefined) return 'N/A';
+      return `${Math.round(value).toLocaleString()} fishers`;
+    }
+  },
+  fishers_male: {
+    label: 'Fishers (Male)',
+    unit: 'fishers',
+    description: 'Male fishers',
+    format: (value) => {
+      if (value === null || value === undefined) return 'N/A';
+      return `${Math.round(value).toLocaleString()} fishers`;
+    }
+  },
+  fishers_female: {
+    label: 'Fishers (Female)',
+    unit: 'fishers',
+    description: 'Female fishers',
+    format: (value) => {
+      if (value === null || value === undefined) return 'N/A';
+      return `${Math.round(value).toLocaleString()} fishers`;
+    }
+  },
+  boats_total: {
+    label: 'Boats',
+    unit: 'number of boats',
+    description: 'Total boats',
+    format: (value) => {
+      if (value === null || value === undefined) return 'N/A';
+      return `${Math.round(value).toLocaleString()} boats`;
+    }
+  },
+  fishers: {
+    label: 'Fishers',
+    unit: 'number of fishers',
+    description: 'Fishers by sex and total',
+    format: (value) => {
+      if (value === null || value === undefined) return 'N/A';
+      return `${Math.round(value).toLocaleString()} fishers`;
+    }
+  },
+  boats: {
+    label: 'Boats',
+    unit: 'number of boats',
+    description: 'Number of boats',
+    format: (value) => {
+      if (value === null || value === undefined) return 'N/A';
+      return `${Math.round(value).toLocaleString()} boats`;
+    }
   }
 };
 
 /** Metric IDs shown in the metric selector (CPUA and RPUA are hidden from selection) */
-export const SELECTABLE_METRIC_IDS = ['mean_cpue', 'mean_rpue', 'mean_price_kg'];
+export const SELECTABLE_METRIC_IDS = ['mean_cpue', 'mean_rpue', 'mean_price_kg', 'fishers', 'boats'];
 
 // Get metric info with fallback
 export const getMetricInfo = (metricId) => {

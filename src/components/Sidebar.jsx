@@ -1,14 +1,12 @@
 import { memo } from 'react';
 import SimpleBar from 'simplebar-react';
 import 'simplebar-react/dist/simplebar.min.css';
-import { Layers, Info, Map as MapIcon } from 'lucide-react';
+import { Layers, Map as MapIcon, Calendar } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { Button } from "./ui/button";
 
 // Modular Sections
 import MetricsSection from './sidebar/MetricsSection';
-import GridActivitySection from './sidebar/GridActivitySection';
-import ComparisonSection from './sidebar/ComparisonSection';
+import FishingActivitySection from './sidebar/GridActivitySection';
 
 const Sidebar = memo(({
   isDarkTheme,
@@ -16,20 +14,29 @@ const Sidebar = memo(({
   isOpen,
   selectedMetric,
   onMetricChange,
-  transformedPdsData,
-  selectedRanges,
-  onRangeToggle,
-  selectedRegions = [],
-  onRegionRemove,
+  selectedFishersMetric,
+  onFishersMetricChange,
+  transformedH3Data,
+  pdsFishingGroundsData,
+  selectedYear,
+  onYearChange,
+  selectedActivityMetric,
+  onActivityMetricChange,
+  activeActivityLayers,
+  onLayerToggle,
   gaulLevel = 'gaul2',
   onGaulLevelChange,
   visualizationMode,
   onVisualizationModeChange
 }) => {
   const isGaul1 = gaulLevel === 'gaul1';
+  const sectionCardClasses = cn(
+    "rounded-2xl border p-4",
+    isDarkTheme ? "bg-white/[0.02] border-white/30" : "bg-black/[0.02] border-black/30"
+  );
 
   const containerClasses = cn(
-    "flex-none flex flex-col overflow-hidden border-r shadow-2xl z-40 transition-[width] duration-300 ease-in-out relative",
+    "flex-none flex flex-col overflow-hidden border-r shadow-2xl z-40 transition-all duration-300 ease-in-out relative",
     isDarkTheme ? "bg-[#060b19]/90 border-white/5" : "bg-white/90 border-[#0a1930]/10",
     "backdrop-blur-2xl",
     isOpen ? (isMobile ? "w-full" : "w-[420px]") : "w-0",
@@ -65,9 +72,9 @@ const Sidebar = memo(({
 
           {/* Admin level switch (Pill Style) */}
           {onGaulLevelChange && (
-            <div className="flex flex-col gap-3">
+            <div className={cn(sectionCardClasses, "flex flex-col gap-3")}>
               <div className="flex items-center gap-2">
-                <MapIcon className="w-4 h-4 text-muted-foreground" />
+                <MapIcon className="w-4 h-4 text-primary" />
                 <div className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">
                   Resolution Boundary
                 </div>
@@ -103,35 +110,60 @@ const Sidebar = memo(({
             </div>
           )}
 
+          <div className={cn(sectionCardClasses, "flex flex-col gap-3")}>
+            <div className="flex items-center gap-2 px-1">
+              <Calendar className="w-3.5 h-3.5 text-primary" />
+              <span className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">Data Year Filter</span>
+            </div>
+            <div className={cn(
+              "p-1 flex gap-1 rounded-xl border backdrop-blur-md",
+              isDarkTheme ? "bg-black/20 border-white/5" : "bg-black/5 border-black/5"
+            )}>
+              {['all', '2024', '2025', '2026'].map(year => (
+                <button
+                  key={year}
+                  onClick={() => onYearChange(year)}
+                  className={cn(
+                    "flex-1 py-2 rounded-lg transition-all duration-300 font-bold text-xs tracking-wide",
+                    selectedYear === year
+                      ? "bg-primary text-primary-foreground shadow-md"
+                      : "text-muted-foreground hover:bg-white/10 hover:text-foreground"
+                  )}
+                >
+                  {year === 'all' ? 'All Years' : year}
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Render Sections Directly without Accordion wrapper */}
-          <div className="w-full h-px bg-border/50" />
 
-          <MetricsSection
-            isDarkTheme={isDarkTheme}
-            selectedMetric={selectedMetric}
-            onMetricChange={onMetricChange}
-          />
+          <div className={sectionCardClasses}>
+            <MetricsSection
+              isDarkTheme={isDarkTheme}
+              selectedMetric={selectedMetric}
+              onMetricChange={onMetricChange}
+              selectedFishersMetric={selectedFishersMetric}
+              onFishersMetricChange={onFishersMetricChange}
+            />
+          </div>
 
-          <div className="w-full h-px bg-border/50" />
+          <div className={sectionCardClasses}>
+            <FishingActivitySection
+              isDarkTheme={isDarkTheme}
+              transformedH3Data={transformedH3Data}
+              pdsFishingGroundsData={pdsFishingGroundsData}
+              visualizationMode={visualizationMode}
+              onVisualizationModeChange={onVisualizationModeChange}
+              selectedYear={selectedYear}
+              onYearChange={onYearChange}
+              selectedActivityMetric={selectedActivityMetric}
+              onActivityMetricChange={onActivityMetricChange}
+              activeActivityLayers={activeActivityLayers}
+              onLayerToggle={onLayerToggle}
+            />
+          </div>
 
-          <GridActivitySection
-            isDarkTheme={isDarkTheme}
-            transformedPdsData={transformedPdsData}
-            visualizationMode={visualizationMode}
-            onVisualizationModeChange={onVisualizationModeChange}
-            selectedRanges={selectedRanges}
-            onRangeToggle={onRangeToggle}
-          />
-
-          <div className="w-full h-px bg-border/50" />
-
-          <ComparisonSection
-            isDarkTheme={isDarkTheme}
-            isGaul1={isGaul1}
-            selectedRegions={selectedRegions}
-            selectedMetric={selectedMetric}
-            onRegionRemove={onRegionRemove}
-          />
         </div>
       </SimpleBar>
 
@@ -145,7 +177,7 @@ const Sidebar = memo(({
           <span className="text-[10px] font-bold tracking-widest uppercase text-muted-foreground">Systems Online</span>
         </div>
         <div className="text-[10px] tracking-widest uppercase text-muted-foreground opacity-50 font-bold">
-          Coasts v2.6
+          Coasts v0.3.0
         </div>
       </div>
     </div>

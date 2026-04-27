@@ -1,17 +1,19 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Header from './Header'; // Adjust path if needed
 import { cn } from '../lib/utils';
-import { useLocation } from 'react-router-dom';
 import { loadTimeSeriesGaul1 } from '../services/dataService';
 import { ChevronDown, BarChart3, Map, Filter, Layers } from 'lucide-react';
 import CountryTimeSeriesChart from './CountryTimeSeriesChart';
+import { useTheme } from './ThemeProvider';
 import { METRIC_CONFIG, SELECTABLE_METRIC_IDS } from '../utils/formatters';
 
+const COUNTRY_VIEW_METRIC_IDS = SELECTABLE_METRIC_IDS.filter(
+    (id) => !['fishers', 'boats'].includes(id)
+);
+
 const CountryView = () => {
-    const [isDarkTheme, setIsDarkTheme] = useState(() => {
-        // Default to dark or read from localStorage equivalent if ThemeProvider handles it
-        return document.documentElement.classList.contains('dark');
-    });
+    const { theme } = useTheme();
+    const isDarkTheme = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
     // State
     const [timeSeriesData, setTimeSeriesData] = useState(null);
@@ -93,17 +95,6 @@ const CountryView = () => {
         };
     }, [selectedCountry, timeSeriesData, selectedMetric]);
 
-    const handleThemeChange = (dark) => {
-        setIsDarkTheme(dark);
-        if (dark) {
-            document.documentElement.classList.add('dark');
-            localStorage.setItem('coasts-ui-theme', 'dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-            localStorage.setItem('coasts-ui-theme', 'light');
-        }
-    };
-
     return (
         <div className={cn(
             "min-h-screen w-full flex flex-col font-sans transition-colors duration-300",
@@ -114,11 +105,9 @@ const CountryView = () => {
         without crashing the dynamicStats calculation.
       */}
             <Header
-                isDarkTheme={isDarkTheme}
-                onThemeChange={handleThemeChange}
                 boundaries={null}
                 timeSeriesData={null}
-                pdsGridsData={null}
+                pdsH3EffortData={null}
             />
 
             <main className="flex-1 flex overflow-hidden">
@@ -198,7 +187,7 @@ const CountryView = () => {
                                     <span className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground opacity-70">Analysis Metric</span>
                                 </div>
                                 <div className="grid grid-cols-1 gap-2">
-                                    {SELECTABLE_METRIC_IDS.map(id => {
+                                    {COUNTRY_VIEW_METRIC_IDS.map(id => {
                                         const config = METRIC_CONFIG[id];
                                         const isActive = selectedMetric === id;
                                         return (

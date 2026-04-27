@@ -1,0 +1,2466 @@
+[
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Kilifi North",
+    "gear_name": "Beach Seine",
+    "fishers_male": 9,
+    "fishers_female": 0,
+    "n_boats": 1
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Kilifi North",
+    "gear_name": "Cast Net",
+    "fishers_male": 56,
+    "fishers_female": 0,
+    "n_boats": 52
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Kilifi North",
+    "gear_name": "Gill Net",
+    "fishers_male": 971,
+    "fishers_female": 7,
+    "n_boats": 371
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Kilifi North",
+    "gear_name": "Hand Line",
+    "fishers_male": 550,
+    "fishers_female": 4,
+    "n_boats": 269
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Kilifi North",
+    "gear_name": "Harpoon",
+    "fishers_male": 25,
+    "fishers_female": 0,
+    "n_boats": 25
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Kilifi North",
+    "gear_name": "Long Line",
+    "fishers_male": 29,
+    "fishers_female": 1,
+    "n_boats": 12
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Kilifi North",
+    "gear_name": "Other",
+    "fishers_male": 7,
+    "fishers_female": 0,
+    "n_boats": 5
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Kilifi North",
+    "gear_name": "Reef Seine",
+    "fishers_male": 308,
+    "fishers_female": 0,
+    "n_boats": 9
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Kilifi North",
+    "gear_name": "Ring Net",
+    "fishers_male": 738,
+    "fishers_female": 0,
+    "n_boats": 33
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Kilifi North",
+    "gear_name": "Scoop Net",
+    "fishers_male": 21,
+    "fishers_female": 0,
+    "n_boats": 5
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Kilifi North",
+    "gear_name": "Seine",
+    "fishers_male": 18,
+    "fishers_female": 0,
+    "n_boats": 2
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Kilifi North",
+    "gear_name": "Spear Gun",
+    "fishers_male": 127,
+    "fishers_female": 0,
+    "n_boats": 120
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Kilifi North",
+    "gear_name": "Stick Rod",
+    "fishers_male": 211,
+    "fishers_female": 0,
+    "n_boats": 107
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Kilifi North",
+    "gear_name": "Trap",
+    "fishers_male": 224,
+    "fishers_female": 0,
+    "n_boats": 76
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Kilifi North",
+    "gear_name": "Trolling Line",
+    "fishers_male": 290,
+    "fishers_female": 3,
+    "n_boats": 72
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Kilifi South",
+    "gear_name": "Beach Seine",
+    "fishers_male": 7,
+    "fishers_female": 0,
+    "n_boats": 2
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Kilifi South",
+    "gear_name": "Cast Net",
+    "fishers_male": 4,
+    "fishers_female": 0,
+    "n_boats": 2
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Kilifi South",
+    "gear_name": "Gill Net",
+    "fishers_male": 549,
+    "fishers_female": 0,
+    "n_boats": 176
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Kilifi South",
+    "gear_name": "Gleaning",
+    "fishers_male": 2,
+    "fishers_female": 9,
+    "n_boats": 11
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Kilifi South",
+    "gear_name": "Hand Line",
+    "fishers_male": 79,
+    "fishers_female": 1,
+    "n_boats": 48
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Kilifi South",
+    "gear_name": "Harpoon",
+    "fishers_male": 38,
+    "fishers_female": 0,
+    "n_boats": 38
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Kilifi South",
+    "gear_name": "Long Line",
+    "fishers_male": 14,
+    "fishers_female": 0,
+    "n_boats": 4
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Kilifi South",
+    "gear_name": "Other",
+    "fishers_male": 1,
+    "fishers_female": 0,
+    "n_boats": 1
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Kilifi South",
+    "gear_name": "Scoop Net",
+    "fishers_male": 30,
+    "fishers_female": 0,
+    "n_boats": 30
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Kilifi South",
+    "gear_name": "Spear Gun",
+    "fishers_male": 192,
+    "fishers_female": 0,
+    "n_boats": 176
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Kilifi South",
+    "gear_name": "Stick Rod",
+    "fishers_male": 13,
+    "fishers_female": 0,
+    "n_boats": 13
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Kilifi South",
+    "gear_name": "Trap",
+    "fishers_male": 10,
+    "fishers_female": 0,
+    "n_boats": 3
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Kilifi South",
+    "gear_name": "Trolling Line",
+    "fishers_male": 24,
+    "fishers_female": 0,
+    "n_boats": 4
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Magarini",
+    "gear_name": "Beach Seine",
+    "fishers_male": 26,
+    "fishers_female": 0,
+    "n_boats": 4
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Magarini",
+    "gear_name": "Cast Net",
+    "fishers_male": 38,
+    "fishers_female": 0,
+    "n_boats": 32
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Magarini",
+    "gear_name": "Gill Net",
+    "fishers_male": 2424,
+    "fishers_female": 0,
+    "n_boats": 532
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Magarini",
+    "gear_name": "Gleaning",
+    "fishers_male": 9,
+    "fishers_female": 0,
+    "n_boats": 7
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Magarini",
+    "gear_name": "Hand Line",
+    "fishers_male": 134,
+    "fishers_female": 3,
+    "n_boats": 67
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Magarini",
+    "gear_name": "Long Line",
+    "fishers_male": 83,
+    "fishers_female": 0,
+    "n_boats": 22
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Magarini",
+    "gear_name": "Other",
+    "fishers_male": 9,
+    "fishers_female": 0,
+    "n_boats": 7
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Magarini",
+    "gear_name": "Scoop Net",
+    "fishers_male": 47,
+    "fishers_female": 3,
+    "n_boats": 47
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Magarini",
+    "gear_name": "Seine",
+    "fishers_male": 150,
+    "fishers_female": 5,
+    "n_boats": 72
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Magarini",
+    "gear_name": "Spear Gun",
+    "fishers_male": 67,
+    "fishers_female": 3,
+    "n_boats": 18
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Magarini",
+    "gear_name": "Stick Rod",
+    "fishers_male": 43,
+    "fishers_female": 5,
+    "n_boats": 43
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Magarini",
+    "gear_name": "Trap",
+    "fishers_male": 19,
+    "fishers_female": 0,
+    "n_boats": 9
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Magarini",
+    "gear_name": "Trolling Line",
+    "fishers_male": 8,
+    "fishers_female": 0,
+    "n_boats": 2
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Malindi",
+    "gear_name": "Beach Seine",
+    "fishers_male": 12,
+    "fishers_female": 0,
+    "n_boats": 6
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Malindi",
+    "gear_name": "Cast Net",
+    "fishers_male": 1,
+    "fishers_female": 0,
+    "n_boats": 1
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Malindi",
+    "gear_name": "Gill Net",
+    "fishers_male": 267,
+    "fishers_female": 0,
+    "n_boats": 74
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Malindi",
+    "gear_name": "Gleaning",
+    "fishers_male": 3,
+    "fishers_female": 0,
+    "n_boats": 3
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Malindi",
+    "gear_name": "Hand Line",
+    "fishers_male": 144,
+    "fishers_female": 0,
+    "n_boats": 46
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Malindi",
+    "gear_name": "Harpoon",
+    "fishers_male": 2,
+    "fishers_female": 0,
+    "n_boats": 2
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Malindi",
+    "gear_name": "Long Line",
+    "fishers_male": 23,
+    "fishers_female": 0,
+    "n_boats": 5
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Malindi",
+    "gear_name": "Reef Seine",
+    "fishers_male": 6,
+    "fishers_female": 0,
+    "n_boats": 1
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Malindi",
+    "gear_name": "Scoop Net",
+    "fishers_male": 28,
+    "fishers_female": 0,
+    "n_boats": 19
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Malindi",
+    "gear_name": "Seine",
+    "fishers_male": 2,
+    "fishers_female": 0,
+    "n_boats": 1
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Malindi",
+    "gear_name": "Spear Gun",
+    "fishers_male": 23,
+    "fishers_female": 0,
+    "n_boats": 17
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Malindi",
+    "gear_name": "Stick Rod",
+    "fishers_male": 18,
+    "fishers_female": 0,
+    "n_boats": 11
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Malindi",
+    "gear_name": "Trap",
+    "fishers_male": 13,
+    "fishers_female": 0,
+    "n_boats": 5
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kilifi",
+    "gaul2_name": "Malindi",
+    "gear_name": "Trolling Line",
+    "fishers_male": 31,
+    "fishers_female": 0,
+    "n_boats": 8
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Kinango",
+    "gear_name": "Cast Net",
+    "fishers_male": 109,
+    "fishers_female": 0,
+    "n_boats": 63
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Kinango",
+    "gear_name": "Gill Net",
+    "fishers_male": 269,
+    "fishers_female": 0,
+    "n_boats": 123
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Kinango",
+    "gear_name": "Hand Line",
+    "fishers_male": 33,
+    "fishers_female": 0,
+    "n_boats": 26
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Kinango",
+    "gear_name": "Long Line",
+    "fishers_male": 39,
+    "fishers_female": 0,
+    "n_boats": 23
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Kinango",
+    "gear_name": "Other",
+    "fishers_male": 3,
+    "fishers_female": 0,
+    "n_boats": 2
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Kinango",
+    "gear_name": "Seine",
+    "fishers_male": 56,
+    "fishers_female": 0,
+    "n_boats": 28
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Kinango",
+    "gear_name": "Stick Rod",
+    "fishers_male": 20,
+    "fishers_female": 29,
+    "n_boats": 48
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Kinango",
+    "gear_name": "Trap",
+    "fishers_male": 3,
+    "fishers_female": 0,
+    "n_boats": 2
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Lunga Lunga",
+    "gear_name": "Beach Seine",
+    "fishers_male": 140,
+    "fishers_female": 0,
+    "n_boats": 23
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Lunga Lunga",
+    "gear_name": "Cast Net",
+    "fishers_male": 18,
+    "fishers_female": 0,
+    "n_boats": 19
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Lunga Lunga",
+    "gear_name": "Gill Net",
+    "fishers_male": 225,
+    "fishers_female": 0,
+    "n_boats": 54
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Lunga Lunga",
+    "gear_name": "Gleaning",
+    "fishers_male": 20,
+    "fishers_female": 3,
+    "n_boats": 10
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Lunga Lunga",
+    "gear_name": "Hand Line",
+    "fishers_male": 237,
+    "fishers_female": 0,
+    "n_boats": 121
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Lunga Lunga",
+    "gear_name": "Long Line",
+    "fishers_male": 26,
+    "fishers_female": 0,
+    "n_boats": 9
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Lunga Lunga",
+    "gear_name": "Other",
+    "fishers_male": 29,
+    "fishers_female": 0,
+    "n_boats": 6
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Lunga Lunga",
+    "gear_name": "Reef Seine",
+    "fishers_male": 74,
+    "fishers_female": 0,
+    "n_boats": 8
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Lunga Lunga",
+    "gear_name": "Ring Net",
+    "fishers_male": 1042,
+    "fishers_female": 0,
+    "n_boats": 52
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Lunga Lunga",
+    "gear_name": "Scoop Net",
+    "fishers_male": 6,
+    "fishers_female": 0,
+    "n_boats": 6
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Lunga Lunga",
+    "gear_name": "Seine",
+    "fishers_male": 19,
+    "fishers_female": 0,
+    "n_boats": 9
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Lunga Lunga",
+    "gear_name": "Spear Gun",
+    "fishers_male": 82,
+    "fishers_female": 0,
+    "n_boats": 25
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Lunga Lunga",
+    "gear_name": "Stick Rod",
+    "fishers_male": 111,
+    "fishers_female": 10,
+    "n_boats": 45
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Lunga Lunga",
+    "gear_name": "Trap",
+    "fishers_male": 140,
+    "fishers_female": 3,
+    "n_boats": 76
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Matuga",
+    "gear_name": "Beach Seine",
+    "fishers_male": 4,
+    "fishers_female": 0,
+    "n_boats": 2
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Matuga",
+    "gear_name": "Gill Net",
+    "fishers_male": 273,
+    "fishers_female": 0,
+    "n_boats": 84
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Matuga",
+    "gear_name": "Hand Line",
+    "fishers_male": 28,
+    "fishers_female": 0,
+    "n_boats": 22
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Matuga",
+    "gear_name": "Long Line",
+    "fishers_male": 32,
+    "fishers_female": 0,
+    "n_boats": 9
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Matuga",
+    "gear_name": "Spear Gun",
+    "fishers_male": 57,
+    "fishers_female": 0,
+    "n_boats": 56
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Matuga",
+    "gear_name": "Stick Rod",
+    "fishers_male": 13,
+    "fishers_female": 0,
+    "n_boats": 13
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Matuga",
+    "gear_name": "Trap",
+    "fishers_male": 79,
+    "fishers_female": 1,
+    "n_boats": 30
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Msambweni",
+    "gear_name": "Beach Seine",
+    "fishers_male": 8,
+    "fishers_female": 0,
+    "n_boats": 2
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Msambweni",
+    "gear_name": "Cast Net",
+    "fishers_male": 2,
+    "fishers_female": 0,
+    "n_boats": 2
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Msambweni",
+    "gear_name": "Gill Net",
+    "fishers_male": 979,
+    "fishers_female": 0,
+    "n_boats": 200
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Msambweni",
+    "gear_name": "Hand Line",
+    "fishers_male": 338,
+    "fishers_female": 0,
+    "n_boats": 148
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Msambweni",
+    "gear_name": "Harpoon",
+    "fishers_male": 19,
+    "fishers_female": 0,
+    "n_boats": 13
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Msambweni",
+    "gear_name": "Long Line",
+    "fishers_male": 32,
+    "fishers_female": 0,
+    "n_boats": 9
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Msambweni",
+    "gear_name": "Reef Seine",
+    "fishers_male": 84,
+    "fishers_female": 0,
+    "n_boats": 17
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Msambweni",
+    "gear_name": "Ring Net",
+    "fishers_male": 264,
+    "fishers_female": 4,
+    "n_boats": 11
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Msambweni",
+    "gear_name": "Scoop Net",
+    "fishers_male": 37,
+    "fishers_female": 0,
+    "n_boats": 18
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Msambweni",
+    "gear_name": "Spear Gun",
+    "fishers_male": 339,
+    "fishers_female": 0,
+    "n_boats": 258
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Msambweni",
+    "gear_name": "Stick Rod",
+    "fishers_male": 42,
+    "fishers_female": 0,
+    "n_boats": 29
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Kwale",
+    "gaul2_name": "Msambweni",
+    "gear_name": "Trap",
+    "fishers_male": 234,
+    "fishers_female": 0,
+    "n_boats": 111
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Lamu",
+    "gaul2_name": "Lamu East",
+    "gear_name": "Beach Seine",
+    "fishers_male": 1141,
+    "fishers_female": 35,
+    "n_boats": 65
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Lamu",
+    "gaul2_name": "Lamu East",
+    "gear_name": "Gill Net",
+    "fishers_male": 4082,
+    "fishers_female": 0,
+    "n_boats": 879
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Lamu",
+    "gaul2_name": "Lamu East",
+    "gear_name": "Gleaning",
+    "fishers_male": 171,
+    "fishers_female": 10,
+    "n_boats": 22
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Lamu",
+    "gaul2_name": "Lamu East",
+    "gear_name": "Hand Line",
+    "fishers_male": 185,
+    "fishers_female": 2,
+    "n_boats": 91
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Lamu",
+    "gaul2_name": "Lamu East",
+    "gear_name": "Long Line",
+    "fishers_male": 402,
+    "fishers_female": 2,
+    "n_boats": 102
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Lamu",
+    "gaul2_name": "Lamu East",
+    "gear_name": "Other",
+    "fishers_male": 59,
+    "fishers_female": 0,
+    "n_boats": 17
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Lamu",
+    "gaul2_name": "Lamu East",
+    "gear_name": "Reef Seine",
+    "fishers_male": 18,
+    "fishers_female": 0,
+    "n_boats": 5
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Lamu",
+    "gaul2_name": "Lamu East",
+    "gear_name": "Ring Net",
+    "fishers_male": 43,
+    "fishers_female": 0,
+    "n_boats": 5
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Lamu",
+    "gaul2_name": "Lamu East",
+    "gear_name": "Scoop Net",
+    "fishers_male": 584,
+    "fishers_female": 2,
+    "n_boats": 153
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Lamu",
+    "gaul2_name": "Lamu East",
+    "gear_name": "Seine",
+    "fishers_male": 59,
+    "fishers_female": 0,
+    "n_boats": 13
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Lamu",
+    "gaul2_name": "Lamu East",
+    "gear_name": "Spear Gun",
+    "fishers_male": 2,
+    "fishers_female": 0,
+    "n_boats": 2
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Lamu",
+    "gaul2_name": "Lamu East",
+    "gear_name": "Stick Rod",
+    "fishers_male": 251,
+    "fishers_female": 43,
+    "n_boats": 150
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Lamu",
+    "gaul2_name": "Lamu East",
+    "gear_name": "Trap",
+    "fishers_male": 38,
+    "fishers_female": 1,
+    "n_boats": 13
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Lamu",
+    "gaul2_name": "Lamu East",
+    "gear_name": "Trolling Line",
+    "fishers_male": 24,
+    "fishers_female": 2,
+    "n_boats": 8
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Lamu",
+    "gaul2_name": "Lamu West",
+    "gear_name": "Gill Net",
+    "fishers_male": 208,
+    "fishers_female": 0,
+    "n_boats": 67
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Lamu",
+    "gaul2_name": "Lamu West",
+    "gear_name": "Gleaning",
+    "fishers_male": 2,
+    "fishers_female": 0,
+    "n_boats": 2
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Lamu",
+    "gaul2_name": "Lamu West",
+    "gear_name": "Hand Line",
+    "fishers_male": 87,
+    "fishers_female": 13,
+    "n_boats": 75
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Lamu",
+    "gaul2_name": "Lamu West",
+    "gear_name": "Long Line",
+    "fishers_male": 38,
+    "fishers_female": 0,
+    "n_boats": 10
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Lamu",
+    "gaul2_name": "Lamu West",
+    "gear_name": "Scoop Net",
+    "fishers_male": 6,
+    "fishers_female": 0,
+    "n_boats": 6
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Lamu",
+    "gaul2_name": "Lamu West",
+    "gear_name": "Stick Rod",
+    "fishers_male": 25,
+    "fishers_female": 0,
+    "n_boats": 17
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Lamu",
+    "gaul2_name": "Lamu West",
+    "gear_name": "Trap",
+    "fishers_male": 8,
+    "fishers_female": 0,
+    "n_boats": 4
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Changamwe",
+    "gear_name": "Cast Net",
+    "fishers_male": 2,
+    "fishers_female": 0,
+    "n_boats": 1
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Changamwe",
+    "gear_name": "Gill Net",
+    "fishers_male": 224,
+    "fishers_female": 0,
+    "n_boats": 25
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Changamwe",
+    "gear_name": "Long Line",
+    "fishers_male": 44,
+    "fishers_female": 0,
+    "n_boats": 8
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Changamwe",
+    "gear_name": "Seine",
+    "fishers_male": 2,
+    "fishers_female": 0,
+    "n_boats": 1
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Changamwe",
+    "gear_name": "Trap",
+    "fishers_male": 8,
+    "fishers_female": 0,
+    "n_boats": 2
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Jomvu",
+    "gear_name": "Cast Net",
+    "fishers_male": 144,
+    "fishers_female": 0,
+    "n_boats": 81
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Jomvu",
+    "gear_name": "Gill Net",
+    "fishers_male": 214,
+    "fishers_female": 0,
+    "n_boats": 70
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Jomvu",
+    "gear_name": "Hand Line",
+    "fishers_male": 8,
+    "fishers_female": 0,
+    "n_boats": 5
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Jomvu",
+    "gear_name": "Long Line",
+    "fishers_male": 62,
+    "fishers_female": 4,
+    "n_boats": 28
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Jomvu",
+    "gear_name": "Other",
+    "fishers_male": 10,
+    "fishers_female": 0,
+    "n_boats": 5
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Jomvu",
+    "gear_name": "Stick Rod",
+    "fishers_male": 35,
+    "fishers_female": 0,
+    "n_boats": 35
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Jomvu",
+    "gear_name": "Trap",
+    "fishers_male": 20,
+    "fishers_female": 0,
+    "n_boats": 15
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Kisauni",
+    "gear_name": "Beach Seine",
+    "fishers_male": 113,
+    "fishers_female": 0,
+    "n_boats": 28
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Kisauni",
+    "gear_name": "Cast Net",
+    "fishers_male": 14,
+    "fishers_female": 0,
+    "n_boats": 11
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Kisauni",
+    "gear_name": "Gill Net",
+    "fishers_male": 272,
+    "fishers_female": 0,
+    "n_boats": 48
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Kisauni",
+    "gear_name": "Hand Line",
+    "fishers_male": 40,
+    "fishers_female": 0,
+    "n_boats": 26
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Kisauni",
+    "gear_name": "Harpoon",
+    "fishers_male": 3,
+    "fishers_female": 0,
+    "n_boats": 2
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Kisauni",
+    "gear_name": "Long Line",
+    "fishers_male": 15,
+    "fishers_female": 0,
+    "n_boats": 5
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Kisauni",
+    "gear_name": "Reef Seine",
+    "fishers_male": 15,
+    "fishers_female": 0,
+    "n_boats": 1
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Kisauni",
+    "gear_name": "Spear Gun",
+    "fishers_male": 2,
+    "fishers_female": 0,
+    "n_boats": 2
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Kisauni",
+    "gear_name": "Stick Rod",
+    "fishers_male": 7,
+    "fishers_female": 0,
+    "n_boats": 7
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Kisauni",
+    "gear_name": "Trap",
+    "fishers_male": 8,
+    "fishers_female": 1,
+    "n_boats": 6
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Likoni",
+    "gear_name": "Cast Net",
+    "fishers_male": 40,
+    "fishers_female": 0,
+    "n_boats": 13
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Likoni",
+    "gear_name": "Gill Net",
+    "fishers_male": 689,
+    "fishers_female": 0,
+    "n_boats": 166
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Likoni",
+    "gear_name": "Hand Line",
+    "fishers_male": 102,
+    "fishers_female": 0,
+    "n_boats": 53
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Likoni",
+    "gear_name": "Harpoon",
+    "fishers_male": 1,
+    "fishers_female": 0,
+    "n_boats": 1
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Likoni",
+    "gear_name": "Long Line",
+    "fishers_male": 95,
+    "fishers_female": 0,
+    "n_boats": 17
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Likoni",
+    "gear_name": "Other",
+    "fishers_male": 6,
+    "fishers_female": 0,
+    "n_boats": 5
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Likoni",
+    "gear_name": "Ring Net",
+    "fishers_male": 6,
+    "fishers_female": 0,
+    "n_boats": 3
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Likoni",
+    "gear_name": "Spear Gun",
+    "fishers_male": 33,
+    "fishers_female": 0,
+    "n_boats": 33
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Likoni",
+    "gear_name": "Stick Rod",
+    "fishers_male": 20,
+    "fishers_female": 0,
+    "n_boats": 17
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Likoni",
+    "gear_name": "Trap",
+    "fishers_male": 257,
+    "fishers_female": 0,
+    "n_boats": 76
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Mvita",
+    "gear_name": "Cast Net",
+    "fishers_male": 3,
+    "fishers_female": 0,
+    "n_boats": 2
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Mvita",
+    "gear_name": "Dropline",
+    "fishers_male": 2,
+    "fishers_female": 0,
+    "n_boats": 1
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Mvita",
+    "gear_name": "Gill Net",
+    "fishers_male": 61,
+    "fishers_female": 0,
+    "n_boats": 25
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Mvita",
+    "gear_name": "Hand Line",
+    "fishers_male": 72,
+    "fishers_female": 0,
+    "n_boats": 31
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Mvita",
+    "gear_name": "Long Line",
+    "fishers_male": 78,
+    "fishers_female": 0,
+    "n_boats": 14
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Mvita",
+    "gear_name": "Ring Net",
+    "fishers_male": 40,
+    "fishers_female": 0,
+    "n_boats": 1
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Mvita",
+    "gear_name": "Scoop Net",
+    "fishers_male": 4,
+    "fishers_female": 0,
+    "n_boats": 3
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Mvita",
+    "gear_name": "Trap",
+    "fishers_male": 1,
+    "fishers_female": 0,
+    "n_boats": 1
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Nyali",
+    "gear_name": "Gill Net",
+    "fishers_male": 76,
+    "fishers_female": 0,
+    "n_boats": 19
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Nyali",
+    "gear_name": "Gleaning",
+    "fishers_male": 2,
+    "fishers_female": 0,
+    "n_boats": 2
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Nyali",
+    "gear_name": "Hand Line",
+    "fishers_male": 45,
+    "fishers_female": 0,
+    "n_boats": 25
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Nyali",
+    "gear_name": "Long Line",
+    "fishers_male": 6,
+    "fishers_female": 0,
+    "n_boats": 2
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Nyali",
+    "gear_name": "Other",
+    "fishers_male": 24,
+    "fishers_female": 0,
+    "n_boats": 4
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Nyali",
+    "gear_name": "Reef Seine",
+    "fishers_male": 68,
+    "fishers_female": 0,
+    "n_boats": 12
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Nyali",
+    "gear_name": "Spear Gun",
+    "fishers_male": 12,
+    "fishers_female": 0,
+    "n_boats": 7
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Nyali",
+    "gear_name": "Stick Rod",
+    "fishers_male": 8,
+    "fishers_female": 0,
+    "n_boats": 7
+  },
+  {
+    "country": "Kenya",
+    "gaul1_name": "Mombasa",
+    "gaul2_name": "Nyali",
+    "gear_name": "Trap",
+    "fishers_male": 8,
+    "fishers_female": 0,
+    "n_boats": 4
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Pemba",
+    "gaul2_name": "Micheweni",
+    "gear_name": "Beach Seine",
+    "fishers_male": 1482,
+    "fishers_female": 0,
+    "n_boats": 108
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Pemba",
+    "gaul2_name": "Micheweni",
+    "gear_name": "Cast Net",
+    "fishers_male": 98,
+    "fishers_female": 0,
+    "n_boats": 7
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Pemba",
+    "gaul2_name": "Micheweni",
+    "gear_name": "Gill Net",
+    "fishers_male": 123,
+    "fishers_female": 0,
+    "n_boats": 32
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Pemba",
+    "gaul2_name": "Micheweni",
+    "gear_name": "Hand Line",
+    "fishers_male": 1129,
+    "fishers_female": 0,
+    "n_boats": 274
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Pemba",
+    "gaul2_name": "Micheweni",
+    "gear_name": "Long Line",
+    "fishers_male": 5,
+    "fishers_female": 0,
+    "n_boats": 1
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Pemba",
+    "gaul2_name": "Micheweni",
+    "gear_name": "Purse Seine",
+    "fishers_male": 38,
+    "fishers_female": 0,
+    "n_boats": 2
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Pemba",
+    "gaul2_name": "Micheweni",
+    "gear_name": "Ring Net",
+    "fishers_male": 1590,
+    "fishers_female": 0,
+    "n_boats": 55
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Pemba",
+    "gaul2_name": "Micheweni",
+    "gear_name": "Scoop Net",
+    "fishers_male": 23,
+    "fishers_female": 0,
+    "n_boats": 5
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Pemba",
+    "gaul2_name": "Micheweni",
+    "gear_name": "Spear Gun",
+    "fishers_male": 760,
+    "fishers_female": 0,
+    "n_boats": 120
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Pemba",
+    "gaul2_name": "Micheweni",
+    "gear_name": "Trap",
+    "fishers_male": 567,
+    "fishers_female": 0,
+    "n_boats": 205
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Pemba",
+    "gaul2_name": "Wete",
+    "gear_name": "Cast Net",
+    "fishers_male": 7,
+    "fishers_female": 0,
+    "n_boats": 5
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Pemba",
+    "gaul2_name": "Wete",
+    "gear_name": "Gill Net",
+    "fishers_male": 795,
+    "fishers_female": 0,
+    "n_boats": 163
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Pemba",
+    "gaul2_name": "Wete",
+    "gear_name": "Hand Line",
+    "fishers_male": 147,
+    "fishers_female": 0,
+    "n_boats": 89
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Pemba",
+    "gaul2_name": "Wete",
+    "gear_name": "Long Line",
+    "fishers_male": 69,
+    "fishers_female": 0,
+    "n_boats": 37
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Pemba",
+    "gaul2_name": "Wete",
+    "gear_name": "Purse Seine",
+    "fishers_male": 45,
+    "fishers_female": 0,
+    "n_boats": 1
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Pemba",
+    "gaul2_name": "Wete",
+    "gear_name": "Ring Net",
+    "fishers_male": 877,
+    "fishers_female": 0,
+    "n_boats": 68
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Pemba",
+    "gaul2_name": "Wete",
+    "gear_name": "Scoop Net",
+    "fishers_male": 55,
+    "fishers_female": 0,
+    "n_boats": 18
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Pemba",
+    "gaul2_name": "Wete",
+    "gear_name": "Spear Gun",
+    "fishers_male": 55,
+    "fishers_female": 0,
+    "n_boats": 30
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Pemba",
+    "gaul2_name": "Wete",
+    "gear_name": "Trap",
+    "fishers_male": 140,
+    "fishers_female": 0,
+    "n_boats": 78
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Unguja",
+    "gaul2_name": "Kaskazini A",
+    "gear_name": "Beach Seine",
+    "fishers_male": 127,
+    "fishers_female": 0,
+    "n_boats": 9
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Unguja",
+    "gaul2_name": "Kaskazini A",
+    "gear_name": "Gill Net",
+    "fishers_male": 950,
+    "fishers_female": 0,
+    "n_boats": 151
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Unguja",
+    "gaul2_name": "Kaskazini A",
+    "gear_name": "Hand Line",
+    "fishers_male": 857,
+    "fishers_female": 0,
+    "n_boats": 382
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Unguja",
+    "gaul2_name": "Kaskazini A",
+    "gear_name": "Lift Net",
+    "fishers_male": 18,
+    "fishers_female": 0,
+    "n_boats": 8
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Unguja",
+    "gaul2_name": "Kaskazini A",
+    "gear_name": "Long Line",
+    "fishers_male": 58,
+    "fishers_female": 0,
+    "n_boats": 20
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Unguja",
+    "gaul2_name": "Kaskazini A",
+    "gear_name": "Purse Seine",
+    "fishers_male": 1715,
+    "fishers_female": 0,
+    "n_boats": 98
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Unguja",
+    "gaul2_name": "Kaskazini A",
+    "gear_name": "Ring Net",
+    "fishers_male": 453,
+    "fishers_female": 0,
+    "n_boats": 27
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Unguja",
+    "gaul2_name": "Kaskazini A",
+    "gear_name": "Scoop Net",
+    "fishers_male": 222,
+    "fishers_female": 0,
+    "n_boats": 50
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Unguja",
+    "gaul2_name": "Kaskazini A",
+    "gear_name": "Spear Gun",
+    "fishers_male": 350,
+    "fishers_female": 0,
+    "n_boats": 65
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Unguja",
+    "gaul2_name": "Kaskazini A",
+    "gear_name": "Trap",
+    "fishers_male": 878,
+    "fishers_female": 0,
+    "n_boats": 369
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Unguja",
+    "gaul2_name": "Kaskazini A",
+    "gear_name": "Trolling Line",
+    "fishers_male": 3,
+    "fishers_female": 0,
+    "n_boats": 1
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Unguja",
+    "gaul2_name": "Kaskazini B",
+    "gear_name": "Gill Net",
+    "fishers_male": 24,
+    "fishers_female": 0,
+    "n_boats": 4
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Unguja",
+    "gaul2_name": "Kaskazini B",
+    "gear_name": "Hand Line",
+    "fishers_male": 1317,
+    "fishers_female": 0,
+    "n_boats": 495
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Unguja",
+    "gaul2_name": "Kaskazini B",
+    "gear_name": "Long Line",
+    "fishers_male": 31,
+    "fishers_female": 0,
+    "n_boats": 11
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Unguja",
+    "gaul2_name": "Kaskazini B",
+    "gear_name": "Purse Seine",
+    "fishers_male": 998,
+    "fishers_female": 0,
+    "n_boats": 58
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Unguja",
+    "gaul2_name": "Kaskazini B",
+    "gear_name": "Spear Gun",
+    "fishers_male": 38,
+    "fishers_female": 0,
+    "n_boats": 2
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kaskazini Unguja",
+    "gaul2_name": "Kaskazini B",
+    "gear_name": "Trap",
+    "fishers_male": 29,
+    "fishers_female": 0,
+    "n_boats": 20
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kusini Pemba",
+    "gaul2_name": "Chake Chake",
+    "gear_name": "Beach Seine",
+    "fishers_male": 260,
+    "fishers_female": 0,
+    "n_boats": 38
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kusini Pemba",
+    "gaul2_name": "Chake Chake",
+    "gear_name": "Gill Net",
+    "fishers_male": 54,
+    "fishers_female": 0,
+    "n_boats": 19
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kusini Pemba",
+    "gaul2_name": "Chake Chake",
+    "gear_name": "Hand Line",
+    "fishers_male": 568,
+    "fishers_female": 0,
+    "n_boats": 273
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kusini Pemba",
+    "gaul2_name": "Chake Chake",
+    "gear_name": "Long Line",
+    "fishers_male": 43,
+    "fishers_female": 0,
+    "n_boats": 22
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kusini Pemba",
+    "gaul2_name": "Chake Chake",
+    "gear_name": "Purse Seine",
+    "fishers_male": 33,
+    "fishers_female": 0,
+    "n_boats": 6
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kusini Pemba",
+    "gaul2_name": "Chake Chake",
+    "gear_name": "Ring Net",
+    "fishers_male": 538,
+    "fishers_female": 0,
+    "n_boats": 23
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kusini Pemba",
+    "gaul2_name": "Chake Chake",
+    "gear_name": "Scoop Net",
+    "fishers_male": 1,
+    "fishers_female": 0,
+    "n_boats": 1
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kusini Pemba",
+    "gaul2_name": "Chake Chake",
+    "gear_name": "Spear Gun",
+    "fishers_male": 91,
+    "fishers_female": 0,
+    "n_boats": 30
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kusini Pemba",
+    "gaul2_name": "Chake Chake",
+    "gear_name": "Trap",
+    "fishers_male": 194,
+    "fishers_female": 0,
+    "n_boats": 84
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kusini Pemba",
+    "gaul2_name": "Mkoani",
+    "gear_name": "Beach Seine",
+    "fishers_male": 302,
+    "fishers_female": 0,
+    "n_boats": 52
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kusini Pemba",
+    "gaul2_name": "Mkoani",
+    "gear_name": "Cast Net",
+    "fishers_male": 2,
+    "fishers_female": 0,
+    "n_boats": 1
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kusini Pemba",
+    "gaul2_name": "Mkoani",
+    "gear_name": "Gill Net",
+    "fishers_male": 387,
+    "fishers_female": 0,
+    "n_boats": 96
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kusini Pemba",
+    "gaul2_name": "Mkoani",
+    "gear_name": "Hand Line",
+    "fishers_male": 1757,
+    "fishers_female": 0,
+    "n_boats": 804
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kusini Pemba",
+    "gaul2_name": "Mkoani",
+    "gear_name": "Long Line",
+    "fishers_male": 76,
+    "fishers_female": 0,
+    "n_boats": 38
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kusini Pemba",
+    "gaul2_name": "Mkoani",
+    "gear_name": "Purse Seine",
+    "fishers_male": 8,
+    "fishers_female": 0,
+    "n_boats": 2
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kusini Pemba",
+    "gaul2_name": "Mkoani",
+    "gear_name": "Ring Net",
+    "fishers_male": 515,
+    "fishers_female": 0,
+    "n_boats": 30
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kusini Pemba",
+    "gaul2_name": "Mkoani",
+    "gear_name": "Scoop Net",
+    "fishers_male": 88,
+    "fishers_female": 0,
+    "n_boats": 26
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kusini Pemba",
+    "gaul2_name": "Mkoani",
+    "gear_name": "Spear Gun",
+    "fishers_male": 186,
+    "fishers_female": 0,
+    "n_boats": 76
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kusini Pemba",
+    "gaul2_name": "Mkoani",
+    "gear_name": "Trap",
+    "fishers_male": 304,
+    "fishers_female": 0,
+    "n_boats": 159
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kusini Unguja",
+    "gaul2_name": "Kati",
+    "gear_name": "Beach Seine",
+    "fishers_male": 313,
+    "fishers_female": 0,
+    "n_boats": 56
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kusini Unguja",
+    "gaul2_name": "Kati",
+    "gear_name": "Gill Net",
+    "fishers_male": 399,
+    "fishers_female": 0,
+    "n_boats": 122
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kusini Unguja",
+    "gaul2_name": "Kati",
+    "gear_name": "Hand Line",
+    "fishers_male": 238,
+    "fishers_female": 0,
+    "n_boats": 170
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kusini Unguja",
+    "gaul2_name": "Kati",
+    "gear_name": "Long Line",
+    "fishers_male": 28,
+    "fishers_female": 0,
+    "n_boats": 14
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kusini Unguja",
+    "gaul2_name": "Kati",
+    "gear_name": "Ring Net",
+    "fishers_male": 26,
+    "fishers_female": 0,
+    "n_boats": 4
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kusini Unguja",
+    "gaul2_name": "Kati",
+    "gear_name": "Scoop Net",
+    "fishers_male": 39,
+    "fishers_female": 0,
+    "n_boats": 13
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kusini Unguja",
+    "gaul2_name": "Kati",
+    "gear_name": "Spear Gun",
+    "fishers_male": 139,
+    "fishers_female": 0,
+    "n_boats": 31
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kusini Unguja",
+    "gaul2_name": "Kati",
+    "gear_name": "Trap",
+    "fishers_male": 251,
+    "fishers_female": 0,
+    "n_boats": 153
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kusini Unguja",
+    "gaul2_name": "Kusini",
+    "gear_name": "Gill Net",
+    "fishers_male": 1068,
+    "fishers_female": 0,
+    "n_boats": 193
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kusini Unguja",
+    "gaul2_name": "Kusini",
+    "gear_name": "Hand Line",
+    "fishers_male": 852,
+    "fishers_female": 0,
+    "n_boats": 549
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kusini Unguja",
+    "gaul2_name": "Kusini",
+    "gear_name": "Long Line",
+    "fishers_male": 82,
+    "fishers_female": 0,
+    "n_boats": 35
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kusini Unguja",
+    "gaul2_name": "Kusini",
+    "gear_name": "Spear Gun",
+    "fishers_male": 207,
+    "fishers_female": 0,
+    "n_boats": 53
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Kusini Unguja",
+    "gaul2_name": "Kusini",
+    "gear_name": "Trap",
+    "fishers_male": 217,
+    "fishers_female": 0,
+    "n_boats": 95
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Mjini Magharibi",
+    "gaul2_name": "Magharibi A",
+    "gear_name": "Gill Net",
+    "fishers_male": 308,
+    "fishers_female": 0,
+    "n_boats": 23
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Mjini Magharibi",
+    "gaul2_name": "Magharibi A",
+    "gear_name": "Hand Line",
+    "fishers_male": 535,
+    "fishers_female": 0,
+    "n_boats": 240
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Mjini Magharibi",
+    "gaul2_name": "Magharibi A",
+    "gear_name": "Long Line",
+    "fishers_male": 85,
+    "fishers_female": 0,
+    "n_boats": 32
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Mjini Magharibi",
+    "gaul2_name": "Magharibi A",
+    "gear_name": "Purse Seine",
+    "fishers_male": 3685,
+    "fishers_female": 0,
+    "n_boats": 188
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Mjini Magharibi",
+    "gaul2_name": "Magharibi A",
+    "gear_name": "Ring Net",
+    "fishers_male": 583,
+    "fishers_female": 0,
+    "n_boats": 35
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Mjini Magharibi",
+    "gaul2_name": "Magharibi A",
+    "gear_name": "Scoop Net",
+    "fishers_male": 77,
+    "fishers_female": 0,
+    "n_boats": 5
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Mjini Magharibi",
+    "gaul2_name": "Magharibi A",
+    "gear_name": "Spear Gun",
+    "fishers_male": 206,
+    "fishers_female": 0,
+    "n_boats": 12
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Mjini Magharibi",
+    "gaul2_name": "Magharibi A",
+    "gear_name": "Trap",
+    "fishers_male": 12,
+    "fishers_female": 0,
+    "n_boats": 3
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Mjini Magharibi",
+    "gaul2_name": "Magharibi B",
+    "gear_name": "Beach Seine",
+    "fishers_male": 122,
+    "fishers_female": 0,
+    "n_boats": 27
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Mjini Magharibi",
+    "gaul2_name": "Magharibi B",
+    "gear_name": "Gill Net",
+    "fishers_male": 509,
+    "fishers_female": 0,
+    "n_boats": 143
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Mjini Magharibi",
+    "gaul2_name": "Magharibi B",
+    "gear_name": "Hand Line",
+    "fishers_male": 479,
+    "fishers_female": 0,
+    "n_boats": 312
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Mjini Magharibi",
+    "gaul2_name": "Magharibi B",
+    "gear_name": "Long Line",
+    "fishers_male": 65,
+    "fishers_female": 0,
+    "n_boats": 31
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Mjini Magharibi",
+    "gaul2_name": "Magharibi B",
+    "gear_name": "Purse Seine",
+    "fishers_male": 278,
+    "fishers_female": 0,
+    "n_boats": 17
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Mjini Magharibi",
+    "gaul2_name": "Magharibi B",
+    "gear_name": "Spear Gun",
+    "fishers_male": 196,
+    "fishers_female": 0,
+    "n_boats": 46
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Mjini Magharibi",
+    "gaul2_name": "Magharibi B",
+    "gear_name": "Trap",
+    "fishers_male": 365,
+    "fishers_female": 0,
+    "n_boats": 179
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Mjini Magharibi",
+    "gaul2_name": "Mjini",
+    "gear_name": "Beach Seine",
+    "fishers_male": 30,
+    "fishers_female": 0,
+    "n_boats": 1
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Mjini Magharibi",
+    "gaul2_name": "Mjini",
+    "gear_name": "Gill Net",
+    "fishers_male": 162,
+    "fishers_female": 0,
+    "n_boats": 25
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Mjini Magharibi",
+    "gaul2_name": "Mjini",
+    "gear_name": "Hand Line",
+    "fishers_male": 542,
+    "fishers_female": 0,
+    "n_boats": 144
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Mjini Magharibi",
+    "gaul2_name": "Mjini",
+    "gear_name": "Long Line",
+    "fishers_male": 159,
+    "fishers_female": 0,
+    "n_boats": 37
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Mjini Magharibi",
+    "gaul2_name": "Mjini",
+    "gear_name": "Purse Seine",
+    "fishers_male": 311,
+    "fishers_female": 0,
+    "n_boats": 16
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Mjini Magharibi",
+    "gaul2_name": "Mjini",
+    "gear_name": "Ring Net",
+    "fishers_male": 1552,
+    "fishers_female": 0,
+    "n_boats": 70
+  },
+  {
+    "country": "Zanzibar",
+    "gaul1_name": "Mjini Magharibi",
+    "gaul2_name": "Mjini",
+    "gear_name": "Trap",
+    "fishers_male": 52,
+    "fishers_female": 0,
+    "n_boats": 20
+  },
+  {
+    "country": "Mozambique",
+    "gaul1_name": "Cabo Delgado",
+    "gaul2_name": "Ibo",
+    "fishers_male": 1682,
+    "fishers_female": 11,
+    "n_boats": 668
+  },
+  {
+    "country": "Mozambique",
+    "gaul1_name": "Cabo Delgado",
+    "gaul2_name": "Mecúfi",
+    "fishers_male": 1072,
+    "fishers_female": 13,
+    "n_boats": 442
+  },
+  {
+    "country": "Mozambique",
+    "gaul1_name": "Cabo Delgado",
+    "gaul2_name": "Pemba",
+    "fishers_male": 1519,
+    "fishers_female": 10,
+    "n_boats": 646
+  },
+  {
+    "country": "Mozambique",
+    "gaul1_name": "Cidade De Maputo",
+    "gaul2_name": "Cidade De Maputo",
+    "fishers_male": 1304,
+    "fishers_female": 54,
+    "n_boats": 539
+  },
+  {
+    "country": "Mozambique",
+    "gaul1_name": "Gaza",
+    "gaul2_name": "Bilene",
+    "fishers_male": 1373,
+    "fishers_female": 107,
+    "n_boats": 415
+  },
+  {
+    "country": "Mozambique",
+    "gaul1_name": "Gaza",
+    "gaul2_name": "Xai-Xai",
+    "fishers_male": 386,
+    "fishers_female": 22,
+    "n_boats": 302
+  },
+  {
+    "country": "Mozambique",
+    "gaul1_name": "Inhambane",
+    "gaul2_name": "Inhassoro",
+    "fishers_male": 2268,
+    "fishers_female": 700,
+    "n_boats": 778
+  },
+  {
+    "country": "Mozambique",
+    "gaul1_name": "Inhambane",
+    "gaul2_name": "Maxixe",
+    "fishers_male": 730,
+    "fishers_female": 115,
+    "n_boats": 214
+  },
+  {
+    "country": "Mozambique",
+    "gaul1_name": "Inhambane",
+    "gaul2_name": "Zavala",
+    "fishers_male": 694,
+    "fishers_female": 11,
+    "n_boats": 366
+  },
+  {
+    "country": "Mozambique",
+    "gaul1_name": "Nampula",
+    "gaul2_name": "Angoche",
+    "fishers_male": 3324,
+    "fishers_female": 9,
+    "n_boats": 1227
+  },
+  {
+    "country": "Mozambique",
+    "gaul1_name": "Nampula",
+    "gaul2_name": "Ilha De Moçambique",
+    "fishers_male": 1836,
+    "fishers_female": 2,
+    "n_boats": 674
+  },
+  {
+    "country": "Mozambique",
+    "gaul1_name": "Nampula",
+    "gaul2_name": "Larde",
+    "fishers_male": 2016,
+    "fishers_female": 7,
+    "n_boats": 474
+  },
+  {
+    "country": "Mozambique",
+    "gaul1_name": "Nampula",
+    "gaul2_name": "Mogincual",
+    "fishers_male": 2418,
+    "fishers_female": 14,
+    "n_boats": 423
+  },
+  {
+    "country": "Mozambique",
+    "gaul1_name": "Nampula",
+    "gaul2_name": "Moma",
+    "fishers_male": 6297,
+    "fishers_female": 17,
+    "n_boats": 1041
+  },
+  {
+    "country": "Mozambique",
+    "gaul1_name": "Nampula",
+    "gaul2_name": "Nacala",
+    "fishers_male": 592,
+    "fishers_female": 4,
+    "n_boats": 293
+  },
+  {
+    "country": "Mozambique",
+    "gaul1_name": "Sofala",
+    "gaul2_name": "Beira",
+    "fishers_male": 1750,
+    "fishers_female": 31,
+    "n_boats": 930
+  },
+  {
+    "country": "Mozambique",
+    "gaul1_name": "Sofala",
+    "gaul2_name": "Buzi",
+    "fishers_male": 1599,
+    "fishers_female": 7,
+    "n_boats": 634
+  },
+  {
+    "country": "Mozambique",
+    "gaul1_name": "Zambézia",
+    "gaul2_name": "Namacurra",
+    "fishers_male": 803,
+    "fishers_female": 9,
+    "n_boats": 351
+  },
+  {
+    "country": "Mozambique",
+    "gaul1_name": "Zambézia",
+    "gaul2_name": "Pebane",
+    "fishers_male": 4632,
+    "fishers_female": 8,
+    "n_boats": 2102
+  },
+  {
+    "country": "Mozambique",
+    "gaul1_name": "Zambézia",
+    "gaul2_name": "Quelimane",
+    "fishers_male": 1861,
+    "fishers_female": 16,
+    "n_boats": 798
+  }
+]

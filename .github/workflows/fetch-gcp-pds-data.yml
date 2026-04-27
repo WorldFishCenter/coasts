@@ -33,12 +33,13 @@ jobs:
           GCP_BUCKET_NAME: ${{ secrets.GCP_BUCKET_NAME }}
           GCP_PDS_GROUNDS_PREFIX: ${{ secrets.GCP_PDS_GROUNDS_PREFIX }}
           GCP_PDS_EFFORT_PREFIX: ${{ secrets.GCP_PDS_EFFORT_PREFIX }}
+          GCP_PDS_FRAME_GEARS_PREFIX: ${{ secrets.GCP_PDS_FRAME_GEARS_PREFIX }}
 
       - name: Commit changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add public/data/pds-fishing-grounds.geojson public/data/pds-h3-effort-r9.json
+          git add public/data/pds-fishing-grounds.geojson public/data/pds-h3-effort-r9.json public/data/frame-gears.json
           if git diff --cached --quiet; then
             echo "No changes to commit"
             exit 0

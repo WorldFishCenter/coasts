@@ -80,29 +80,6 @@ const validateTimeSeriesGaul1 = (data) => {
 };
 
 /**
- * Load PDS grid data - GPS movement data aggregated in 1km grid cells
- * @returns {Promise<Array|null>} Array of grid cell data or null if error
- */
-const loadPdsGridsData = async () => {
-  try {
-    console.log('Loading PDS grids data...');
-    const response = await fetch('/data/pds_grids.json');
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    if (!Array.isArray(data)) {
-      throw new Error('Invalid PDS grids data format');
-    }
-    console.log(`Successfully loaded ${data.length} PDS grid cells`);
-    return data;
-  } catch (error) {
-    console.error('Error loading PDS grids data:', error);
-    return null;
-  }
-};
-
-/**
  * Load PDS fishing grounds GeoJSON from GCP-exported static file
  * @returns {Promise<Object|null>} GeoJSON object or null if error
  */
@@ -145,6 +122,93 @@ const loadPdsH3EffortData = async () => {
     console.error('Error loading PDS H3 effort data:', error);
     return null;
   }
+};
+
+/**
+ * Load frame-gears JSON from static data and validate shape.
+ * Each record is gear-level and will be aggregated later by GAUL.
+ * @returns {Promise<Array|null>} Frame-gears rows or null on error
+ */
+const loadFrameGearsData = async () => {
+  try {
+    const response = await fetch('/data/frame-gears.json');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    if (!Array.isArray(data)) {
+      throw new Error('Invalid frame-gears data format');
+    }
+
+    const hasInvalidRow = data.some((row) =>
+      !row ||
+      typeof row !== 'object' ||
+      !row.country ||
+      !row.gaul1_name ||
+      !row.gaul2_name ||
+      typeof row.fishers_male !== 'number' ||
+      Number.isNaN(row.fishers_male) ||
+      typeof row.fishers_female !== 'number' ||
+      Number.isNaN(row.fishers_female) ||
+      typeof row.n_boats !== 'number' ||
+      Number.isNaN(row.n_boats)
+    );
+    if (hasInvalidRow) {
+      throw new Error('Invalid frame-gears rows: expected country/gaul names and numeric fishers_male/fishers_female/n_boats');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error loading frame-gears data:', error);
+    return null;
+  }
+};
+
+const emptyFrameMetrics = () => ({
+  fishers_total: 0,
+  fishers_male: 0,
+  fishers_female: 0,
+  boats_total: 0
+});
+
+const sumFrameMetrics = (target, row) => {
+  target.fishers_male += row.fishers_male;
+  target.fishers_female += row.fishers_female;
+  target.fishers_total += row.fishers_male + row.fishers_female;
+  target.boats_total += row.n_boats;
+};
+
+/**
+ * Aggregate gear-level frame data to GAUL2 and GAUL1 totals.
+ * @param {Array} rows - frame-gears rows
+ * @returns {{gaul2: Object, gaul1: Object}} key-value aggregates
+ */
+const aggregateFrameGearsData = (rows) => {
+  if (!Array.isArray(rows) || rows.length === 0) {
+    return { gaul2: {}, gaul1: {} };
+  }
+
+  const gaul2Agg = new Map();
+  const gaul1Agg = new Map();
+
+  rows.forEach((row) => {
+    const country = countryForKey(String(row.country).toLowerCase());
+    const gaul2Key = getTimeSeriesKey(country, row.gaul1_name, row.gaul2_name);
+    const gaul1Key = getTimeSeriesKeyGaul1(country, row.gaul1_name);
+
+    const gaul2Metrics = gaul2Agg.get(gaul2Key) ?? emptyFrameMetrics();
+    sumFrameMetrics(gaul2Metrics, row);
+    gaul2Agg.set(gaul2Key, gaul2Metrics);
+
+    const gaul1Metrics = gaul1Agg.get(gaul1Key) ?? emptyFrameMetrics();
+    sumFrameMetrics(gaul1Metrics, row);
+    gaul1Agg.set(gaul1Key, gaul1Metrics);
+  });
+
+  return {
+    gaul2: Object.fromEntries(gaul2Agg),
+    gaul1: Object.fromEntries(gaul1Agg)
+  };
 };
 
 /**
@@ -280,7 +344,6 @@ const loadTimeSeriesGaul2 = async () => {
  */
 const getLatestDate = (timeSeriesData) => {
   if (!timeSeriesData) {
-    console.error('Invalid time series data structure:', timeSeriesData);
     return null;
   }
 
@@ -296,7 +359,6 @@ const getLatestDate = (timeSeriesData) => {
 
   // Sort dates in descending order and return the latest
   const latestDate = dates.sort((a, b) => new Date(b) - new Date(a))[0];
-  console.log('Latest date found:', latestDate);
   return latestDate;
 };
 
@@ -605,9 +667,10 @@ const getAverageMetricsInRange = (timeSeriesData, country, gaul1Name, gaul2Name,
 export const loadMapData = loadWioMapData;
 
 export {
-  loadPdsGridsData,
   loadPdsFishingGroundsData,
   loadPdsH3EffortData,
+  loadFrameGearsData,
+  aggregateFrameGearsData,
   loadWioMapData,
   loadTimeSeriesData,
   loadMapDataGaul1,

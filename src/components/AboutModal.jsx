@@ -82,7 +82,7 @@ const AboutModal = ({ open, onOpenChange, isDarkTheme, dynamicStats }) => {
                                 Our platform integrates multiple data streams updated every 2 days:
                             </p>
                             <ul className="m-0 pl-5 text-[13px] space-y-2">
-                                <li><strong>GPS Tracking Data:</strong> {dynamicStats?.totalGridCells?.toLocaleString() || 0} vessel movement patterns aggregated into 1km grids</li>
+                                <li><strong>GPS Tracking Data:</strong> {dynamicStats?.totalH3Cells?.toLocaleString() || 0} vessel movement patterns aggregated into H3 Hexagon cells</li>
                                 <li><strong>Fisheries Surveys:</strong> Catch, effort, and economic data from {dynamicStats?.totalRegions || 0} coastal communities</li>
                                 <li><strong>Administrative Boundaries:</strong> Official district boundaries for {dynamicStats?.totalCountries || 0} countries</li>
                                 <li><strong>Market Data:</strong> Fish price trends and revenue calculations across all regions</li>
@@ -140,7 +140,7 @@ const AboutModal = ({ open, onOpenChange, isDarkTheme, dynamicStats }) => {
                 )}>
                     <div className="flex flex-col gap-1">
                         <span className="text-xs text-muted-foreground tracking-wide font-medium">
-                            PESKAS | COASTS v1.0.0
+                            PESKAS | COASTS v0.3.0
                         </span>
                         <span className="text-[11px] text-muted-foreground">
                             Data updated every 2 days • Last sync: {dynamicStats?.lastSyncDate || 'Loading...'}
@@ -148,7 +148,7 @@ const AboutModal = ({ open, onOpenChange, isDarkTheme, dynamicStats }) => {
                     </div>
                     <div className="text-[11px] text-muted-foreground text-right">
                         Covering {dynamicStats?.totalCountries || 0} countries<br />
-                        {dynamicStats?.totalRegions || 0} regions • {dynamicStats?.totalGridCells?.toLocaleString() || 0} GPS grid cells
+                        {dynamicStats?.totalRegions || 0} regions • {dynamicStats?.totalH3Cells?.toLocaleString() || 0} GPS H3 cells
                     </div>
                 </div>
             </DialogContent>

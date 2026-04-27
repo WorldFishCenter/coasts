@@ -1,14 +1,20 @@
 import { useCallback } from 'react';
-import { TIME_BREAKS, COLOR_RANGE } from '../utils/gridLayerConfig';
 import { getMetricInfo, formatRegionName, formatCountryName } from '../utils/formatters';
-import { COLORS } from '../components/map/UnifiedLegend';
+import { COLORS } from '../components/map/EnhancedLegend';
 
 export const useMapTooltip = ({
   selectedMetric,
   isDarkTheme,
-  metricStats,
-  visualizationMode
+  metricStats
 }) => {
+  const escapeHtml = (value) =>
+    String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+
   return useCallback(({object, layer}) => {
     if (!object) return null;
 
@@ -17,6 +23,8 @@ export const useMapTooltip = ({
       const props = object.properties;
       const metricValue = props[selectedMetric];
       const metricInfo = getMetricInfo(selectedMetric);
+      const isFishersMetric = selectedMetric.startsWith('fishers_');
+      const isBoatsMetric = selectedMetric === 'boats_total';
       
       // Get the color for this value
       let backgroundColor = isDarkTheme ? 'rgba(60, 60, 60, 0.95)' : 'rgba(240, 240, 240, 0.95)'; // Neutral background for NA
@@ -49,9 +57,13 @@ export const useMapTooltip = ({
       return {
         html: `
           <div style="padding: 8px">
-            <div style="font-weight: bold; margin-bottom: 4px">${formatRegionName(props)}</div>
-            <div>Country: ${formatCountryName(props.country)}</div>
+            <div style="font-weight: bold; margin-bottom: 4px">${escapeHtml(formatRegionName(props))}</div>
+            <div>Country: ${escapeHtml(formatCountryName(props.country))}</div>
             <div>${metricInfo.label}: ${metricInfo.format(metricValue)}</div>
+            ${isFishersMetric ? `<div style="margin-top: 4px">Male: ${getMetricInfo('fishers_male').format(props.fishers_male)}</div>
+            <div>Female: ${getMetricInfo('fishers_female').format(props.fishers_female)}</div>
+            <div>Total: ${getMetricInfo('fishers_total').format(props.fishers_total)}</div>` : ''}
+            ${isBoatsMetric ? `<div style="margin-top: 4px">Boats Total: ${getMetricInfo('boats_total').format(props.boats_total)}</div>` : ''}
           </div>
         `,
         style: {
@@ -65,60 +77,18 @@ export const useMapTooltip = ({
       };
     }
 
-    // Handle ColumnLayer (PDS grid) tooltips
-    if (layer.id === 'pds-grid-column-layer' || layer.id === 'pds-grid-heatmap-layer') {
-      const avgTime = object.avgTimeHours;
-      const totalVisits = object.totalVisits;
-      
-      // Determine appropriate styling based on visualization mode
-      let backgroundColor;
-      let textColor;
-      
-      if (visualizationMode === 'column') {
-        const breakIndex = TIME_BREAKS.findIndex(range => 
-          avgTime >= range.min && (range.max === Infinity ? true : avgTime < range.max)
-        );
-        const cellColor = COLOR_RANGE[breakIndex >= 0 ? breakIndex : 0];
-        backgroundColor = `rgba(${cellColor.join(',')}, 0.95)`;
-        textColor = breakIndex > 2 ? '#ffffff' : '#000000';
-      } else {
-        // For heatmap, use a consistent style
-        backgroundColor = isDarkTheme ? 'rgba(30, 30, 30, 0.95)' : 'rgba(255, 255, 255, 0.95)';
-        textColor = isDarkTheme ? '#ffffff' : '#000000';
-      }
-      
-      return {
-        html: `
-          <div style="padding: 8px">
-            <div><strong>Fishing Activity</strong></div>
-            <div>Average time: ${avgTime.toFixed(2)} hours</div>
-            <div>Total visits: ${totalVisits}</div>
-            <div style="font-size: 11px; margin-top: 4px; opacity: 0.8">
-              Location: ${object.position[1].toFixed(3)}°, ${object.position[0].toFixed(3)}°
-            </div>
-          </div>
-        `,
-        style: {
-          backgroundColor,
-          color: textColor,
-          fontSize: '12px',
-          borderRadius: '4px',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-          border: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`
-        }
-      };
-    }
+
 
     if (layer.id === 'pds-fishing-grounds-layer') {
       const props = object.properties || {};
       return {
         html: `
           <div style="padding: 8px">
-            <div><strong>Fishing Ground ${props.ground_id ?? 'N/A'}</strong></div>
-            <div>Area: ${(props.area_km2 ?? 0).toFixed?.(2) ?? '0.00'} km²</div>
-            <div>Fishing hours: ${(props.fishing_hours ?? 0).toLocaleString?.() ?? props.fishing_hours ?? '0'}</div>
-            <div>Unique trips: ${(props.unique_trips ?? 0).toLocaleString?.() ?? props.unique_trips ?? '0'}</div>
-            <div>Active days: ${(props.n_active_days ?? 0).toLocaleString?.() ?? props.n_active_days ?? '0'}</div>
+            <div><strong>Designated Fishing Ground</strong></div>
+            <div style="margin-top: 4px;">Area: ${(props.area_km2 ?? 0).toFixed?.(2) ?? '0.00'} km²</div>
+            <div>Total Hours: ${(props.fishing_hours ?? 0).toLocaleString?.(undefined, {maximumFractionDigits: 1}) ?? props.fishing_hours ?? '0'}</div>
+            <div>Unique Trips: ${(props.unique_trips ?? 0).toLocaleString?.() ?? props.unique_trips ?? '0'}</div>
+            <div>Active Days: ${(props.n_active_days ?? 0).toLocaleString?.() ?? props.n_active_days ?? '0'}</div>
           </div>
         `,
         style: {
@@ -136,12 +106,11 @@ export const useMapTooltip = ({
       return {
         html: `
           <div style="padding: 8px">
-            <div><strong>PDS H3 Effort</strong></div>
-            <div>H3: ${object.h3_index ?? 'N/A'}</div>
-            <div>Year: ${object.year ?? 'N/A'}</div>
-            <div>Fishing hours: ${(object.fishing_hours ?? 0).toLocaleString?.() ?? object.fishing_hours ?? '0'}</div>
-            <div>Unique trips: ${(object.unique_trips ?? 0).toLocaleString?.() ?? object.unique_trips ?? '0'}</div>
-            <div>Active days: ${(object.n_active_days ?? 0).toLocaleString?.() ?? object.n_active_days ?? '0'}</div>
+            <div><strong>Fishing Activity Cell</strong></div>
+            <div style="margin-top: 4px;">Total Hours: ${(object.fishing_hours ?? 0).toLocaleString?.(undefined, {maximumFractionDigits: 1}) ?? object.fishing_hours ?? '0'}</div>
+            <div>Avg Hours/Day: ${(object.avg_hours_per_day ?? 0).toFixed?.(2) ?? object.avg_hours_per_day ?? '0.00'}</div>
+            <div>Unique Trips: ${(object.unique_trips ?? 0).toLocaleString?.() ?? object.unique_trips ?? '0'}</div>
+            <div>Active Days: ${(object.n_active_days ?? 0).toLocaleString?.() ?? object.n_active_days ?? '0'}</div>
           </div>
         `,
         style: {
@@ -156,5 +125,5 @@ export const useMapTooltip = ({
     }
 
     return null;
-  }, [selectedMetric, isDarkTheme, metricStats, visualizationMode]);
+  }, [selectedMetric, isDarkTheme, metricStats]);
 }; 

@@ -1,3 +1,24 @@
+# coasts 0.3.0
+
+## New Features
+
+- **Frame-gears ingestion pipeline**: Added Google Cloud latest-file retrieval for `frame-gears__*` and automatic write/commit to `public/data/frame-gears.json` via `scripts/data/fetchGcpPdsData.js` and `.github/workflows/fetch-gcp-pds-data.yml`.
+- **Static census metrics on map**: Integrated frame-gears aggregates into GAUL1/GAUL2 boundaries with new analysis metrics for fishers and boats.
+- **Fishers split controls**: Added switchable Fishers sub-metrics (`Total`, `Male`, `Female`) with synchronized map coloring, legend, and tooltip output.
+
+## Improvements
+
+- **Analysis metric UX redesign**: Refactored sidebar layout to clearly separate time-series fisheries metrics from static census metrics and reduce vertical space.
+- **Section clarity refresh**: Improved visual grouping and borders for sidebar sections while keeping a minimal style.
+- **Tooltip enrichment**: Added fishers/boats detail display in region tooltips when those metrics are selected.
+
+## Stability and Quality
+
+- **Canonical GAUL keying for frame data**: Switched to service key helpers for frame-gears lookups to avoid country alias mismatches.
+- **Static metric behavior hardening**: Disabled time-series histogram panel for non-time-based fishers/boats metrics.
+- **Security hardening**: Escaped user/data-driven strings in tooltip HTML rendering.
+- **Lint command compatibility**: Updated lint script/config for flat-config compatible CLI usage.
+
 # coasts 0.2.0
 
 ## New Features

@@ -121,7 +121,7 @@
 
 /* Glassmorphic Utilities */
 @utility glass-panel {
-  @apply bg-white/70 dark:bg-[#020617]/70 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-[0_8px_32px_#0000001a];
+  @apply bg-white/70 dark:bg-[#020617]/70 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-[0_8px_32px_#0000001a] transition-all duration-300 ease-in-out;
 }
 
 @utility glass-card {

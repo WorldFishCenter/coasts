@@ -18,6 +18,11 @@ const DATASETS = [
     label: 'PDS H3 effort',
     prefix: process.env.GCP_PDS_EFFORT_PREFIX || 'pds-h3-effort-r9__',
     outputFile: 'pds-h3-effort-r9.json'
+  },
+  {
+    label: 'Frame gears by GAUL2',
+    prefix: process.env.GCP_PDS_FRAME_GEARS_PREFIX || 'frame-gears__',
+    outputFile: 'frame-gears.json'
   }
 ];
 

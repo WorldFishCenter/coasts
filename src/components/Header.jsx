@@ -4,23 +4,25 @@ import { getLatestDate, getUniqueCountries } from '../services/dataService';
 import { cn } from '../lib/utils';
 import { Button } from './ui/button';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
+import { useTheme } from './ThemeProvider';
 import AboutModal from './AboutModal';
 
 const Header = ({
-  isDarkTheme,
-  onThemeChange,
   boundaries,
   timeSeriesData,
-  pdsGridsData
+  pdsH3EffortData
 }) => {
   const [showAbout, setShowAbout] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { theme, setTheme } = useTheme();
+  
+  const isDarkTheme = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
   const currentView = location.pathname === '/country' ? 'country' : 'map';
 
   const handleThemeToggle = () => {
-    onThemeChange(!isDarkTheme);
+    setTheme(isDarkTheme ? 'light' : 'dark');
   };
 
   const dynamicStats = useMemo(() => {
@@ -47,12 +49,12 @@ const Header = ({
       }
     }
 
-    if (pdsGridsData?.length) {
-      stats.totalGridCells = pdsGridsData.length;
+    if (pdsH3EffortData?.length) {
+      stats.totalH3Cells = pdsH3EffortData.length;
     }
 
     return stats;
-  }, [boundaries, timeSeriesData, pdsGridsData]);
+  }, [boundaries, timeSeriesData, pdsH3EffortData]);
 
   return (
     <>

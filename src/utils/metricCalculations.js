@@ -1,4 +1,4 @@
-import { COLORS } from '../components/map/UnifiedLegend';
+import { COLORS } from '../components/map/EnhancedLegend';
 
 /**
  * Calculate quantile breaks for better data distribution representation

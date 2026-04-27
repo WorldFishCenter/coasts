@@ -1,12 +1,10 @@
 import { useMemo } from 'react';
 import { GeoJsonLayer } from '@deck.gl/layers';
 import { H3HexagonLayer } from '@deck.gl/geo-layers';
-import { COLORS } from '../components/map/UnifiedLegend';
+import { COLORS } from '../components/map/EnhancedLegend';
 import {
   PDS_GROUNDS_COLOR_RANGE,
   PDS_EFFORT_COLOR_RANGE,
-  PDS_GROUNDS_METRIC,
-  PDS_EFFORT_METRIC,
   PDS_GROUNDS_OPACITY,
   PDS_EFFORT_OPACITY,
   PDS_EFFORT_COVERAGE,
@@ -29,13 +27,15 @@ export const useMapLayers = ({
   hoveredFeatureIndex,
   visualizationMode,
   pdsFishingGroundsData,
-  pdsH3EffortData
+  pdsH3EffortData,
+  selectedActivityMetric,
+  activeActivityLayers
 }) => {
   return useMemo(() => {
     const allLayers = [];
     const showWioRegions = true;
-    const showGrounds = true;
-    const showEffort = true;
+    const showGrounds = activeActivityLayers?.grounds !== false;
+    const showEffort = activeActivityLayers?.hexagons !== false;
     const groundsOpacity = PDS_GROUNDS_OPACITY;
     const effortOpacity = PDS_EFFORT_OPACITY;
     const effortExtruded = visualizationMode === 'column';
@@ -108,7 +108,7 @@ export const useMapLayers = ({
     // PDS H3 effort overlay (Kepler-like H3 layer)
     if (showEffort && pdsH3EffortData?.length) {
       const effortValues = pdsH3EffortData
-        .map((row) => row?.[PDS_EFFORT_METRIC])
+        .map((row) => row?.[selectedActivityMetric])
         .filter((value) => typeof value === 'number' && !isNaN(value));
       const effortQuantiles = getQuantileThresholds(effortValues, PDS_EFFORT_COLOR_RANGE.length);
       const minEffort = effortValues.length ? Math.min(...effortValues) : 0;
@@ -131,9 +131,9 @@ export const useMapLayers = ({
           ...(pdsBlendParameters ? { parameters: pdsBlendParameters } : {}),
           getHexagon: (d) => d.h3_index,
           getFillColor: (d) =>
-            getColorByQuantile(d?.[PDS_EFFORT_METRIC], effortQuantiles, PDS_EFFORT_COLOR_RANGE),
+            getColorByQuantile(d?.[selectedActivityMetric], effortQuantiles, PDS_EFFORT_COLOR_RANGE),
           getElevation: (d) => {
-            const value = d?.[PDS_EFFORT_METRIC];
+            const value = d?.[selectedActivityMetric];
             if (typeof value !== 'number' || isNaN(value) || value <= 0) return 0;
             // Kepler visualChannels.sizeField with visConfig.sizeRange.
             if (effortRange <= 0) return 0;
@@ -142,8 +142,8 @@ export const useMapLayers = ({
           },
           elevationScale: effortElevationScale,
           updateTriggers: {
-            getFillColor: [pdsH3EffortData, effortOpacity],
-            getElevation: [pdsH3EffortData, effortElevationScale, effortExtruded, minEffort, maxEffort],
+            getFillColor: [pdsH3EffortData, effortOpacity, selectedActivityMetric],
+            getElevation: [pdsH3EffortData, effortElevationScale, effortExtruded, minEffort, maxEffort, selectedActivityMetric],
             parameters: [KEPLER_LAYER_BLENDING, effortOpacity]
           }
         })
@@ -163,7 +163,7 @@ export const useMapLayers = ({
         );
       });
       const groundsValues = filteredGroundsFeatures
-        .map((feature) => feature?.properties?.[PDS_GROUNDS_METRIC])
+        .map((feature) => feature?.properties?.[selectedActivityMetric])
         .filter((value) => typeof value === 'number' && !isNaN(value));
       const groundsQuantiles = getQuantileThresholds(groundsValues, PDS_GROUNDS_COLOR_RANGE.length);
 
@@ -183,13 +183,13 @@ export const useMapLayers = ({
           ...(pdsBlendParameters ? { parameters: pdsBlendParameters } : {}),
           getFillColor: (feature) =>
             getColorByQuantile(
-              feature?.properties?.[PDS_GROUNDS_METRIC],
+              feature?.properties?.[selectedActivityMetric],
               groundsQuantiles,
               PDS_GROUNDS_COLOR_RANGE,
               Math.round(255 * groundsOpacity)
             ),
           updateTriggers: {
-            getFillColor: [pdsFishingGroundsData, groundsOpacity],
+            getFillColor: [pdsFishingGroundsData, groundsOpacity, selectedActivityMetric],
             parameters: [KEPLER_LAYER_BLENDING, groundsOpacity]
           }
         })
@@ -207,6 +207,8 @@ export const useMapLayers = ({
     hoveredFeatureIndex,
     visualizationMode,
     pdsFishingGroundsData,
-    pdsH3EffortData
+    pdsH3EffortData,
+    selectedActivityMetric,
+    activeActivityLayers
   ]);
 }; 
