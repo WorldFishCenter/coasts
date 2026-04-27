@@ -212,6 +212,59 @@ const aggregateFrameGearsData = (rows) => {
 };
 
 /**
+ * Build country/GAUL2 frame insights with optional gear composition.
+ * Countries with missing gear_name values (e.g., Mozambique) still return
+ * fishers/boats totals while gear breakdown is omitted.
+ * @param {Array} rows - frame-gears rows
+ * @param {string} country - country filter
+ * @param {string} [gaul1Name]
+ * @param {string} [gaul2Name]
+ * @returns {{totals: Object, hasGearBreakdown: boolean, gearBreakdown: Array}}
+ */
+const getFrameGearInsights = (rows, country, gaul1Name = null, gaul2Name = null) => {
+  if (!Array.isArray(rows) || !country) {
+    return { totals: emptyFrameMetrics(), hasGearBreakdown: false, gearBreakdown: [] };
+  }
+
+  const normalizedCountry = String(country).toLowerCase();
+  const filtered = rows.filter((row) => {
+    if (!row?.country || String(row.country).toLowerCase() !== normalizedCountry) return false;
+    if (gaul1Name && row.gaul1_name !== gaul1Name) return false;
+    if (gaul2Name && row.gaul2_name !== gaul2Name) return false;
+    return true;
+  });
+
+  if (filtered.length === 0) {
+    return { totals: emptyFrameMetrics(), hasGearBreakdown: false, gearBreakdown: [] };
+  }
+
+  const totals = emptyFrameMetrics();
+  const hasAnyGearName = filtered.some((row) => typeof row.gear_name === 'string' && row.gear_name.trim());
+  const gearMap = new Map();
+
+  filtered.forEach((row) => {
+    sumFrameMetrics(totals, row);
+    if (!hasAnyGearName || !row.gear_name) return;
+    const key = row.gear_name.trim();
+    const current = gearMap.get(key) ?? emptyFrameMetrics();
+    sumFrameMetrics(current, row);
+    gearMap.set(key, current);
+  });
+
+  const gearBreakdown = hasAnyGearName
+    ? Array.from(gearMap.entries())
+        .map(([gear_name, metrics]) => ({ gear_name, ...metrics }))
+        .sort((a, b) => b.fishers_total - a.fishers_total)
+    : [];
+
+  return {
+    totals,
+    hasGearBreakdown: hasAnyGearName,
+    gearBreakdown
+  };
+};
+
+/**
  * Load WIO map data - Fisheries data in GeoJSON format
  * @returns {Promise<Object|null>} GeoJSON object or null if error
  */
@@ -671,6 +724,7 @@ export {
   loadPdsH3EffortData,
   loadFrameGearsData,
   aggregateFrameGearsData,
+  getFrameGearInsights,
   loadWioMapData,
   loadTimeSeriesData,
   loadMapDataGaul1,

@@ -1,41 +1,75 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import Header from './Header'; // Adjust path if needed
+import { useState, useEffect, useMemo } from 'react';
+import Header from './Header';
 import { cn } from '../lib/utils';
-import { loadTimeSeriesGaul1 } from '../services/dataService';
-import { ChevronDown, BarChart3, Map, Filter, Layers } from 'lucide-react';
+import { loadFrameGearsData, loadTimeSeriesGaul2, getFrameGearInsights } from '../services/dataService';
+import { ChevronDown, BarChart3, MapPin, Filter, Layers, Users, Ship, Activity, TrendingUp } from 'lucide-react';
 import CountryTimeSeriesChart from './CountryTimeSeriesChart';
 import { useTheme } from './ThemeProvider';
-import { METRIC_CONFIG, SELECTABLE_METRIC_IDS } from '../utils/formatters';
+import { METRIC_CONFIG, formatCountryName } from '../utils/formatters';
 
-const COUNTRY_VIEW_METRIC_IDS = SELECTABLE_METRIC_IDS.filter(
-    (id) => !['fishers', 'boats'].includes(id)
-);
+const COUNTRY_VIEW_METRIC_IDS = ['mean_cpue', 'mean_rpue', 'mean_price_kg'];
+const MOZAMBIQUE_NO_GEAR = 'mozambique';
+
+const toTitleCase = (value = '') =>
+    value
+        .toLowerCase()
+        .split(' ')
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(' ');
+
+const formatMetricValue = (metricId, value) => {
+    if (typeof value !== 'number' || Number.isNaN(value)) return 'N/A';
+    const config = METRIC_CONFIG[metricId];
+    if (!config?.format) return value.toFixed(2);
+    return config.format(value);
+};
+
+const getPercentileBand = (percentile) => {
+    if (percentile >= 75) return 'Top Quartile';
+    if (percentile <= 25) return 'Bottom Quartile';
+    return 'Middle Band';
+};
+
+const getMedian = (values) => {
+    if (!values.length) return null;
+    const sorted = [...values].sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    if (sorted.length % 2 === 0) {
+        return (sorted[mid - 1] + sorted[mid]) / 2;
+    }
+    return sorted[mid];
+};
 
 const CountryView = () => {
     const { theme } = useTheme();
     const isDarkTheme = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
-    // State
     const [timeSeriesData, setTimeSeriesData] = useState(null);
+    const [frameGearRows, setFrameGearRows] = useState([]);
     const [selectedCountry, setSelectedCountry] = useState('');
     const [selectedMetric, setSelectedMetric] = useState('mean_cpue');
-    const [selectedDistrict, setSelectedDistrict] = useState('all');
+    const [selectedGaul1, setSelectedGaul1] = useState('all');
+    const [selectedGaul2Key, setSelectedGaul2Key] = useState('');
     const [isLoading, setIsLoading] = useState(true);
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [isDistrictOpen, setIsDistrictOpen] = useState(false);
+    const [isCountryOpen, setIsCountryOpen] = useState(false);
+    const [isGaul1Open, setIsGaul1Open] = useState(false);
+    const [isGaul2Open, setIsGaul2Open] = useState(false);
+    const [showExtendedComparison, setShowExtendedComparison] = useState(false);
 
-    // Initial Data Load
     useEffect(() => {
         const initData = async () => {
             setIsLoading(true);
-            const data = await loadTimeSeriesGaul1();
-            setTimeSeriesData(data);
+            const [timeSeries, frameRows] = await Promise.all([
+                loadTimeSeriesGaul2(),
+                loadFrameGearsData()
+            ]);
+            setTimeSeriesData(timeSeries);
+            setFrameGearRows(frameRows ?? []);
             setIsLoading(false);
         };
         initData();
     }, []);
 
-    // Compute unique countries from the GAUL1 timeseries data
     const availableCountries = useMemo(() => {
         if (!timeSeriesData) return [];
         const countries = new Set();
@@ -45,65 +79,143 @@ const CountryView = () => {
         return Array.from(countries).sort();
     }, [timeSeriesData]);
 
-    // Compute unique districts for the selected country
-    const availableDistricts = useMemo(() => {
+    const gaul2Regions = useMemo(() => {
         if (!selectedCountry || !timeSeriesData) return [];
-        const districts = new Set();
-        Object.values(timeSeriesData).forEach(region => {
-            if (region.country?.toLowerCase() === selectedCountry.toLowerCase()) {
-                if (region.gaul1_name) districts.add(region.gaul1_name);
-            }
-        });
-        return Array.from(districts).sort();
+        return Object.entries(timeSeriesData)
+            .filter(([, region]) => region.country?.toLowerCase() === selectedCountry.toLowerCase())
+            .map(([key, region]) => ({
+                key,
+                country: region.country,
+                gaul1_name: region.gaul1_name,
+                gaul2_name: region.gaul2_name,
+                data: region.data
+            }))
+            .sort((a, b) => {
+                if (a.gaul1_name === b.gaul1_name) {
+                    return a.gaul2_name.localeCompare(b.gaul2_name);
+                }
+                return a.gaul1_name.localeCompare(b.gaul1_name);
+            });
     }, [selectedCountry, timeSeriesData]);
 
-    // Reset district when country changes
+    const availableGaul1 = useMemo(() => {
+        const gaul1 = new Set();
+        gaul2Regions.forEach((region) => gaul1.add(region.gaul1_name));
+        return Array.from(gaul1).sort();
+    }, [gaul2Regions]);
+
+    const visibleGaul2Regions = useMemo(() => {
+        if (selectedGaul1 === 'all') return gaul2Regions;
+        return gaul2Regions.filter((region) => region.gaul1_name === selectedGaul1);
+    }, [gaul2Regions, selectedGaul1]);
+
     useEffect(() => {
-        setSelectedDistrict('all');
+        setSelectedGaul1('all');
+        setSelectedGaul2Key('');
     }, [selectedCountry]);
 
-    // Compute aggregate stats for the selected country
-    const nationalStats = useMemo(() => {
-        if (!selectedCountry || !timeSeriesData) return null;
-
-        let countryRegions = Object.values(timeSeriesData).filter(
-            r => r.country?.toLowerCase() === selectedCountry.toLowerCase()
-        );
-
-        if (selectedDistrict !== 'all') {
-            countryRegions = countryRegions.filter(r => r.gaul1_name === selectedDistrict);
+    useEffect(() => {
+        if (!visibleGaul2Regions.some((region) => region.key === selectedGaul2Key)) {
+            setSelectedGaul2Key(visibleGaul2Regions[0]?.key ?? '');
         }
+    }, [visibleGaul2Regions, selectedGaul2Key]);
 
-        let totalCpue = 0;
-        let dataPoints = 0;
-        const activeRegions = countryRegions.length;
+    const selectedGaul2Region = useMemo(() => {
+        return gaul2Regions.find((region) => region.key === selectedGaul2Key) ?? null;
+    }, [gaul2Regions, selectedGaul2Key]);
 
-        countryRegions.forEach(region => {
-            region.data.forEach(d => {
-                const val = d[selectedMetric];
-                if (typeof val === 'number') {
-                    totalCpue += val;
-                    dataPoints++;
-                }
-            });
-        });
+    const selectedGaul2MetricSummary = useMemo(() => {
+        if (!selectedGaul2Region?.data?.length) return null;
+        const validEntries = selectedGaul2Region.data.filter((entry) => typeof entry[selectedMetric] === 'number');
+        if (!validEntries.length) return null;
+
+        const latestEntry = [...validEntries].sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+        const avgValue = validEntries.reduce((sum, entry) => sum + entry[selectedMetric], 0) / validEntries.length;
 
         return {
-            avgValue: dataPoints > 0 ? (totalCpue / dataPoints).toFixed(2) : '0.00',
-            activeRegions,
-            dataRetention: activeRegions > 0 ? 'High' : 'None'
+            latestValue: latestEntry[selectedMetric],
+            latestDate: latestEntry.date,
+            averageValue: avgValue,
+            observations: validEntries.length
         };
-    }, [selectedCountry, timeSeriesData, selectedMetric]);
+    }, [selectedGaul2Region, selectedMetric]);
+
+    const countryMetricSummary = useMemo(() => {
+        if (!visibleGaul2Regions.length) return null;
+        const values = [];
+        visibleGaul2Regions.forEach((region) => {
+            const numeric = region.data
+                .map((entry) => entry[selectedMetric])
+                .filter((value) => typeof value === 'number' && !Number.isNaN(value));
+            if (!numeric.length) return;
+            values.push(numeric.reduce((sum, value) => sum + value, 0) / numeric.length);
+        });
+
+        if (!values.length) return null;
+        return {
+            average: values.reduce((sum, value) => sum + value, 0) / values.length,
+            median: getMedian(values),
+            count: values.length
+        };
+    }, [visibleGaul2Regions, selectedMetric]);
+
+    const benchmarkData = useMemo(() => {
+        if (!selectedGaul2Region || !visibleGaul2Regions.length) return null;
+        const entries = visibleGaul2Regions.map((region) => {
+            const numeric = region.data
+                .map((entry) => entry[selectedMetric])
+                .filter((value) => typeof value === 'number' && !Number.isNaN(value));
+            const avg = numeric.length ? numeric.reduce((sum, value) => sum + value, 0) / numeric.length : null;
+            return { key: region.key, name: region.gaul2_name, avg };
+        }).filter((item) => item.avg !== null);
+
+        if (!entries.length) return null;
+        const sorted = [...entries].sort((a, b) => b.avg - a.avg);
+        const selected = sorted.find((entry) => entry.key === selectedGaul2Region.key);
+        if (!selected) return null;
+
+        const rank = sorted.findIndex((entry) => entry.key === selected.key) + 1;
+        const percentile = Math.round(((sorted.length - rank) / Math.max(sorted.length - 1, 1)) * 100);
+        const median = getMedian(sorted.map((entry) => entry.avg));
+        const diffMedian = selected.avg - median;
+        return {
+            rank,
+            total: sorted.length,
+            percentile,
+            band: getPercentileBand(percentile),
+            diffMedian,
+            median,
+            top: sorted.slice(0, 3),
+            bottom: sorted.slice(-3).reverse()
+        };
+    }, [selectedGaul2Region, visibleGaul2Regions, selectedMetric]);
+
+    const countryFrameInsights = useMemo(() => {
+        if (!selectedCountry) return null;
+        return getFrameGearInsights(frameGearRows, selectedCountry);
+    }, [frameGearRows, selectedCountry]);
+
+    const selectedFrameInsights = useMemo(() => {
+        if (!selectedCountry || !selectedGaul2Region) return null;
+        return getFrameGearInsights(
+            frameGearRows,
+            selectedCountry,
+            selectedGaul2Region.gaul1_name,
+            selectedGaul2Region.gaul2_name
+        );
+    }, [frameGearRows, selectedCountry, selectedGaul2Region]);
+
+    const showGearBreakdown = useMemo(() => {
+        if (!selectedCountry || !selectedFrameInsights) return false;
+        if (selectedCountry.toLowerCase() === MOZAMBIQUE_NO_GEAR) return false;
+        return selectedFrameInsights.hasGearBreakdown && selectedFrameInsights.gearBreakdown.length > 0;
+    }, [selectedCountry, selectedFrameInsights]);
 
     return (
         <div className={cn(
             "min-h-screen w-full flex flex-col font-sans transition-colors duration-300",
             isDarkTheme ? "bg-[#060b19] text-foreground" : "bg-[#f8fafc] text-slate-900"
         )}>
-            {/* 
-        We pass empty datasets for now just so the Header renders cleanly 
-        without crashing the dynamicStats calculation.
-      */}
             <Header
                 boundaries={null}
                 timeSeriesData={null}
@@ -117,38 +229,36 @@ const CountryView = () => {
                     isDarkTheme ? "bg-[#0a1930]/90 border-white/5" : "bg-white border-slate-200"
                 )}>
                     <div className="glass-panel p-5 rounded-2xl mb-6 flex flex-col gap-4">
-                        <h2 className="font-display font-bold text-lg m-0 text-foreground">Country Overview</h2>
+                        <h2 className="font-display font-bold text-lg m-0 text-foreground">Country Insights</h2>
                         <p className="text-sm text-muted-foreground m-0">
-                            Select a country to explore detailed time-series of national fishing activity.
+                            Explore country and GAUL2 performance, fishers/boats, and gear composition.
                         </p>
 
-                        {/* Country Selector Dropdown */}
                         <div className="relative mt-2">
                             <button
-                                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                                onClick={() => setIsCountryOpen(!isCountryOpen)}
                                 disabled={isLoading}
                                 className={cn(
                                     "h-11 w-full rounded-xl border flex items-center justify-between px-4 transition-all duration-300",
                                     isDarkTheme
                                         ? "bg-white/5 border-white/10 hover:bg-white/10"
                                         : "bg-black/5 border-black/10 hover:bg-black/10",
-                                    isDropdownOpen && "ring-2 ring-primary border-primary"
+                                    isCountryOpen && "ring-2 ring-primary border-primary"
                                 )}
                             >
                                 <span className={cn(
                                     "text-sm font-medium",
                                     selectedCountry ? "text-foreground" : "text-muted-foreground opacity-70"
                                 )}>
-                                    {isLoading ? 'Loading data...' : (selectedCountry || 'Select a country...')}
+                                    {isLoading ? 'Loading data...' : (selectedCountry ? formatCountryName(selectedCountry) : 'Select a country...')}
                                 </span>
                                 <ChevronDown size={16} className={cn(
                                     "text-muted-foreground transition-transform duration-300",
-                                    isDropdownOpen && "rotate-180"
+                                    isCountryOpen && "rotate-180"
                                 )} />
                             </button>
 
-                            {/* Dropdown Menu */}
-                            {isDropdownOpen && (
+                            {isCountryOpen && (
                                 <div className={cn(
                                     "absolute top-[calc(100%+8px)] left-0 w-full rounded-xl border shadow-xl overflow-hidden z-50 animate-in slide-in-from-top-2",
                                     isDarkTheme ? "bg-[#0f172a] border-white/10" : "bg-white border-slate-200"
@@ -159,7 +269,7 @@ const CountryView = () => {
                                                 key={country}
                                                 onClick={() => {
                                                     setSelectedCountry(country);
-                                                    setIsDropdownOpen(false);
+                                                    setIsCountryOpen(false);
                                                 }}
                                                 className={cn(
                                                     "w-full px-4 py-2.5 text-left text-sm transition-colors",
@@ -168,7 +278,7 @@ const CountryView = () => {
                                                         : isDarkTheme ? "text-foreground hover:bg-white/5" : "text-slate-700 hover:bg-slate-50"
                                                 )}
                                             >
-                                                {country.charAt(0).toUpperCase() + country.slice(1)}
+                                                {formatCountryName(country)}
                                             </button>
                                         ))}
                                     </div>
@@ -177,10 +287,8 @@ const CountryView = () => {
                         </div>
                     </div>
 
-                    {/* Filters Section */}
                     {selectedCountry && (
                         <div className="flex flex-col gap-6 mb-8 animate-in fade-in slide-in-from-left-4 duration-500">
-                            {/* Metric Selector */}
                             <div className="flex flex-col gap-3">
                                 <div className="px-1 flex items-center gap-2">
                                     <Layers size={12} className="text-primary" />
@@ -212,36 +320,35 @@ const CountryView = () => {
                                 </div>
                             </div>
 
-                            {/* District Selector */}
                             <div className="flex flex-col gap-3">
                                 <div className="px-1 flex items-center gap-2">
                                     <Filter size={12} className="text-primary" />
-                                    <span className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground opacity-70">Regional Filter</span>
+                                    <span className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground opacity-70">GAUL1 Filter</span>
                                 </div>
                                 <div className="relative">
                                     <button
-                                        onClick={() => setIsDistrictOpen(!isDistrictOpen)}
+                                        onClick={() => setIsGaul1Open(!isGaul1Open)}
                                         className={cn(
                                             "h-11 w-full rounded-xl border flex items-center justify-between px-4 transition-all duration-300",
                                             isDarkTheme
                                                 ? "bg-white/5 border-white/10 hover:bg-white/10"
                                                 : "bg-black/5 border-black/10 hover:bg-black/10",
-                                            isDistrictOpen && "ring-2 ring-primary border-primary"
+                                            isGaul1Open && "ring-2 ring-primary border-primary"
                                         )}
                                     >
                                         <span className={cn(
                                             "text-sm font-medium",
-                                            selectedDistrict !== 'all' ? "text-foreground" : "text-muted-foreground opacity-70"
+                                            selectedGaul1 !== 'all' ? "text-foreground" : "text-muted-foreground opacity-70"
                                         )}>
-                                            {selectedDistrict === 'all' ? 'All Districts' : selectedDistrict}
+                                            {selectedGaul1 === 'all' ? 'All GAUL1 Regions' : selectedGaul1}
                                         </span>
                                         <ChevronDown size={14} className={cn(
                                             "text-muted-foreground transition-transform duration-300",
-                                            isDistrictOpen && "rotate-180"
+                                            isGaul1Open && "rotate-180"
                                         )} />
                                     </button>
 
-                                    {isDistrictOpen && (
+                                    {isGaul1Open && (
                                         <div className={cn(
                                             "absolute top-[calc(100%+8px)] left-0 w-full rounded-xl border shadow-xl overflow-hidden z-50 animate-in slide-in-from-top-2",
                                             isDarkTheme ? "bg-[#0f172a] border-white/10" : "bg-white border-slate-200"
@@ -249,33 +356,90 @@ const CountryView = () => {
                                             <div className="max-h-[250px] overflow-y-auto py-2">
                                                 <button
                                                     onClick={() => {
-                                                        setSelectedDistrict('all');
-                                                        setIsDistrictOpen(false);
+                                                        setSelectedGaul1('all');
+                                                        setIsGaul1Open(false);
                                                     }}
                                                     className={cn(
                                                         "w-full px-4 py-2 text-left text-sm transition-colors",
-                                                        selectedDistrict === 'all'
+                                                        selectedGaul1 === 'all'
                                                             ? "bg-primary/20 text-primary font-bold"
                                                             : isDarkTheme ? "text-foreground hover:bg-white/5" : "text-slate-700 hover:bg-slate-50"
                                                     )}
                                                 >
-                                                    All Districts
+                                                    All GAUL1 Regions
                                                 </button>
-                                                {availableDistricts.map((district) => (
+                                                {availableGaul1.map((region) => (
                                                     <button
-                                                        key={district}
+                                                        key={region}
                                                         onClick={() => {
-                                                            setSelectedDistrict(district);
-                                                            setIsDistrictOpen(false);
+                                                            setSelectedGaul1(region);
+                                                            setIsGaul1Open(false);
                                                         }}
                                                         className={cn(
                                                             "w-full px-4 py-2 text-left text-sm transition-colors",
-                                                            selectedDistrict === district
+                                                            selectedGaul1 === region
                                                                 ? "bg-primary/20 text-primary font-bold"
                                                                 : isDarkTheme ? "text-foreground hover:bg-white/5" : "text-slate-700 hover:bg-slate-50"
                                                         )}
                                                     >
-                                                        {district}
+                                                        {region}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col gap-3">
+                                <div className="px-1 flex items-center gap-2">
+                                    <MapPin size={12} className="text-primary" />
+                                    <span className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground opacity-70">Selected GAUL2</span>
+                                </div>
+                                <div className="relative">
+                                    <button
+                                        onClick={() => setIsGaul2Open(!isGaul2Open)}
+                                        className={cn(
+                                            "h-11 w-full rounded-xl border flex items-center justify-between px-4 transition-all duration-300",
+                                            isDarkTheme
+                                                ? "bg-white/5 border-white/10 hover:bg-white/10"
+                                                : "bg-black/5 border-black/10 hover:bg-black/10",
+                                            isGaul2Open && "ring-2 ring-primary border-primary"
+                                        )}
+                                    >
+                                        <span className={cn(
+                                            "text-sm font-medium truncate",
+                                            selectedGaul2Region ? "text-foreground" : "text-muted-foreground opacity-70"
+                                        )}>
+                                            {selectedGaul2Region ? `${selectedGaul2Region.gaul2_name} (${selectedGaul2Region.gaul1_name})` : 'No GAUL2 available'}
+                                        </span>
+                                        <ChevronDown size={14} className={cn(
+                                            "text-muted-foreground transition-transform duration-300",
+                                            isGaul2Open && "rotate-180"
+                                        )} />
+                                    </button>
+                                    {isGaul2Open && (
+                                        <div className={cn(
+                                            "absolute top-[calc(100%+8px)] left-0 w-full rounded-xl border shadow-xl overflow-hidden z-50 animate-in slide-in-from-top-2",
+                                            isDarkTheme ? "bg-[#0f172a] border-white/10" : "bg-white border-slate-200"
+                                        )}>
+                                            <div className="max-h-[260px] overflow-y-auto py-2">
+                                                {visibleGaul2Regions.map((region) => (
+                                                    <button
+                                                        key={region.key}
+                                                        onClick={() => {
+                                                            setSelectedGaul2Key(region.key);
+                                                            setIsGaul2Open(false);
+                                                        }}
+                                                        className={cn(
+                                                            "w-full px-4 py-2 text-left text-sm transition-colors",
+                                                            selectedGaul2Key === region.key
+                                                                ? "bg-primary/20 text-primary font-bold"
+                                                                : isDarkTheme ? "text-foreground hover:bg-white/5" : "text-slate-700 hover:bg-slate-50"
+                                                        )}
+                                                    >
+                                                        {region.gaul2_name}
+                                                        <span className="ml-1 text-xs opacity-60">({region.gaul1_name})</span>
                                                     </button>
                                                 ))}
                                             </div>
@@ -286,17 +450,16 @@ const CountryView = () => {
                         </div>
                     )}
 
-                    {/* National/Regional Summary Section */}
-                    {selectedCountry && nationalStats && (
+                    {selectedCountry && countryMetricSummary && (
                         <div className="flex flex-col gap-3 animate-in fade-in slide-in-from-bottom-2 duration-500">
                             <div className="px-5 text-[10px] uppercase font-bold tracking-widest text-muted-foreground opacity-70">
-                                {selectedDistrict === 'all' ? 'National' : 'Regional'} Summary
+                                Country Snapshot
                             </div>
 
                             <div className="glass-panel p-4 rounded-xl flex items-center justify-between border-l-2 border-primary">
                                 <div>
                                     <div className="text-[10px] text-muted-foreground uppercase font-semibold">Avg. {METRIC_CONFIG[selectedMetric].label}</div>
-                                    <div className="text-xl font-display font-bold text-primary">{nationalStats.avgValue}</div>
+                                    <div className="text-xl font-display font-bold text-primary">{formatMetricValue(selectedMetric, countryMetricSummary.average)}</div>
                                 </div>
                                 <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
                                     <BarChart3 size={16} className="text-primary" />
@@ -305,31 +468,31 @@ const CountryView = () => {
 
                             <div className="glass-panel p-4 rounded-xl flex items-center justify-between">
                                 <div>
-                                    <div className="text-[10px] text-muted-foreground uppercase font-semibold">Tracked Regions</div>
-                                    <div className="text-xl font-display font-extrabold text-foreground">{nationalStats.activeRegions}</div>
+                                    <div className="text-[10px] text-muted-foreground uppercase font-semibold">Tracked GAUL2</div>
+                                    <div className="text-xl font-display font-extrabold text-foreground">{countryMetricSummary.count}</div>
                                 </div>
                                 <div className="h-8 w-8 rounded-lg bg-white/5 flex items-center justify-center text-muted-foreground">
-                                    <Map size={16} />
+                                    <MapPin size={16} />
                                 </div>
                             </div>
 
                             <div className="glass-panel p-4 rounded-xl flex items-center justify-between">
                                 <div>
-                                    <div className="text-[10px] text-muted-foreground uppercase font-semibold">Data Quality</div>
-                                    <div className="text-sm font-bold text-foreground">{nationalStats.dataRetention}</div>
+                                    <div className="text-[10px] text-muted-foreground uppercase font-semibold">Fishers / Boats</div>
+                                    <div className="text-sm font-bold text-foreground">
+                                        {(countryFrameInsights?.totals?.fishers_total ?? 0).toLocaleString()} / {(countryFrameInsights?.totals?.boats_total ?? 0).toLocaleString()}
+                                    </div>
                                 </div>
-                                <div className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
-                                    OPTIMAL
+                                <div className="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                                    FRAME
                                 </div>
                             </div>
                         </div>
                     )}
                 </aside>
 
-                {/* Main Dashboard Canvas */}
                 <div className="flex-1 p-8 overflow-y-auto">
                     <div className="max-w-6xl mx-auto flex flex-col gap-6">
-
                         {!selectedCountry ? (
                             <div className="glass-panel p-8 rounded-2xl min-h-[400px] flex items-center justify-center">
                                 <div className="text-center">
@@ -339,36 +502,164 @@ const CountryView = () => {
                             </div>
                         ) : (
                             <div className="glass-panel p-8 rounded-2xl min-h-[400px]">
-                                <h2 className="font-display font-bold text-2xl text-foreground mb-1 capitalize">{selectedCountry}</h2>
-                                <p className="text-muted-foreground text-sm mb-6">Detailed fishing activity analysis and historical trends.</p>
+                                <h2 className="font-display font-bold text-2xl text-foreground mb-1">{formatCountryName(selectedCountry)}</h2>
+                                <p className="text-muted-foreground text-sm mb-6">Country and GAUL2 intelligence with trend, benchmark, and frame-level profile.</p>
 
-                                {/* Country Insights Chart */}
-                                <div className="w-full mt-4">
+                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+                                    <div className="glass-panel p-4 rounded-xl">
+                                        <div className="text-[10px] uppercase text-muted-foreground tracking-widest font-bold mb-2">Selected Metric</div>
+                                        <div className="text-lg font-display font-bold text-primary">{METRIC_CONFIG[selectedMetric].label}</div>
+                                        <div className="text-xs text-muted-foreground mt-1">{METRIC_CONFIG[selectedMetric].description}</div>
+                                    </div>
+                                    <div className="glass-panel p-4 rounded-xl">
+                                        <div className="flex items-center gap-2 text-[10px] uppercase text-muted-foreground tracking-widest font-bold mb-2"><Users size={12} /> Fishers</div>
+                                        <div className="text-lg font-display font-bold text-foreground">{(selectedFrameInsights?.totals?.fishers_total ?? 0).toLocaleString()}</div>
+                                        <div className="text-xs text-muted-foreground mt-1">
+                                            Male {(selectedFrameInsights?.totals?.fishers_male ?? 0).toLocaleString()} | Female {(selectedFrameInsights?.totals?.fishers_female ?? 0).toLocaleString()}
+                                        </div>
+                                    </div>
+                                    <div className="glass-panel p-4 rounded-xl">
+                                        <div className="flex items-center gap-2 text-[10px] uppercase text-muted-foreground tracking-widest font-bold mb-2"><Ship size={12} /> Boats</div>
+                                        <div className="text-lg font-display font-bold text-foreground">{(selectedFrameInsights?.totals?.boats_total ?? 0).toLocaleString()}</div>
+                                        <div className="text-xs text-muted-foreground mt-1">For selected GAUL2 area</div>
+                                    </div>
+                                </div>
+
+                                <div className="w-full mt-4 mb-6">
                                     <CountryTimeSeriesChart
                                         data={timeSeriesData}
                                         selectedCountry={selectedCountry}
                                         selectedMetric={selectedMetric}
-                                        selectedDistrict={selectedDistrict}
+                                        selectedGaul2={selectedGaul2Region}
                                         isDarkTheme={isDarkTheme}
                                     />
                                 </div>
 
-                                {/* Placeholder Metrics Grid for "More Stuff" */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-                                    <div className="glass-panel p-6 rounded-2xl flex flex-col gap-2 group hover:bg-white/5 transition-colors">
-                                        <div className="text-muted-foreground uppercase text-[10px] font-bold tracking-wider">Fleet Registry</div>
-                                        <div className="text-xl font-bold">Integration Pending</div>
-                                        <div className="mt-auto pt-4 border-t border-border/20 text-xs text-muted-foreground">Vessel count and registration status.</div>
+                                <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
+                                    <div className="glass-panel p-6 rounded-2xl flex flex-col gap-4">
+                                        <div className="flex items-center justify-between">
+                                            <h3 className="text-lg font-display font-bold text-foreground m-0">GAUL2 Informative Card</h3>
+                                            <span className="text-xs px-2 py-1 rounded bg-primary/10 text-primary border border-primary/20">Focused Area</span>
+                                        </div>
+                                        {selectedGaul2Region ? (
+                                            <>
+                                                <div className="text-sm text-muted-foreground">
+                                                    <span className="font-semibold text-foreground">{toTitleCase(selectedGaul2Region.gaul2_name)}</span>
+                                                    <span className="mx-1.5">·</span>
+                                                    {toTitleCase(selectedGaul2Region.gaul1_name)}
+                                                </div>
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                    <div className="rounded-xl border border-border/20 p-3">
+                                                        <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">Latest {METRIC_CONFIG[selectedMetric].label}</div>
+                                                        <div className="text-base font-semibold mt-1">{formatMetricValue(selectedMetric, selectedGaul2MetricSummary?.latestValue)}</div>
+                                                        <div className="text-xs text-muted-foreground mt-1">{selectedGaul2MetricSummary?.latestDate ?? 'N/A'}</div>
+                                                    </div>
+                                                    <div className="rounded-xl border border-border/20 p-3">
+                                                        <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">Average in Series</div>
+                                                        <div className="text-base font-semibold mt-1">{formatMetricValue(selectedMetric, selectedGaul2MetricSummary?.averageValue)}</div>
+                                                        <div className="text-xs text-muted-foreground mt-1">{selectedGaul2MetricSummary?.observations ?? 0} observations</div>
+                                                    </div>
+                                                </div>
+                                                <div className="rounded-xl border border-border/20 p-3">
+                                                    <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-2">Quick Comparison</div>
+                                                    {benchmarkData ? (
+                                                        <div className="flex flex-wrap gap-2">
+                                                            <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-primary/15 text-primary">Rank {benchmarkData.rank}/{benchmarkData.total}</span>
+                                                            <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/15 text-emerald-400">{benchmarkData.band}</span>
+                                                            <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/15 text-amber-400">
+                                                                {benchmarkData.diffMedian >= 0 ? '+' : ''}{benchmarkData.diffMedian.toFixed(2)} vs median
+                                                            </span>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="text-sm text-muted-foreground">Not enough data to compare.</div>
+                                                    )}
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <div className="text-sm text-muted-foreground">Select a GAUL2 area to view details.</div>
+                                        )}
                                     </div>
-                                    <div className="glass-panel p-6 rounded-2xl flex flex-col gap-2 group hover:bg-white/5 transition-colors">
-                                        <div className="text-muted-foreground uppercase text-[10px] font-bold tracking-wider">Policy Compliance</div>
-                                        <div className="text-xl font-bold">Awaiting Data</div>
-                                        <div className="mt-auto pt-4 border-t border-border/20 text-xs text-muted-foreground">Regulatory adherence by local catch.</div>
-                                    </div>
-                                    <div className="glass-panel p-6 rounded-2xl flex flex-col gap-2 group hover:bg-white/5 transition-colors">
-                                        <div className="text-muted-foreground uppercase text-[10px] font-bold tracking-wider">Port Activity</div>
-                                        <div className="text-xl font-bold">Modules Loading...</div>
-                                        <div className="mt-auto pt-4 border-t border-border/20 text-xs text-muted-foreground">Logistics and offloading frequency.</div>
+
+                                    <div className="glass-panel p-6 rounded-2xl flex flex-col gap-4">
+                                        <div className="flex items-center justify-between">
+                                            <h3 className="text-lg font-display font-bold text-foreground m-0">Comparison & Gear Profile</h3>
+                                            <button
+                                                onClick={() => setShowExtendedComparison((prev) => !prev)}
+                                                className="text-xs px-2.5 py-1 rounded-lg border border-border/25 hover:border-primary/40 transition-colors text-muted-foreground hover:text-foreground"
+                                            >
+                                                {showExtendedComparison ? 'Hide details' : 'See full comparison'}
+                                            </button>
+                                        </div>
+
+                                        <div className="rounded-xl border border-border/20 p-3">
+                                            <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-2"><TrendingUp size={12} /> Benchmark chips</div>
+                                            {benchmarkData ? (
+                                                <div className="flex flex-wrap gap-2">
+                                                    <span className="px-2 py-1 rounded-full text-xs bg-primary/15 text-primary">{benchmarkData.percentile}th percentile</span>
+                                                    <span className="px-2 py-1 rounded-full text-xs bg-sky-500/15 text-sky-300">Median {benchmarkData.median.toFixed(2)}</span>
+                                                    <span className="px-2 py-1 rounded-full text-xs bg-violet-500/15 text-violet-300">{benchmarkData.total} GAUL2 compared</span>
+                                                </div>
+                                            ) : (
+                                                <div className="text-sm text-muted-foreground">Benchmark data unavailable for current filter.</div>
+                                            )}
+                                            {showExtendedComparison && benchmarkData && (
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+                                                    <div className="rounded-lg border border-border/20 p-3">
+                                                        <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-2">Top peers</div>
+                                                        <div className="space-y-1.5 text-sm">
+                                                            {benchmarkData.top.map((item) => (
+                                                                <div key={item.key} className="flex items-center justify-between">
+                                                                    <span>{item.name}</span>
+                                                                    <span className="font-medium">{item.avg.toFixed(2)}</span>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                    <div className="rounded-lg border border-border/20 p-3">
+                                                        <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-2">Bottom peers</div>
+                                                        <div className="space-y-1.5 text-sm">
+                                                            {benchmarkData.bottom.map((item) => (
+                                                                <div key={item.key} className="flex items-center justify-between">
+                                                                    <span>{item.name}</span>
+                                                                    <span className="font-medium">{item.avg.toFixed(2)}</span>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <div className="rounded-xl border border-border/20 p-3">
+                                            <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-2"><Activity size={12} /> Gear composition</div>
+                                            {showGearBreakdown ? (
+                                                <div className="space-y-2">
+                                                    {selectedFrameInsights.gearBreakdown.slice(0, 6).map((gear) => {
+                                                        const fishersShare = selectedFrameInsights.totals.fishers_total > 0
+                                                            ? (gear.fishers_total / selectedFrameInsights.totals.fishers_total) * 100
+                                                            : 0;
+                                                        return (
+                                                            <div key={gear.gear_name} className="rounded-lg border border-border/20 p-2.5">
+                                                                <div className="flex items-center justify-between text-sm">
+                                                                    <span className="font-medium">{gear.gear_name}</span>
+                                                                    <span className="text-muted-foreground">{gear.fishers_total.toLocaleString()} fishers</span>
+                                                                </div>
+                                                                <div className="mt-2 h-1.5 rounded-full bg-white/10 overflow-hidden">
+                                                                    <div className="h-full bg-primary rounded-full" style={{ width: `${Math.min(fishersShare, 100)}%` }} />
+                                                                </div>
+                                                                <div className="mt-1 text-[11px] text-muted-foreground">{fishersShare.toFixed(1)}% of fishers | {gear.boats_total.toLocaleString()} boats</div>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            ) : (
+                                                <div className="text-sm text-muted-foreground">
+                                                    {selectedCountry.toLowerCase() === MOZAMBIQUE_NO_GEAR
+                                                        ? 'Gear-level breakdown unavailable for Mozambique; only fishers and boats totals are provided.'
+                                                        : 'No gear-level breakdown available for this area.'}
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>

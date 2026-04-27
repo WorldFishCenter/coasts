@@ -1,4 +1,5 @@
-import React, { useMemo } from 'react';
+/* eslint-disable react/prop-types */
+import { useMemo } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { cn } from '../lib/utils';
 import { METRIC_CONFIG } from '../utils/formatters';
@@ -13,68 +14,67 @@ const CHART_COLORS = [
     '#8b5cf6', // purple
 ];
 
-const CountryTimeSeriesChart = ({ data, selectedCountry, selectedMetric = 'mean_cpue', selectedDistrict = 'all', isDarkTheme }) => {
+const CountryTimeSeriesChart = ({
+    data,
+    selectedCountry,
+    selectedMetric = 'mean_cpue',
+    selectedGaul2 = null,
+    isDarkTheme
+}) => {
 
     const chartData = useMemo(() => {
         if (!data || !selectedCountry) return [];
 
-        // Filter regions belonging to selected country
-        let countryRegions = Object.entries(data).filter(([key, region]) =>
+        const countryRegions = Object.entries(data).filter(([, region]) =>
             region.country?.toLowerCase() === selectedCountry.toLowerCase()
         );
-
-        // Filter by district if not 'all'
-        if (selectedDistrict !== 'all') {
-            countryRegions = countryRegions.filter(([key, regionDesc]) =>
-                regionDesc.gaul1_name === selectedDistrict
-            );
-        }
 
         if (countryRegions.length === 0) return [];
 
         const dateMap = new Map();
 
-        countryRegions.forEach(([key, regionDesc]) => {
-            const regionName = regionDesc.gaul1_name || key;
-
+        countryRegions.forEach(([, regionDesc]) => {
             regionDesc.data.forEach(entry => {
                 const metricValue = entry[selectedMetric];
                 if (!entry.date || typeof metricValue !== 'number') return;
 
                 let point = dateMap.get(entry.date) || {
                     date: entry.date,
-                    timestamp: new Date(entry.date).getTime()
+                    timestamp: new Date(entry.date).getTime(),
+                    country_sum: 0,
+                    country_count: 0
                 };
-                point[regionName] = metricValue;
+                point.country_sum += metricValue;
+                point.country_count += 1;
+
+                if (
+                    selectedGaul2 &&
+                    regionDesc.gaul1_name === selectedGaul2.gaul1_name &&
+                    regionDesc.gaul2_name === selectedGaul2.gaul2_name
+                ) {
+                    point.selected_region = metricValue;
+                }
+
                 dateMap.set(entry.date, point);
             });
         });
 
-        return Array.from(dateMap.values()).sort((a, b) => a.timestamp - b.timestamp);
-    }, [data, selectedCountry, selectedMetric, selectedDistrict]);
+        return Array.from(dateMap.values())
+            .map((point) => ({
+                ...point,
+                country_average: point.country_count > 0 ? point.country_sum / point.country_count : null
+            }))
+            .sort((a, b) => a.timestamp - b.timestamp);
+    }, [data, selectedCountry, selectedMetric, selectedGaul2]);
 
     const metricConfig = useMemo(() => METRIC_CONFIG[selectedMetric] || { label: 'Metric', unit: '' }, [selectedMetric]);
-
-    const regions = useMemo(() => {
-        if (chartData.length === 0) return [];
-        const seriesKeys = new Set();
-        chartData.forEach((point) => {
-            Object.keys(point).forEach((key) => {
-                if (key !== 'date' && key !== 'timestamp') {
-                    seriesKeys.add(key);
-                }
-            });
-        });
-        return Array.from(seriesKeys);
-    }, [chartData]);
-
 
     if (!data) return null;
 
     if (chartData.length === 0) {
         return (
             <div className="w-full h-[400px] flex items-center justify-center bg-black/5 rounded-xl border border-dashed border-border/50">
-                <span className="text-muted-foreground">No {metricConfig.label} data available for {selectedDistrict === 'all' ? selectedCountry : selectedDistrict}</span>
+                <span className="text-muted-foreground">No {metricConfig.label} data available for {selectedCountry}</span>
             </div>
         );
     }
@@ -111,12 +111,14 @@ const CountryTimeSeriesChart = ({ data, selectedCountry, selectedMetric = 'mean_
                     margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
                 >
                     <defs>
-                        {regions.map((region, index) => (
-                            <linearGradient key={`grad-${region}`} id={`fill-${index}`} x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor={CHART_COLORS[index % CHART_COLORS.length]} stopOpacity={0.3} />
-                                <stop offset="95%" stopColor={CHART_COLORS[index % CHART_COLORS.length]} stopOpacity={0} />
-                            </linearGradient>
-                        ))}
+                        <linearGradient id="fill-0" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor={CHART_COLORS[0]} stopOpacity={0.3} />
+                            <stop offset="95%" stopColor={CHART_COLORS[0]} stopOpacity={0} />
+                        </linearGradient>
+                        <linearGradient id="fill-1" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor={CHART_COLORS[1]} stopOpacity={0.3} />
+                            <stop offset="95%" stopColor={CHART_COLORS[1]} stopOpacity={0} />
+                        </linearGradient>
                     </defs>
                     <CartesianGrid
                         strokeDasharray="3 3"
@@ -146,19 +148,29 @@ const CountryTimeSeriesChart = ({ data, selectedCountry, selectedMetric = 'mean_
                         iconType="circle"
                         wrapperStyle={{ fontSize: '12px', color: isDarkTheme ? '#cbd5e1' : '#475569' }}
                     />
-                    {regions.map((region, index) => (
+                    <Area
+                        type="monotone"
+                        dataKey="country_average"
+                        name="Country Average"
+                        stroke={CHART_COLORS[0]}
+                        strokeWidth={2}
+                        fillOpacity={1}
+                        fill="url(#fill-0)"
+                        activeDot={{ r: 5, strokeWidth: 0 }}
+                    />
+                    {selectedGaul2 && (
                         <Area
-                            key={region}
                             type="monotone"
-                            dataKey={region}
-                            name={region}
-                            stroke={CHART_COLORS[index % CHART_COLORS.length]}
-                            strokeWidth={2}
+                            dataKey="selected_region"
+                            name={`${selectedGaul2.gaul2_name} (GAUL2)`}
+                            stroke={CHART_COLORS[1]}
+                            strokeWidth={2.2}
                             fillOpacity={1}
-                            fill={`url(#fill-${index})`}
+                            fill="url(#fill-1)"
                             activeDot={{ r: 6, strokeWidth: 0 }}
+                            connectNulls
                         />
-                    ))}
+                    )}
                 </AreaChart>
             </ResponsiveContainer>
         </div>
