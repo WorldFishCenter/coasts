@@ -19,7 +19,8 @@ const CountryTimeSeriesChart = ({
     selectedCountry,
     selectedMetric = 'mean_cpue',
     selectedGaul2 = null,
-    isDarkTheme
+    isDarkTheme,
+    compact = false
 }) => {
 
     const chartData = useMemo(() => {
@@ -104,11 +105,11 @@ const CountryTimeSeriesChart = ({
     };
 
     return (
-        <div className="w-full h-[450px]">
+        <div className={cn("w-full", compact ? "h-[300px]" : "h-[450px]")}>
             <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
                     data={chartData}
-                    margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                    margin={compact ? { top: 8, right: 6, left: -24, bottom: 16 } : { top: 10, right: 10, left: -20, bottom: 0 }}
                 >
                     <defs>
                         <linearGradient id="fill-0" x1="0" y1="0" x2="0" y2="1">
@@ -128,10 +129,10 @@ const CountryTimeSeriesChart = ({
                     <XAxis
                         dataKey="date"
                         tickFormatter={(tick) => new Date(tick).toLocaleDateString(undefined, { month: 'short', year: '2-digit' })}
-                        tick={{ fill: isDarkTheme ? '#94a3b8' : '#64748b', fontSize: 12 }}
+                        tick={{ fill: isDarkTheme ? '#94a3b8' : '#64748b', fontSize: compact ? 11 : 12 }}
                         axisLine={false}
                         tickLine={false}
-                        dy={10}
+                        dy={compact ? 6 : 10}
                         minTickGap={30}
                     />
                     <YAxis
@@ -144,9 +145,9 @@ const CountryTimeSeriesChart = ({
                     <Tooltip content={<CustomTooltip />} />
                     <Legend
                         verticalAlign="top"
-                        height={36}
+                        height={compact ? 28 : 36}
                         iconType="circle"
-                        wrapperStyle={{ fontSize: '12px', color: isDarkTheme ? '#cbd5e1' : '#475569' }}
+                        wrapperStyle={{ fontSize: compact ? '11px' : '12px', color: isDarkTheme ? '#cbd5e1' : '#475569' }}
                     />
                     <Area
                         type="monotone"

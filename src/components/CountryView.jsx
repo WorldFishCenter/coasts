@@ -1,8 +1,8 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import Header from './Header';
 import { cn } from '../lib/utils';
 import { loadFrameGearsData, loadTimeSeriesGaul2, getFrameGearInsights } from '../services/dataService';
-import { ChevronDown, BarChart3, MapPin, Filter, Layers, Users, Ship, Activity, TrendingUp } from 'lucide-react';
+import { ChevronDown, BarChart3, MapPin, Layers, Users, Ship, Activity, TrendingUp, SlidersHorizontal, Globe2 } from 'lucide-react';
 import CountryTimeSeriesChart from './CountryTimeSeriesChart';
 import { useTheme } from './ThemeProvider';
 import { METRIC_CONFIG, formatCountryName } from '../utils/formatters';
@@ -48,13 +48,12 @@ const CountryView = () => {
     const [frameGearRows, setFrameGearRows] = useState([]);
     const [selectedCountry, setSelectedCountry] = useState('');
     const [selectedMetric, setSelectedMetric] = useState('mean_cpue');
-    const [selectedGaul1, setSelectedGaul1] = useState('all');
     const [selectedGaul2Key, setSelectedGaul2Key] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const [isCountryOpen, setIsCountryOpen] = useState(false);
-    const [isGaul1Open, setIsGaul1Open] = useState(false);
     const [isGaul2Open, setIsGaul2Open] = useState(false);
     const [showExtendedComparison, setShowExtendedComparison] = useState(false);
+    const countryScopeRef = useRef(null);
 
     useEffect(() => {
         const initData = async () => {
@@ -79,6 +78,12 @@ const CountryView = () => {
         return Array.from(countries).sort();
     }, [timeSeriesData]);
 
+    useEffect(() => {
+        if (!selectedCountry && availableCountries.length > 0) {
+            setSelectedCountry(availableCountries[0]);
+        }
+    }, [selectedCountry, availableCountries]);
+
     const gaul2Regions = useMemo(() => {
         if (!selectedCountry || !timeSeriesData) return [];
         return Object.entries(timeSeriesData)
@@ -98,27 +103,40 @@ const CountryView = () => {
             });
     }, [selectedCountry, timeSeriesData]);
 
-    const availableGaul1 = useMemo(() => {
-        const gaul1 = new Set();
-        gaul2Regions.forEach((region) => gaul1.add(region.gaul1_name));
-        return Array.from(gaul1).sort();
-    }, [gaul2Regions]);
-
-    const visibleGaul2Regions = useMemo(() => {
-        if (selectedGaul1 === 'all') return gaul2Regions;
-        return gaul2Regions.filter((region) => region.gaul1_name === selectedGaul1);
-    }, [gaul2Regions, selectedGaul1]);
-
     useEffect(() => {
-        setSelectedGaul1('all');
         setSelectedGaul2Key('');
+        setIsCountryOpen(false);
+        setIsGaul2Open(false);
     }, [selectedCountry]);
 
     useEffect(() => {
-        if (!visibleGaul2Regions.some((region) => region.key === selectedGaul2Key)) {
-            setSelectedGaul2Key(visibleGaul2Regions[0]?.key ?? '');
+        if (!gaul2Regions.some((region) => region.key === selectedGaul2Key)) {
+            setSelectedGaul2Key(gaul2Regions[0]?.key ?? '');
         }
-    }, [visibleGaul2Regions, selectedGaul2Key]);
+    }, [gaul2Regions, selectedGaul2Key]);
+
+    useEffect(() => {
+        const handleDocumentMouseDown = (event) => {
+            if (!countryScopeRef.current?.contains(event.target)) {
+                setIsCountryOpen(false);
+                setIsGaul2Open(false);
+            }
+        };
+
+        const handleEscape = (event) => {
+            if (event.key === 'Escape') {
+                setIsCountryOpen(false);
+                setIsGaul2Open(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleDocumentMouseDown);
+        document.addEventListener('keydown', handleEscape);
+        return () => {
+            document.removeEventListener('mousedown', handleDocumentMouseDown);
+            document.removeEventListener('keydown', handleEscape);
+        };
+    }, []);
 
     const selectedGaul2Region = useMemo(() => {
         return gaul2Regions.find((region) => region.key === selectedGaul2Key) ?? null;
@@ -141,9 +159,9 @@ const CountryView = () => {
     }, [selectedGaul2Region, selectedMetric]);
 
     const countryMetricSummary = useMemo(() => {
-        if (!visibleGaul2Regions.length) return null;
+        if (!gaul2Regions.length) return null;
         const values = [];
-        visibleGaul2Regions.forEach((region) => {
+        gaul2Regions.forEach((region) => {
             const numeric = region.data
                 .map((entry) => entry[selectedMetric])
                 .filter((value) => typeof value === 'number' && !Number.isNaN(value));
@@ -157,11 +175,11 @@ const CountryView = () => {
             median: getMedian(values),
             count: values.length
         };
-    }, [visibleGaul2Regions, selectedMetric]);
+    }, [gaul2Regions, selectedMetric]);
 
     const benchmarkData = useMemo(() => {
-        if (!selectedGaul2Region || !visibleGaul2Regions.length) return null;
-        const entries = visibleGaul2Regions.map((region) => {
+        if (!selectedGaul2Region || !gaul2Regions.length) return null;
+        const entries = gaul2Regions.map((region) => {
             const numeric = region.data
                 .map((entry) => entry[selectedMetric])
                 .filter((value) => typeof value === 'number' && !Number.isNaN(value));
@@ -188,7 +206,7 @@ const CountryView = () => {
             top: sorted.slice(0, 3),
             bottom: sorted.slice(-3).reverse()
         };
-    }, [selectedGaul2Region, visibleGaul2Regions, selectedMetric]);
+    }, [selectedGaul2Region, gaul2Regions, selectedMetric]);
 
     const countryFrameInsights = useMemo(() => {
         if (!selectedCountry) return null;
@@ -223,20 +241,41 @@ const CountryView = () => {
             />
 
             <main className="flex-1 flex overflow-hidden">
-                {/* Left Sidebar Menu */}
                 <aside className={cn(
-                    "w-[340px] flex-none border-r flex flex-col pt-6 pb-6 px-4 z-40 transition-all duration-300",
-                    isDarkTheme ? "bg-[#0a1930]/90 border-white/5" : "bg-white border-slate-200"
+                    "w-[380px] flex-none border-r flex flex-col overflow-hidden z-40 transition-all duration-300 shadow-2xl",
+                    isDarkTheme ? "bg-[#060b19]/90 border-white/5 backdrop-blur-2xl" : "bg-white/90 border-slate-200 backdrop-blur-2xl"
                 )}>
-                    <div className="glass-panel p-5 rounded-2xl mb-6 flex flex-col gap-4">
-                        <h2 className="font-display font-bold text-lg m-0 text-foreground">Country Insights</h2>
-                        <p className="text-sm text-muted-foreground m-0">
-                            Explore country and GAUL2 performance, fishers/boats, and gear composition.
+                    <div className={cn(
+                        "px-6 pt-8 pb-6 border-b shrink-0",
+                        isDarkTheme ? "border-white/5 bg-black/20" : "border-black/5 bg-black/5"
+                    )}>
+                        <h2 className="m-0 text-xl font-display font-semibold flex items-center gap-3 text-foreground tracking-tight">
+                            <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center border border-primary/30">
+                                <SlidersHorizontal className="w-4 h-4 text-primary" />
+                            </div>
+                            Country Panel
+                        </h2>
+                        <p className="m-0 mt-3 text-xs text-muted-foreground font-medium uppercase tracking-widest opacity-80">
+                            Scope, metric and focus area
                         </p>
+                    </div>
 
-                        <div className="relative mt-2">
+                    <div className="flex-1 overflow-y-auto px-6 py-6">
+                        <div className="flex flex-col gap-6">
+                            <div className={cn(
+                                "rounded-2xl border p-4 flex flex-col gap-4",
+                                isDarkTheme ? "bg-white/[0.02] border-white/30" : "bg-black/[0.02] border-black/30"
+                            )} ref={countryScopeRef}>
+                                <div className="flex items-center gap-2 px-1">
+                                    <Globe2 size={14} className="text-primary" />
+                                    <span className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground opacity-80">Country Scope</span>
+                                </div>
+                                <div className="relative mt-2">
                             <button
-                                onClick={() => setIsCountryOpen(!isCountryOpen)}
+                                onClick={() => {
+                                    setIsCountryOpen((prev) => !prev);
+                                    setIsGaul2Open(false);
+                                }}
                                 disabled={isLoading}
                                 className={cn(
                                     "h-11 w-full rounded-xl border flex items-center justify-between px-4 transition-all duration-300",
@@ -260,7 +299,7 @@ const CountryView = () => {
 
                             {isCountryOpen && (
                                 <div className={cn(
-                                    "absolute top-[calc(100%+8px)] left-0 w-full rounded-xl border shadow-xl overflow-hidden z-50 animate-in slide-in-from-top-2",
+                                    "relative mt-2 w-full rounded-xl border shadow-xl overflow-hidden z-50 animate-in slide-in-from-top-2",
                                     isDarkTheme ? "bg-[#0f172a] border-white/10" : "bg-white border-slate-200"
                                 )}>
                                     <div className="max-h-[300px] overflow-y-auto py-2">
@@ -284,12 +323,71 @@ const CountryView = () => {
                                     </div>
                                 </div>
                             )}
-                        </div>
-                    </div>
+                            {selectedCountry && (
+                                <div className="relative mt-4 pt-4 border-t border-border/40">
+                                    <div className="text-[10px] uppercase tracking-widest text-muted-foreground/80 font-semibold px-1 mb-2">GAUL2 Area</div>
+                                    <button
+                                        onClick={() => {
+                                            setIsGaul2Open((prev) => !prev);
+                                            setIsCountryOpen(false);
+                                        }}
+                                        className={cn(
+                                            "h-11 w-full rounded-xl border flex items-center justify-between px-4 transition-all duration-300",
+                                            isDarkTheme
+                                                ? "bg-white/5 border-white/10 hover:bg-white/10"
+                                                : "bg-black/5 border-black/10 hover:bg-black/10",
+                                            isGaul2Open && "ring-2 ring-primary border-primary"
+                                        )}
+                                    >
+                                        <span className={cn(
+                                            "text-sm font-medium truncate",
+                                            selectedGaul2Region ? "text-foreground" : "text-muted-foreground opacity-70"
+                                        )}>
+                                            {selectedGaul2Region ? `${selectedGaul2Region.gaul2_name} (${selectedGaul2Region.gaul1_name})` : 'No GAUL2 available'}
+                                        </span>
+                                        <ChevronDown size={14} className={cn(
+                                            "text-muted-foreground transition-transform duration-300",
+                                            isGaul2Open && "rotate-180"
+                                        )} />
+                                    </button>
+                                    {isGaul2Open && (
+                                        <div className={cn(
+                                            "relative mt-2 w-full rounded-xl border shadow-xl overflow-hidden z-50 animate-in slide-in-from-top-2",
+                                            isDarkTheme ? "bg-[#0f172a] border-white/10" : "bg-white border-slate-200"
+                                        )}>
+                                            <div className="max-h-[260px] overflow-y-auto py-2">
+                                                {gaul2Regions.map((region) => (
+                                                    <button
+                                                        key={region.key}
+                                                        onClick={() => {
+                                                            setSelectedGaul2Key(region.key);
+                                                            setIsGaul2Open(false);
+                                                        }}
+                                                        className={cn(
+                                                            "w-full px-4 py-2 text-left text-sm transition-colors",
+                                                            selectedGaul2Key === region.key
+                                                                ? "bg-primary/20 text-primary font-bold"
+                                                                : isDarkTheme ? "text-foreground hover:bg-white/5" : "text-slate-700 hover:bg-slate-50"
+                                                        )}
+                                                    >
+                                                        {region.gaul2_name}
+                                                        <span className="ml-1 text-xs opacity-60">({region.gaul1_name})</span>
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                                </div>
+                            </div>
 
-                    {selectedCountry && (
-                        <div className="flex flex-col gap-6 mb-8 animate-in fade-in slide-in-from-left-4 duration-500">
-                            <div className="flex flex-col gap-3">
+                            {selectedCountry && (
+                                <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-left-4 duration-500">
+                                    <div className={cn(
+                                        "rounded-2xl border p-4 flex flex-col gap-3",
+                                        isDarkTheme ? "bg-white/[0.02] border-white/30" : "bg-black/[0.02] border-black/30"
+                                    )}>
                                 <div className="px-1 flex items-center gap-2">
                                     <Layers size={12} className="text-primary" />
                                     <span className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground opacity-70">Analysis Metric</span>
@@ -320,141 +418,17 @@ const CountryView = () => {
                                 </div>
                             </div>
 
-                            <div className="flex flex-col gap-3">
-                                <div className="px-1 flex items-center gap-2">
-                                    <Filter size={12} className="text-primary" />
-                                    <span className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground opacity-70">GAUL1 Filter</span>
                                 </div>
-                                <div className="relative">
-                                    <button
-                                        onClick={() => setIsGaul1Open(!isGaul1Open)}
-                                        className={cn(
-                                            "h-11 w-full rounded-xl border flex items-center justify-between px-4 transition-all duration-300",
-                                            isDarkTheme
-                                                ? "bg-white/5 border-white/10 hover:bg-white/10"
-                                                : "bg-black/5 border-black/10 hover:bg-black/10",
-                                            isGaul1Open && "ring-2 ring-primary border-primary"
-                                        )}
-                                    >
-                                        <span className={cn(
-                                            "text-sm font-medium",
-                                            selectedGaul1 !== 'all' ? "text-foreground" : "text-muted-foreground opacity-70"
-                                        )}>
-                                            {selectedGaul1 === 'all' ? 'All GAUL1 Regions' : selectedGaul1}
-                                        </span>
-                                        <ChevronDown size={14} className={cn(
-                                            "text-muted-foreground transition-transform duration-300",
-                                            isGaul1Open && "rotate-180"
-                                        )} />
-                                    </button>
+                            )}
 
-                                    {isGaul1Open && (
-                                        <div className={cn(
-                                            "absolute top-[calc(100%+8px)] left-0 w-full rounded-xl border shadow-xl overflow-hidden z-50 animate-in slide-in-from-top-2",
-                                            isDarkTheme ? "bg-[#0f172a] border-white/10" : "bg-white border-slate-200"
-                                        )}>
-                                            <div className="max-h-[250px] overflow-y-auto py-2">
-                                                <button
-                                                    onClick={() => {
-                                                        setSelectedGaul1('all');
-                                                        setIsGaul1Open(false);
-                                                    }}
-                                                    className={cn(
-                                                        "w-full px-4 py-2 text-left text-sm transition-colors",
-                                                        selectedGaul1 === 'all'
-                                                            ? "bg-primary/20 text-primary font-bold"
-                                                            : isDarkTheme ? "text-foreground hover:bg-white/5" : "text-slate-700 hover:bg-slate-50"
-                                                    )}
-                                                >
-                                                    All GAUL1 Regions
-                                                </button>
-                                                {availableGaul1.map((region) => (
-                                                    <button
-                                                        key={region}
-                                                        onClick={() => {
-                                                            setSelectedGaul1(region);
-                                                            setIsGaul1Open(false);
-                                                        }}
-                                                        className={cn(
-                                                            "w-full px-4 py-2 text-left text-sm transition-colors",
-                                                            selectedGaul1 === region
-                                                                ? "bg-primary/20 text-primary font-bold"
-                                                                : isDarkTheme ? "text-foreground hover:bg-white/5" : "text-slate-700 hover:bg-slate-50"
-                                                        )}
-                                                    >
-                                                        {region}
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div className="flex flex-col gap-3">
-                                <div className="px-1 flex items-center gap-2">
-                                    <MapPin size={12} className="text-primary" />
-                                    <span className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground opacity-70">Selected GAUL2</span>
-                                </div>
-                                <div className="relative">
-                                    <button
-                                        onClick={() => setIsGaul2Open(!isGaul2Open)}
-                                        className={cn(
-                                            "h-11 w-full rounded-xl border flex items-center justify-between px-4 transition-all duration-300",
-                                            isDarkTheme
-                                                ? "bg-white/5 border-white/10 hover:bg-white/10"
-                                                : "bg-black/5 border-black/10 hover:bg-black/10",
-                                            isGaul2Open && "ring-2 ring-primary border-primary"
-                                        )}
-                                    >
-                                        <span className={cn(
-                                            "text-sm font-medium truncate",
-                                            selectedGaul2Region ? "text-foreground" : "text-muted-foreground opacity-70"
-                                        )}>
-                                            {selectedGaul2Region ? `${selectedGaul2Region.gaul2_name} (${selectedGaul2Region.gaul1_name})` : 'No GAUL2 available'}
-                                        </span>
-                                        <ChevronDown size={14} className={cn(
-                                            "text-muted-foreground transition-transform duration-300",
-                                            isGaul2Open && "rotate-180"
-                                        )} />
-                                    </button>
-                                    {isGaul2Open && (
-                                        <div className={cn(
-                                            "absolute top-[calc(100%+8px)] left-0 w-full rounded-xl border shadow-xl overflow-hidden z-50 animate-in slide-in-from-top-2",
-                                            isDarkTheme ? "bg-[#0f172a] border-white/10" : "bg-white border-slate-200"
-                                        )}>
-                                            <div className="max-h-[260px] overflow-y-auto py-2">
-                                                {visibleGaul2Regions.map((region) => (
-                                                    <button
-                                                        key={region.key}
-                                                        onClick={() => {
-                                                            setSelectedGaul2Key(region.key);
-                                                            setIsGaul2Open(false);
-                                                        }}
-                                                        className={cn(
-                                                            "w-full px-4 py-2 text-left text-sm transition-colors",
-                                                            selectedGaul2Key === region.key
-                                                                ? "bg-primary/20 text-primary font-bold"
-                                                                : isDarkTheme ? "text-foreground hover:bg-white/5" : "text-slate-700 hover:bg-slate-50"
-                                                        )}
-                                                    >
-                                                        {region.gaul2_name}
-                                                        <span className="ml-1 text-xs opacity-60">({region.gaul1_name})</span>
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {selectedCountry && countryMetricSummary && (
-                        <div className="flex flex-col gap-3 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                            <div className="px-5 text-[10px] uppercase font-bold tracking-widest text-muted-foreground opacity-70">
+                            {selectedCountry && countryMetricSummary && (
+                                <div className={cn(
+                                    "rounded-2xl border p-4 flex flex-col gap-3 animate-in fade-in slide-in-from-bottom-2 duration-500",
+                                    isDarkTheme ? "bg-white/[0.02] border-white/30" : "bg-black/[0.02] border-black/30"
+                                )}>
+                                    <div className="px-1 text-[10px] uppercase font-bold tracking-widest text-muted-foreground opacity-70">
                                 Country Snapshot
-                            </div>
+                                    </div>
 
                             <div className="glass-panel p-4 rounded-xl flex items-center justify-between border-l-2 border-primary">
                                 <div>
@@ -487,12 +461,14 @@ const CountryView = () => {
                                     FRAME
                                 </div>
                             </div>
+                                </div>
+                            )}
                         </div>
-                    )}
+                    </div>
                 </aside>
 
                 <div className="flex-1 p-8 overflow-y-auto">
-                    <div className="max-w-6xl mx-auto flex flex-col gap-6">
+                    <div className="max-w-7xl mx-auto flex flex-col gap-6">
                         {!selectedCountry ? (
                             <div className="glass-panel p-8 rounded-2xl min-h-[400px] flex items-center justify-center">
                                 <div className="text-center">
@@ -501,9 +477,23 @@ const CountryView = () => {
                                 </div>
                             </div>
                         ) : (
-                            <div className="glass-panel p-8 rounded-2xl min-h-[400px]">
+                            <div className="min-h-[400px]">
                                 <h2 className="font-display font-bold text-2xl text-foreground mb-1">{formatCountryName(selectedCountry)}</h2>
-                                <p className="text-muted-foreground text-sm mb-6">Country and GAUL2 intelligence with trend, benchmark, and frame-level profile.</p>
+                                <p className="text-muted-foreground text-sm mb-6">Country and GAUL2 details with trend, comparison and gear data.</p>
+
+                                <div className="glass-panel p-5 rounded-2xl mb-6">
+                                    <div className="flex items-center justify-between mb-3">
+                                        <h3 className="text-base font-display font-semibold text-foreground m-0">Time Series</h3>
+                                    </div>
+                                    <CountryTimeSeriesChart
+                                        data={timeSeriesData}
+                                        selectedCountry={selectedCountry}
+                                        selectedMetric={selectedMetric}
+                                        selectedGaul2={selectedGaul2Region}
+                                        isDarkTheme={isDarkTheme}
+                                        compact
+                                    />
+                                </div>
 
                                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
                                     <div className="glass-panel p-4 rounded-xl">
@@ -525,21 +515,11 @@ const CountryView = () => {
                                     </div>
                                 </div>
 
-                                <div className="w-full mt-4 mb-6">
-                                    <CountryTimeSeriesChart
-                                        data={timeSeriesData}
-                                        selectedCountry={selectedCountry}
-                                        selectedMetric={selectedMetric}
-                                        selectedGaul2={selectedGaul2Region}
-                                        isDarkTheme={isDarkTheme}
-                                    />
-                                </div>
-
-                                <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
+                                <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-2">
                                     <div className="glass-panel p-6 rounded-2xl flex flex-col gap-4">
                                         <div className="flex items-center justify-between">
                                             <h3 className="text-lg font-display font-bold text-foreground m-0">GAUL2 Informative Card</h3>
-                                            <span className="text-xs px-2 py-1 rounded bg-primary/10 text-primary border border-primary/20">Focused Area</span>
+                                            <span className="text-xs px-2 py-1 rounded bg-primary/10 text-primary border border-primary/20">Selected Area</span>
                                         </div>
                                         {selectedGaul2Region ? (
                                             <>
@@ -580,9 +560,9 @@ const CountryView = () => {
                                         )}
                                     </div>
 
-                                    <div className="glass-panel p-6 rounded-2xl flex flex-col gap-4">
+                                    <div className="glass-panel p-6 rounded-2xl flex flex-col gap-4 xl:col-span-2">
                                         <div className="flex items-center justify-between">
-                                            <h3 className="text-lg font-display font-bold text-foreground m-0">Comparison & Gear Profile</h3>
+                                            <h3 className="text-lg font-display font-bold text-foreground m-0">Comparison and Gear</h3>
                                             <button
                                                 onClick={() => setShowExtendedComparison((prev) => !prev)}
                                                 className="text-xs px-2.5 py-1 rounded-lg border border-border/25 hover:border-primary/40 transition-colors text-muted-foreground hover:text-foreground"
@@ -662,6 +642,7 @@ const CountryView = () => {
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
                         )}
 
