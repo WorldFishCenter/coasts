@@ -40,12 +40,17 @@ const BATHYMETRY_LABEL_LAYER_ID = 'bathymetry-labels';
 const BATHYMETRY_DATA_PATH = '/data/bathymetry_contours_wio.geojson';
 
 const DeckGLOverlay = (props) => {
-  const overlay = useControl(() => new MapboxOverlay(props));
+  // Use a stable creator function to prevent destroying/recreating the overlay on every render.
+  // react-map-gl's useControl will only call this once unless the function identity changes.
+  const overlay = useControl(useCallback(() => new MapboxOverlay(props), []));
+  
+  // Efficiently update deck.gl layers/props without recreating the Mapbox control.
   overlay.setProps(props);
+  
   return null;
 };
 
-const MapComponent = () => {
+const MapComponent = ({ isActive = true }) => {
   // Device detection
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   
@@ -260,18 +265,25 @@ const MapComponent = () => {
     }
   }, []);
 
-  const ensureBathymetryLayers = useCallback(async (map) => {
+  const ensureBathymetryLayers = useCallback((map) => {
     if (!map || !map.isStyleLoaded()) return;
-    setBathymetryLoading(true);
+    
+    // Only proceed if layers are actually missing to avoid redundant style updates
+    const hasSource = !!map.getSource(BATHYMETRY_SOURCE_ID);
+    const hasLineLayer = !!map.getLayer(BATHYMETRY_LINE_LAYER_ID);
+    const hasLabelLayer = !!map.getLayer(BATHYMETRY_LABEL_LAYER_ID);
+    
+    if (hasSource && hasLineLayer && hasLabelLayer) return;
+
     try {
-      if (!map.getSource(BATHYMETRY_SOURCE_ID)) {
+      if (!hasSource) {
         map.addSource(BATHYMETRY_SOURCE_ID, {
           type: 'geojson',
           data: BATHYMETRY_DATA_PATH
         });
       }
 
-      if (!map.getLayer(BATHYMETRY_LINE_LAYER_ID)) {
+      if (!hasLineLayer) {
         map.addLayer({
           id: BATHYMETRY_LINE_LAYER_ID,
           type: 'line',
@@ -304,7 +316,7 @@ const MapComponent = () => {
         });
       }
 
-      if (!map.getLayer(BATHYMETRY_LABEL_LAYER_ID)) {
+      if (!hasLabelLayer) {
         map.addLayer({
           id: BATHYMETRY_LABEL_LAYER_ID,
           type: 'symbol',
@@ -331,8 +343,8 @@ const MapComponent = () => {
           }
         });
       }
-    } finally {
-      setBathymetryLoading(false);
+    } catch (e) {
+      console.warn('Error adding bathymetry layers:', e);
     }
   }, [isDarkTheme]);
 
@@ -352,6 +364,20 @@ const MapComponent = () => {
     if (!map || !showBathymetry) return;
     ensureBathymetryLayers(map);
   }, [showBathymetry, ensureBathymetryLayers]);
+
+  // Resize map when it becomes active (e.g. returning from Country Insights)
+  useEffect(() => {
+    if (isActive) {
+      const timer = setTimeout(() => {
+        const map = mapRef.current?.getMap?.();
+        if (map) {
+          map.resize();
+          map.triggerRepaint();
+        }
+      }, 100); // Small delay to ensure CSS transition has started
+      return () => clearTimeout(timer);
+    }
+  }, [isActive]);
 
   const handleMapLoad = useCallback(() => {
     const map = mapRef.current?.getMap?.();

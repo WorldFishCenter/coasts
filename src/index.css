@@ -99,6 +99,14 @@
   --ring: #00f5ff;
 }
 
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
