@@ -7,9 +7,11 @@ Interactive map visualization for coastal regions using React and Mapbox GL JS.
 - Interactive map visualization
 - District selection and analysis
 - Data visualization with charts
+- Static census overlays (fishers and boats by GAUL region)
+- In-app documentation hub (`/docs`) with metric and layer methodology
 - Dark/Light theme support
 - Mobile responsive design
-- Daily data updates from MongoDB via GitHub Actions
+- Daily data updates from MongoDB and Google Cloud via GitHub Actions
 
 ## Technologies
 
@@ -42,7 +44,14 @@ This project uses a GitHub Actions workflow to fetch data from MongoDB daily and
 To manually update the data:
 
 ```bash
-npm run fetch-data
+# MongoDB export refresh
+node scripts/data/fetchMongoData.js
+
+# Google Cloud versioned datasets refresh
+npm run fetch-gcp-data
+
+# Accuracy and clarity guardrails
+npm run qa:clarity
 ```
 
 ### GitHub Secrets Setup
@@ -50,7 +59,12 @@ npm run fetch-data
 For the automated workflow to function, you need to set up the following secrets in your GitHub repository:
 
 1. `MONGODB_URI` - Your MongoDB connection string
-2. `VITE_MAPBOX_TOKEN` - Your Mapbox access token
+2. `VITE_MAPBOX_TOKEN` - Your Mapbox access token (client app)
+3. `GCP_SA_KEY` - Google Cloud service account JSON (single-line)
+4. `GCP_BUCKET_NAME` - Google Cloud bucket containing versioned PDS files
+5. `GCP_PDS_GROUNDS_PREFIX` - Prefix for fishing grounds files (optional)
+6. `GCP_PDS_EFFORT_PREFIX` - Prefix for H3 effort files (optional)
+7. `GCP_PDS_FRAME_GEARS_PREFIX` - Prefix for frame-gears files (optional)
 
 See `.github/README.md` for detailed instructions.
 

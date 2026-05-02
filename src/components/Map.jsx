@@ -1,17 +1,20 @@
 import { useState, useCallback, useEffect, useMemo, useRef, lazy, Suspense } from 'react';
-import DeckGL from '@deck.gl/react';
-import { Map as MapGL } from 'react-map-gl';
+import { Map as MapGL, useControl } from 'react-map-gl';
+import { MapboxOverlay } from '@deck.gl/mapbox';
+import { Waves } from 'lucide-react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 // Components - Lazy load heavy components
 import Header from './Header';
 import Sidebar from './Sidebar';
 import EnhancedLegend from './map/EnhancedLegend';
+import MapClarityPanel from './map/MapClarityPanel';
 import MapStyleToggle from './map/MapStyleToggle';
-import TimeRangeControl from './map/TimeRangeControl';
 
 // Lazy loaded components
 const DistributionHistogram = lazy(() => import('./map/DistributionHistogram'));
+
+import { useTheme } from './ThemeProvider';
 
 // Hooks
 import { useMapData } from '../hooks/useMapData';
@@ -20,58 +23,66 @@ import { useMapTooltip } from '../hooks/useMapTooltip';
 
 // Utils
 import { getMapStyles } from '../styles/mapStyles';
-import { TIME_BREAKS, COLOR_RANGE } from '../utils/gridLayerConfig';
-import { processPdsData, transformPdsData } from '../utils/pdsDataProcessor';
+import { processH3EffortData } from '../utils/pdsDataProcessor';
 import { calculateMetricStats } from '../utils/metricCalculations';
-import { getAverageMetricsInRange, getAverageMetricsInRangeGaul1, getRegionKey as getRegionKeyFromService } from '../services/dataService';
+import { getAverageMetricsInRange, getAverageMetricsInRangeGaul1 } from '../services/dataService';
+import { KEPLER_INITIAL_VIEW_STATE } from '../utils/pdsOverlayConfig';
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
 // Initial viewport configuration
 const INITIAL_VIEW_STATE = {
-  longitude: 39.0,
-  latitude: -7,
-  zoom: 5.7,
-  pitch: 40,
-  bearing: 0
+  ...KEPLER_INITIAL_VIEW_STATE
+};
+const BATHYMETRY_SOURCE_ID = 'bathymetry-source';
+const BATHYMETRY_LINE_LAYER_ID = 'bathymetry-lines';
+const BATHYMETRY_LABEL_LAYER_ID = 'bathymetry-labels';
+const BATHYMETRY_DATA_PATH = '/data/bathymetry_contours_wio.geojson';
+
+const DeckGLOverlay = (props) => {
+  // Use a stable creator function to prevent destroying/recreating the overlay on every render.
+  // react-map-gl's useControl will only call this once unless the function identity changes.
+  const overlay = useControl(useCallback(() => new MapboxOverlay(props), []));
+  
+  // Efficiently update deck.gl layers/props without recreating the Mapbox control.
+  overlay.setProps(props);
+  
+  return null;
 };
 
-const MapComponent = () => {
+const MapComponent = ({ isActive = true }) => {
   // Device detection
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   
   // Theme and visualization states
-  const [isDarkTheme, setIsDarkTheme] = useState(true);
+  const { theme } = useTheme();
+  const isDarkTheme = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
   const [isSatellite, setIsSatellite] = useState(true);
   const [visualizationMode, setVisualizationMode] = useState('column');
+  const [showBathymetry, setShowBathymetry] = useState(true);
+  const [bathymetryLoading, setBathymetryLoading] = useState(false);
   
   // Map interaction states
   const [hoveredFeatureIndex, setHoveredFeatureIndex] = useState(null);
-  const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
   
   // Analysis states
-  const [opacity, setOpacity] = useState(0.7);
+  const [opacity] = useState(0.7);
   const [selectedMetric, setSelectedMetric] = useState('mean_cpue');
-  const [selectedRanges, setSelectedRanges] = useState(TIME_BREAKS);
+  const [selectedFishersMetric, setSelectedFishersMetric] = useState('fishers_total');
+  const [selectedYear, setSelectedYear] = useState('all');
+  const [selectedActivityMetric, setSelectedActivityMetric] = useState('avg_hours_per_day');
+  const [activeActivityLayers, setActiveActivityLayers] = useState({ hexagons: true, grounds: true });
   const [selectedRegion, setSelectedRegion] = useState(null);
   
   // Selection and filter states
-  const [selectedRegionsForComparison, setSelectedRegionsForComparison] = useState([]);
   const [selectedCountries, setSelectedCountries] = useState([]);
   
   // Admin level: gaul1 = Admin 1 (provinces), gaul2 = Admin 2 (districts)
   const [gaulLevel, setGaulLevel] = useState('gaul2');
   
-  // Data loading states
-  const [pdsDataLoaded, setPdsDataLoaded] = useState(false);
-  
-  // Add state for date range (indices)
-  const [dateRange, setDateRange] = useState([0, 0]); // [startIdx, endIdx]
-  
+
   // Refs
   const mapRef = useRef(null);
-  const deckRef = useRef(null);
-  const didSetDefault = useRef(false);
 
   // Load map data (both GAUL levels)
   const {
@@ -79,7 +90,8 @@ const MapComponent = () => {
     boundariesGaul2,
     timeSeriesGaul1,
     timeSeriesGaul2,
-    pdsGridsData,
+    pdsFishingGroundsData,
+    pdsH3EffortData,
     loading,
     error
   } = useMapData();
@@ -91,7 +103,6 @@ const MapComponent = () => {
   // Clear selection when switching admin level
   useEffect(() => {
     setSelectedRegion(null);
-    setSelectedRegionsForComparison([]);
   }, [gaulLevel]);
 
   // Extract all unique sorted dates from timeSeriesData (from 2020 onwards)
@@ -103,32 +114,25 @@ const MapComponent = () => {
       .filter(date => new Date(date).getFullYear() >= 2020);
     return Array.from(new Set(dates)).sort((a, b) => new Date(a) - new Date(b));
   }, [timeSeriesData]);
-
-  // Set default date range when data loads
-  useEffect(() => {
-    if (
-      allDates.length > 1 &&
-      !didSetDefault.current
-    ) {
-      setDateRange([0, allDates.length - 1]);
-      didSetDefault.current = true;
-    }
+  const dataFreshnessLabel = useMemo(() => {
+    if (!allDates.length) return 'Unknown';
+    const latest = new Date(allDates[allDates.length - 1]);
+    return latest.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   }, [allDates]);
-
-  // Handler to clamp date range
-  const handleDateRangeChange = (range) => {
-    const [min, max] = range;
-    const clampedMin = Math.max(0, Math.min(min, allDates.length - 1));
-    const clampedMax = Math.max(clampedMin, Math.min(max, allDates.length - 1));
-    setDateRange([clampedMin, clampedMax]);
-  };
 
   // Helper to enrich boundaries with average metrics in range (GAUL level–aware)
   const getBoundariesWithAveragedMetrics = useCallback(() => {
     if (!boundaries || !timeSeriesData || allDates.length === 0) return boundaries;
-    const [startIdx, endIdx] = dateRange;
-    const startDate = allDates[startIdx];
-    const endDate = allDates[endIdx];
+
+    let startDate, endDate;
+    if (selectedYear === 'all') {
+      startDate = allDates[0];
+      endDate = allDates[allDates.length - 1];
+    } else {
+      startDate = `${selectedYear}-01-01`;
+      endDate = `${selectedYear}-12-31`;
+    }
+
     return {
       ...boundaries,
       features: boundaries.features.map((feature) => {
@@ -150,17 +154,12 @@ const MapComponent = () => {
         };
       })
     };
-  }, [boundaries, timeSeriesData, allDates, dateRange, gaulLevel]);
+  }, [boundaries, timeSeriesData, allDates, selectedYear, gaulLevel]);
 
   // Use enriched boundaries for map and sidebar
   const enrichedBoundaries = useMemo(() => getBoundariesWithAveragedMetrics(), [getBoundariesWithAveragedMetrics]);
 
-  // Process PDS data when it loads
-  useEffect(() => {
-    if (processPdsData(pdsGridsData)) {
-      setPdsDataLoaded(true);
-    }
-  }, [pdsGridsData]);
+
 
   // Handle window resize
   useEffect(() => {
@@ -174,11 +173,11 @@ const MapComponent = () => {
 
   // Adjust pitch when switching visualization modes
   useEffect(() => {
-    setViewState(prev => ({
-      ...prev,
-      pitch: visualizationMode === 'heatmap' ? 0 : 40,
-      transitionDuration: 1000
-    }));
+    const map = mapRef.current?.getMap?.();
+    if (!map) return;
+    const targetPitch = visualizationMode === 'heatmap' ? 0 : KEPLER_INITIAL_VIEW_STATE.pitch;
+    map.setPitch(targetPitch);
+    map.triggerRepaint();
   }, [visualizationMode]);
 
   // Filter enriched boundaries by selected countries
@@ -192,10 +191,10 @@ const MapComponent = () => {
     };
   }, [enrichedBoundaries, selectedCountries]);
 
-  // Transform PDS data based on selected ranges
-  const transformedPdsData = useMemo(() => {
-    return transformPdsData(selectedRanges);
-  }, [selectedRanges, pdsDataLoaded]);
+  // Transform H3 data based on selected year
+  const transformedH3Data = useMemo(() => {
+    return processH3EffortData(pdsH3EffortData, selectedYear);
+  }, [selectedYear, pdsH3EffortData]);
 
   // Calculate metric statistics based on enriched boundaries
   const metricStats = useMemo(() => {
@@ -205,7 +204,6 @@ const MapComponent = () => {
   // Create map layers
   const layers = useMapLayers({
     filteredBoundaries,
-    transformedPdsData,
     selectedMetric,
     metricStats,
     opacity,
@@ -213,25 +211,22 @@ const MapComponent = () => {
     isDarkTheme,
     hoveredFeatureIndex,
     visualizationMode,
-    selectedRanges
+    pdsFishingGroundsData,
+    pdsH3EffortData: transformedH3Data,
+    selectedActivityMetric,
+    activeActivityLayers
   });
 
   // Create tooltip handler
   const getTooltip = useMapTooltip({
     selectedMetric,
+    selectedActivityMetric,
     isDarkTheme,
     metricStats,
     visualizationMode
   });
 
-  // Event handlers
-  const handleThemeChange = useCallback((isDark) => {
-    setIsDarkTheme(isDark);
-  }, []);
 
-  const onViewStateChange = useCallback(({ viewState }) => {
-    setViewState(viewState);
-  }, []);
 
   const onHover = useCallback((info) => {
     if (info.object && info.layer.id === 'wio-regions') {
@@ -245,16 +240,164 @@ const MapComponent = () => {
     setIsSatellite(prev => !prev);
   }, []);
 
-  // Selection handlers
-  const handleRangeToggle = useCallback((range) => {
-    setSelectedRanges(current => {
-      const isSelected = current.some(r => r.min === range.min && r.max === range.max);
-      if (isSelected) {
-        return current.length === 1 ? current : 
-          current.filter(r => r.min !== range.min || r.max !== range.max);
+  const handleSelectedMetricChange = useCallback((metricId) => {
+    setSelectedMetric(metricId);
+    if (metricId.startsWith('fishers_')) {
+      setSelectedFishersMetric(metricId);
+    }
+  }, []);
+
+  const handleFishersMetricChange = useCallback((metricId) => {
+    setSelectedFishersMetric(metricId);
+    setSelectedMetric(metricId);
+  }, []);
+
+  const removeBathymetryLayers = useCallback((map) => {
+    if (!map) return;
+    if (map.getLayer(BATHYMETRY_LABEL_LAYER_ID)) {
+      map.removeLayer(BATHYMETRY_LABEL_LAYER_ID);
+    }
+    if (map.getLayer(BATHYMETRY_LINE_LAYER_ID)) {
+      map.removeLayer(BATHYMETRY_LINE_LAYER_ID);
+    }
+    if (map.getSource(BATHYMETRY_SOURCE_ID)) {
+      map.removeSource(BATHYMETRY_SOURCE_ID);
+    }
+  }, []);
+
+  const ensureBathymetryLayers = useCallback((map) => {
+    if (!map || !map.isStyleLoaded()) return;
+    
+    // Only proceed if layers are actually missing to avoid redundant style updates
+    const hasSource = !!map.getSource(BATHYMETRY_SOURCE_ID);
+    const hasLineLayer = !!map.getLayer(BATHYMETRY_LINE_LAYER_ID);
+    const hasLabelLayer = !!map.getLayer(BATHYMETRY_LABEL_LAYER_ID);
+    
+    if (hasSource && hasLineLayer && hasLabelLayer) return;
+
+    try {
+      if (!hasSource) {
+        map.addSource(BATHYMETRY_SOURCE_ID, {
+          type: 'geojson',
+          data: BATHYMETRY_DATA_PATH
+        });
       }
-      return [...current, range];
-    });
+
+      if (!hasLineLayer) {
+        map.addLayer({
+          id: BATHYMETRY_LINE_LAYER_ID,
+          type: 'line',
+          source: BATHYMETRY_SOURCE_ID,
+          minzoom: 4,
+          paint: {
+            'line-color': [
+              'interpolate',
+              ['linear'],
+              ['get', 'depth_m'],
+              5, '#84d2f6',
+              40, '#55a9df',
+              120, '#2f7eb8',
+              300, '#255c95',
+              1000, '#1e3f72',
+              2000, '#172f58'
+            ],
+            'line-width': [
+              'match',
+              ['get', 'depth_m'],
+              [5, 10, 20, 40, 60, 90, 120, 150, 200, 300, 500, 1000, 2000], 1.5,
+              1
+            ],
+            'line-opacity': isDarkTheme ? 0.65 : 0.5
+          },
+          layout: {
+            'line-join': 'round',
+            'line-cap': 'round'
+          }
+        });
+      }
+
+      if (!hasLabelLayer) {
+        map.addLayer({
+          id: BATHYMETRY_LABEL_LAYER_ID,
+          type: 'symbol',
+          source: BATHYMETRY_SOURCE_ID,
+          minzoom: 8,
+          filter: [
+            'in',
+            ['get', 'depth_m'],
+            ['literal', [10, 40, 90, 200, 500, 1000, 2000]]
+          ],
+          layout: {
+            'text-field': ['get', 'depth_label'],
+            'text-font': ['Open Sans Regular', 'Arial Unicode MS Regular'],
+            'text-size': 11,
+            'text-anchor': 'center',
+            'symbol-placement': 'line',
+            'symbol-spacing': 180,
+            'text-max-angle': 45
+          },
+          paint: {
+            'text-color': isDarkTheme ? '#d9f2ff' : '#154368',
+            'text-halo-color': isDarkTheme ? 'rgba(0,0,0,0.65)' : 'rgba(255,255,255,0.8)',
+            'text-halo-width': 1.5
+          }
+        });
+      }
+    } catch (e) {
+      console.warn('Error adding bathymetry layers:', e);
+    }
+  }, [isDarkTheme]);
+
+  useEffect(() => {
+    const map = mapRef.current?.getMap?.();
+    if (!map) return;
+    if (showBathymetry) {
+      ensureBathymetryLayers(map);
+    } else {
+      removeBathymetryLayers(map);
+      setBathymetryLoading(false);
+    }
+  }, [showBathymetry, ensureBathymetryLayers, removeBathymetryLayers]);
+
+  const handleStyleData = useCallback(() => {
+    const map = mapRef.current?.getMap?.();
+    if (!map || !showBathymetry) return;
+    ensureBathymetryLayers(map);
+  }, [showBathymetry, ensureBathymetryLayers]);
+
+  // Resize map when it becomes active (e.g. returning from Country Insights)
+  useEffect(() => {
+    if (isActive) {
+      const timer = setTimeout(() => {
+        const map = mapRef.current?.getMap?.();
+        if (map) {
+          map.resize();
+          map.triggerRepaint();
+        }
+      }, 100); // Small delay to ensure CSS transition has started
+      return () => clearTimeout(timer);
+    }
+  }, [isActive]);
+
+  const handleMapLoad = useCallback(() => {
+    const map = mapRef.current?.getMap?.();
+    if (!map) return;
+    map.dragPan.enable();
+    map.dragRotate.enable();
+    map.touchZoomRotate.enable();
+    map.touchZoomRotate.disableRotation();
+    map.keyboard.enable();
+    if (showBathymetry) {
+      ensureBathymetryLayers(map);
+    }
+  }, [showBathymetry, ensureBathymetryLayers]);
+
+  // Selection handlers
+  const handleLayerToggle = useCallback((layer) => {
+    setActiveActivityLayers(prev => ({
+      ...prev,
+      [layer]: !prev[layer]
+    }));
   }, []);
 
   const handleCountryToggle = useCallback((country) => {
@@ -267,34 +410,11 @@ const MapComponent = () => {
     });
   }, []);
 
-  // Selection key: level-aware (GAUL1 = country_gaul1, GAUL2 = ADM2_PCODE or country_gaul1_gaul2)
-  const getRegionKey = useCallback(
-    (props) => getRegionKeyFromService(props, gaulLevel),
-    [gaulLevel]
-  );
-
-  const handleRegionSelect = useCallback((region) => {
-    const key = getRegionKey(region.properties);
-    setSelectedRegionsForComparison(prev => {
-      const exists = prev.some(r => getRegionKey(r.properties) === key);
-      if (exists) return prev;
-      return [...prev, region];
-    });
-  }, [getRegionKey]);
-
-  const handleRegionRemove = useCallback((region) => {
-    const key = getRegionKey(region.properties);
-    setSelectedRegionsForComparison(prev =>
-      prev.filter(r => getRegionKey(r.properties) !== key)
-    );
-  }, [getRegionKey]);
-
   const handleRegionClick = useCallback((info) => {
     if (info.object && info.layer.id === 'wio-regions') {
       setSelectedRegion(info.object);
-      handleRegionSelect(info.object);
     }
-  }, [handleRegionSelect]);
+  }, []);
 
   // Get map style (satellite-v9 = bare imagery, no roads/labels)
   const getMapStyle = useCallback(() => {
@@ -337,37 +457,38 @@ const MapComponent = () => {
       width: '100%',
       backgroundColor: isDarkTheme ? '#1a1a1a' : '#f8f9fa',
       display: 'flex',
-      flexDirection: 'column'
+      flexDirection: 'column',
+      transition: 'background-color 0.3s ease'
     }}>
       <Header 
-        isDarkTheme={isDarkTheme} 
-        onThemeChange={handleThemeChange}
         boundaries={enrichedBoundaries}
         timeSeriesData={timeSeriesData}
-        pdsGridsData={pdsGridsData}
+        pdsH3EffortData={pdsH3EffortData}
       />
       
       <div style={{
         position: 'relative',
         flex: '1 1 auto',
-        marginTop: '64px',
         display: 'flex',
-        height: 'calc(100vh - 64px)',
         minHeight: 0
       }}>
         <Sidebar
           isDarkTheme={isDarkTheme}
           isMobile={isMobile}
-          isOpen={true}
+          isOpen={!isMobile}
           boundaries={enrichedBoundaries}
           selectedMetric={selectedMetric}
-          onMetricChange={setSelectedMetric}
-          transformedPdsData={transformedPdsData}
-          selectedRanges={selectedRanges}
-          onRangeToggle={handleRangeToggle}
-          selectedRegions={selectedRegionsForComparison}
-          onRegionSelect={handleRegionSelect}
-          onRegionRemove={handleRegionRemove}
+          onMetricChange={handleSelectedMetricChange}
+          selectedFishersMetric={selectedFishersMetric}
+          onFishersMetricChange={handleFishersMetricChange}
+          transformedH3Data={transformedH3Data}
+          pdsFishingGroundsData={pdsFishingGroundsData}
+          selectedYear={selectedYear}
+          onYearChange={setSelectedYear}
+          selectedActivityMetric={selectedActivityMetric}
+          onActivityMetricChange={setSelectedActivityMetric}
+          activeActivityLayers={activeActivityLayers}
+          onLayerToggle={handleLayerToggle}
           selectedCountries={selectedCountries}
           onCountryToggle={handleCountryToggle}
           gaulLevel={gaulLevel}
@@ -387,24 +508,28 @@ const MapComponent = () => {
           position: 'relative',
           transition: 'margin-left 0.3s ease'
         }}>
-          <DeckGL
-            ref={deckRef}
-            viewState={viewState}
-            onViewStateChange={onViewStateChange}
-            controller={true}
-            layers={layers}
-            getTooltip={getTooltip}
-            onHover={onHover}
-            getCursor={getCursor}
-            onClick={handleRegionClick}
+          <MapGL
+            ref={mapRef}
+            initialViewState={INITIAL_VIEW_STATE}
+            projection="mercator"
+            // Default bearingSnap is 7°: small non-zero bearings (e.g. Kepler ~-2°) get eased to north
+            // after zoom/pan inertia ends. Disable so zoom never "corrects" bearing unexpectedly.
+            bearingSnap={0}
+            mapStyle={getMapStyle()}
+            mapboxAccessToken={MAPBOX_TOKEN}
+            onLoad={handleMapLoad}
+            onStyleData={handleStyleData}
+            style={{ position: 'absolute', width: '100%', height: '100%' }}
           >
-            <MapGL
-              ref={mapRef}
-              mapStyle={getMapStyle()}
-              mapboxAccessToken={MAPBOX_TOKEN}
-              style={{ position: 'absolute', width: '100%', height: '100%' }}
+            <DeckGLOverlay
+              interleaved={true}
+              layers={layers}
+              getTooltip={getTooltip}
+              onHover={onHover}
+              onClick={handleRegionClick}
+              getCursor={getCursor}
             />
-          </DeckGL>
+          </MapGL>
 
           <div style={{
             position: 'absolute',
@@ -416,27 +541,66 @@ const MapComponent = () => {
               isDarkTheme={isDarkTheme}
               grades={metricStats.grades}
               selectedMetric={selectedMetric}
-              colorRange={COLOR_RANGE}
-              hasGridData={transformedPdsData.length > 0}
+              selectedActivityMetric={selectedActivityMetric}
+              hasGridData={transformedH3Data.length > 0 || pdsFishingGroundsData?.features?.length > 0}
+              pdsH3EffortData={transformedH3Data}
+              pdsFishingGroundsData={pdsFishingGroundsData}
+              activeActivityLayers={activeActivityLayers}
               visualizationMode={visualizationMode}
+              showBathymetry={showBathymetry}
+              dataFreshnessLabel={dataFreshnessLabel}
             />
           </div>
 
-          <MapStyleToggle
-            isDarkTheme={isDarkTheme}
-            isSatellite={isSatellite}
-            onToggle={handleMapStyleToggle}
-          />
+          <div
+            style={{
+              position: 'absolute',
+              top: '24px',
+              left: '24px',
+              zIndex: 1000,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px'
+            }}
+          >
+            <MapStyleToggle
+              isDarkTheme={isDarkTheme}
+              isSatellite={isSatellite}
+              onToggle={handleMapStyleToggle}
+            />
 
-          <TimeRangeControl
-            timeSeriesData={timeSeriesData}
-            dateRange={dateRange}
-            onDateRangeChange={handleDateRangeChange}
-            isDarkTheme={isDarkTheme}
-            isMobile={isMobile}
-          />
+            <button
+              onClick={() => setShowBathymetry((prev) => !prev)}
+              title={showBathymetry ? 'Hide bathymetry contours' : 'Show bathymetry contours'}
+              className="relative w-12 h-12 p-2 glass-panel rounded-xl flex items-center justify-center transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/10 group cursor-pointer"
+              aria-label={showBathymetry ? 'Hide bathymetry contours' : 'Show bathymetry contours'}
+            >
+              <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl pointer-events-none" />
+              <Waves
+                size={22}
+                strokeWidth={2}
+                className={`${showBathymetry ? 'text-primary' : 'text-foreground/70'} group-hover:text-primary transition-colors relative z-10`}
+              />
+            </button>
 
-          {selectedRegion && (
+            <MapClarityPanel
+              isDarkTheme={isDarkTheme}
+              selectedActivityMetric={selectedActivityMetric}
+              showBathymetry={showBathymetry}
+              h3Records={transformedH3Data?.length ?? 0}
+              groundsFeatures={pdsFishingGroundsData?.features?.length ?? 0}
+            />
+          </div>
+
+          {bathymetryLoading && (
+            <div
+              className="px-3 py-1.5 rounded-lg glass-panel z-[1000] text-xs text-foreground/80"
+              style={{ position: 'absolute', top: '132px', left: '24px' }}
+            >
+              Loading bathymetry...
+            </div>
+          )}
+          {selectedRegion && !selectedMetric.startsWith('fishers_') && selectedMetric !== 'boats_total' && (
             <Suspense fallback={<div>Loading distribution histogram...</div>}>
               <DistributionHistogram
                 isDarkTheme={isDarkTheme}
@@ -448,7 +612,7 @@ const MapComponent = () => {
                 onClose={() => setSelectedRegion(null)}
                 style={{
                   position: 'absolute',
-                  bottom: '24px',
+                  bottom: '12px',
                   left: '50%',
                   transform: 'translateX(-50%)',
                   zIndex: 1001

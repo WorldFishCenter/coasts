@@ -1,0 +1,2774 @@
+[
+  {
+    "h3_index": "897b4a10153ffff",
+    "country": "kenya",
+    "cpue": 119.211175,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 39.394778,
+    "lat": -4.685985
+  },
+  {
+    "h3_index": "897b4a102c3ffff",
+    "country": "kenya",
+    "cpue": 0.214645,
+    "species": "Clp",
+    "n_trips": 4,
+    "lon": 39.429681,
+    "lat": -4.672927
+  },
+  {
+    "h3_index": "897b4a10633ffff",
+    "country": "kenya",
+    "cpue": 125.984252,
+    "species": "Clp",
+    "n_trips": 4,
+    "lon": 39.426203,
+    "lat": -4.690013
+  },
+  {
+    "h3_index": "897b4a106afffff",
+    "country": "kenya",
+    "cpue": 292.230383,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 39.42452,
+    "lat": -4.69282
+  },
+  {
+    "h3_index": "897b4a10893ffff",
+    "country": "kenya",
+    "cpue": 9.319109,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 39.355096,
+    "lat": -4.67878
+  },
+  {
+    "h3_index": "897b4a10b83ffff",
+    "country": "kenya",
+    "cpue": 1.638225,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 39.342079,
+    "lat": -4.655342
+  },
+  {
+    "h3_index": "897b4a10b9bffff",
+    "country": "kenya",
+    "cpue": 0.245839,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 39.345391,
+    "lat": -4.655465
+  },
+  {
+    "h3_index": "897b4a1156bffff",
+    "country": "kenya",
+    "cpue": 220.112631,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 39.444716,
+    "lat": -4.659138
+  },
+  {
+    "h3_index": "897b4a1156fffff",
+    "country": "kenya",
+    "cpue": 96.883497,
+    "species": "Clp",
+    "n_trips": 4,
+    "lon": 39.441406,
+    "lat": -4.659016
+  },
+  {
+    "h3_index": "897b4a162d7ffff",
+    "country": "kenya",
+    "cpue": 174.672215,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 39.276683,
+    "lat": -4.730422
+  },
+  {
+    "h3_index": "897b4a17413ffff",
+    "country": "kenya",
+    "cpue": 71.271982,
+    "species": "Clp",
+    "n_trips": 4,
+    "lon": 39.318135,
+    "lat": -4.72908
+  },
+  {
+    "h3_index": "897b4a1741bffff",
+    "country": "kenya",
+    "cpue": 132.092529,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 39.319821,
+    "lat": -4.726271
+  },
+  {
+    "h3_index": "897b4a174c7ffff",
+    "country": "kenya",
+    "cpue": 308.832131,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 39.321448,
+    "lat": -4.729202
+  },
+  {
+    "h3_index": "897b4a17623ffff",
+    "country": "kenya",
+    "cpue": 258.571043,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 39.320054,
+    "lat": -4.703316
+  },
+  {
+    "h3_index": "897b4a19107ffff",
+    "country": "kenya",
+    "cpue": 9.506854,
+    "species": "Clp",
+    "n_trips": 5,
+    "lon": 39.512296,
+    "lat": -4.512559
+  },
+  {
+    "h3_index": "897b4a1910fffff",
+    "country": "kenya",
+    "cpue": 59.709281,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 39.513977,
+    "lat": -4.509756
+  },
+  {
+    "h3_index": "897b4a191abffff",
+    "country": "kenya",
+    "cpue": 8.142313,
+    "species": "Clp",
+    "n_trips": 7,
+    "lon": 39.510616,
+    "lat": -4.515362
+  },
+  {
+    "h3_index": "897b4a499d7ffff",
+    "country": "kenya",
+    "cpue": 1513.043478,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 39.710983,
+    "lat": -4.085171
+  },
+  {
+    "h3_index": "897b5916213ffff",
+    "country": "kenya",
+    "cpue": 25.892677,
+    "species": "Clp",
+    "n_trips": 5,
+    "lon": 39.847015,
+    "lat": -3.768009
+  },
+  {
+    "h3_index": "897b591621bffff",
+    "country": "kenya",
+    "cpue": 14.459471,
+    "species": "Clp",
+    "n_trips": 5,
+    "lon": 39.848682,
+    "lat": -3.765224
+  },
+  {
+    "h3_index": "897b5916257ffff",
+    "country": "kenya",
+    "cpue": 47.361691,
+    "species": "Clp",
+    "n_trips": 4,
+    "lon": 39.85035,
+    "lat": -3.762439
+  },
+  {
+    "h3_index": "897b591629bffff",
+    "country": "kenya",
+    "cpue": 34.42184,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 39.850259,
+    "lat": -3.773836
+  },
+  {
+    "h3_index": "897b591662bffff",
+    "country": "kenya",
+    "cpue": 117.707853,
+    "species": "Clp",
+    "n_trips": 4,
+    "lon": 39.850213,
+    "lat": -3.779535
+  },
+  {
+    "h3_index": "897b591663bffff",
+    "country": "kenya",
+    "cpue": 10.101682,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 39.851835,
+    "lat": -3.782449
+  },
+  {
+    "h3_index": "897b5916667ffff",
+    "country": "kenya",
+    "cpue": 31.344565,
+    "species": "Clp",
+    "n_trips": 5,
+    "lon": 39.851881,
+    "lat": -3.77675
+  },
+  {
+    "h3_index": "897b591666fffff",
+    "country": "kenya",
+    "cpue": 28.114351,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 39.853548,
+    "lat": -3.773965
+  },
+  {
+    "h3_index": "897b5916677ffff",
+    "country": "kenya",
+    "cpue": 80.880374,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 39.853503,
+    "lat": -3.779664
+  },
+  {
+    "h3_index": "897b59166afffff",
+    "country": "kenya",
+    "cpue": 22.362706,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 39.8485,
+    "lat": -3.788019
+  },
+  {
+    "h3_index": "897b5917173ffff",
+    "country": "kenya",
+    "cpue": 19.580571,
+    "species": "Clp",
+    "n_trips": 4,
+    "lon": 39.857109,
+    "lat": -3.739907
+  },
+  {
+    "h3_index": "897b591717bffff",
+    "country": "kenya",
+    "cpue": 12.262946,
+    "species": "Clp",
+    "n_trips": 4,
+    "lon": 39.858776,
+    "lat": -3.737123
+  },
+  {
+    "h3_index": "897b5917333ffff",
+    "country": "kenya",
+    "cpue": 42.963168,
+    "species": "Clp",
+    "n_trips": 6,
+    "lon": 39.862155,
+    "lat": -3.725858
+  },
+  {
+    "h3_index": "897b591733bffff",
+    "country": "kenya",
+    "cpue": 16.229956,
+    "species": "Clp",
+    "n_trips": 4,
+    "lon": 39.863822,
+    "lat": -3.723074
+  },
+  {
+    "h3_index": "897b59173a7ffff",
+    "country": "kenya",
+    "cpue": 20.415021,
+    "species": "Clp",
+    "n_trips": 4,
+    "lon": 39.858822,
+    "lat": -3.731426
+  },
+  {
+    "h3_index": "897b59173afffff",
+    "country": "kenya",
+    "cpue": 33.035703,
+    "species": "Clp",
+    "n_trips": 5,
+    "lon": 39.860489,
+    "lat": -3.728642
+  },
+  {
+    "h3_index": "897b5984a03ffff",
+    "country": "kenya",
+    "cpue": 67.164463,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 39.774647,
+    "lat": -3.961985
+  },
+  {
+    "h3_index": "897b5984a13ffff",
+    "country": "kenya",
+    "cpue": 59.011275,
+    "species": "Clp",
+    "n_trips": 10,
+    "lon": 39.77627,
+    "lat": -3.964902
+  },
+  {
+    "h3_index": "897b5984a1bffff",
+    "country": "kenya",
+    "cpue": 13.876612,
+    "species": "Clp",
+    "n_trips": 7,
+    "lon": 39.77794,
+    "lat": -3.962113
+  },
+  {
+    "h3_index": "897b5984a43ffff",
+    "country": "kenya",
+    "cpue": 22.817706,
+    "species": "Clp",
+    "n_trips": 7,
+    "lon": 39.781281,
+    "lat": -3.956534
+  },
+  {
+    "h3_index": "897b5984a4bffff",
+    "country": "kenya",
+    "cpue": 74.282367,
+    "species": "Clp",
+    "n_trips": 9,
+    "lon": 39.782951,
+    "lat": -3.953745
+  },
+  {
+    "h3_index": "897b5984a53ffff",
+    "country": "kenya",
+    "cpue": 16.062349,
+    "species": "Clp",
+    "n_trips": 18,
+    "lon": 39.782904,
+    "lat": -3.959451
+  },
+  {
+    "h3_index": "897b5984a57ffff",
+    "country": "kenya",
+    "cpue": 27.622951,
+    "species": "Clp",
+    "n_trips": 6,
+    "lon": 39.77961,
+    "lat": -3.959323
+  },
+  {
+    "h3_index": "897b5984a5bffff",
+    "country": "kenya",
+    "cpue": 18.838556,
+    "species": "Clp",
+    "n_trips": 18,
+    "lon": 39.784574,
+    "lat": -3.956662
+  },
+  {
+    "h3_index": "897b5984a83ffff",
+    "country": "kenya",
+    "cpue": 13.198045,
+    "species": "Clp",
+    "n_trips": 5,
+    "lon": 39.776222,
+    "lat": -3.970609
+  },
+  {
+    "h3_index": "897b5984a87ffff",
+    "country": "kenya",
+    "cpue": 10.485292,
+    "species": "Clp",
+    "n_trips": 23,
+    "lon": 39.772929,
+    "lat": -3.970482
+  },
+  {
+    "h3_index": "897b5984a8bffff",
+    "country": "kenya",
+    "cpue": 24.461438,
+    "species": "Clp",
+    "n_trips": 9,
+    "lon": 39.777893,
+    "lat": -3.967819
+  },
+  {
+    "h3_index": "897b5984a8fffff",
+    "country": "kenya",
+    "cpue": 10.783705,
+    "species": "Clp",
+    "n_trips": 21,
+    "lon": 39.774599,
+    "lat": -3.967692
+  },
+  {
+    "h3_index": "897b5984a9bffff",
+    "country": "kenya",
+    "cpue": 9.072445,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 39.779516,
+    "lat": -3.970736
+  },
+  {
+    "h3_index": "897b5984abbffff",
+    "country": "kenya",
+    "cpue": 22.654639,
+    "species": "Clp",
+    "n_trips": 7,
+    "lon": 39.771306,
+    "lat": -3.967564
+  },
+  {
+    "h3_index": "897b5984ac3ffff",
+    "country": "kenya",
+    "cpue": 2.38422,
+    "species": "Clp",
+    "n_trips": 9,
+    "lon": 39.782857,
+    "lat": -3.965157
+  },
+  {
+    "h3_index": "897b5984ac7ffff",
+    "country": "kenya",
+    "cpue": 95.848866,
+    "species": "Clp",
+    "n_trips": 5,
+    "lon": 39.779563,
+    "lat": -3.96503
+  },
+  {
+    "h3_index": "897b5984acbffff",
+    "country": "kenya",
+    "cpue": 1.985503,
+    "species": "Clp",
+    "n_trips": 11,
+    "lon": 39.784527,
+    "lat": -3.962368
+  },
+  {
+    "h3_index": "897b5984acfffff",
+    "country": "kenya",
+    "cpue": 25.252494,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 39.781234,
+    "lat": -3.96224
+  },
+  {
+    "h3_index": "897b5984ad7ffff",
+    "country": "kenya",
+    "cpue": 87.724138,
+    "species": "Clp",
+    "n_trips": 5,
+    "lon": 39.781186,
+    "lat": -3.967947
+  },
+  {
+    "h3_index": "897b5984b43ffff",
+    "country": "kenya",
+    "cpue": 9.555202,
+    "species": "Clp",
+    "n_trips": 11,
+    "lon": 39.758226,
+    "lat": -3.955641
+  },
+  {
+    "h3_index": "897b5984c27ffff",
+    "country": "kenya",
+    "cpue": 3.343727,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 39.762809,
+    "lat": -3.998636
+  },
+  {
+    "h3_index": "897b5984d57ffff",
+    "country": "kenya",
+    "cpue": 1.794189,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 39.756221,
+    "lat": -3.998382
+  },
+  {
+    "h3_index": "897b5984d5bffff",
+    "country": "kenya",
+    "cpue": 3.627154,
+    "species": "Clp",
+    "n_trips": 5,
+    "lon": 39.761186,
+    "lat": -3.995719
+  },
+  {
+    "h3_index": "897b5984d83ffff",
+    "country": "kenya",
+    "cpue": 1.121437,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 39.752831,
+    "lat": -4.009671
+  },
+  {
+    "h3_index": "897b5984dcfffff",
+    "country": "kenya",
+    "cpue": 5.373548,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 39.757844,
+    "lat": -4.001299
+  },
+  {
+    "h3_index": "897b5985827ffff",
+    "country": "kenya",
+    "cpue": 182.5,
+    "species": "Clp",
+    "n_trips": 5,
+    "lon": 39.797887,
+    "lat": -3.940055
+  },
+  {
+    "h3_index": "897b598591bffff",
+    "country": "kenya",
+    "cpue": 39.984598,
+    "species": "Clp",
+    "n_trips": 4,
+    "lon": 39.789631,
+    "lat": -3.942589
+  },
+  {
+    "h3_index": "897b5985943ffff",
+    "country": "kenya",
+    "cpue": 110.173503,
+    "species": "Clp",
+    "n_trips": 10,
+    "lon": 39.792971,
+    "lat": -3.937011
+  },
+  {
+    "h3_index": "897b598594bffff",
+    "country": "kenya",
+    "cpue": 161.948568,
+    "species": "Clp",
+    "n_trips": 10,
+    "lon": 39.794641,
+    "lat": -3.934222
+  },
+  {
+    "h3_index": "897b598594fffff",
+    "country": "kenya",
+    "cpue": 213.906977,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 39.791348,
+    "lat": -3.934094
+  },
+  {
+    "h3_index": "897b5985953ffff",
+    "country": "kenya",
+    "cpue": 240.253797,
+    "species": "Clp",
+    "n_trips": 9,
+    "lon": 39.794594,
+    "lat": -3.939927
+  },
+  {
+    "h3_index": "897b5985957ffff",
+    "country": "kenya",
+    "cpue": 68.352663,
+    "species": "Clp",
+    "n_trips": 7,
+    "lon": 39.791301,
+    "lat": -3.9398
+  },
+  {
+    "h3_index": "897b598595bffff",
+    "country": "kenya",
+    "cpue": 192.325376,
+    "species": "Clp",
+    "n_trips": 7,
+    "lon": 39.796264,
+    "lat": -3.937138
+  },
+  {
+    "h3_index": "897b5985983ffff",
+    "country": "kenya",
+    "cpue": 31.801943,
+    "species": "Clp",
+    "n_trips": 5,
+    "lon": 39.787914,
+    "lat": -3.951083
+  },
+  {
+    "h3_index": "897b5985987ffff",
+    "country": "kenya",
+    "cpue": 66.331306,
+    "species": "Clp",
+    "n_trips": 4,
+    "lon": 39.784621,
+    "lat": -3.950956
+  },
+  {
+    "h3_index": "897b598598bffff",
+    "country": "kenya",
+    "cpue": 96.956978,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 39.789584,
+    "lat": -3.948294
+  },
+  {
+    "h3_index": "897b598598fffff",
+    "country": "kenya",
+    "cpue": 374.72119,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 39.786291,
+    "lat": -3.948167
+  },
+  {
+    "h3_index": "897b5985993ffff",
+    "country": "kenya",
+    "cpue": 92.806327,
+    "species": "Clp",
+    "n_trips": 5,
+    "lon": 39.789537,
+    "lat": -3.954
+  },
+  {
+    "h3_index": "897b5985997ffff",
+    "country": "kenya",
+    "cpue": 65.24464,
+    "species": "Clp",
+    "n_trips": 19,
+    "lon": 39.786244,
+    "lat": -3.953872
+  },
+  {
+    "h3_index": "897b59859c7ffff",
+    "country": "kenya",
+    "cpue": 29.272916,
+    "species": "Clp",
+    "n_trips": 5,
+    "lon": 39.791254,
+    "lat": -3.945505
+  },
+  {
+    "h3_index": "897b59859cbffff",
+    "country": "kenya",
+    "cpue": 68.752399,
+    "species": "Clp",
+    "n_trips": 5,
+    "lon": 39.796217,
+    "lat": -3.942844
+  },
+  {
+    "h3_index": "897b59859cfffff",
+    "country": "kenya",
+    "cpue": 29.478739,
+    "species": "Clp",
+    "n_trips": 13,
+    "lon": 39.792924,
+    "lat": -3.942716
+  },
+  {
+    "h3_index": "897b5985b03ffff",
+    "country": "kenya",
+    "cpue": 3.892539,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 39.798027,
+    "lat": -3.92294
+  },
+  {
+    "h3_index": "897b5985b07ffff",
+    "country": "kenya",
+    "cpue": 47.368421,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 39.794734,
+    "lat": -3.922812
+  },
+  {
+    "h3_index": "897b5985b0bffff",
+    "country": "kenya",
+    "cpue": 355.031368,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 39.799697,
+    "lat": -3.920152
+  },
+  {
+    "h3_index": "897b5985b0fffff",
+    "country": "kenya",
+    "cpue": 34.993512,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 39.796404,
+    "lat": -3.920024
+  },
+  {
+    "h3_index": "897b5985b17ffff",
+    "country": "kenya",
+    "cpue": 121.658537,
+    "species": "Clp",
+    "n_trips": 6,
+    "lon": 39.796357,
+    "lat": -3.925728
+  },
+  {
+    "h3_index": "897b5985b1bffff",
+    "country": "kenya",
+    "cpue": 175.536151,
+    "species": "Clp",
+    "n_trips": 4,
+    "lon": 39.80132,
+    "lat": -3.923068
+  },
+  {
+    "h3_index": "897b5985b83ffff",
+    "country": "kenya",
+    "cpue": 72.088091,
+    "species": "Clp",
+    "n_trips": 4,
+    "lon": 39.799603,
+    "lat": -3.931561
+  },
+  {
+    "h3_index": "897b5985b87ffff",
+    "country": "kenya",
+    "cpue": 350.17341,
+    "species": "Clp",
+    "n_trips": 5,
+    "lon": 39.796311,
+    "lat": -3.931433
+  },
+  {
+    "h3_index": "897b5985b8fffff",
+    "country": "kenya",
+    "cpue": 40.102803,
+    "species": "Clp",
+    "n_trips": 6,
+    "lon": 39.79798,
+    "lat": -3.928645
+  },
+  {
+    "h3_index": "897b5985b97ffff",
+    "country": "kenya",
+    "cpue": 177.866157,
+    "species": "Clp",
+    "n_trips": 4,
+    "lon": 39.797934,
+    "lat": -3.93435
+  },
+  {
+    "h3_index": "897b5985babffff",
+    "country": "kenya",
+    "cpue": 40.425944,
+    "species": "Clp",
+    "n_trips": 4,
+    "lon": 39.793065,
+    "lat": -3.925601
+  },
+  {
+    "h3_index": "897b5985bb3ffff",
+    "country": "kenya",
+    "cpue": 35.489009,
+    "species": "Clp",
+    "n_trips": 5,
+    "lon": 39.793018,
+    "lat": -3.931306
+  },
+  {
+    "h3_index": "897b5985bbbffff",
+    "country": "kenya",
+    "cpue": 22.819058,
+    "species": "Clp",
+    "n_trips": 4,
+    "lon": 39.794688,
+    "lat": -3.928517
+  },
+  {
+    "h3_index": "897b5985d27ffff",
+    "country": "kenya",
+    "cpue": 29.828449,
+    "species": "Clp",
+    "n_trips": 10,
+    "lon": 39.786197,
+    "lat": -3.959578
+  },
+  {
+    "h3_index": "897b5985d2fffff",
+    "country": "kenya",
+    "cpue": 137.211155,
+    "species": "Clp",
+    "n_trips": 4,
+    "lon": 39.787867,
+    "lat": -3.956789
+  },
+  {
+    "h3_index": "897b5985d37ffff",
+    "country": "kenya",
+    "cpue": 15.914887,
+    "species": "Clp",
+    "n_trips": 5,
+    "lon": 39.78782,
+    "lat": -3.962495
+  },
+  {
+    "h3_index": "897b59bb463ffff",
+    "country": "kenya",
+    "cpue": 5.578743,
+    "species": "Clp",
+    "n_trips": 4,
+    "lon": 39.808137,
+    "lat": -3.894803
+  },
+  {
+    "h3_index": "897b59bb473ffff",
+    "country": "kenya",
+    "cpue": 3.062036,
+    "species": "Clp",
+    "n_trips": 5,
+    "lon": 39.80976,
+    "lat": -3.897719
+  },
+  {
+    "h3_index": "897b59bb47bffff",
+    "country": "kenya",
+    "cpue": 4.507482,
+    "species": "Clp",
+    "n_trips": 5,
+    "lon": 39.811429,
+    "lat": -3.894931
+  },
+  {
+    "h3_index": "897b5b0a80bffff",
+    "country": "kenya",
+    "cpue": 250.733138,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 40.508479,
+    "lat": -2.538793
+  },
+  {
+    "h3_index": "897b5b0a81bffff",
+    "country": "kenya",
+    "cpue": 68.469412,
+    "species": "Clp",
+    "n_trips": 6,
+    "lon": 40.510094,
+    "lat": -2.541683
+  },
+  {
+    "h3_index": "897b5b0a843ffff",
+    "country": "kenya",
+    "cpue": 266.130374,
+    "species": "Clp",
+    "n_trips": 5,
+    "lon": 40.513382,
+    "lat": -2.536181
+  },
+  {
+    "h3_index": "897b5b0a847ffff",
+    "country": "kenya",
+    "cpue": 297.890752,
+    "species": "Clp",
+    "n_trips": 4,
+    "lon": 40.510123,
+    "lat": -2.536042
+  },
+  {
+    "h3_index": "897b5b0a853ffff",
+    "country": "kenya",
+    "cpue": 345.789474,
+    "species": "Clp",
+    "n_trips": 6,
+    "lon": 40.514996,
+    "lat": -2.539072
+  },
+  {
+    "h3_index": "897b5b0a857ffff",
+    "country": "kenya",
+    "cpue": 76.21677,
+    "species": "Clp",
+    "n_trips": 10,
+    "lon": 40.511738,
+    "lat": -2.538932
+  },
+  {
+    "h3_index": "897b5b0a8c3ffff",
+    "country": "kenya",
+    "cpue": 10.585784,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 40.514966,
+    "lat": -2.544713
+  },
+  {
+    "h3_index": "897b5b0a8cfffff",
+    "country": "kenya",
+    "cpue": 37.573646,
+    "species": "Clp",
+    "n_trips": 7,
+    "lon": 40.513352,
+    "lat": -2.541822
+  },
+  {
+    "h3_index": "897b5b0a8dbffff",
+    "country": "kenya",
+    "cpue": 20.256978,
+    "species": "Clp",
+    "n_trips": 4,
+    "lon": 40.518225,
+    "lat": -2.544852
+  },
+  {
+    "h3_index": "897b5b0aa9bffff",
+    "country": "kenya",
+    "cpue": 10.153574,
+    "species": "Clp",
+    "n_trips": 7,
+    "lon": 40.523185,
+    "lat": -2.530959
+  },
+  {
+    "h3_index": "897b5b0ac4bffff",
+    "country": "kenya",
+    "cpue": 30.513977,
+    "species": "Clp",
+    "n_trips": 5,
+    "lon": 40.526326,
+    "lat": -2.553662
+  },
+  {
+    "h3_index": "897b5b0ac6bffff",
+    "country": "kenya",
+    "cpue": 46.256345,
+    "species": "Clp",
+    "n_trips": 4,
+    "lon": 40.518195,
+    "lat": -2.550494
+  },
+  {
+    "h3_index": "897b5b0ae23ffff",
+    "country": "kenya",
+    "cpue": 488.227425,
+    "species": "Clp",
+    "n_trips": 4,
+    "lon": 40.521512,
+    "lat": -2.53935
+  },
+  {
+    "h3_index": "897b5b0ae33ffff",
+    "country": "kenya",
+    "cpue": 98.845714,
+    "species": "Clp",
+    "n_trips": 5,
+    "lon": 40.523127,
+    "lat": -2.54224
+  },
+  {
+    "h3_index": "897b5b0ae37ffff",
+    "country": "kenya",
+    "cpue": 24.94933,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 40.519869,
+    "lat": -2.542101
+  },
+  {
+    "h3_index": "897b5b0ae3bffff",
+    "country": "kenya",
+    "cpue": 123.270978,
+    "species": "Clp",
+    "n_trips": 4,
+    "lon": 40.52477,
+    "lat": -2.53949
+  },
+  {
+    "h3_index": "897b5b0ae47ffff",
+    "country": "kenya",
+    "cpue": 70.43552,
+    "species": "Clp",
+    "n_trips": 12,
+    "lon": 40.53293,
+    "lat": -2.537017
+  },
+  {
+    "h3_index": "897b5b0ae6fffff",
+    "country": "kenya",
+    "cpue": 75.481145,
+    "species": "Clp",
+    "n_trips": 4,
+    "lon": 40.526443,
+    "lat": -2.531098
+  },
+  {
+    "h3_index": "897b5b0ae73ffff",
+    "country": "kenya",
+    "cpue": 35.015591,
+    "species": "Clp",
+    "n_trips": 7,
+    "lon": 40.529672,
+    "lat": -2.536878
+  },
+  {
+    "h3_index": "897b5b0ae7bffff",
+    "country": "kenya",
+    "cpue": 99.298685,
+    "species": "Clp",
+    "n_trips": 11,
+    "lon": 40.531315,
+    "lat": -2.534127
+  },
+  {
+    "h3_index": "897b5b0ae87ffff",
+    "country": "kenya",
+    "cpue": 25.385619,
+    "species": "Clp",
+    "n_trips": 6,
+    "lon": 40.52797,
+    "lat": -2.550911
+  },
+  {
+    "h3_index": "897b5b0ae97ffff",
+    "country": "kenya",
+    "cpue": 38.236473,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 40.529584,
+    "lat": -2.553802
+  },
+  {
+    "h3_index": "897b5b0aea3ffff",
+    "country": "kenya",
+    "cpue": 158.554958,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 40.523097,
+    "lat": -2.547882
+  },
+  {
+    "h3_index": "897b5b0aea7ffff",
+    "country": "kenya",
+    "cpue": 17.438499,
+    "species": "Clp",
+    "n_trips": 6,
+    "lon": 40.519839,
+    "lat": -2.547742
+  },
+  {
+    "h3_index": "897b5b0aeabffff",
+    "country": "kenya",
+    "cpue": 6.128007,
+    "species": "Clp",
+    "n_trips": 4,
+    "lon": 40.524741,
+    "lat": -2.545131
+  },
+  {
+    "h3_index": "897b5b0aeafffff",
+    "country": "kenya",
+    "cpue": 24.841772,
+    "species": "Clp",
+    "n_trips": 5,
+    "lon": 40.521483,
+    "lat": -2.544991
+  },
+  {
+    "h3_index": "897b5b0aebbffff",
+    "country": "kenya",
+    "cpue": 111.929438,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 40.526355,
+    "lat": -2.548021
+  },
+  {
+    "h3_index": "897b5bc224bffff",
+    "country": "kenya",
+    "cpue": 2183.522727,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 40.901239,
+    "lat": -2.826255
+  },
+  {
+    "h3_index": "897b5bc3183ffff",
+    "country": "kenya",
+    "cpue": 13.038229,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 40.906129,
+    "lat": -2.823636
+  },
+  {
+    "h3_index": "897b5bc3187ffff",
+    "country": "kenya",
+    "cpue": 38.269734,
+    "species": "Clp",
+    "n_trips": 4,
+    "lon": 40.902876,
+    "lat": -2.8235
+  },
+  {
+    "h3_index": "897b5bc3197ffff",
+    "country": "kenya",
+    "cpue": 622.348178,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 40.904492,
+    "lat": -2.82639
+  },
+  {
+    "h3_index": "897b5bd56b7ffff",
+    "country": "kenya",
+    "cpue": 189.461024,
+    "species": "Clp",
+    "n_trips": 3,
+    "lon": 40.850512,
+    "lat": -2.90039
+  },
+  {
+    "h3_index": "897a7481383ffff",
+    "country": "kenya",
+    "cpue": 18.203335,
+    "species": "Mzz",
+    "n_trips": 8,
+    "lon": 41.147036,
+    "lat": -2.065739
+  },
+  {
+    "h3_index": "897a7481393ffff",
+    "country": "kenya",
+    "cpue": 15.846995,
+    "species": "Mzz",
+    "n_trips": 7,
+    "lon": 41.148647,
+    "lat": -2.068616
+  },
+  {
+    "h3_index": "897a7481397ffff",
+    "country": "kenya",
+    "cpue": 4.174573,
+    "species": "Mzz",
+    "n_trips": 11,
+    "lon": 41.14541,
+    "lat": -2.068473
+  },
+  {
+    "h3_index": "897a748139bffff",
+    "country": "kenya",
+    "cpue": 2.611008,
+    "species": "Mzz",
+    "n_trips": 6,
+    "lon": 41.150273,
+    "lat": -2.065882
+  },
+  {
+    "h3_index": "897a748449bffff",
+    "country": "kenya",
+    "cpue": 10.783242,
+    "species": "Mzz",
+    "n_trips": 3,
+    "lon": 40.968607,
+    "lat": -2.136484
+  },
+  {
+    "h3_index": "897b4a10067ffff",
+    "country": "kenya",
+    "cpue": 4.631052,
+    "species": "Mzz",
+    "n_trips": 3,
+    "lon": 39.404767,
+    "lat": -4.680615
+  },
+  {
+    "h3_index": "897b4a10153ffff",
+    "country": "kenya",
+    "cpue": 10.649137,
+    "species": "Mzz",
+    "n_trips": 3,
+    "lon": 39.394778,
+    "lat": -4.685985
+  },
+  {
+    "h3_index": "897b4a102c3ffff",
+    "country": "kenya",
+    "cpue": 0.670766,
+    "species": "Mzz",
+    "n_trips": 4,
+    "lon": 39.429681,
+    "lat": -4.672927
+  },
+  {
+    "h3_index": "897b4a10893ffff",
+    "country": "kenya",
+    "cpue": 6.15626,
+    "species": "Mzz",
+    "n_trips": 3,
+    "lon": 39.355096,
+    "lat": -4.67878
+  },
+  {
+    "h3_index": "897b4a10b83ffff",
+    "country": "kenya",
+    "cpue": 15.358362,
+    "species": "Mzz",
+    "n_trips": 3,
+    "lon": 39.342079,
+    "lat": -4.655342
+  },
+  {
+    "h3_index": "897b4a10b9bffff",
+    "country": "kenya",
+    "cpue": 1.321383,
+    "species": "Mzz",
+    "n_trips": 3,
+    "lon": 39.345391,
+    "lat": -4.655465
+  },
+  {
+    "h3_index": "897b4a10d1bffff",
+    "country": "kenya",
+    "cpue": 4.419914,
+    "species": "Mzz",
+    "n_trips": 3,
+    "lon": 39.343417,
+    "lat": -4.686958
+  },
+  {
+    "h3_index": "897b4a1156bffff",
+    "country": "kenya",
+    "cpue": 7.240547,
+    "species": "Mzz",
+    "n_trips": 3,
+    "lon": 39.444716,
+    "lat": -4.659138
+  },
+  {
+    "h3_index": "897b4a1156fffff",
+    "country": "kenya",
+    "cpue": 2.509935,
+    "species": "Mzz",
+    "n_trips": 4,
+    "lon": 39.441406,
+    "lat": -4.659016
+  },
+  {
+    "h3_index": "897b4a191b7ffff",
+    "country": "kenya",
+    "cpue": 6.903164,
+    "species": "Mzz",
+    "n_trips": 3,
+    "lon": 39.507256,
+    "lat": -4.520968
+  },
+  {
+    "h3_index": "897b594094fffff",
+    "country": "kenya",
+    "cpue": 56.285534,
+    "species": "Mzz",
+    "n_trips": 3,
+    "lon": 40.152641,
+    "lat": -3.290941
+  },
+  {
+    "h3_index": "897b59409a7ffff",
+    "country": "kenya",
+    "cpue": 23.510866,
+    "species": "Mzz",
+    "n_trips": 3,
+    "lon": 40.1378,
+    "lat": -3.304535
+  },
+  {
+    "h3_index": "897b5940b87ffff",
+    "country": "kenya",
+    "cpue": 488.183981,
+    "species": "Mzz",
+    "n_trips": 3,
+    "lon": 40.157574,
+    "lat": -3.288303
+  },
+  {
+    "h3_index": "897b5940d67ffff",
+    "country": "kenya",
+    "cpue": 24.766273,
+    "species": "Mzz",
+    "n_trips": 4,
+    "lon": 40.154146,
+    "lat": -3.310875
+  },
+  {
+    "h3_index": "897b5940d6fffff",
+    "country": "kenya",
+    "cpue": 42.250978,
+    "species": "Mzz",
+    "n_trips": 3,
+    "lon": 40.155803,
+    "lat": -3.308103
+  },
+  {
+    "h3_index": "897b594731bffff",
+    "country": "kenya",
+    "cpue": 104.392324,
+    "species": "Mzz",
+    "n_trips": 3,
+    "lon": 40.116401,
+    "lat": -3.317866
+  },
+  {
+    "h3_index": "897b5984a13ffff",
+    "country": "kenya",
+    "cpue": 0.446041,
+    "species": "Mzz",
+    "n_trips": 10,
+    "lon": 39.77627,
+    "lat": -3.964902
+  },
+  {
+    "h3_index": "897b5984a47ffff",
+    "country": "kenya",
+    "cpue": 27.272727,
+    "species": "Mzz",
+    "n_trips": 3,
+    "lon": 39.777987,
+    "lat": -3.956407
+  },
+  {
+    "h3_index": "897b5984a4bffff",
+    "country": "kenya",
+    "cpue": 6.09256,
+    "species": "Mzz",
+    "n_trips": 9,
+    "lon": 39.782951,
+    "lat": -3.953745
+  },
+  {
+    "h3_index": "897b5984a53ffff",
+    "country": "kenya",
+    "cpue": 2.651552,
+    "species": "Mzz",
+    "n_trips": 18,
+    "lon": 39.782904,
+    "lat": -3.959451
+  },
+  {
+    "h3_index": "897b5984a57ffff",
+    "country": "kenya",
+    "cpue": 3.442623,
+    "species": "Mzz",
+    "n_trips": 6,
+    "lon": 39.77961,
+    "lat": -3.959323
+  },
+  {
+    "h3_index": "897b5984a5bffff",
+    "country": "kenya",
+    "cpue": 2.95869,
+    "species": "Mzz",
+    "n_trips": 18,
+    "lon": 39.784574,
+    "lat": -3.956662
+  },
+  {
+    "h3_index": "897b5984a87ffff",
+    "country": "kenya",
+    "cpue": 1.754217,
+    "species": "Mzz",
+    "n_trips": 23,
+    "lon": 39.772929,
+    "lat": -3.970482
+  },
+  {
+    "h3_index": "897b5984a8bffff",
+    "country": "kenya",
+    "cpue": 6.62942,
+    "species": "Mzz",
+    "n_trips": 9,
+    "lon": 39.777893,
+    "lat": -3.967819
+  },
+  {
+    "h3_index": "897b5984a8fffff",
+    "country": "kenya",
+    "cpue": 2.090971,
+    "species": "Mzz",
+    "n_trips": 21,
+    "lon": 39.774599,
+    "lat": -3.967692
+  },
+  {
+    "h3_index": "897b5984a9bffff",
+    "country": "kenya",
+    "cpue": 2.445403,
+    "species": "Mzz",
+    "n_trips": 3,
+    "lon": 39.779516,
+    "lat": -3.970736
+  },
+  {
+    "h3_index": "897b5984abbffff",
+    "country": "kenya",
+    "cpue": 0.193299,
+    "species": "Mzz",
+    "n_trips": 7,
+    "lon": 39.771306,
+    "lat": -3.967564
+  },
+  {
+    "h3_index": "897b5984ac3ffff",
+    "country": "kenya",
+    "cpue": 1.909104,
+    "species": "Mzz",
+    "n_trips": 9,
+    "lon": 39.782857,
+    "lat": -3.965157
+  },
+  {
+    "h3_index": "897b5984ac7ffff",
+    "country": "kenya",
+    "cpue": 1.994962,
+    "species": "Mzz",
+    "n_trips": 5,
+    "lon": 39.779563,
+    "lat": -3.96503
+  },
+  {
+    "h3_index": "897b5984acbffff",
+    "country": "kenya",
+    "cpue": 0.902399,
+    "species": "Mzz",
+    "n_trips": 11,
+    "lon": 39.784527,
+    "lat": -3.962368
+  },
+  {
+    "h3_index": "897b5984acfffff",
+    "country": "kenya",
+    "cpue": 3.867997,
+    "species": "Mzz",
+    "n_trips": 3,
+    "lon": 39.781234,
+    "lat": -3.96224
+  },
+  {
+    "h3_index": "897b5984ad7ffff",
+    "country": "kenya",
+    "cpue": 26.246305,
+    "species": "Mzz",
+    "n_trips": 5,
+    "lon": 39.781186,
+    "lat": -3.967947
+  },
+  {
+    "h3_index": "897b5984b43ffff",
+    "country": "kenya",
+    "cpue": 1.395621,
+    "species": "Mzz",
+    "n_trips": 11,
+    "lon": 39.758226,
+    "lat": -3.955641
+  },
+  {
+    "h3_index": "897b5984c27ffff",
+    "country": "kenya",
+    "cpue": 3.715252,
+    "species": "Mzz",
+    "n_trips": 3,
+    "lon": 39.762809,
+    "lat": -3.998636
+  },
+  {
+    "h3_index": "897b5984d57ffff",
+    "country": "kenya",
+    "cpue": 4.791301,
+    "species": "Mzz",
+    "n_trips": 3,
+    "lon": 39.756221,
+    "lat": -3.998382
+  },
+  {
+    "h3_index": "897b5984d5bffff",
+    "country": "kenya",
+    "cpue": 0.665533,
+    "species": "Mzz",
+    "n_trips": 5,
+    "lon": 39.761186,
+    "lat": -3.995719
+  },
+  {
+    "h3_index": "897b5984d83ffff",
+    "country": "kenya",
+    "cpue": 1.383106,
+    "species": "Mzz",
+    "n_trips": 3,
+    "lon": 39.752831,
+    "lat": -4.009671
+  },
+  {
+    "h3_index": "897b5984dcfffff",
+    "country": "kenya",
+    "cpue": 3.157652,
+    "species": "Mzz",
+    "n_trips": 3,
+    "lon": 39.757844,
+    "lat": -4.001299
+  },
+  {
+    "h3_index": "897b598598bffff",
+    "country": "kenya",
+    "cpue": 12.591815,
+    "species": "Mzz",
+    "n_trips": 3,
+    "lon": 39.789584,
+    "lat": -3.948294
+  },
+  {
+    "h3_index": "897b5985993ffff",
+    "country": "kenya",
+    "cpue": 1.382828,
+    "species": "Mzz",
+    "n_trips": 5,
+    "lon": 39.789537,
+    "lat": -3.954
+  },
+  {
+    "h3_index": "897b5985997ffff",
+    "country": "kenya",
+    "cpue": 2.258283,
+    "species": "Mzz",
+    "n_trips": 19,
+    "lon": 39.786244,
+    "lat": -3.953872
+  },
+  {
+    "h3_index": "897b59859cfffff",
+    "country": "kenya",
+    "cpue": 1.660224,
+    "species": "Mzz",
+    "n_trips": 13,
+    "lon": 39.792924,
+    "lat": -3.942716
+  },
+  {
+    "h3_index": "897b5985b03ffff",
+    "country": "kenya",
+    "cpue": 1.71671,
+    "species": "Mzz",
+    "n_trips": 3,
+    "lon": 39.798027,
+    "lat": -3.92294
+  },
+  {
+    "h3_index": "897b5985b0fffff",
+    "country": "kenya",
+    "cpue": 7.304471,
+    "species": "Mzz",
+    "n_trips": 3,
+    "lon": 39.796404,
+    "lat": -3.920024
+  },
+  {
+    "h3_index": "897b5985b17ffff",
+    "country": "kenya",
+    "cpue": 16.780488,
+    "species": "Mzz",
+    "n_trips": 6,
+    "lon": 39.796357,
+    "lat": -3.925728
+  },
+  {
+    "h3_index": "897b5985d27ffff",
+    "country": "kenya",
+    "cpue": 7.790248,
+    "species": "Mzz",
+    "n_trips": 10,
+    "lon": 39.786197,
+    "lat": -3.959578
+  },
+  {
+    "h3_index": "897b5985d37ffff",
+    "country": "kenya",
+    "cpue": 1.748889,
+    "species": "Mzz",
+    "n_trips": 5,
+    "lon": 39.78782,
+    "lat": -3.962495
+  },
+  {
+    "h3_index": "897b59b258bffff",
+    "country": "kenya",
+    "cpue": 11.173358,
+    "species": "Mzz",
+    "n_trips": 7,
+    "lon": 39.661527,
+    "lat": -4.083271
+  },
+  {
+    "h3_index": "897b59bb463ffff",
+    "country": "kenya",
+    "cpue": 2.23676,
+    "species": "Mzz",
+    "n_trips": 4,
+    "lon": 39.808137,
+    "lat": -3.894803
+  },
+  {
+    "h3_index": "897b59bb473ffff",
+    "country": "kenya",
+    "cpue": 0.853354,
+    "species": "Mzz",
+    "n_trips": 5,
+    "lon": 39.80976,
+    "lat": -3.897719
+  },
+  {
+    "h3_index": "897b59bb47bffff",
+    "country": "kenya",
+    "cpue": 1.256183,
+    "species": "Mzz",
+    "n_trips": 5,
+    "lon": 39.811429,
+    "lat": -3.894931
+  },
+  {
+    "h3_index": "897b5b0a80bffff",
+    "country": "kenya",
+    "cpue": 17.947214,
+    "species": "Mzz",
+    "n_trips": 3,
+    "lon": 40.508479,
+    "lat": -2.538793
+  },
+  {
+    "h3_index": "897b5b0a81bffff",
+    "country": "kenya",
+    "cpue": 2.913592,
+    "species": "Mzz",
+    "n_trips": 6,
+    "lon": 40.510094,
+    "lat": -2.541683
+  },
+  {
+    "h3_index": "897b5b0a843ffff",
+    "country": "kenya",
+    "cpue": 51.927878,
+    "species": "Mzz",
+    "n_trips": 5,
+    "lon": 40.513382,
+    "lat": -2.536181
+  },
+  {
+    "h3_index": "897b5b0a847ffff",
+    "country": "kenya",
+    "cpue": 6.619794,
+    "species": "Mzz",
+    "n_trips": 4,
+    "lon": 40.510123,
+    "lat": -2.536042
+  },
+  {
+    "h3_index": "897b5b0a853ffff",
+    "country": "kenya",
+    "cpue": 128.842105,
+    "species": "Mzz",
+    "n_trips": 6,
+    "lon": 40.514996,
+    "lat": -2.539072
+  },
+  {
+    "h3_index": "897b5b0a857ffff",
+    "country": "kenya",
+    "cpue": 7.675801,
+    "species": "Mzz",
+    "n_trips": 10,
+    "lon": 40.511738,
+    "lat": -2.538932
+  },
+  {
+    "h3_index": "897b5b0a8c3ffff",
+    "country": "kenya",
+    "cpue": 21.25492,
+    "species": "Mzz",
+    "n_trips": 3,
+    "lon": 40.514966,
+    "lat": -2.544713
+  },
+  {
+    "h3_index": "897b5b0a8cfffff",
+    "country": "kenya",
+    "cpue": 46.867279,
+    "species": "Mzz",
+    "n_trips": 7,
+    "lon": 40.513352,
+    "lat": -2.541822
+  },
+  {
+    "h3_index": "897b5b0a8d3ffff",
+    "country": "kenya",
+    "cpue": 41.755743,
+    "species": "Mzz",
+    "n_trips": 4,
+    "lon": 40.516581,
+    "lat": -2.547603
+  },
+  {
+    "h3_index": "897b5b0a8dbffff",
+    "country": "kenya",
+    "cpue": 40.67346,
+    "species": "Mzz",
+    "n_trips": 4,
+    "lon": 40.518225,
+    "lat": -2.544852
+  },
+  {
+    "h3_index": "897b5b0ac4bffff",
+    "country": "kenya",
+    "cpue": 1.644725,
+    "species": "Mzz",
+    "n_trips": 5,
+    "lon": 40.526326,
+    "lat": -2.553662
+  },
+  {
+    "h3_index": "897b5b0ae23ffff",
+    "country": "kenya",
+    "cpue": 6.020067,
+    "species": "Mzz",
+    "n_trips": 4,
+    "lon": 40.521512,
+    "lat": -2.53935
+  },
+  {
+    "h3_index": "897b5b0ae33ffff",
+    "country": "kenya",
+    "cpue": 1.028571,
+    "species": "Mzz",
+    "n_trips": 5,
+    "lon": 40.523127,
+    "lat": -2.54224
+  },
+  {
+    "h3_index": "897b5b0ae37ffff",
+    "country": "kenya",
+    "cpue": 2.35371,
+    "species": "Mzz",
+    "n_trips": 3,
+    "lon": 40.519869,
+    "lat": -2.542101
+  },
+  {
+    "h3_index": "897b5b0ae47ffff",
+    "country": "kenya",
+    "cpue": 8.653846,
+    "species": "Mzz",
+    "n_trips": 12,
+    "lon": 40.53293,
+    "lat": -2.537017
+  },
+  {
+    "h3_index": "897b5b0ae6fffff",
+    "country": "kenya",
+    "cpue": 16.786105,
+    "species": "Mzz",
+    "n_trips": 4,
+    "lon": 40.526443,
+    "lat": -2.531098
+  },
+  {
+    "h3_index": "897b5b0ae73ffff",
+    "country": "kenya",
+    "cpue": 11.009834,
+    "species": "Mzz",
+    "n_trips": 7,
+    "lon": 40.529672,
+    "lat": -2.536878
+  },
+  {
+    "h3_index": "897b5b0ae7bffff",
+    "country": "kenya",
+    "cpue": 28.74139,
+    "species": "Mzz",
+    "n_trips": 11,
+    "lon": 40.531315,
+    "lat": -2.534127
+  },
+  {
+    "h3_index": "897b5b0ae87ffff",
+    "country": "kenya",
+    "cpue": 1.189462,
+    "species": "Mzz",
+    "n_trips": 6,
+    "lon": 40.52797,
+    "lat": -2.550911
+  },
+  {
+    "h3_index": "897b5b0ae97ffff",
+    "country": "kenya",
+    "cpue": 3.607214,
+    "species": "Mzz",
+    "n_trips": 3,
+    "lon": 40.529584,
+    "lat": -2.553802
+  },
+  {
+    "h3_index": "897b5b0aea3ffff",
+    "country": "kenya",
+    "cpue": 141.122214,
+    "species": "Mzz",
+    "n_trips": 3,
+    "lon": 40.523097,
+    "lat": -2.547882
+  },
+  {
+    "h3_index": "897b5b0aea7ffff",
+    "country": "kenya",
+    "cpue": 15.521177,
+    "species": "Mzz",
+    "n_trips": 6,
+    "lon": 40.519839,
+    "lat": -2.547742
+  },
+  {
+    "h3_index": "897b5b0aeabffff",
+    "country": "kenya",
+    "cpue": 11.561507,
+    "species": "Mzz",
+    "n_trips": 4,
+    "lon": 40.524741,
+    "lat": -2.545131
+  },
+  {
+    "h3_index": "897b5b0aeafffff",
+    "country": "kenya",
+    "cpue": 16.139241,
+    "species": "Mzz",
+    "n_trips": 5,
+    "lon": 40.521483,
+    "lat": -2.544991
+  },
+  {
+    "h3_index": "897b5b0aebbffff",
+    "country": "kenya",
+    "cpue": 6.033076,
+    "species": "Mzz",
+    "n_trips": 3,
+    "lon": 40.526355,
+    "lat": -2.548021
+  },
+  {
+    "h3_index": "897a7481387ffff",
+    "country": "kenya",
+    "cpue": 16.080402,
+    "species": "Emp",
+    "n_trips": 3,
+    "lon": 41.143798,
+    "lat": -2.065597
+  },
+  {
+    "h3_index": "897a7481397ffff",
+    "country": "kenya",
+    "cpue": 1.214421,
+    "species": "Emp",
+    "n_trips": 11,
+    "lon": 41.14541,
+    "lat": -2.068473
+  },
+  {
+    "h3_index": "897a7484443ffff",
+    "country": "kenya",
+    "cpue": 13.840313,
+    "species": "Emp",
+    "n_trips": 4,
+    "lon": 40.970275,
+    "lat": -2.122515
+  },
+  {
+    "h3_index": "897a748444fffff",
+    "country": "kenya",
+    "cpue": 5.588321,
+    "species": "Emp",
+    "n_trips": 3,
+    "lon": 40.968663,
+    "lat": -2.119636
+  },
+  {
+    "h3_index": "897a748449bffff",
+    "country": "kenya",
+    "cpue": 9.238616,
+    "species": "Emp",
+    "n_trips": 3,
+    "lon": 40.968607,
+    "lat": -2.136484
+  },
+  {
+    "h3_index": "897b4a499d7ffff",
+    "country": "kenya",
+    "cpue": 578.782609,
+    "species": "Emp",
+    "n_trips": 3,
+    "lon": 39.710983,
+    "lat": -4.085171
+  },
+  {
+    "h3_index": "897b594094fffff",
+    "country": "kenya",
+    "cpue": 10.233733,
+    "species": "Emp",
+    "n_trips": 3,
+    "lon": 40.152641,
+    "lat": -3.290941
+  },
+  {
+    "h3_index": "897b5940b87ffff",
+    "country": "kenya",
+    "cpue": 51.387787,
+    "species": "Emp",
+    "n_trips": 3,
+    "lon": 40.157574,
+    "lat": -3.288303
+  },
+  {
+    "h3_index": "897b5940d67ffff",
+    "country": "kenya",
+    "cpue": 11.430587,
+    "species": "Emp",
+    "n_trips": 4,
+    "lon": 40.154146,
+    "lat": -3.310875
+  },
+  {
+    "h3_index": "897b5940d6fffff",
+    "country": "kenya",
+    "cpue": 19.500451,
+    "species": "Emp",
+    "n_trips": 3,
+    "lon": 40.155803,
+    "lat": -3.308103
+  },
+  {
+    "h3_index": "897b594562fffff",
+    "country": "kenya",
+    "cpue": 46.407021,
+    "species": "Emp",
+    "n_trips": 3,
+    "lon": 40.126544,
+    "lat": -3.27285
+  },
+  {
+    "h3_index": "897b5984a13ffff",
+    "country": "kenya",
+    "cpue": 1.29352,
+    "species": "Emp",
+    "n_trips": 10,
+    "lon": 39.77627,
+    "lat": -3.964902
+  },
+  {
+    "h3_index": "897b5984a43ffff",
+    "country": "kenya",
+    "cpue": 2.484531,
+    "species": "Emp",
+    "n_trips": 7,
+    "lon": 39.781281,
+    "lat": -3.956534
+  },
+  {
+    "h3_index": "897b5984a47ffff",
+    "country": "kenya",
+    "cpue": 6.493506,
+    "species": "Emp",
+    "n_trips": 3,
+    "lon": 39.777987,
+    "lat": -3.956407
+  },
+  {
+    "h3_index": "897b5984a4bffff",
+    "country": "kenya",
+    "cpue": 6.865847,
+    "species": "Emp",
+    "n_trips": 9,
+    "lon": 39.782951,
+    "lat": -3.953745
+  },
+  {
+    "h3_index": "897b5984a53ffff",
+    "country": "kenya",
+    "cpue": 2.037693,
+    "species": "Emp",
+    "n_trips": 18,
+    "lon": 39.782904,
+    "lat": -3.959451
+  },
+  {
+    "h3_index": "897b5984a57ffff",
+    "country": "kenya",
+    "cpue": 0.819672,
+    "species": "Emp",
+    "n_trips": 6,
+    "lon": 39.77961,
+    "lat": -3.959323
+  },
+  {
+    "h3_index": "897b5984a5bffff",
+    "country": "kenya",
+    "cpue": 3.210452,
+    "species": "Emp",
+    "n_trips": 18,
+    "lon": 39.784574,
+    "lat": -3.956662
+  },
+  {
+    "h3_index": "897b5984a83ffff",
+    "country": "kenya",
+    "cpue": 4.41268,
+    "species": "Emp",
+    "n_trips": 5,
+    "lon": 39.776222,
+    "lat": -3.970609
+  },
+  {
+    "h3_index": "897b5984a87ffff",
+    "country": "kenya",
+    "cpue": 2.673335,
+    "species": "Emp",
+    "n_trips": 23,
+    "lon": 39.772929,
+    "lat": -3.970482
+  },
+  {
+    "h3_index": "897b5984a8bffff",
+    "country": "kenya",
+    "cpue": 0.674178,
+    "species": "Emp",
+    "n_trips": 9,
+    "lon": 39.777893,
+    "lat": -3.967819
+  },
+  {
+    "h3_index": "897b5984a8fffff",
+    "country": "kenya",
+    "cpue": 3.014463,
+    "species": "Emp",
+    "n_trips": 21,
+    "lon": 39.774599,
+    "lat": -3.967692
+  },
+  {
+    "h3_index": "897b5984a9bffff",
+    "country": "kenya",
+    "cpue": 0.611351,
+    "species": "Emp",
+    "n_trips": 3,
+    "lon": 39.779516,
+    "lat": -3.970736
+  },
+  {
+    "h3_index": "897b5984aabffff",
+    "country": "kenya",
+    "cpue": 2.651092,
+    "species": "Emp",
+    "n_trips": 3,
+    "lon": 39.769683,
+    "lat": -3.964647
+  },
+  {
+    "h3_index": "897b5984abbffff",
+    "country": "kenya",
+    "cpue": 6.746134,
+    "species": "Emp",
+    "n_trips": 7,
+    "lon": 39.771306,
+    "lat": -3.967564
+  },
+  {
+    "h3_index": "897b5984ac3ffff",
+    "country": "kenya",
+    "cpue": 1.766569,
+    "species": "Emp",
+    "n_trips": 9,
+    "lon": 39.782857,
+    "lat": -3.965157
+  },
+  {
+    "h3_index": "897b5984acbffff",
+    "country": "kenya",
+    "cpue": 2.850863,
+    "species": "Emp",
+    "n_trips": 11,
+    "lon": 39.784527,
+    "lat": -3.962368
+  },
+  {
+    "h3_index": "897b5984ad7ffff",
+    "country": "kenya",
+    "cpue": 17.73399,
+    "species": "Emp",
+    "n_trips": 5,
+    "lon": 39.781186,
+    "lat": -3.967947
+  },
+  {
+    "h3_index": "897b5984b43ffff",
+    "country": "kenya",
+    "cpue": 0.939644,
+    "species": "Emp",
+    "n_trips": 11,
+    "lon": 39.758226,
+    "lat": -3.955641
+  },
+  {
+    "h3_index": "897b5984c27ffff",
+    "country": "kenya",
+    "cpue": 0.932765,
+    "species": "Emp",
+    "n_trips": 3,
+    "lon": 39.762809,
+    "lat": -3.998636
+  },
+  {
+    "h3_index": "897b5984d57ffff",
+    "country": "kenya",
+    "cpue": 1.053407,
+    "species": "Emp",
+    "n_trips": 3,
+    "lon": 39.756221,
+    "lat": -3.998382
+  },
+  {
+    "h3_index": "897b5984d5bffff",
+    "country": "kenya",
+    "cpue": 2.382607,
+    "species": "Emp",
+    "n_trips": 5,
+    "lon": 39.761186,
+    "lat": -3.995719
+  },
+  {
+    "h3_index": "897b5984d83ffff",
+    "country": "kenya",
+    "cpue": 20.428846,
+    "species": "Emp",
+    "n_trips": 3,
+    "lon": 39.752831,
+    "lat": -4.009671
+  },
+  {
+    "h3_index": "897b5984dcfffff",
+    "country": "kenya",
+    "cpue": 4.597984,
+    "species": "Emp",
+    "n_trips": 3,
+    "lon": 39.757844,
+    "lat": -4.001299
+  },
+  {
+    "h3_index": "897b5985943ffff",
+    "country": "kenya",
+    "cpue": 0.081236,
+    "species": "Emp",
+    "n_trips": 10,
+    "lon": 39.792971,
+    "lat": -3.937011
+  },
+  {
+    "h3_index": "897b598594bffff",
+    "country": "kenya",
+    "cpue": 0.451599,
+    "species": "Emp",
+    "n_trips": 10,
+    "lon": 39.794641,
+    "lat": -3.934222
+  },
+  {
+    "h3_index": "897b5985957ffff",
+    "country": "kenya",
+    "cpue": 0.062837,
+    "species": "Emp",
+    "n_trips": 7,
+    "lon": 39.791301,
+    "lat": -3.9398
+  },
+  {
+    "h3_index": "897b5985983ffff",
+    "country": "kenya",
+    "cpue": 0.529317,
+    "species": "Emp",
+    "n_trips": 5,
+    "lon": 39.787914,
+    "lat": -3.951083
+  },
+  {
+    "h3_index": "897b598598bffff",
+    "country": "kenya",
+    "cpue": 3.147954,
+    "species": "Emp",
+    "n_trips": 3,
+    "lon": 39.789584,
+    "lat": -3.948294
+  },
+  {
+    "h3_index": "897b5985993ffff",
+    "country": "kenya",
+    "cpue": 1.510652,
+    "species": "Emp",
+    "n_trips": 5,
+    "lon": 39.789537,
+    "lat": -3.954
+  },
+  {
+    "h3_index": "897b5985997ffff",
+    "country": "kenya",
+    "cpue": 3.592724,
+    "species": "Emp",
+    "n_trips": 19,
+    "lon": 39.786244,
+    "lat": -3.953872
+  },
+  {
+    "h3_index": "897b59859cfffff",
+    "country": "kenya",
+    "cpue": 0.66409,
+    "species": "Emp",
+    "n_trips": 13,
+    "lon": 39.792924,
+    "lat": -3.942716
+  },
+  {
+    "h3_index": "897b5985b03ffff",
+    "country": "kenya",
+    "cpue": 1.576977,
+    "species": "Emp",
+    "n_trips": 3,
+    "lon": 39.798027,
+    "lat": -3.92294
+  },
+  {
+    "h3_index": "897b5985b0bffff",
+    "country": "kenya",
+    "cpue": 25.294856,
+    "species": "Emp",
+    "n_trips": 3,
+    "lon": 39.799697,
+    "lat": -3.920152
+  },
+  {
+    "h3_index": "897b5985b0fffff",
+    "country": "kenya",
+    "cpue": 4.331721,
+    "species": "Emp",
+    "n_trips": 3,
+    "lon": 39.796404,
+    "lat": -3.920024
+  },
+  {
+    "h3_index": "897b5985b17ffff",
+    "country": "kenya",
+    "cpue": 9.95122,
+    "species": "Emp",
+    "n_trips": 6,
+    "lon": 39.796357,
+    "lat": -3.925728
+  },
+  {
+    "h3_index": "897b5985b1bffff",
+    "country": "kenya",
+    "cpue": 7.041565,
+    "species": "Emp",
+    "n_trips": 4,
+    "lon": 39.80132,
+    "lat": -3.923068
+  },
+  {
+    "h3_index": "897b5985d27ffff",
+    "country": "kenya",
+    "cpue": 2.827382,
+    "species": "Emp",
+    "n_trips": 10,
+    "lon": 39.786197,
+    "lat": -3.959578
+  },
+  {
+    "h3_index": "897b5985d37ffff",
+    "country": "kenya",
+    "cpue": 3.279166,
+    "species": "Emp",
+    "n_trips": 5,
+    "lon": 39.78782,
+    "lat": -3.962495
+  },
+  {
+    "h3_index": "897b59b258bffff",
+    "country": "kenya",
+    "cpue": 95.633212,
+    "species": "Emp",
+    "n_trips": 7,
+    "lon": 39.661527,
+    "lat": -4.083271
+  },
+  {
+    "h3_index": "897b59bb463ffff",
+    "country": "kenya",
+    "cpue": 0.35525,
+    "species": "Emp",
+    "n_trips": 4,
+    "lon": 39.808137,
+    "lat": -3.894803
+  },
+  {
+    "h3_index": "897b59bb473ffff",
+    "country": "kenya",
+    "cpue": 0.406598,
+    "species": "Emp",
+    "n_trips": 5,
+    "lon": 39.80976,
+    "lat": -3.897719
+  },
+  {
+    "h3_index": "897b59bb47bffff",
+    "country": "kenya",
+    "cpue": 0.598534,
+    "species": "Emp",
+    "n_trips": 5,
+    "lon": 39.811429,
+    "lat": -3.894931
+  },
+  {
+    "h3_index": "897b5b0a853ffff",
+    "country": "kenya",
+    "cpue": 298.421053,
+    "species": "Emp",
+    "n_trips": 6,
+    "lon": 40.514996,
+    "lat": -2.539072
+  },
+  {
+    "h3_index": "897b5b0a8c3ffff",
+    "country": "kenya",
+    "cpue": 52.512156,
+    "species": "Emp",
+    "n_trips": 3,
+    "lon": 40.514966,
+    "lat": -2.544713
+  },
+  {
+    "h3_index": "897b5b0a8cfffff",
+    "country": "kenya",
+    "cpue": 71.840355,
+    "species": "Emp",
+    "n_trips": 7,
+    "lon": 40.513352,
+    "lat": -2.541822
+  },
+  {
+    "h3_index": "897b5b0a8d3ffff",
+    "country": "kenya",
+    "cpue": 103.161246,
+    "species": "Emp",
+    "n_trips": 4,
+    "lon": 40.516581,
+    "lat": -2.547603
+  },
+  {
+    "h3_index": "897b5b0a8dbffff",
+    "country": "kenya",
+    "cpue": 100.487373,
+    "species": "Emp",
+    "n_trips": 4,
+    "lon": 40.518225,
+    "lat": -2.544852
+  },
+  {
+    "h3_index": "897b5b0ac4bffff",
+    "country": "kenya",
+    "cpue": 0.324617,
+    "species": "Emp",
+    "n_trips": 5,
+    "lon": 40.526326,
+    "lat": -2.553662
+  },
+  {
+    "h3_index": "897b5b0ac6bffff",
+    "country": "kenya",
+    "cpue": 143.908629,
+    "species": "Emp",
+    "n_trips": 4,
+    "lon": 40.518195,
+    "lat": -2.550494
+  },
+  {
+    "h3_index": "897b5b0ae47ffff",
+    "country": "kenya",
+    "cpue": 21.634615,
+    "species": "Emp",
+    "n_trips": 12,
+    "lon": 40.53293,
+    "lat": -2.537017
+  },
+  {
+    "h3_index": "897b5b0ae73ffff",
+    "country": "kenya",
+    "cpue": 27.524586,
+    "species": "Emp",
+    "n_trips": 7,
+    "lon": 40.529672,
+    "lat": -2.536878
+  },
+  {
+    "h3_index": "897b5b0ae7bffff",
+    "country": "kenya",
+    "cpue": 71.853475,
+    "species": "Emp",
+    "n_trips": 11,
+    "lon": 40.531315,
+    "lat": -2.534127
+  },
+  {
+    "h3_index": "897b5b0ae87ffff",
+    "country": "kenya",
+    "cpue": 0.234762,
+    "species": "Emp",
+    "n_trips": 6,
+    "lon": 40.52797,
+    "lat": -2.550911
+  },
+  {
+    "h3_index": "897b5b0aea7ffff",
+    "country": "kenya",
+    "cpue": 38.346437,
+    "species": "Emp",
+    "n_trips": 6,
+    "lon": 40.519839,
+    "lat": -2.547742
+  },
+  {
+    "h3_index": "897a7481383ffff",
+    "country": "kenya",
+    "cpue": 46.670253,
+    "species": "Oct",
+    "n_trips": 8,
+    "lon": 41.147036,
+    "lat": -2.065739
+  },
+  {
+    "h3_index": "897a7481387ffff",
+    "country": "kenya",
+    "cpue": 77.889447,
+    "species": "Oct",
+    "n_trips": 3,
+    "lon": 41.143798,
+    "lat": -2.065597
+  },
+  {
+    "h3_index": "897a7481393ffff",
+    "country": "kenya",
+    "cpue": 89.89071,
+    "species": "Oct",
+    "n_trips": 7,
+    "lon": 41.148647,
+    "lat": -2.068616
+  },
+  {
+    "h3_index": "897a7481397ffff",
+    "country": "kenya",
+    "cpue": 14.003795,
+    "species": "Oct",
+    "n_trips": 11,
+    "lon": 41.14541,
+    "lat": -2.068473
+  },
+  {
+    "h3_index": "897a748139bffff",
+    "country": "kenya",
+    "cpue": 17.261665,
+    "species": "Oct",
+    "n_trips": 6,
+    "lon": 41.150273,
+    "lat": -2.065882
+  },
+  {
+    "h3_index": "897b4a10633ffff",
+    "country": "kenya",
+    "cpue": 5.615298,
+    "species": "Oct",
+    "n_trips": 4,
+    "lon": 39.426203,
+    "lat": -4.690013
+  },
+  {
+    "h3_index": "897b4a1156bffff",
+    "country": "kenya",
+    "cpue": 5.068383,
+    "species": "Oct",
+    "n_trips": 3,
+    "lon": 39.444716,
+    "lat": -4.659138
+  },
+  {
+    "h3_index": "897b4a1156fffff",
+    "country": "kenya",
+    "cpue": 1.756955,
+    "species": "Oct",
+    "n_trips": 4,
+    "lon": 39.441406,
+    "lat": -4.659016
+  },
+  {
+    "h3_index": "897b4a19107ffff",
+    "country": "kenya",
+    "cpue": 4.272743,
+    "species": "Oct",
+    "n_trips": 5,
+    "lon": 39.512296,
+    "lat": -4.512559
+  },
+  {
+    "h3_index": "897b4a191a3ffff",
+    "country": "kenya",
+    "cpue": 30.769231,
+    "species": "Oct",
+    "n_trips": 4,
+    "lon": 39.508936,
+    "lat": -4.518165
+  },
+  {
+    "h3_index": "897b4a191abffff",
+    "country": "kenya",
+    "cpue": 10.063532,
+    "species": "Oct",
+    "n_trips": 7,
+    "lon": 39.510616,
+    "lat": -4.515362
+  },
+  {
+    "h3_index": "897b4a191b7ffff",
+    "country": "kenya",
+    "cpue": 6.574442,
+    "species": "Oct",
+    "n_trips": 3,
+    "lon": 39.507256,
+    "lat": -4.520968
+  },
+  {
+    "h3_index": "897b4a19c47ffff",
+    "country": "kenya",
+    "cpue": 31.458967,
+    "species": "Oct",
+    "n_trips": 3,
+    "lon": 39.495817,
+    "lat": -4.506213
+  },
+  {
+    "h3_index": "897b4a19c53ffff",
+    "country": "kenya",
+    "cpue": 15.784529,
+    "species": "Oct",
+    "n_trips": 3,
+    "lon": 39.50075,
+    "lat": -4.509262
+  },
+  {
+    "h3_index": "897b4a19c93ffff",
+    "country": "kenya",
+    "cpue": 29.667817,
+    "species": "Oct",
+    "n_trips": 3,
+    "lon": 39.495655,
+    "lat": -4.523401
+  },
+  {
+    "h3_index": "897b4a19cc3ffff",
+    "country": "kenya",
+    "cpue": 15.858269,
+    "species": "Oct",
+    "n_trips": 4,
+    "lon": 39.500696,
+    "lat": -4.514992
+  },
+  {
+    "h3_index": "897b4a19cc7ffff",
+    "country": "kenya",
+    "cpue": 5.04643,
+    "species": "Oct",
+    "n_trips": 3,
+    "lon": 39.49739,
+    "lat": -4.514869
+  },
+  {
+    "h3_index": "897b4a19ccbffff",
+    "country": "kenya",
+    "cpue": 18.241337,
+    "species": "Oct",
+    "n_trips": 3,
+    "lon": 39.502377,
+    "lat": -4.512189
+  },
+  {
+    "h3_index": "897b4a19ccfffff",
+    "country": "kenya",
+    "cpue": 9.472933,
+    "species": "Oct",
+    "n_trips": 4,
+    "lon": 39.49907,
+    "lat": -4.512065
+  },
+  {
+    "h3_index": "897b5984a5bffff",
+    "country": "kenya",
+    "cpue": 0.240703,
+    "species": "Oct",
+    "n_trips": 18,
+    "lon": 39.784574,
+    "lat": -3.956662
+  },
+  {
+    "h3_index": "897b5984a8bffff",
+    "country": "kenya",
+    "cpue": 0.831487,
+    "species": "Oct",
+    "n_trips": 9,
+    "lon": 39.777893,
+    "lat": -3.967819
+  },
+  {
+    "h3_index": "897b5984ac7ffff",
+    "country": "kenya",
+    "cpue": 6.710327,
+    "species": "Oct",
+    "n_trips": 5,
+    "lon": 39.779563,
+    "lat": -3.96503
+  },
+  {
+    "h3_index": "897b5984acbffff",
+    "country": "kenya",
+    "cpue": 0.207642,
+    "species": "Oct",
+    "n_trips": 11,
+    "lon": 39.784527,
+    "lat": -3.962368
+  },
+  {
+    "h3_index": "897b5984ad7ffff",
+    "country": "kenya",
+    "cpue": 8.748768,
+    "species": "Oct",
+    "n_trips": 5,
+    "lon": 39.781186,
+    "lat": -3.967947
+  },
+  {
+    "h3_index": "897b5985d27ffff",
+    "country": "kenya",
+    "cpue": 0.632103,
+    "species": "Oct",
+    "n_trips": 10,
+    "lon": 39.786197,
+    "lat": -3.959578
+  },
+  {
+    "h3_index": "897b5b0a80bffff",
+    "country": "kenya",
+    "cpue": 46.979472,
+    "species": "Oct",
+    "n_trips": 3,
+    "lon": 40.508479,
+    "lat": -2.538793
+  },
+  {
+    "h3_index": "897b5b0a81bffff",
+    "country": "kenya",
+    "cpue": 7.626756,
+    "species": "Oct",
+    "n_trips": 6,
+    "lon": 40.510094,
+    "lat": -2.541683
+  },
+  {
+    "h3_index": "897b5b0a843ffff",
+    "country": "kenya",
+    "cpue": 23.800277,
+    "species": "Oct",
+    "n_trips": 5,
+    "lon": 40.513382,
+    "lat": -2.536181
+  },
+  {
+    "h3_index": "897b5b0a847ffff",
+    "country": "kenya",
+    "cpue": 17.328286,
+    "species": "Oct",
+    "n_trips": 4,
+    "lon": 40.510123,
+    "lat": -2.536042
+  },
+  {
+    "h3_index": "897b5b0a853ffff",
+    "country": "kenya",
+    "cpue": 21.078947,
+    "species": "Oct",
+    "n_trips": 6,
+    "lon": 40.514996,
+    "lat": -2.539072
+  },
+  {
+    "h3_index": "897b5b0a857ffff",
+    "country": "kenya",
+    "cpue": 3.518076,
+    "species": "Oct",
+    "n_trips": 10,
+    "lon": 40.511738,
+    "lat": -2.538932
+  },
+  {
+    "h3_index": "897b5b0a8cfffff",
+    "country": "kenya",
+    "cpue": 8.15331,
+    "species": "Oct",
+    "n_trips": 7,
+    "lon": 40.513352,
+    "lat": -2.541822
+  },
+  {
+    "h3_index": "897b5b0aa9bffff",
+    "country": "kenya",
+    "cpue": 0.776861,
+    "species": "Oct",
+    "n_trips": 7,
+    "lon": 40.523185,
+    "lat": -2.530959
+  },
+  {
+    "h3_index": "897b5b0ae6fffff",
+    "country": "kenya",
+    "cpue": 3.041777,
+    "species": "Oct",
+    "n_trips": 4,
+    "lon": 40.526443,
+    "lat": -2.531098
+  },
+  {
+    "h3_index": "897b5b0ae7bffff",
+    "country": "kenya",
+    "cpue": 16.9067,
+    "species": "Oct",
+    "n_trips": 11,
+    "lon": 40.531315,
+    "lat": -2.534127
+  }
+]

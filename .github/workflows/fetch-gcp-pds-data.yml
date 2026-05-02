@@ -1,0 +1,49 @@
+name: Fetch GCP PDS Data
+
+on:
+  schedule:
+    - cron: "15 0 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: fetch-gcp-pds-data-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  fetch-gcp-pds-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Fetch latest GCP PDS data
+        run: npm run fetch-gcp-data
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+          GCP_BUCKET_NAME: ${{ secrets.GCP_BUCKET_NAME }}
+          GCP_PDS_GROUNDS_PREFIX: ${{ secrets.GCP_PDS_GROUNDS_PREFIX }}
+          GCP_PDS_EFFORT_PREFIX: ${{ secrets.GCP_PDS_EFFORT_PREFIX }}
+          GCP_PDS_FRAME_GEARS_PREFIX: ${{ secrets.GCP_PDS_FRAME_GEARS_PREFIX }}
+
+      - name: Commit changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add public/data/pds-fishing-grounds.geojson public/data/pds-h3-effort-r9.json public/data/frame-gears.json
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "Update GCP PDS datasets (automated)"
+          git pull --rebase origin ${{ github.ref_name }}
+          git push

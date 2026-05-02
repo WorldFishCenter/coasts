@@ -1,7 +1,8 @@
 import React, { memo, useState } from 'react';
 import { ChevronDown, Eye, EyeOff } from 'lucide-react';
-import { TIME_BREAKS, COLOR_RANGE } from '../../utils/gridLayerConfig';
+import { COLOR_RANGE, ACTIVITY_METRICS } from '../../utils/gridLayerConfig';
 import { getMetricInfo } from '../../utils/formatters';
+import { PDS_EFFORT_COLOR_HEX, PDS_GROUNDS_COLOR_HEX } from '../../utils/pdsOverlayConfig';
 
 // Modern color palette for metrics
 export const COLORS = ['#ffffd9', '#edf8b1', '#c7e9b4', '#7fcdbb', '#41b6c4', '#1d91c0', '#225ea8', '#0c2c84'];
@@ -10,17 +11,26 @@ const EnhancedLegend = memo(({
   isDarkTheme,
   grades,
   selectedMetric,
+  selectedActivityMetric,
   colorRange,
   hasGridData,
-  visualizationMode
+  pdsH3EffortData,
+  pdsFishingGroundsData,
+  activeActivityLayers,
+  visualizationMode,
+  showBathymetry = false,
+  dataFreshnessLabel = 'Latest available export'
 }) => {
   const [expandedSections, setExpandedSections] = useState({
     metrics: true,
-    activity: true
+    activity: true,
+    grounds: true,
+    bathymetry: true
   });
   const [isMinimized, setIsMinimized] = useState(false);
 
   const metricInfo = getMetricInfo(selectedMetric);
+  const activeMetricConfig = ACTIVITY_METRICS.find(m => m.id === selectedActivityMetric) || ACTIVITY_METRICS[0];
 
   const toggleSection = (section) => {
     setExpandedSections(prev => ({
@@ -43,8 +53,8 @@ const EnhancedLegend = memo(({
         transition: 'all 0.2s ease'
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.backgroundColor = isDarkTheme 
-          ? 'rgba(255, 255, 255, 0.03)' 
+        e.currentTarget.style.backgroundColor = isDarkTheme
+          ? 'rgba(255, 255, 255, 0.03)'
           : 'rgba(0, 0, 0, 0.02)';
       }}
       onMouseLeave={(e) => {
@@ -64,8 +74,8 @@ const EnhancedLegend = memo(({
           {title}
         </h4>
       </div>
-      <ChevronDown 
-        size={14} 
+      <ChevronDown
+        size={14}
         style={{
           transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
           transition: 'transform 0.2s ease',
@@ -93,7 +103,7 @@ const EnhancedLegend = memo(({
   const GradientBar = ({ colors, height = '8px' }) => (
     <div style={{
       height,
-      background: `linear-gradient(to right, ${colors.map(color => 
+      background: `linear-gradient(to right, ${colors.map(color =>
         typeof color === 'string' ? color : `rgba(${color.join(',')}, 0.8)`
       ).join(', ')})`,
       borderRadius: '4px',
@@ -102,41 +112,28 @@ const EnhancedLegend = memo(({
     }} />
   );
 
+  const formatGradeValue = (value) => {
+    if (!Number.isFinite(value)) return '0';
+    const absValue = Math.abs(value);
+    if (absValue >= 100) return value.toFixed(0);
+    if (absValue >= 10) return value.toFixed(1);
+    if (absValue >= 1) return value.toFixed(2);
+    return value.toFixed(3);
+  };
+
   if (isMinimized) {
     return (
-      <div style={{
-        backgroundColor: isDarkTheme ? 'rgba(15, 23, 42, 0.8)' : 'rgba(255, 255, 255, 0.9)',
-        backdropFilter: 'blur(12px)',
-        borderRadius: '6px',
-        border: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`,
-        boxShadow: isDarkTheme 
-          ? '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' 
-          : '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-        padding: '8px',
-        cursor: 'pointer'
-      }}
-      onClick={() => setIsMinimized(false)}
+      <div
+        className="glass-panel p-2.5 rounded-xl cursor-pointer hover:bg-white/10 transition-colors backdrop-blur-xl border border-border/50 group"
+        onClick={() => setIsMinimized(false)}
       >
-        <Eye size={16} style={{ 
-          color: isDarkTheme ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)' 
-        }} />
+        <Eye size={16} className="text-foreground/70 group-hover:text-primary transition-colors" />
       </div>
     );
   }
 
   return (
-    <div style={{
-      backgroundColor: isDarkTheme ? 'rgba(15, 23, 42, 0.85)' : 'rgba(255, 255, 255, 0.9)',
-      backdropFilter: 'blur(12px)',
-      borderRadius: '8px',
-      border: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`,
-      boxShadow: isDarkTheme 
-        ? '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' 
-        : '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-      padding: '12px',
-      minWidth: '200px',
-      maxWidth: '220px'
-    }}>
+    <div className="glass-panel p-4 rounded-2xl min-w-[200px] max-w-[220px]">
       {/* Header with minimize button */}
       <div style={{
         display: 'flex',
@@ -152,6 +149,12 @@ const EnhancedLegend = memo(({
         }}>
           Legend
         </h3>
+        <a
+          href="/docs#layer-interpretation"
+          style={{ fontSize: '10px', color: 'var(--primary)', textDecoration: 'none', marginRight: '6px' }}
+        >
+          Guide
+        </a>
         <button
           onClick={() => setIsMinimized(true)}
           style={{
@@ -164,8 +167,8 @@ const EnhancedLegend = memo(({
             transition: 'all 0.2s ease'
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = isDarkTheme 
-              ? 'rgba(255, 255, 255, 0.1)' 
+            e.currentTarget.style.backgroundColor = isDarkTheme
+              ? 'rgba(255, 255, 255, 0.1)'
               : 'rgba(0, 0, 0, 0.1)';
           }}
           onMouseLeave={(e) => {
@@ -182,21 +185,23 @@ const EnhancedLegend = memo(({
           title={`${metricInfo.label} ${metricInfo.unit ? `(${metricInfo.unit})` : ''}`}
           isExpanded={expandedSections.metrics}
           onToggle={() => toggleSection('metrics')}
-          icon={<div style={{
-            width: '8px',
-            height: '8px',
-            borderRadius: '50%',
-            backgroundColor: '#3b82f6'
-          }} />}
+          icon={<div className="w-2 h-2 rounded-full bg-primary" />}
         />
 
         {expandedSections.metrics && (
-          <div style={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
             gap: '6px',
             paddingLeft: '2px'
           }}>
+            <div style={{
+              fontSize: '10px',
+              color: isDarkTheme ? 'rgba(255,255,255,0.65)' : 'rgba(0,0,0,0.65)',
+              lineHeight: 1.4
+            }}>
+              Colors represent quantile classes for the selected metric and selected year filter.
+            </div>
             {/* Gradient bar for overall visualization */}
             <div style={{ marginBottom: '6px' }}>
               <GradientBar colors={COLORS.slice(0, grades.length)} height="8px" />
@@ -207,8 +212,8 @@ const EnhancedLegend = memo(({
                 fontSize: '10px',
                 color: isDarkTheme ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)'
               }}>
-                <span>{grades[0]?.toFixed(1) || '0'}</span>
-                <span>{grades[grades.length - 1]?.toFixed(1) || '0'}+</span>
+                <span>{formatGradeValue(grades[0])}</span>
+                <span>{formatGradeValue(grades[grades.length - 1])}+</span>
               </div>
             </div>
 
@@ -225,8 +230,8 @@ const EnhancedLegend = memo(({
                   transition: 'all 0.2s ease'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = isDarkTheme 
-                    ? 'rgba(255, 255, 255, 0.05)' 
+                  e.currentTarget.style.backgroundColor = isDarkTheme
+                    ? 'rgba(255, 255, 255, 0.05)'
                     : 'rgba(0, 0, 0, 0.03)';
                 }}
                 onMouseLeave={(e) => {
@@ -239,7 +244,7 @@ const EnhancedLegend = memo(({
                   fontWeight: 500,
                   color: isDarkTheme ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)'
                 }}>
-                  {grade.toFixed(1)}{i < grades.length - 1 ? ` - ${grades[i + 1].toFixed(1)}` : '+'}
+                  {formatGradeValue(grade)}{i < grades.length - 1 ? ` - ${formatGradeValue(grades[i + 1])}` : '+'}
                 </span>
               </div>
             ))}
@@ -249,125 +254,165 @@ const EnhancedLegend = memo(({
 
       {/* Fishing Activity Legend Section */}
       {hasGridData && (
-        <div>
-          <SectionHeader
-            title={`Activity ${visualizationMode === 'heatmap' ? '(Heatmap)' : '(Hours)'}`}
-            isExpanded={expandedSections.activity}
-            onToggle={() => toggleSection('activity')}
-            icon={<div style={{
-              width: '8px',
-              height: '8px',
-              borderRadius: '50%',
-              backgroundColor: '#10b981'
-            }} />}
-          />
+        <>
+          {/* H3 Effort Legend */}
+          {activeActivityLayers?.hexagons !== false && pdsH3EffortData?.length > 0 && (() => {
+            const values = pdsH3EffortData.map(d => d[selectedActivityMetric]).filter(v => typeof v === 'number');
+            const min = values.length ? Math.min(...values) : 0;
+            const max = values.length ? Math.max(...values) : 0;
+            return (
+              <div>
+                <SectionHeader
+                  title="Local Fishing Activity"
+                  isExpanded={expandedSections.activity}
+                  onToggle={() => toggleSection('activity')}
+                  icon={<div style={{
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    backgroundColor: PDS_EFFORT_COLOR_HEX[PDS_EFFORT_COLOR_HEX.length - 1]
+                  }} />}
+                />
 
-          {expandedSections.activity && (
-            <div style={{ paddingLeft: '2px' }}>
-              {visualizationMode === 'column' ? (
-                <div>
-                  {/* Gradient overview for column view */}
-                  <div style={{ marginBottom: '8px' }}>
-                    <GradientBar 
-                      colors={COLOR_RANGE.map(color => `rgba(${color.join(',')}, 0.8)`)} 
-                      height="8px" 
-                    />
+                {expandedSections.activity && (
+                  <div style={{ paddingLeft: '2px', marginBottom: '10px' }}>
                     <div style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      marginTop: '3px',
                       fontSize: '10px',
-                      color: isDarkTheme ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)'
+                      marginBottom: '4px',
+                      color: isDarkTheme ? 'rgba(255,255,255,0.65)' : 'rgba(0,0,0,0.65)'
                     }}>
-                      <span>Low</span>
-                      <span>High</span>
+                      H3 cells are colored by quantile and extruded in column mode.
+                    </div>
+                    <div style={{ marginBottom: '8px' }}>
+                      <div style={{
+                        fontSize: '11px',
+                        fontWeight: 600,
+                        marginBottom: '4px',
+                        color: isDarkTheme ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.85)'
+                      }}>
+                        {activeMetricConfig.label}
+                      </div>
+                      <GradientBar
+                        colors={PDS_EFFORT_COLOR_HEX}
+                        height="8px"
+                      />
+                      <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        marginTop: '3px',
+                        fontSize: '10px',
+                        color: isDarkTheme ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)'
+                      }}>
+                        <span>{min > 1000 ? `${(min/1000).toFixed(1)}k` : min.toFixed(1)}</span>
+                        <span>{max > 1000 ? `${(max/1000).toFixed(1)}k` : max.toFixed(1)}</span>
+                      </div>
                     </div>
                   </div>
+                )}
+              </div>
+            );
+          })()}
 
-                  {/* Time ranges */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                    {TIME_BREAKS.map((range, index) => {
-                      const timeValue = range.min + (range.max === Infinity ? 8 : range.max - range.min) / 2;
-                      const normalizedValue = Math.min(timeValue / 12, 1);
-                      const opacity = 0.3 + (normalizedValue * 0.6);
+          {/* Fishing Grounds Legend */}
+          {activeActivityLayers?.grounds !== false && pdsFishingGroundsData?.features?.length > 0 && (() => {
+            const values = pdsFishingGroundsData.features.map(f => f.properties[selectedActivityMetric]).filter(v => typeof v === 'number');
+            const min = values.length ? Math.min(...values) : 0;
+            const max = values.length ? Math.max(...values) : 0;
+            return (
+              <div>
+                <SectionHeader
+                  title="Fishing Grounds"
+                  isExpanded={expandedSections.grounds}
+                  onToggle={() => toggleSection('grounds')}
+                  icon={<div style={{
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    backgroundColor: PDS_GROUNDS_COLOR_HEX[PDS_GROUNDS_COLOR_HEX.length - 1]
+                  }} />}
+                />
 
-                      return (
-                        <div
-                          key={index}
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '6px',
-                            padding: '2px 4px',
-                            borderRadius: '4px',
-                            transition: 'all 0.2s ease'
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = isDarkTheme 
-                              ? 'rgba(255, 255, 255, 0.05)' 
-                              : 'rgba(0, 0, 0, 0.03)';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = 'transparent';
-                          }}
-                        >
-                          <ColorSwatch 
-                            color={`rgba(${colorRange[index].join(',')}, ${opacity})`} 
-                            size="small" 
-                          />
-                          <span style={{
-                            fontSize: '11px',
-                            fontWeight: 500,
-                            color: isDarkTheme ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)'
-                          }}>
-                            {range.label}
-                          </span>
-                        </div>
-                      );
-                    })}
+                {expandedSections.grounds && (
+                  <div style={{ paddingLeft: '2px', marginBottom: '10px' }}>
+                    <div style={{
+                      fontSize: '10px',
+                      marginBottom: '4px',
+                      color: isDarkTheme ? 'rgba(255,255,255,0.65)' : 'rgba(0,0,0,0.65)'
+                    }}>
+                      Grounds polygons use the same metric with quantile bins after trips filtering.
+                    </div>
+                    <div style={{ marginBottom: '8px' }}>
+                      <div style={{
+                        fontSize: '11px',
+                        fontWeight: 600,
+                        marginBottom: '4px',
+                        color: isDarkTheme ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.85)'
+                      }}>
+                        {activeMetricConfig.label}
+                      </div>
+                      <GradientBar
+                        colors={PDS_GROUNDS_COLOR_HEX}
+                        height="8px"
+                      />
+                      <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        marginTop: '3px',
+                        fontSize: '10px',
+                        color: isDarkTheme ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)'
+                      }}>
+                        <span>{min > 1000 ? `${(min/1000).toFixed(1)}k` : min.toFixed(1)}</span>
+                        <span>{max > 1000 ? `${(max/1000).toFixed(1)}k` : max.toFixed(1)}</span>
+                      </div>
+                    </div>
                   </div>
+                )}
+              </div>
+            );
+          })()}
+        </>
+      )}
+
+      {/* Bathymetry Legend Section */}
+      {showBathymetry && (
+        <div style={{ marginTop: (hasGridData ? '10px' : '0') }}>
+          <SectionHeader
+            title="Bathymetry (Depth m)"
+            isExpanded={expandedSections.bathymetry}
+            onToggle={() => toggleSection('bathymetry')}
+            icon={<div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#55a9df' }} />}
+          />
+
+          {expandedSections.bathymetry && (
+            <div style={{ paddingLeft: '2px' }}>
+              <div style={{ marginBottom: '8px' }}>
+                <GradientBar
+                  colors={['#84d2f6', '#55a9df', '#2f7eb8', '#255c95', '#1e3f72', '#172f58']}
+                  height="8px"
+                />
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  marginTop: '3px',
+                  fontSize: '10px',
+                  color: isDarkTheme ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)'
+                }}>
+                  <span>10m</span>
+                  <span>2000m</span>
                 </div>
-              ) : (
-                // Heatmap view
-                <div>
-                  <div style={{ marginBottom: '6px' }}>
-                    <GradientBar 
-                      colors={[
-                        'rgba(254, 235, 226, 0.2)', 
-                        'rgba(254, 235, 226, 0.5)',
-                        'rgba(252, 197, 192, 0.7)',
-                        'rgba(250, 159, 181, 0.8)',
-                        'rgba(247, 104, 161, 0.9)',
-                        'rgba(221, 52, 151, 1)',
-                        'rgba(174, 1, 126, 1)'
-                      ]} 
-                      height="8px" 
-                    />
-                  </div>
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    fontSize: '10px',
-                    color: isDarkTheme ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
-                    marginBottom: '4px'
-                  }}>
-                    <span>Low Activity</span>
-                    <span>High Activity</span>
-                  </div>
-                  <div style={{
-                    textAlign: 'center',
-                    fontSize: '9px',
-                    color: isDarkTheme ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
-                    fontStyle: 'italic'
-                  }}>
-                    Intensity based on fishing effort (hours)
-                  </div>
-                </div>
-              )}
+              </div>
+
             </div>
           )}
         </div>
       )}
+      <div style={{
+        marginTop: '10px',
+        fontSize: '10px',
+        color: isDarkTheme ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)'
+      }}>
+        Data as of: {dataFreshnessLabel}
+      </div>
     </div>
   );
 });

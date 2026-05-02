@@ -4,7 +4,12 @@ import {
   loadMapDataGaul2,
   loadTimeSeriesGaul1,
   loadTimeSeriesGaul2,
-  loadPdsGridsData,
+  loadPdsFishingGroundsData,
+  loadPdsH3EffortData,
+  loadFrameGearsData,
+  aggregateFrameGearsData,
+  getTimeSeriesKey,
+  getTimeSeriesKeyGaul1,
   getLatestMetrics,
   getLatestMetricsGaul1
 } from '../services/dataService';
@@ -14,7 +19,10 @@ export const useMapData = () => {
   const [boundariesGaul2, setBoundariesGaul2] = useState(null);
   const [timeSeriesGaul1, setTimeSeriesGaul1] = useState(null);
   const [timeSeriesGaul2, setTimeSeriesGaul2] = useState(null);
-  const [pdsGridsData, setPdsGridsData] = useState(null);
+
+  const [pdsFishingGroundsData, setPdsFishingGroundsData] = useState(null);
+  const [pdsH3EffortData, setPdsH3EffortData] = useState(null);
+  const [frameGearsData, setFrameGearsData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [totalValueGaul1, setTotalValueGaul1] = useState(0);
@@ -26,12 +34,15 @@ export const useMapData = () => {
         setLoading(true);
         setError(null);
 
-        const [mapGaul1, mapGaul2, tsGaul1, tsGaul2, pdsGrids] = await Promise.all([
+        const [mapGaul1, mapGaul2, tsGaul1, tsGaul2, fishingGrounds, h3EffortData, frameGearsRows] =
+          await Promise.all([
           loadMapDataGaul1(),
           loadMapDataGaul2(),
           loadTimeSeriesGaul1(),
           loadTimeSeriesGaul2(),
-          loadPdsGridsData()
+          loadPdsFishingGroundsData(),
+          loadPdsH3EffortData(),
+          loadFrameGearsData()
         ]);
 
         if (!mapGaul2) {
@@ -47,9 +58,18 @@ export const useMapData = () => {
           throw new Error('Failed to load GAUL1 time series data');
         }
 
-        if (!pdsGrids) {
-          console.warn('PDS grids data not available');
+
+        if (!fishingGrounds) {
+          console.warn('PDS fishing grounds data not available');
         }
+        if (!h3EffortData) {
+          console.warn('PDS H3 effort data not available');
+        }
+        if (!frameGearsRows) {
+          console.warn('Frame-gears data not available');
+        }
+
+        const frameGearsAggregates = aggregateFrameGearsData(frameGearsRows);
 
         // Enrich GAUL1 map with latest metrics
         const enrichedGaul1 = {
@@ -57,6 +77,8 @@ export const useMapData = () => {
           features: mapGaul1.features.map((feature) => {
             const { country, gaul1_name } = feature.properties;
             const latestMetrics = getLatestMetricsGaul1(tsGaul1, country, gaul1_name);
+            const gaul1Key = getTimeSeriesKeyGaul1(country, gaul1_name);
+            const frameMetrics = frameGearsAggregates.gaul1[gaul1Key] ?? null;
             return {
               ...feature,
               properties: {
@@ -65,7 +87,11 @@ export const useMapData = () => {
                 mean_cpua: latestMetrics?.mean_cpua,
                 mean_rpue: latestMetrics?.mean_rpue,
                 mean_rpua: latestMetrics?.mean_rpua,
-                mean_price_kg: latestMetrics?.mean_price_kg
+                mean_price_kg: latestMetrics?.mean_price_kg,
+                fishers_total: frameMetrics?.fishers_total ?? null,
+                fishers_male: frameMetrics?.fishers_male ?? null,
+                fishers_female: frameMetrics?.fishers_female ?? null,
+                boats_total: frameMetrics?.boats_total ?? null
               }
             };
           })
@@ -77,6 +103,8 @@ export const useMapData = () => {
           features: mapGaul2.features.map((feature) => {
             const { country, gaul1_name, gaul2_name } = feature.properties;
             const latestMetrics = getLatestMetrics(tsGaul2, country, gaul1_name, gaul2_name);
+            const gaul2Key = getTimeSeriesKey(country, gaul1_name, gaul2_name);
+            const frameMetrics = frameGearsAggregates.gaul2[gaul2Key] ?? null;
             return {
               ...feature,
               properties: {
@@ -85,7 +113,11 @@ export const useMapData = () => {
                 mean_cpua: latestMetrics?.mean_cpua,
                 mean_rpue: latestMetrics?.mean_rpue,
                 mean_rpua: latestMetrics?.mean_rpua,
-                mean_price_kg: latestMetrics?.mean_price_kg
+                mean_price_kg: latestMetrics?.mean_price_kg,
+                fishers_total: frameMetrics?.fishers_total ?? null,
+                fishers_male: frameMetrics?.fishers_male ?? null,
+                fishers_female: frameMetrics?.fishers_female ?? null,
+                boats_total: frameMetrics?.boats_total ?? null
               }
             };
           })
@@ -104,7 +136,9 @@ export const useMapData = () => {
         setBoundariesGaul2(enrichedGaul2);
         setTimeSeriesGaul1(tsGaul1);
         setTimeSeriesGaul2(tsGaul2);
-        setPdsGridsData(pdsGrids);
+        setPdsFishingGroundsData(fishingGrounds);
+        setPdsH3EffortData(Array.isArray(h3EffortData) ? h3EffortData : null);
+        setFrameGearsData(frameGearsAggregates);
         setTotalValueGaul1(total1);
         setTotalValueGaul2(total2);
       } catch (err) {
@@ -123,7 +157,9 @@ export const useMapData = () => {
     boundariesGaul2,
     timeSeriesGaul1,
     timeSeriesGaul2,
-    pdsGridsData,
+    pdsFishingGroundsData,
+    pdsH3EffortData,
+    frameGearsData,
     loading,
     error,
     totalValueGaul1,

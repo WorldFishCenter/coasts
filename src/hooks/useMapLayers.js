@@ -1,12 +1,24 @@
 import { useMemo } from 'react';
-import { GeoJsonLayer, ColumnLayer } from '@deck.gl/layers';
-import { HeatmapLayer } from '@deck.gl/aggregation-layers';
-import { COLOR_RANGE, getColorForValue } from '../utils/gridLayerConfig';
-import { COLORS } from '../components/map/UnifiedLegend';
+import { GeoJsonLayer } from '@deck.gl/layers';
+import { H3HexagonLayer } from '@deck.gl/geo-layers';
+import { COLORS } from '../components/map/EnhancedLegend';
+import {
+  PDS_GROUNDS_COLOR_RANGE,
+  PDS_EFFORT_COLOR_RANGE,
+  PDS_GROUNDS_OPACITY,
+  PDS_EFFORT_OPACITY,
+  PDS_EFFORT_COVERAGE,
+  PDS_EFFORT_ELEVATION_SCALE,
+  PDS_EFFORT_SIZE_RANGE,
+  PDS_GROUNDS_UNIQUE_TRIPS_FILTER,
+  KEPLER_LAYER_BLENDING,
+  getKeplerPdsLayerParameters,
+  getQuantileThresholds,
+  getColorByQuantile
+} from '../utils/pdsOverlayConfig';
 
 export const useMapLayers = ({
   filteredBoundaries,
-  transformedPdsData,
   selectedMetric,
   metricStats,
   opacity,
@@ -14,13 +26,24 @@ export const useMapLayers = ({
   isDarkTheme,
   hoveredFeatureIndex,
   visualizationMode,
-  selectedRanges
+  pdsFishingGroundsData,
+  pdsH3EffortData,
+  selectedActivityMetric,
+  activeActivityLayers
 }) => {
   return useMemo(() => {
     const allLayers = [];
+    const showWioRegions = true;
+    const showGrounds = activeActivityLayers?.grounds !== false;
+    const showEffort = activeActivityLayers?.hexagons !== false;
+    const groundsOpacity = PDS_GROUNDS_OPACITY;
+    const effortOpacity = PDS_EFFORT_OPACITY;
+    const effortExtruded = visualizationMode === 'column';
+    const effortElevationScale = PDS_EFFORT_ELEVATION_SCALE;
+    const pdsBlendParameters = getKeplerPdsLayerParameters();
 
     // Add choropleth layer with filtered boundaries
-    if (filteredBoundaries) {
+    if (showWioRegions && filteredBoundaries) {
       // Function to get color based on metric value
       const getColorForFeature = (feature) => {
         const value = feature.properties[selectedMetric];
@@ -82,78 +105,99 @@ export const useMapLayers = ({
       );
     }
 
-    // Add PDS grid visualization
-    if (transformedPdsData.length > 0) {
-      if (visualizationMode === 'column') {
-        // Column layer for 3D visualization
-        allLayers.push(
-          new ColumnLayer({
-            id: 'pds-grid-column-layer',
-            data: transformedPdsData,
-            pickable: true,
-            getPosition: d => d.position,
-            radius: 500,
-            elevationScale: 2500,
-            getElevation: d => d.avgTimeHours,
-            getFillColor: d => {
-              const colorIndex = getColorForValue(d.avgTimeHours);
-              const baseColor = COLOR_RANGE[colorIndex];
-              const normalizedValue = Math.min(d.avgTimeHours / 12, 1);
-              const opacity = 0.3 + (normalizedValue * 0.6);
-              return [...baseColor, 255 * opacity];
-            },
-            opacity: 1,
-            material: {
-              ambient: 0.64,
-              diffuse: 0.6,
-              shininess: 32,
-              specularColor: [51, 51, 51]
-            },
-            updateTriggers: {
-              getFillColor: [selectedRanges],
-              opacity: []
-            }
-          })
+    // PDS H3 effort overlay (Kepler-like H3 layer)
+    if (showEffort && pdsH3EffortData?.length) {
+      const effortValues = pdsH3EffortData
+        .map((row) => row?.[selectedActivityMetric])
+        .filter((value) => typeof value === 'number' && !isNaN(value));
+      const effortQuantiles = getQuantileThresholds(effortValues, PDS_EFFORT_COLOR_RANGE.length);
+      const minEffort = effortValues.length ? Math.min(...effortValues) : 0;
+      const maxEffort = effortValues.length ? Math.max(...effortValues) : 0;
+      const effortRange = maxEffort - minEffort;
+
+      allLayers.push(
+        new H3HexagonLayer({
+          id: 'pds-h3-effort-layer',
+          data: pdsH3EffortData,
+          pickable: true,
+          autoHighlight: true,
+          highlightColor: [252, 242, 26, 255],
+          extruded: effortExtruded,
+          filled: true,
+          stroked: false,
+          wireframe: false,
+          coverage: PDS_EFFORT_COVERAGE,
+          opacity: effortOpacity,
+          ...(pdsBlendParameters ? { parameters: pdsBlendParameters } : {}),
+          getHexagon: (d) => d.h3_index,
+          getFillColor: (d) =>
+            getColorByQuantile(d?.[selectedActivityMetric], effortQuantiles, PDS_EFFORT_COLOR_RANGE),
+          getElevation: (d) => {
+            const value = d?.[selectedActivityMetric];
+            if (typeof value !== 'number' || isNaN(value) || value <= 0) return 0;
+            // Kepler visualChannels.sizeField with visConfig.sizeRange.
+            if (effortRange <= 0) return 0;
+            const [, maxSize] = PDS_EFFORT_SIZE_RANGE;
+            return ((value - minEffort) / effortRange) * maxSize;
+          },
+          elevationScale: effortElevationScale,
+          updateTriggers: {
+            getFillColor: [pdsH3EffortData, effortOpacity, selectedActivityMetric],
+            getElevation: [pdsH3EffortData, effortElevationScale, effortExtruded, minEffort, maxEffort, selectedActivityMetric],
+            parameters: [KEPLER_LAYER_BLENDING, effortOpacity]
+          }
+        })
+      );
+    }
+
+    // PDS fishing grounds overlay (Kepler-style geojson choropleth)
+    // Draw after H3 layer so grounds remain visible.
+    if (showGrounds && pdsFishingGroundsData?.features?.length) {
+      // Kepler filter on grounds dataset: unique_trips configured in style filter.
+      const filteredGroundsFeatures = pdsFishingGroundsData.features.filter((feature) => {
+        const trips = Number(feature?.properties?.unique_trips);
+        return (
+          Number.isFinite(trips) &&
+          trips >= PDS_GROUNDS_UNIQUE_TRIPS_FILTER.min &&
+          trips <= PDS_GROUNDS_UNIQUE_TRIPS_FILTER.max
         );
-      } else {
-        // Heatmap layer for density visualization
-        allLayers.push(
-          new HeatmapLayer({
-            id: 'pds-grid-heatmap-layer',
-            data: transformedPdsData || [],
-            pickable: true,
-            getPosition: d => d.position,
-            getWeight: d => {
-              if (!d || typeof d.avgTimeHours !== 'number') return 0;
-              return Math.max(0, d.avgTimeHours);
-            },
-            radiusPixels: 40,
-            intensity: 1.2,
-            threshold: 0.03,
-            colorRange: [
-              [255, 255, 255, 0],
-              [254, 235, 226, 255],
-              [252, 197, 192, 255],
-              [250, 159, 181, 255],
-              [247, 104, 161, 255],
-              [221, 52, 151, 255],
-              [174, 1, 126, 255]
-            ],
-            aggregation: 'SUM',
-            weightsTextureSize: 1024,
-            updateTriggers: {
-              getWeight: [selectedRanges],
-              data: [transformedPdsData]
-            }
-          })
-        );
-      }
+      });
+      const groundsValues = filteredGroundsFeatures
+        .map((feature) => feature?.properties?.[selectedActivityMetric])
+        .filter((value) => typeof value === 'number' && !isNaN(value));
+      const groundsQuantiles = getQuantileThresholds(groundsValues, PDS_GROUNDS_COLOR_RANGE.length);
+
+      allLayers.push(
+        new GeoJsonLayer({
+          id: 'pds-fishing-grounds-layer',
+          data: {
+            ...pdsFishingGroundsData,
+            features: filteredGroundsFeatures
+          },
+          pickable: true,
+          autoHighlight: true,
+          highlightColor: [252, 242, 26, 255],
+          stroked: false,
+          filled: true,
+          opacity: groundsOpacity,
+          ...(pdsBlendParameters ? { parameters: pdsBlendParameters } : {}),
+          getFillColor: (feature) =>
+            getColorByQuantile(
+              feature?.properties?.[selectedActivityMetric],
+              groundsQuantiles,
+              PDS_GROUNDS_COLOR_RANGE,
+              Math.round(255 * groundsOpacity)
+            ),
+          updateTriggers: {
+            getFillColor: [pdsFishingGroundsData, groundsOpacity, selectedActivityMetric],
+            parameters: [KEPLER_LAYER_BLENDING, groundsOpacity]
+          }
+        })
+      );
     }
 
     return allLayers;
   }, [
-    transformedPdsData,
-    selectedRanges,
     filteredBoundaries,
     selectedMetric,
     metricStats,
@@ -161,6 +205,10 @@ export const useMapLayers = ({
     isSatellite,
     isDarkTheme,
     hoveredFeatureIndex,
-    visualizationMode
+    visualizationMode,
+    pdsFishingGroundsData,
+    pdsH3EffortData,
+    selectedActivityMetric,
+    activeActivityLayers
   ]);
 }; 
