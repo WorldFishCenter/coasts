@@ -1,3 +1,15 @@
+# coasts 0.4.1
+
+## Improvements
+
+- **PDS activity filter**: H3 effort cells and fishing grounds are now pre-filtered to `unique_trips ≥ 3` globally, removing low-confidence single-visit cells from all layers, legends, and stats.
+- **`avg_hours_per_day` height calibration**: Fixed 3D column heights for the Avg Hrs / Active Day metric. The previous data update changed its range from 0–0.4 to 0–17 (correct denominator: `fishing_hours / n_active_days`). Heights now use a fixed semantic ceiling (75 h) aligned to the visual scale of the Total Hours metric.
+- **Metric definitions updated for backend fix**: `avg_hours_per_day` now correctly represents fishing intensity per active day (`fishing_hours / n_active_days`), not a diluted daily average over the entire study period. `constancy` is confirmed as `n_active_days / n_total_days` (study period ≈ 2023–present; typical range ≤ 0.41).
+- **Metric labels and formats**: Renamed `avg_hours_per_day` UI label to "Avg Hrs / Active Day"; added `h/day` and `h` unit suffixes to relevant formatters; `constancy` format precision increased to 4 decimal places.
+- **Glossary expanded**: Added authoritative definitions for Avg Hrs / Active Day, Constancy, Unique Trips, and Active Days (including formulas and typical ranges) to `GLOSSARY_TERMS` and `LAYER_METADATA`.
+- **Tooltip deduplication**: Activity tooltips (H3 cells and fishing grounds) no longer repeat the selected metric in the context rows below — the chosen metric appears once at the top, remaining context fields follow.
+- **Data dictionary updated**: `DATA_DICTIONARY_ROWS` and `LAYER_METADATA` notes now reflect corrected formulas and the `unique_trips ≥ 3` filter.
+
 # coasts 0.4.0
 
 ## New Features

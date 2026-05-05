@@ -78,8 +78,9 @@ export const PDS_EFFORT_SIZE_RANGE =
   Array.isArray(effortVisConfig.sizeRange) && effortVisConfig.sizeRange.length === 2
     ? effortVisConfig.sizeRange
     : [0, 500];
+export const PDS_MIN_UNIQUE_TRIPS = 3;
 export const PDS_GROUNDS_UNIQUE_TRIPS_FILTER = {
-  min: tripsFilterRange[0] ?? 4,
+  min: PDS_MIN_UNIQUE_TRIPS,
   max: tripsFilterRange[1] ?? 3055
 };
 

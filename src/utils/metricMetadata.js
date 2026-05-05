@@ -122,7 +122,8 @@ export const LAYER_METADATA = Object.freeze({
     id: 'pds-h3-effort-layer',
     label: 'PDS H3 activity cells',
     source: 'public/data/pds-h3-effort-r9.json',
-    encoding: 'Quantile color + optional extrusion in column mode'
+    encoding: 'Quantile color + optional extrusion in column mode; pre-filtered to unique_trips ≥ 3',
+    notes: 'avg_hours_per_day = fishing_hours / n_active_days (intensity per active day). constancy = n_active_days / n_total_days (fraction of study period).'
   },
   'pds-fishing-grounds-layer': {
     id: 'pds-fishing-grounds-layer',
@@ -151,11 +152,15 @@ export const GLOSSARY_TERMS = Object.freeze([
   { term: 'RPUE', definition: 'Revenue per unit effort, in USD per fisher-day.' },
   { term: 'PDS Grounds', definition: 'Designated fishing-ground polygons from PeskAAS movement data.' },
   { term: 'H3 Activity Cells', definition: 'Hexagonal bins showing movement-derived activity intensity.' },
-  { term: 'Quantile scale', definition: 'Color classes split into equally sized ranked groups.' }
+  { term: 'Quantile scale', definition: 'Color classes split into equally sized ranked groups.' },
+  { term: 'Avg Hrs / Active Day', definition: 'fishing_hours ÷ n_active_days. Measures fishing intensity on days when this cell was actually visited. Typical range 0.04–17 h/day.' },
+  { term: 'Constancy', definition: 'n_active_days ÷ n_total_days (study period ≈ 2023–present). Fraction of all days in the study window on which this cell was active. A cell active every day for one year scores ≈ 0.41.' },
+  { term: 'Unique Trips', definition: 'Number of distinct vessel trips that passed through this H3 cell or fishing ground.' },
+  { term: 'Active Days', definition: 'Number of distinct calendar days on which at least one fishing trip was recorded in this cell.' }
 ]);
 
 export const DATA_DICTIONARY_ROWS = Object.freeze([
-  { uiLabel: 'Local Fishing Activity', sourceField: 'fishing_hours | unique_trips | n_active_days | avg_hours_per_day', transform: 'Quantile thresholds over current filtered H3 rows' },
+  { uiLabel: 'Local Fishing Activity', sourceField: 'fishing_hours | unique_trips | n_active_days | avg_hours_per_day (= fishing_hours / n_active_days) | constancy (= n_active_days / n_total_days)', transform: 'Pre-filtered unique_trips ≥ 3; quantile thresholds over remaining H3 rows' },
   { uiLabel: 'Fishing Grounds', sourceField: 'feature.properties.* in pds-fishing-grounds.geojson', transform: 'Unique-trips filter then quantile thresholds by selected metric' },
   { uiLabel: 'Bathymetry (Depth m)', sourceField: 'depth_m, depth_label', transform: 'Mapbox interpolate depth classes + label filter for key contours' },
   { uiLabel: 'Global Map metric legend', sourceField: 'mean_cpue / mean_rpue / mean_price_kg / fishers_* / boats_total', transform: 'Averaged per selected year range and color-binned by grades' }

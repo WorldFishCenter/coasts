@@ -3,10 +3,10 @@
  */
 
 export const ACTIVITY_METRICS = [
-  { id: 'fishing_hours', label: 'Total Hours', format: (v) => v > 1000 ? `${(v/1000).toFixed(1)}k` : v.toFixed(0) },
-  { id: 'avg_hours_per_day', label: 'Avg Hrs/Day', format: (v) => v.toFixed(2) },
+  { id: 'fishing_hours', label: 'Total Hours', format: (v) => v > 1000 ? `${(v/1000).toFixed(1)}k h` : `${v.toFixed(1)} h` },
+  { id: 'avg_hours_per_day', label: 'Avg Hrs / Active Day', format: (v) => `${v.toFixed(2)} h/day` },
   { id: 'unique_trips', label: 'Unique Trips', format: (v) => v > 1000 ? `${(v/1000).toFixed(1)}k` : v.toLocaleString() },
-  { id: 'constancy', label: 'Constancy', format: (v) => v.toFixed(3) }
+  { id: 'constancy', label: 'Constancy', format: (v) => v.toFixed(4) }
 ];
 
 // Color range for the grid layer (from light to dark)

@@ -32,6 +32,7 @@ export const useMapLayers = ({
   activeActivityLayers
 }) => {
   return useMemo(() => {
+    const isAvgHoursMetric = selectedActivityMetric === 'avg_hours_per_day';
     const allLayers = [];
     const showWioRegions = true;
     const showGrounds = activeActivityLayers?.grounds !== false;
@@ -111,9 +112,14 @@ export const useMapLayers = ({
         .map((row) => row?.[selectedActivityMetric])
         .filter((value) => typeof value === 'number' && !isNaN(value));
       const effortQuantiles = getQuantileThresholds(effortValues, PDS_EFFORT_COLOR_RANGE.length);
-      const minEffort = effortValues.length ? Math.min(...effortValues) : 0;
       const maxEffort = effortValues.length ? Math.max(...effortValues) : 0;
+      const minEffort = effortValues.length ? Math.min(...effortValues) : 0;
       const effortRange = maxEffort - minEffort;
+      // avg_hours_per_day has a small natural range (0-17) which makes linear
+      // normalization against its own max produce bars ~9× taller than fishing_hours
+      // at the same percentile. A fixed ceiling of 75 brings column heights into the
+      // same visual order as fishing_hours while keeping hotspot differentiation.
+      const AVG_HOURS_CEILING = 75;
 
       allLayers.push(
         new H3HexagonLayer({
@@ -135,15 +141,17 @@ export const useMapLayers = ({
           getElevation: (d) => {
             const value = d?.[selectedActivityMetric];
             if (typeof value !== 'number' || isNaN(value) || value <= 0) return 0;
-            // Kepler visualChannels.sizeField with visConfig.sizeRange.
-            if (effortRange <= 0) return 0;
             const [, maxSize] = PDS_EFFORT_SIZE_RANGE;
+            if (isAvgHoursMetric) {
+              return (value / AVG_HOURS_CEILING) * maxSize;
+            }
+            if (effortRange <= 0) return 0;
             return ((value - minEffort) / effortRange) * maxSize;
           },
           elevationScale: effortElevationScale,
           updateTriggers: {
             getFillColor: [pdsH3EffortData, effortOpacity, selectedActivityMetric],
-            getElevation: [pdsH3EffortData, effortElevationScale, effortExtruded, minEffort, maxEffort, selectedActivityMetric],
+            getElevation: [pdsH3EffortData, effortElevationScale, effortExtruded, minEffort, maxEffort, isAvgHoursMetric, selectedActivityMetric],
             parameters: [KEPLER_LAYER_BLENDING, effortOpacity]
           }
         })

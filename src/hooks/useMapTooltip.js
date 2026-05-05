@@ -90,15 +90,24 @@ export const useMapTooltip = ({
 
     if (layer.id === 'pds-fishing-grounds-layer') {
       const props = object.properties || {};
+      const groundContextRows = [
+        `<div>Area: ${(props.area_km2 ?? 0).toFixed?.(2) ?? '0.00'} km²</div>`,
+        selectedActivityMetric !== 'fishing_hours'
+          ? `<div>Total Hours: ${(props.fishing_hours ?? 0).toLocaleString?.(undefined, {maximumFractionDigits: 1}) ?? '0'} h</div>`
+          : '',
+        selectedActivityMetric !== 'unique_trips'
+          ? `<div>Unique Trips: ${(props.unique_trips ?? 0).toLocaleString?.() ?? '0'}</div>`
+          : '',
+        selectedActivityMetric !== 'n_active_days'
+          ? `<div>Active Days: ${(props.n_active_days ?? 0).toLocaleString?.() ?? '0'}</div>`
+          : '',
+      ].join('');
       return {
         html: `
           <div style="padding: 8px">
             <div><strong>Designated Fishing Ground</strong></div>
             <div style="margin-top: 4px;">${escapeHtml(selectedActivityLabel)}: ${formatActivityValue(props[selectedActivityMetric])}</div>
-            <div>Area: ${(props.area_km2 ?? 0).toFixed?.(2) ?? '0.00'} km²</div>
-            <div>Total Hours: ${(props.fishing_hours ?? 0).toLocaleString?.(undefined, {maximumFractionDigits: 1}) ?? props.fishing_hours ?? '0'}</div>
-            <div>Unique Trips: ${(props.unique_trips ?? 0).toLocaleString?.() ?? props.unique_trips ?? '0'}</div>
-            <div>Active Days: ${(props.n_active_days ?? 0).toLocaleString?.() ?? props.n_active_days ?? '0'}</div>
+            ${groundContextRows}
           </div>
         `,
         style: {
@@ -113,14 +122,23 @@ export const useMapTooltip = ({
     }
 
     if (layer.id === 'pds-h3-effort-layer') {
+      const contextRows = [
+        selectedActivityMetric !== 'fishing_hours'
+          ? `<div>Total Hours: ${(object.fishing_hours ?? 0).toLocaleString?.(undefined, {maximumFractionDigits: 1}) ?? '0'} h</div>`
+          : '',
+        selectedActivityMetric !== 'unique_trips'
+          ? `<div>Unique Trips: ${(object.unique_trips ?? 0).toLocaleString?.() ?? '0'}</div>`
+          : '',
+        selectedActivityMetric !== 'n_active_days'
+          ? `<div>Active Days: ${(object.n_active_days ?? 0).toLocaleString?.() ?? '0'}</div>`
+          : '',
+      ].join('');
       return {
         html: `
           <div style="padding: 8px">
             <div><strong>Fishing Activity Cell</strong></div>
             <div style="margin-top: 4px;">${escapeHtml(selectedActivityLabel)}: ${formatActivityValue(object[selectedActivityMetric])}</div>
-            <div>Total Hours: ${(object.fishing_hours ?? 0).toLocaleString?.(undefined, {maximumFractionDigits: 1}) ?? object.fishing_hours ?? '0'}</div>
-            <div>Unique Trips: ${(object.unique_trips ?? 0).toLocaleString?.() ?? object.unique_trips ?? '0'}</div>
-            <div>Active Days: ${(object.n_active_days ?? 0).toLocaleString?.() ?? object.n_active_days ?? '0'}</div>
+            ${contextRows}
           </div>
         `,
         style: {

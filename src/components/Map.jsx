@@ -26,7 +26,7 @@ import { getMapStyles } from '../styles/mapStyles';
 import { processH3EffortData } from '../utils/pdsDataProcessor';
 import { calculateMetricStats } from '../utils/metricCalculations';
 import { getAverageMetricsInRange, getAverageMetricsInRangeGaul1 } from '../services/dataService';
-import { KEPLER_INITIAL_VIEW_STATE } from '../utils/pdsOverlayConfig';
+import { KEPLER_INITIAL_VIEW_STATE, PDS_MIN_UNIQUE_TRIPS } from '../utils/pdsOverlayConfig';
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
@@ -193,8 +193,23 @@ const MapComponent = ({ isActive = true }) => {
 
   // Transform H3 data based on selected year
   const transformedH3Data = useMemo(() => {
-    return processH3EffortData(pdsH3EffortData, selectedYear);
+    const yearFiltered = processH3EffortData(pdsH3EffortData, selectedYear);
+    return yearFiltered.filter((row) => {
+      const trips = Number(row?.unique_trips);
+      return Number.isFinite(trips) && trips >= PDS_MIN_UNIQUE_TRIPS;
+    });
   }, [selectedYear, pdsH3EffortData]);
+
+  const filteredPdsFishingGroundsData = useMemo(() => {
+    if (!pdsFishingGroundsData?.features?.length) return pdsFishingGroundsData;
+    return {
+      ...pdsFishingGroundsData,
+      features: pdsFishingGroundsData.features.filter((feature) => {
+        const trips = Number(feature?.properties?.unique_trips);
+        return Number.isFinite(trips) && trips >= PDS_MIN_UNIQUE_TRIPS;
+      })
+    };
+  }, [pdsFishingGroundsData]);
 
   // Calculate metric statistics based on enriched boundaries
   const metricStats = useMemo(() => {
@@ -211,7 +226,7 @@ const MapComponent = ({ isActive = true }) => {
     isDarkTheme,
     hoveredFeatureIndex,
     visualizationMode,
-    pdsFishingGroundsData,
+    pdsFishingGroundsData: filteredPdsFishingGroundsData,
     pdsH3EffortData: transformedH3Data,
     selectedActivityMetric,
     activeActivityLayers
@@ -463,7 +478,7 @@ const MapComponent = ({ isActive = true }) => {
       <Header 
         boundaries={enrichedBoundaries}
         timeSeriesData={timeSeriesData}
-        pdsH3EffortData={pdsH3EffortData}
+        pdsH3EffortData={transformedH3Data}
       />
       
       <div style={{
@@ -482,7 +497,7 @@ const MapComponent = ({ isActive = true }) => {
           selectedFishersMetric={selectedFishersMetric}
           onFishersMetricChange={handleFishersMetricChange}
           transformedH3Data={transformedH3Data}
-          pdsFishingGroundsData={pdsFishingGroundsData}
+          pdsFishingGroundsData={filteredPdsFishingGroundsData}
           selectedYear={selectedYear}
           onYearChange={setSelectedYear}
           selectedActivityMetric={selectedActivityMetric}
@@ -542,9 +557,9 @@ const MapComponent = ({ isActive = true }) => {
               grades={metricStats.grades}
               selectedMetric={selectedMetric}
               selectedActivityMetric={selectedActivityMetric}
-              hasGridData={transformedH3Data.length > 0 || pdsFishingGroundsData?.features?.length > 0}
+              hasGridData={transformedH3Data.length > 0 || filteredPdsFishingGroundsData?.features?.length > 0}
               pdsH3EffortData={transformedH3Data}
-              pdsFishingGroundsData={pdsFishingGroundsData}
+              pdsFishingGroundsData={filteredPdsFishingGroundsData}
               activeActivityLayers={activeActivityLayers}
               visualizationMode={visualizationMode}
               showBathymetry={showBathymetry}
@@ -588,7 +603,7 @@ const MapComponent = ({ isActive = true }) => {
               selectedActivityMetric={selectedActivityMetric}
               showBathymetry={showBathymetry}
               h3Records={transformedH3Data?.length ?? 0}
-              groundsFeatures={pdsFishingGroundsData?.features?.length ?? 0}
+              groundsFeatures={filteredPdsFishingGroundsData?.features?.length ?? 0}
             />
           </div>
 
