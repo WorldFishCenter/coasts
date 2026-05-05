@@ -16,6 +16,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Sync with latest branch
+        run: git pull --ff-only origin ${{ github.ref_name }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -45,5 +50,4 @@ jobs:
             exit 0
           fi
           git commit -m "Update GCP PDS datasets (automated)"
-          git pull --rebase origin ${{ github.ref_name }}
           git push

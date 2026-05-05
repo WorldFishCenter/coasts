@@ -17,6 +17,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Sync with latest branch
+        run: git pull --ff-only origin ${{ github.ref_name }}
       
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -41,6 +46,9 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add -A
-          git commit -m "Update MongoDB data (automated)" || echo "No changes to commit"
-          git pull --rebase origin ${{ github.ref_name }}
-          git push 
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "Update MongoDB data (automated)"
+          git push
