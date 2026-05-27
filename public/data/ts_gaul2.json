@@ -8772,11 +8772,11 @@
       },
       {
         "date": "2025-05-01T00:00:00Z",
-        "mean_cpue": 6.413311111,
+        "mean_cpue": 6.46952381,
         "mean_cpua": null,
-        "mean_rpue": 11.252346661,
+        "mean_rpue": 11.334343295,
         "mean_rpua": null,
-        "mean_price_kg": 1.803617708
+        "mean_price_kg": 1.802808347
       },
       {
         "date": "2025-06-01T00:00:00Z",
@@ -8860,11 +8860,11 @@
       },
       {
         "date": "2026-04-01T00:00:00Z",
-        "mean_cpue": 8.084715496,
+        "mean_cpue": 8.211454582,
         "mean_cpua": null,
-        "mean_rpue": 12.513975989,
+        "mean_rpue": 12.708620448,
         "mean_rpua": null,
-        "mean_price_kg": 1.573127108
+        "mean_price_kg": 1.573016796
       },
       {
         "date": "2026-05-01T00:00:00Z",
@@ -11827,11 +11827,11 @@
       },
       {
         "date": "2026-05-01T00:00:00Z",
-        "mean_cpue": 4.645502911,
+        "mean_cpue": 4.628307138,
         "mean_cpua": null,
-        "mean_rpue": 10.669449136,
+        "mean_rpue": 10.619520153,
         "mean_rpua": null,
-        "mean_price_kg": 2.381604243
+        "mean_price_kg": 2.375584448
       }
     ]
   },
@@ -17715,9 +17715,9 @@
         "date": "2026-01-01T00:00:00Z",
         "mean_cpue": 4.959393262,
         "mean_cpua": null,
-        "mean_rpue": 12.509063082,
+        "mean_rpue": 12.511144163,
         "mean_rpua": null,
-        "mean_price_kg": 2.712750196
+        "mean_price_kg": 2.71326719
       },
       {
         "date": "2026-02-01T00:00:00Z",
@@ -17731,25 +17731,25 @@
         "date": "2026-03-01T00:00:00Z",
         "mean_cpue": 6.422851286,
         "mean_cpua": null,
-        "mean_rpue": 15.284975981,
+        "mean_rpue": 15.28570436,
         "mean_rpua": null,
-        "mean_price_kg": 2.497369684
+        "mean_price_kg": 2.497606171
       },
       {
         "date": "2026-04-01T00:00:00Z",
         "mean_cpue": 6.239103349,
         "mean_cpua": null,
-        "mean_rpue": 14.975491948,
+        "mean_rpue": 14.977486767,
         "mean_rpua": null,
-        "mean_price_kg": 2.475720287
+        "mean_price_kg": 2.476087692
       },
       {
         "date": "2026-05-01T00:00:00Z",
-        "mean_cpue": 5.859383213,
+        "mean_cpue": 5.881287962,
         "mean_cpua": null,
-        "mean_rpue": 13.434006219,
+        "mean_rpue": 13.534272108,
         "mean_rpua": null,
-        "mean_price_kg": 2.329606089
+        "mean_price_kg": 2.356704841
       }
     ]
   },
@@ -23663,11 +23663,11 @@
       },
       {
         "date": "2026-05-01T00:00:00Z",
-        "mean_cpue": 4.24152381,
+        "mean_cpue": 4.1955,
         "mean_cpua": null,
-        "mean_rpue": 12.22892,
+        "mean_rpue": 11.9871675,
         "mean_rpua": null,
-        "mean_price_kg": 3.454285714
+        "mean_price_kg": 3.4125
       }
     ]
   },
@@ -29477,11 +29477,11 @@
       },
       {
         "date": "2025-04-01T00:00:00Z",
-        "mean_cpue": 6.108622361,
+        "mean_cpue": 6.12151965,
         "mean_cpua": null,
-        "mean_rpue": 15.283632311,
+        "mean_rpue": 15.319430031,
         "mean_rpua": null,
-        "mean_price_kg": 2.487643777
+        "mean_price_kg": 2.487881139
       },
       {
         "date": "2025-05-01T00:00:00Z",
@@ -29581,11 +29581,11 @@
       },
       {
         "date": "2026-05-01T00:00:00Z",
-        "mean_cpue": 5.442155516,
+        "mean_cpue": 5.418952567,
         "mean_cpua": null,
-        "mean_rpue": 10.603053391,
+        "mean_rpue": 10.428940276,
         "mean_rpua": null,
-        "mean_price_kg": 2.026708425
+        "mean_price_kg": 2.001777745
       }
     ]
   },
@@ -41387,41 +41387,41 @@
         "date": "2026-01-01T00:00:00Z",
         "mean_cpue": 4.995134445,
         "mean_cpua": null,
-        "mean_rpue": 11.496697301,
+        "mean_rpue": 11.546250747,
         "mean_rpua": null,
-        "mean_price_kg": 2.419011252
+        "mean_price_kg": 2.433326597
       },
       {
         "date": "2026-02-01T00:00:00Z",
         "mean_cpue": 5.234236149,
         "mean_cpua": null,
-        "mean_rpue": 12.447280348,
+        "mean_rpue": 12.490601188,
         "mean_rpua": null,
-        "mean_price_kg": 2.503408195
+        "mean_price_kg": 2.516708183
       },
       {
         "date": "2026-03-01T00:00:00Z",
         "mean_cpue": 6.44785482,
         "mean_cpua": null,
-        "mean_rpue": 14.380465877,
+        "mean_rpue": 14.42823554,
         "mean_rpua": null,
-        "mean_price_kg": 2.400632379
+        "mean_price_kg": 2.414247778
       },
       {
         "date": "2026-04-01T00:00:00Z",
         "mean_cpue": 5.779871792,
         "mean_cpua": null,
-        "mean_rpue": 13.110604525,
+        "mean_rpue": 13.19014998,
         "mean_rpua": null,
-        "mean_price_kg": 2.413072064
+        "mean_price_kg": 2.432938038
       },
       {
         "date": "2026-05-01T00:00:00Z",
-        "mean_cpue": 5.448183335,
+        "mean_cpue": 5.31587144,
         "mean_cpua": null,
-        "mean_rpue": 11.705179705,
+        "mean_rpue": 11.48242912,
         "mean_rpua": null,
-        "mean_price_kg": 2.251373697
+        "mean_price_kg": 2.269819889
       }
     ]
   },
