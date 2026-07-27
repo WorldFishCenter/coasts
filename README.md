@@ -32,6 +32,20 @@ Interactive map visualization for coastal regions using React and Mapbox GL JS.
    ```
 4. Run development server: `npm run dev`
 
+## Analytics
+
+Google Analytics 4 is wired through `src/lib/analytics.js` and loads only when `VITE_GA_MEASUREMENT_ID` is set:
+
+```
+VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+```
+
+The tag is skipped in development so local sessions don't reach production reports; set `VITE_GA_DEBUG=true` to load it locally for testing.
+
+Because this is a single-page app, page views are sent manually from `usePageTracking` on every React Router navigation. GA4's own history-based page views must therefore stay disabled, otherwise each navigation is counted twice: in GA4 Admin → Data streams → your web stream → Enhanced measurement → Page views → Show advanced settings, clear **Page changes based on browser history events**.
+
+Custom events go through `trackEvent(name, params)` from `src/lib/analytics.js`.
+
 ## MongoDB Data Processing
 
 This project uses a GitHub Actions workflow to fetch data from MongoDB daily and store it as static JSON files. The data comes from two collections:

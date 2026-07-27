@@ -3,9 +3,12 @@ import MapComponent from './components/Map'
 import CountryView from './components/CountryView'
 import DocsHub from './components/DocsHub'
 import { ThemeProvider } from './components/ThemeProvider'
+import { usePageTracking } from './hooks/usePageTracking'
 
 function AppContent() {
   const location = useLocation();
+
+  usePageTracking();
   
   // Routes where the map should be active
   const isCountryRoute = location.pathname === '/country';
