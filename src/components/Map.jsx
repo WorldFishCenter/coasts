@@ -200,6 +200,20 @@ const MapComponent = ({ isActive = true }) => {
     });
   }, [selectedYear, pdsH3EffortData]);
 
+  // Which period the effort grid currently represents, for legend and panel copy.
+  const activityYearScope = useMemo(() => {
+    if (selectedYear !== 'all') {
+      return { isAllYears: false, label: String(selectedYear) };
+    }
+    const years = Array.from(
+      new Set((pdsH3EffortData ?? []).map((row) => Number(row?.year)).filter(Number.isFinite))
+    ).sort((a, b) => a - b);
+    if (years.length > 1) {
+      return { isAllYears: true, label: `all years (${years[0]}–${years[years.length - 1]})` };
+    }
+    return { isAllYears: true, label: years.length ? `all years (${years[0]})` : 'all years' };
+  }, [selectedYear, pdsH3EffortData]);
+
   const filteredPdsFishingGroundsData = useMemo(() => {
     if (!pdsFishingGroundsData?.features?.length) return pdsFishingGroundsData;
     return {
@@ -238,7 +252,8 @@ const MapComponent = ({ isActive = true }) => {
     selectedActivityMetric,
     isDarkTheme,
     metricStats,
-    visualizationMode
+    visualizationMode,
+    yearScopeLabel: activityYearScope.label
   });
 
 
@@ -564,6 +579,7 @@ const MapComponent = ({ isActive = true }) => {
               visualizationMode={visualizationMode}
               showBathymetry={showBathymetry}
               dataFreshnessLabel={dataFreshnessLabel}
+              yearScope={activityYearScope}
             />
           </div>
 
@@ -604,6 +620,8 @@ const MapComponent = ({ isActive = true }) => {
               showBathymetry={showBathymetry}
               h3Records={transformedH3Data?.length ?? 0}
               groundsFeatures={filteredPdsFishingGroundsData?.features?.length ?? 0}
+              yearScope={activityYearScope}
+              visualizationMode={visualizationMode}
             />
           </div>
 

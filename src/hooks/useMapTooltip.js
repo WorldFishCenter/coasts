@@ -1,13 +1,14 @@
 import { useCallback } from 'react';
 import { getMetricInfo, formatRegionName, formatCountryName } from '../utils/formatters';
 import { COLORS } from '../components/map/EnhancedLegend';
-import { ACTIVITY_METRIC_METADATA } from '../utils/metricMetadata';
+import { ACTIVITY_METRIC_METADATA, H3_EFFORT_GRID, isRatioActivityField } from '../utils/metricMetadata';
 
 export const useMapTooltip = ({
   selectedMetric,
   selectedActivityMetric = 'fishing_hours',
   isDarkTheme,
-  metricStats
+  metricStats,
+  yearScopeLabel = 'all years'
 }) => {
   const escapeHtml = (value) =>
     String(value ?? '')
@@ -19,13 +20,17 @@ export const useMapTooltip = ({
 
   return useCallback(({object, layer}) => {
     if (!object) return null;
-    const selectedActivityLabel = ACTIVITY_METRIC_METADATA[selectedActivityMetric]?.label ?? selectedActivityMetric;
+    const activityDocs = ACTIVITY_METRIC_METADATA[selectedActivityMetric] ?? {};
+    const selectedActivityLabel = activityDocs.label ?? selectedActivityMetric;
     const formatActivityValue = (value) => {
       if (value === null || value === undefined || Number.isNaN(Number(value))) return 'N/A';
-      const formatter = ACTIVITY_METRIC_METADATA[selectedActivityMetric]?.format;
+      const formatter = activityDocs.format;
       if (formatter) return formatter(Number(value));
       return Number(value).toFixed(2);
     };
+    const mutedColor = isDarkTheme ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.55)';
+    const footnote = (text) =>
+      `<div style="margin-top:6px; font-size:11px; line-height:1.35; color:${mutedColor}">${text}</div>`;
 
     // Handle GeoJsonLayer (choropleth) tooltips
     if (layer.id === 'wio-regions') {
@@ -93,21 +98,24 @@ export const useMapTooltip = ({
       const groundContextRows = [
         `<div>Area: ${(props.area_km2 ?? 0).toFixed?.(2) ?? '0.00'} km²</div>`,
         selectedActivityMetric !== 'fishing_hours'
-          ? `<div>Total Hours: ${(props.fishing_hours ?? 0).toLocaleString?.(undefined, {maximumFractionDigits: 1}) ?? '0'} h</div>`
+          ? `<div>Fishing hours: ${(props.fishing_hours ?? 0).toLocaleString?.(undefined, {maximumFractionDigits: 1}) ?? '0'} vessel-h</div>`
           : '',
         selectedActivityMetric !== 'unique_trips'
-          ? `<div>Unique Trips: ${(props.unique_trips ?? 0).toLocaleString?.() ?? '0'}</div>`
+          ? `<div>Cell visits: ${(props.unique_trips ?? 0).toLocaleString?.() ?? '0'}</div>`
           : '',
-        selectedActivityMetric !== 'n_active_days'
-          ? `<div>Active Days: ${(props.n_active_days ?? 0).toLocaleString?.() ?? '0'}</div>`
-          : '',
+        `<div>Active days: ${(props.n_active_days ?? 0).toLocaleString?.() ?? '0'}</div>`,
       ].join('');
+      const groundFootnote = isRatioActivityField(selectedActivityMetric)
+        ? `${escapeHtml(selectedActivityLabel)} is averaged across this ground’s cells, not derived from its totals.`
+        : 'Cell visits count a trip once per cell it crossed, so they exceed the number of distinct trips.';
       return {
         html: `
-          <div style="padding: 8px">
-            <div><strong>Designated Fishing Ground</strong></div>
-            <div style="margin-top: 4px;">${escapeHtml(selectedActivityLabel)}: ${formatActivityValue(props[selectedActivityMetric])}</div>
+          <div style="padding: 8px; max-width: 260px">
+            <div><strong>Fishing ground</strong>${props.ground_id ? ` <span style="color:${mutedColor}">${escapeHtml(props.ground_id)}</span>` : ''}</div>
+            <div style="font-size:11px; color:${mutedColor}">All years${props.country ? ` · ${escapeHtml(formatCountryName(props.country))}` : ''}</div>
+            <div style="margin-top: 6px;">${escapeHtml(selectedActivityLabel)}: <strong>${formatActivityValue(props[selectedActivityMetric])}</strong></div>
             ${groundContextRows}
+            ${footnote(groundFootnote)}
           </div>
         `,
         style: {
@@ -124,21 +132,21 @@ export const useMapTooltip = ({
     if (layer.id === 'pds-h3-effort-layer') {
       const contextRows = [
         selectedActivityMetric !== 'fishing_hours'
-          ? `<div>Total Hours: ${(object.fishing_hours ?? 0).toLocaleString?.(undefined, {maximumFractionDigits: 1}) ?? '0'} h</div>`
+          ? `<div>Fishing hours: ${(object.fishing_hours ?? 0).toLocaleString?.(undefined, {maximumFractionDigits: 1}) ?? '0'} vessel-h</div>`
           : '',
         selectedActivityMetric !== 'unique_trips'
-          ? `<div>Unique Trips: ${(object.unique_trips ?? 0).toLocaleString?.() ?? '0'}</div>`
+          ? `<div>Trips: ${(object.unique_trips ?? 0).toLocaleString?.() ?? '0'}</div>`
           : '',
-        selectedActivityMetric !== 'n_active_days'
-          ? `<div>Active Days: ${(object.n_active_days ?? 0).toLocaleString?.() ?? '0'}</div>`
-          : '',
+        `<div>Active days: ${(object.n_active_days ?? 0).toLocaleString?.() ?? '0'}</div>`,
       ].join('');
       return {
         html: `
-          <div style="padding: 8px">
-            <div><strong>Fishing Activity Cell</strong></div>
-            <div style="margin-top: 4px;">${escapeHtml(selectedActivityLabel)}: ${formatActivityValue(object[selectedActivityMetric])}</div>
+          <div style="padding: 8px; max-width: 260px">
+            <div><strong>Fishing activity cell</strong></div>
+            <div style="font-size:11px; color:${mutedColor}">${H3_EFFORT_GRID.areaLabel} · ${escapeHtml(yearScopeLabel)}</div>
+            <div style="margin-top: 6px;">${escapeHtml(selectedActivityLabel)}: <strong>${formatActivityValue(object[selectedActivityMetric])}</strong></div>
             ${contextRows}
+            ${footnote('Hours are summed across boats, so one day can exceed 24.')}
           </div>
         `,
         style: {
@@ -153,5 +161,5 @@ export const useMapTooltip = ({
     }
 
     return null;
-  }, [selectedMetric, selectedActivityMetric, isDarkTheme, metricStats]);
+  }, [selectedMetric, selectedActivityMetric, isDarkTheme, metricStats, yearScopeLabel]);
 }; 

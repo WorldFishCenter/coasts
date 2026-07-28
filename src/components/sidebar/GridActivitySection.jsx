@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { Activity, Box, Flame, Hexagon, Map as MapIcon, Layers, Eye, EyeOff } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { ACTIVITY_METRICS, calculateH3Stats, calculateGroundsStats } from '../../utils/gridLayerConfig';
+import { ACTIVITY_METRIC_METADATA, H3_EFFORT_GRID } from '../../utils/metricMetadata';
 
 const FishingActivitySection = ({
     isDarkTheme,
@@ -22,6 +23,8 @@ const FishingActivitySection = ({
         return calculateGroundsStats(pdsFishingGroundsData);
     }, [pdsFishingGroundsData]);
 
+    const activeMetricDocs = ACTIVITY_METRIC_METADATA[selectedActivityMetric] ?? {};
+
     return (
         <div className="flex flex-col gap-5">
             {/* Section Header */}
@@ -32,7 +35,7 @@ const FishingActivitySection = ({
                 <div>
                     <h3 className="m-0 text-base font-display font-semibold text-foreground tracking-wide">Fishing Activity</h3>
                     <p className="m-0 text-[10px] text-muted-foreground font-semibold uppercase tracking-widest opacity-80 mt-1">
-                        {h3Stats.activeCells.toLocaleString()} H3 Cells • {groundsStats.totalGrounds.toLocaleString()} Grounds
+                        {h3Stats.activeCells.toLocaleString()} cells ({H3_EFFORT_GRID.areaLabel}) • {groundsStats.totalGrounds.toLocaleString()} grounds
                     </p>
                 </div>
             </div>
@@ -173,6 +176,21 @@ const FishingActivitySection = ({
                             </button>
                         ))}
                     </div>
+                    {activeMetricDocs.definition && (
+                        <div className={cn(
+                            "rounded-xl border px-3 py-2.5",
+                            isDarkTheme ? "bg-white/[0.03] border-white/5" : "bg-black/[0.02] border-black/5"
+                        )}>
+                            {activeMetricDocs.unit && (
+                                <div className="text-[9px] uppercase font-bold tracking-[0.15em] text-muted-foreground opacity-70 mb-1">
+                                    {activeMetricDocs.unit}
+                                </div>
+                            )}
+                            <p className="m-0 text-[11px] leading-relaxed text-muted-foreground">
+                                {activeMetricDocs.definition}
+                            </p>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

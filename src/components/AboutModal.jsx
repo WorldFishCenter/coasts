@@ -1,5 +1,6 @@
-import { Info, X } from 'lucide-react';
+import { Info } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { H3_EFFORT_GRID } from '../utils/metricMetadata';
 import {
     Dialog,
     DialogContent,
@@ -54,11 +55,11 @@ const AboutModal = ({ open, onOpenChange, isDarkTheme, dynamicStats }) => {
                             <div className="grid grid-cols-2 gap-3 text-[13px]">
                                 <div>
                                     <strong>3D Fishing Effort Visualization</strong><br />
-                                    <span className="text-muted-foreground">Column heights show time spent fishing in 1km² grid cells</span>
+                                    <span className="text-muted-foreground">Column heights show fishing time in hexagonal cells of {H3_EFFORT_GRID.areaLabel}</span>
                                 </div>
                                 <div>
-                                    <strong>Time-based Filtering</strong><br />
-                                    <span className="text-muted-foreground">Filter by fishing duration (0.5h to 8+ hours)</span>
+                                    <strong>Year Filtering</strong><br />
+                                    <span className="text-muted-foreground">View a single year, or pool the whole record together</span>
                                 </div>
                                 <div>
                                     <strong>Metric Comparison</strong><br />
@@ -82,7 +83,7 @@ const AboutModal = ({ open, onOpenChange, isDarkTheme, dynamicStats }) => {
                                 Our platform integrates multiple data streams updated every 2 days:
                             </p>
                             <ul className="m-0 pl-5 text-[13px] space-y-2">
-                                <li><strong>GPS Tracking Data:</strong> {dynamicStats?.totalH3Cells?.toLocaleString() || 0} vessel movement patterns aggregated into H3 Hexagon cells</li>
+                                <li><strong>GPS Tracking Data:</strong> {dynamicStats?.totalH3Cells?.toLocaleString() || 0} hexagonal cells of fishing time, counting only positions classified as fishing</li>
                                 <li><strong>Fisheries Surveys:</strong> Catch, effort, and economic data from {dynamicStats?.totalRegions || 0} coastal communities</li>
                                 <li><strong>Administrative Boundaries:</strong> Official district boundaries for {dynamicStats?.totalCountries || 0} countries</li>
                                 <li><strong>Market Data:</strong> Fish price trends and revenue calculations across all regions</li>
@@ -126,9 +127,9 @@ const AboutModal = ({ open, onOpenChange, isDarkTheme, dynamicStats }) => {
                             <ol className="m-0 pl-5 text-[13px] space-y-2">
                                 <li>Click any district on the map to view detailed fisheries data</li>
                                 <li>Toggle between satellite and street view using the map style button</li>
-                                <li>Switch visualization modes between 3D columns and heat maps</li>
-                                <li>Use the legend panel to filter fishing effort by time ranges</li>
-                                <li>Compare different metrics (CPUE, prices) using the dropdown selector</li>
+                                <li>Switch the effort grid between 3D columns and a flat view</li>
+                                <li>Hover a cell or ground to see its underlying figures and units</li>
+                                <li>Open <strong>Layer details</strong> on the map, or the documentation, for how each number is produced</li>
                             </ol>
                         </div>
                     </div>
@@ -148,7 +149,7 @@ const AboutModal = ({ open, onOpenChange, isDarkTheme, dynamicStats }) => {
                     </div>
                     <div className="text-[11px] text-muted-foreground text-right">
                         Covering {dynamicStats?.totalCountries || 0} countries<br />
-                        {dynamicStats?.totalRegions || 0} regions • {dynamicStats?.totalH3Cells?.toLocaleString() || 0} GPS H3 cells
+                        {dynamicStats?.totalRegions || 0} regions • {dynamicStats?.totalH3Cells?.toLocaleString() || 0} effort cells
                     </div>
                 </div>
             </DialogContent>

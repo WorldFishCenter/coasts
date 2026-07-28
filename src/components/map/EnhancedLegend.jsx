@@ -3,6 +3,7 @@ import { ChevronDown, Eye, EyeOff } from 'lucide-react';
 import { COLOR_RANGE, ACTIVITY_METRICS } from '../../utils/gridLayerConfig';
 import { getMetricInfo } from '../../utils/formatters';
 import { PDS_EFFORT_COLOR_HEX, PDS_GROUNDS_COLOR_HEX } from '../../utils/pdsOverlayConfig';
+import { ACTIVITY_METRIC_METADATA, H3_EFFORT_GRID, isRatioActivityField } from '../../utils/metricMetadata';
 
 // Modern color palette for metrics
 export const COLORS = ['#ffffd9', '#edf8b1', '#c7e9b4', '#7fcdbb', '#41b6c4', '#1d91c0', '#225ea8', '#0c2c84'];
@@ -19,7 +20,8 @@ const EnhancedLegend = memo(({
   activeActivityLayers,
   visualizationMode,
   showBathymetry = false,
-  dataFreshnessLabel = 'Latest available export'
+  dataFreshnessLabel = 'Latest available export',
+  yearScope = { isAllYears: true, label: 'all years' }
 }) => {
   const [expandedSections, setExpandedSections] = useState({
     metrics: true,
@@ -31,6 +33,8 @@ const EnhancedLegend = memo(({
 
   const metricInfo = getMetricInfo(selectedMetric);
   const activeMetricConfig = ACTIVITY_METRICS.find(m => m.id === selectedActivityMetric) || ACTIVITY_METRICS[0];
+  const activeMetricDocs = ACTIVITY_METRIC_METADATA[activeMetricConfig.id] ?? {};
+  const isRatioActivityMetric = isRatioActivityField(activeMetricConfig.id);
 
   const toggleSection = (section) => {
     setExpandedSections(prev => ({
@@ -112,6 +116,28 @@ const EnhancedLegend = memo(({
     }} />
   );
 
+  const captionStyle = {
+    fontSize: '10px',
+    lineHeight: 1.4,
+    marginBottom: '4px',
+    color: isDarkTheme ? 'rgba(255,255,255,0.65)' : 'rgba(0,0,0,0.65)'
+  };
+
+  const rampScaleStyle = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginTop: '3px',
+    marginBottom: '4px',
+    fontSize: '10px',
+    color: isDarkTheme ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)'
+  };
+
+  // Uses the metric's own formatter so the ramp ends carry their unit.
+  const formatActivityValue = (value) => {
+    if (!Number.isFinite(value)) return 'N/A';
+    return activeMetricConfig.format ? activeMetricConfig.format(value) : value.toFixed(2);
+  };
+
   const formatGradeValue = (value) => {
     if (!Number.isFinite(value)) return '0';
     const absValue = Math.abs(value);
@@ -133,7 +159,7 @@ const EnhancedLegend = memo(({
   }
 
   return (
-    <div className="glass-panel p-4 rounded-2xl min-w-[200px] max-w-[220px]">
+    <div className="glass-panel p-4 rounded-2xl min-w-[200px] max-w-[220px] max-h-[calc(100vh-8rem)] overflow-y-auto">
       {/* Header with minimize button */}
       <div style={{
         display: 'flex',
@@ -195,12 +221,8 @@ const EnhancedLegend = memo(({
             gap: '6px',
             paddingLeft: '2px'
           }}>
-            <div style={{
-              fontSize: '10px',
-              color: isDarkTheme ? 'rgba(255,255,255,0.65)' : 'rgba(0,0,0,0.65)',
-              lineHeight: 1.4
-            }}>
-              Colors represent quantile classes for the selected metric and selected year filter.
+            <div style={captionStyle}>
+              Coastal regions shaded by survey metric, averaged over the selected years.
             </div>
             {/* Gradient bar for overall visualization */}
             <div style={{ marginBottom: '6px' }}>
@@ -276,36 +298,34 @@ const EnhancedLegend = memo(({
 
                 {expandedSections.activity && (
                   <div style={{ paddingLeft: '2px', marginBottom: '10px' }}>
-                    <div style={{
-                      fontSize: '10px',
-                      marginBottom: '4px',
-                      color: isDarkTheme ? 'rgba(255,255,255,0.65)' : 'rgba(0,0,0,0.65)'
-                    }}>
-                      H3 cells are colored by quantile and extruded in column mode.
+                    <div style={captionStyle}>
+                      Hexagons of {H3_EFFORT_GRID.areaLabel} holding time that GPS-tracked boats
+                      spent fishing{visualizationMode === 'column' ? '. Height and colour show the same value' : ''}.
                     </div>
                     <div style={{ marginBottom: '8px' }}>
                       <div style={{
                         fontSize: '11px',
                         fontWeight: 600,
-                        marginBottom: '4px',
+                        marginBottom: '2px',
                         color: isDarkTheme ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.85)'
                       }}>
                         {activeMetricConfig.label}
+                        {activeMetricDocs.unit ? (
+                          <span style={{ fontWeight: 400, opacity: 0.65 }}> ({activeMetricDocs.unit})</span>
+                        ) : null}
                       </div>
+                      {activeMetricDocs.short && (
+                        <div style={captionStyle}>{activeMetricDocs.short}</div>
+                      )}
                       <GradientBar
                         colors={PDS_EFFORT_COLOR_HEX}
                         height="8px"
                       />
-                      <div style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        marginTop: '3px',
-                        fontSize: '10px',
-                        color: isDarkTheme ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)'
-                      }}>
-                        <span>{min > 1000 ? `${(min/1000).toFixed(1)}k` : min.toFixed(1)}</span>
-                        <span>{max > 1000 ? `${(max/1000).toFixed(1)}k` : max.toFixed(1)}</span>
+                      <div style={rampScaleStyle}>
+                        <span>{formatActivityValue(min)}</span>
+                        <span>{formatActivityValue(max)}</span>
                       </div>
+                      <div style={captionStyle}>Showing {yearScope.label}.</div>
                     </div>
                   </div>
                 )}
@@ -334,36 +354,35 @@ const EnhancedLegend = memo(({
 
                 {expandedSections.grounds && (
                   <div style={{ paddingLeft: '2px', marginBottom: '10px' }}>
-                    <div style={{
-                      fontSize: '10px',
-                      marginBottom: '4px',
-                      color: isDarkTheme ? 'rgba(255,255,255,0.65)' : 'rgba(0,0,0,0.65)'
-                    }}>
-                      Grounds polygons use the same metric with quantile bins after trips filtering.
+                    <div style={captionStyle}>
+                      Contiguous areas of sustained fishing, merged from neighbouring cells.
+                      Always all years.
                     </div>
                     <div style={{ marginBottom: '8px' }}>
                       <div style={{
                         fontSize: '11px',
                         fontWeight: 600,
-                        marginBottom: '4px',
+                        marginBottom: '2px',
                         color: isDarkTheme ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.85)'
                       }}>
                         {activeMetricConfig.label}
+                        {activeMetricDocs.unit ? (
+                          <span style={{ fontWeight: 400, opacity: 0.65 }}> ({activeMetricDocs.unit})</span>
+                        ) : null}
                       </div>
                       <GradientBar
                         colors={PDS_GROUNDS_COLOR_HEX}
                         height="8px"
                       />
-                      <div style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        marginTop: '3px',
-                        fontSize: '10px',
-                        color: isDarkTheme ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)'
-                      }}>
-                        <span>{min > 1000 ? `${(min/1000).toFixed(1)}k` : min.toFixed(1)}</span>
-                        <span>{max > 1000 ? `${(max/1000).toFixed(1)}k` : max.toFixed(1)}</span>
+                      <div style={rampScaleStyle}>
+                        <span>{formatActivityValue(min)}</span>
+                        <span>{formatActivityValue(max)}</span>
                       </div>
+                      {isRatioActivityMetric && (
+                        <div style={captionStyle}>
+                          Averaged across each ground’s cells, not a ground total.
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}

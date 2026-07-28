@@ -64,3 +64,6 @@ dist-ssr
 .claude/
 AGENTS.md
 CLAUDE.md
+
+# Documentation
+/docs

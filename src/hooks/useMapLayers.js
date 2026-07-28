@@ -115,11 +115,11 @@ export const useMapLayers = ({
       const maxEffort = effortValues.length ? Math.max(...effortValues) : 0;
       const minEffort = effortValues.length ? Math.min(...effortValues) : 0;
       const effortRange = maxEffort - minEffort;
-      // avg_hours_per_day has a small natural range (0-17) which makes linear
-      // normalization against its own max produce bars ~9× taller than fishing_hours
-      // at the same percentile. A fixed ceiling of 75 brings column heights into the
-      // same visual order as fishing_hours while keeping hotspot differentiation.
-      const AVG_HOURS_CEILING = 75;
+      // avg_hours_per_day tops out around 7 and is far less outlier-driven than
+      // fishing_hours, so normalizing against its own max makes mid-range cells tower
+      // over the equivalent fishing_hours columns. A fixed ceiling damps it instead;
+      // 20 keeps peaks below fishing_hours while staying tall enough to read.
+      const AVG_HOURS_CEILING = 20;
 
       allLayers.push(
         new H3HexagonLayer({
