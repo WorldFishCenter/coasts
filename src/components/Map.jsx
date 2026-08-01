@@ -57,7 +57,9 @@ const MapComponent = ({ isActive = true }) => {
   // Theme and visualization states
   const { theme } = useTheme();
   const isDarkTheme = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-  const [isSatellite, setIsSatellite] = useState(true);
+  // Default to the vector basemap (light-v11/dark-v11): cheap map loads.
+  // Satellite (satellite-v9) bills against the Raster Tiles API, so it is opt-in via MapStyleToggle.
+  const [isSatellite, setIsSatellite] = useState(false);
   const [visualizationMode, setVisualizationMode] = useState('column');
   const [showBathymetry, setShowBathymetry] = useState(true);
   const [bathymetryLoading, setBathymetryLoading] = useState(false);
