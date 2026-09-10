@@ -18,6 +18,7 @@ const ISO3_TO_COUNTRY = {
   KEN: 'kenya',
   TZA: 'tanzania',
   MOZ: 'mozambique',
+  TLS: 'timor',
   MDG: 'madagascar',
   COM: 'comoros',
   SYC: 'seychelles',

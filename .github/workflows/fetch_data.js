@@ -19,7 +19,7 @@ const client = new MongoClient(uri);
 const METRIC_COLUMNS = ['mean_cpue', 'mean_cpua', 'mean_rpue', 'mean_rpua', 'mean_price_kg'];
 
 const ISO3_TO_COUNTRY = {
-  KEN: 'kenya', TZA: 'tanzania', MOZ: 'mozambique', MDG: 'madagascar',
+  KEN: 'kenya', TZA: 'tanzania', MOZ: 'mozambique', TLS: 'timor', MDG: 'madagascar',
   COM: 'comoros', SYC: 'seychelles', MUS: 'mauritius', ZAF: 'south africa'
 };
 
