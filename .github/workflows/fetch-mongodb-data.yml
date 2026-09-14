@@ -6,9 +6,11 @@ on:
     - cron: "0 0 * * *"
   # Allow manual trigger
   workflow_dispatch:
-  # Run on push to main branch
-  push:
-    branches: [ main, master ]
+
+# Never let two fetches overlap; an in-flight run finishes before the next starts
+concurrency:
+  group: fetch-mongodb-data
+  cancel-in-progress: false
 
 jobs:
   fetch-data:

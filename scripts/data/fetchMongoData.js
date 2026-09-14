@@ -13,6 +13,9 @@ const OUTPUT_DIR = path.join(process.cwd(), 'public', 'data');
 /** GAUL metric columns - pass through if present, default to null if missing */
 const METRIC_COLUMNS = ['mean_cpue', 'mean_cpua', 'mean_rpue', 'mean_rpua', 'mean_price_kg'];
 
+/** Minimum fraction of the previous record count an output must retain to be written */
+const MIN_RETENTION_RATIO = 0.5;
+
 /** ISO3 code -> country name (lowercase) for wio_map features */
 const ISO3_TO_COUNTRY = {
   KEN: 'kenya',
@@ -140,6 +143,53 @@ const validatePdsGrid = (grid) => {
   if (!grid || typeof grid !== 'object') return false;
   if (typeof grid.lat_grid_1km !== 'number' || typeof grid.lng_grid_1km !== 'number') return false;
   return true;
+};
+
+/**
+ * Count records in an output payload (GeoJSON, keyed region object, or array)
+ * @param {Object|Array} payload - The payload about to be written
+ * @returns {number} Number of records the payload carries
+ */
+const countRecords = (payload) => {
+  if (Array.isArray(payload)) return payload.length;
+  if (payload && Array.isArray(payload.features)) return payload.features.length;
+  if (payload && typeof payload === 'object') return Object.keys(payload).length;
+  return 0;
+};
+
+/**
+ * Read the record count of an already-written output file.
+ * @param {string} filePath - Absolute path to the existing output file
+ * @returns {Promise<number|null>} Count, or null when absent/unreadable (first run, fresh clone)
+ */
+const readExistingCount = async (filePath) => {
+  try {
+    const raw = await fs.readFile(filePath, 'utf8');
+    return countRecords(JSON.parse(raw));
+  } catch {
+    return null;
+  }
+};
+
+/**
+ * Find outputs that would truncate the file already on disk.
+ * A transient MongoDB read (e.g. a collection caught mid-rewrite by the upstream
+ * pipeline) yields an empty or partial payload; writing it silently wipes the
+ * previous run's data and the CI job commits the loss.
+ * @param {Array<{fileName: string, payload: Object|Array}>} outputs - Pending writes
+ * @returns {Promise<Array<{fileName: string, previous: number, current: number}>>} Offending outputs
+ */
+const findTruncatedOutputs = async (outputs) => {
+  const checks = await Promise.all(
+    outputs.map(async ({ fileName, payload }) => {
+      const previous = await readExistingCount(path.join(OUTPUT_DIR, fileName));
+      const current = countRecords(payload);
+      if (previous === null || previous === 0) return null;
+      if (current >= previous * MIN_RETENTION_RATIO) return null;
+      return { fileName, previous, current };
+    })
+  );
+  return checks.filter(Boolean);
 };
 
 async function main() {
@@ -401,36 +451,41 @@ async function main() {
     });
 
     // Save all files (existing + GAUL1/GAUL2)
-    await Promise.all([
-      fs.writeFile(
-        path.join(OUTPUT_DIR, 'wio_map.json'),
-        JSON.stringify(geojson, null, 2)
-      ),
-      fs.writeFile(
-        path.join(OUTPUT_DIR, 'time_series.json'),
-        JSON.stringify(timeSeriesByRegion, null, 2)
-      ),
-      fs.writeFile(
-        path.join(OUTPUT_DIR, 'pds_grids.json'),
-        JSON.stringify(validPdsGridsData, null, 2)
-      ),
-      fs.writeFile(
-        path.join(OUTPUT_DIR, 'map_gaul1.json'),
-        JSON.stringify(geojsonGaul1, null, 2)
-      ),
-      fs.writeFile(
-        path.join(OUTPUT_DIR, 'map_gaul2.json'),
-        JSON.stringify(geojsonGaul2, null, 2)
-      ),
-      fs.writeFile(
-        path.join(OUTPUT_DIR, 'ts_gaul1.json'),
-        JSON.stringify(timeSeriesByRegionGaul1, null, 2)
-      ),
-      fs.writeFile(
-        path.join(OUTPUT_DIR, 'ts_gaul2.json'),
-        JSON.stringify(timeSeriesByRegionGaul2, null, 2)
+    const outputs = [
+      { fileName: 'wio_map.json', payload: geojson },
+      { fileName: 'time_series.json', payload: timeSeriesByRegion },
+      { fileName: 'pds_grids.json', payload: validPdsGridsData },
+      { fileName: 'map_gaul1.json', payload: geojsonGaul1 },
+      { fileName: 'map_gaul2.json', payload: geojsonGaul2 },
+      { fileName: 'ts_gaul1.json', payload: timeSeriesByRegionGaul1 },
+      { fileName: 'ts_gaul2.json', payload: timeSeriesByRegionGaul2 }
+    ];
+
+    outputs.forEach(({ fileName, payload }) => {
+      console.log(`Prepared ${fileName}: ${countRecords(payload)} records`);
+    });
+
+    // Refuse to overwrite good data with a truncated fetch - nothing is written
+    const truncated = await findTruncatedOutputs(outputs);
+    if (truncated.length > 0) {
+      console.error(
+        `Aborting: ${truncated.length} output(s) would drop below ` +
+          `${MIN_RETENTION_RATIO * 100}% of the records already on disk.`
+      );
+      truncated.forEach(({ fileName, previous, current }) => {
+        console.error(`  ${fileName}: ${previous} -> ${current} records`);
+      });
+      console.error(
+        'A source collection was likely read mid-rewrite. No files written; re-run the fetch.'
+      );
+      throw new Error('Truncated fetch - refusing to write output files');
+    }
+
+    await Promise.all(
+      outputs.map(({ fileName, payload }) =>
+        fs.writeFile(path.join(OUTPUT_DIR, fileName), JSON.stringify(payload, null, 2))
       )
-    ]);
+    );
 
     console.log('Data saved successfully');
   } catch (error) {
