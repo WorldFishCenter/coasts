@@ -1,6 +1,6 @@
-import React, { memo, useState } from 'react';
+import { memo, useState } from 'react';
 import { ChevronDown, Eye, EyeOff } from 'lucide-react';
-import { COLOR_RANGE, ACTIVITY_METRICS } from '../../utils/gridLayerConfig';
+import { ACTIVITY_METRICS } from '../../utils/gridLayerConfig';
 import { getMetricInfo } from '../../utils/formatters';
 import { PDS_EFFORT_COLOR_HEX, PDS_GROUNDS_COLOR_HEX } from '../../utils/pdsOverlayConfig';
 import { ACTIVITY_METRIC_METADATA, H3_EFFORT_GRID, isRatioActivityField } from '../../utils/metricMetadata';
@@ -13,7 +13,6 @@ const EnhancedLegend = memo(({
   grades,
   selectedMetric,
   selectedActivityMetric,
-  colorRange,
   hasGridData,
   pdsH3EffortData,
   pdsFishingGroundsData,

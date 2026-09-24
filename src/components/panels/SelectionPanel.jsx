@@ -7,7 +7,6 @@ const SelectionPanel = memo(({
   showPanel, 
   onTogglePanel, 
   selectedDistricts, 
-  onClearSelection,
   selectedTotal,
   totalValue,
   onRemoveDistrict,

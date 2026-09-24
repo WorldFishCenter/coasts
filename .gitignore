@@ -61,9 +61,9 @@ dist-ssr
 # AI / agent config (local or synced elsewhere)
 .agents/
 .cursor/
-.claude/
 AGENTS.md
-CLAUDE.md
+.claude/settings.local.json
+CLAUDE.local.md
 
 # Documentation
 /docs

@@ -16,7 +16,7 @@ const METRIC_COLUMNS = ['mean_cpue', 'mean_cpua', 'mean_rpue', 'mean_rpua', 'mea
 /** Minimum fraction of the previous record count an output must retain to be written */
 const MIN_RETENTION_RATIO = 0.5;
 
-/** ISO3 code -> country name (lowercase) for wio_map features */
+/** ISO3 code -> country name (lowercase) for GAUL features */
 const ISO3_TO_COUNTRY = {
   KEN: 'kenya',
   TZA: 'tanzania',
@@ -135,17 +135,6 @@ const validateTimeSeriesRecordGaul1 = (record) => {
 };
 
 /**
- * Validate PDS grid record structure
- * @param {Object} grid - The grid to validate
- * @returns {boolean} Whether the grid is valid
- */
-const validatePdsGrid = (grid) => {
-  if (!grid || typeof grid !== 'object') return false;
-  if (typeof grid.lat_grid_1km !== 'number' || typeof grid.lng_grid_1km !== 'number') return false;
-  return true;
-};
-
-/**
  * Count records in an output payload (GeoJSON, keyed region object, or array)
  * @param {Object|Array} payload - The payload about to be written
  * @returns {number} Number of records the payload carries
@@ -208,58 +197,23 @@ async function main() {
     // Ensure output directory exists
     await fs.mkdir(OUTPUT_DIR, { recursive: true });
     
-    // Fetch data from all collections (existing + GAUL1/GAUL2)
+    // Fetch GAUL1/GAUL2 collections
     const [
-      mapData,
-      timeSeriesData,
-      pdsGridsData,
       mapGaul1Data,
       mapGaul2Data,
       metricsGaul1Data,
       metricsGaul2Data
     ] = await Promise.all([
-      db.collection('wio_map').find({}).toArray(),
-      db.collection('regional_metrics').find({}).toArray(),
-      db.collection('pds_grids').find({}).toArray(),
       db.collection('wio_gaul1').find({}).toArray(),
       db.collection('wio_gaul2').find({}).toArray(),
       db.collection('metrics_gaul1').find({}).toArray(),
       db.collection('metrics_gaul2').find({}).toArray()
     ]);
 
-    console.log(`Fetched ${mapData.length} map features`);
-    console.log(`Fetched ${timeSeriesData.length} time series records`);
-    console.log(`Fetched ${pdsGridsData.length} pds grids records`);
     console.log(`Fetched ${mapGaul1Data.length} GAUL1 map features`);
     console.log(`Fetched ${mapGaul2Data.length} GAUL2 map features`);
     console.log(`Fetched ${metricsGaul1Data.length} GAUL1 metrics records`);
     console.log(`Fetched ${metricsGaul2Data.length} GAUL2 metrics records`);
-
-    // Normalize GAUL fields for validation
-    const normalizedMapForValidation = mapData.map(normalizeGaulFields);
-    const normalizedTimeSeriesForValidation = timeSeriesData.map(normalizeGaulFields);
-
-    // Validate data
-    const invalidMapFeatures = normalizedMapForValidation.filter((f) => !validateMapFeature(f));
-    const invalidTimeSeriesRecords = normalizedTimeSeriesForValidation.filter(
-      (r) => !validateTimeSeriesRecord(r)
-    );
-    const invalidPdsGrids = pdsGridsData.filter(grid => !validatePdsGrid(grid));
-
-    if (invalidMapFeatures.length > 0) {
-      console.error(`Found ${invalidMapFeatures.length} invalid map features`);
-      console.error('First invalid feature:', JSON.stringify(invalidMapFeatures[0], null, 2));
-    }
-
-    if (invalidTimeSeriesRecords.length > 0) {
-      console.error(`Found ${invalidTimeSeriesRecords.length} invalid time series records`);
-      console.error('First invalid record:', JSON.stringify(invalidTimeSeriesRecords[0], null, 2));
-    }
-
-    if (invalidPdsGrids.length > 0) {
-      console.error(`Found ${invalidPdsGrids.length} invalid PDS grids`);
-      console.error('First invalid grid:', JSON.stringify(invalidPdsGrids[0], null, 2));
-    }
 
     // Normalize and validate GAUL1/GAUL2 data
     const normalizedMapGaul1 = mapGaul1Data.map(normalizeGaulFields);
@@ -290,75 +244,6 @@ async function main() {
     const validMapGaul2 = normalizedMapGaul2.filter(validateMapFeature);
     const validMetricsGaul1 = normalizedMetricsGaul1.filter(validateTimeSeriesRecordGaul1);
     const validMetricsGaul2 = normalizedMetricsGaul2.filter(validateTimeSeriesRecord);
-
-    // Normalize GAUL fields and filter invalid data
-    const normalizedMapData = mapData.map(normalizeGaulFields);
-    const normalizedTimeSeriesData = timeSeriesData.map(normalizeGaulFields);
-    const validMapData = normalizedMapData.filter(validateMapFeature);
-    const validTimeSeriesData = normalizedTimeSeriesData.filter(validateTimeSeriesRecord);
-    const validPdsGridsData = pdsGridsData.filter(validatePdsGrid);
-
-    // Create a lookup map for time series data (key: country_gaul1_gaul2)
-    const timeSeriesMap = new Map();
-    validTimeSeriesData.forEach(record => {
-      const keyCountry = countryForKey(record.country);
-      const key = gaulKey(keyCountry, record.gaul1_name, record.gaul2_name);
-      if (!timeSeriesMap.has(key)) {
-        timeSeriesMap.set(key, []);
-      }
-      timeSeriesMap.get(key).push(record);
-    });
-
-    // Process map data and attach time series
-    const processedFeatures = validMapData.map(feature => {
-      const keyCountry = countryForKey(feature.country);
-      const key = gaulKey(keyCountry, feature.gaul1_name, feature.gaul2_name);
-      const timeSeries = timeSeriesMap.get(key) || [];
-
-      timeSeries.sort((a, b) => new Date(a.date) - new Date(b.date));
-      const latestMetrics = getLatestMetricsFromSeries(timeSeries);
-
-      const props = {
-        country: feature.country,
-        gaul1_name: feature.gaul1_name,
-        gaul2_name: feature.gaul2_name,
-        time_series: timeSeries,
-        ...Object.fromEntries(
-          METRIC_COLUMNS.map((col) => [col, getMetric(latestMetrics, col) ?? 0])
-        )
-      };
-      return {
-        type: 'Feature',
-        geometry: feature.geometry,
-        properties: props
-      };
-    });
-
-    const geojson = {
-      type: 'FeatureCollection',
-      features: processedFeatures
-    };
-
-    // Create time series data structure (key: country_gaul1_gaul2)
-    const timeSeriesByRegion = {};
-    validTimeSeriesData.forEach(record => {
-      const keyCountry = countryForKey(record.country);
-      const key = gaulKey(keyCountry, record.gaul1_name, record.gaul2_name);
-      if (!timeSeriesByRegion[key]) {
-        timeSeriesByRegion[key] = {
-          country: record.country,
-          gaul1_name: record.gaul1_name,
-          gaul2_name: record.gaul2_name,
-          data: []
-        };
-      }
-      timeSeriesByRegion[key].data.push({
-        date: record.date,
-        ...Object.fromEntries(
-          METRIC_COLUMNS.map((col) => [col, getMetric(record, col)])
-        )
-      });
-    });
 
     // --- GAUL1 map: GeoJSON FeatureCollection (no gaul2_name, no time_series) ---
     const geojsonGaul1 = {
@@ -393,7 +278,7 @@ async function main() {
       });
     });
 
-    // --- GAUL2 map: same shape as wio_map (with time_series from metrics_gaul2) ---
+    // --- GAUL2 map: features with time_series from metrics_gaul2 ---
     const timeSeriesMapGaul2 = new Map();
     validMetricsGaul2.forEach((record) => {
       const keyCountry = countryForKey(record.country);
@@ -429,7 +314,7 @@ async function main() {
       features: processedFeaturesGaul2
     };
 
-    // --- GAUL2 time series: same structure as time_series.json ---
+    // --- GAUL2 time series: keyed by country_gaul1_gaul2 ---
     const timeSeriesByRegionGaul2 = {};
     validMetricsGaul2.forEach((record) => {
       const keyCountry = countryForKey(record.country);
@@ -450,11 +335,7 @@ async function main() {
       });
     });
 
-    // Save all files (existing + GAUL1/GAUL2)
     const outputs = [
-      { fileName: 'wio_map.json', payload: geojson },
-      { fileName: 'time_series.json', payload: timeSeriesByRegion },
-      { fileName: 'pds_grids.json', payload: validPdsGridsData },
       { fileName: 'map_gaul1.json', payload: geojsonGaul1 },
       { fileName: 'map_gaul2.json', payload: geojsonGaul2 },
       { fileName: 'ts_gaul1.json', payload: timeSeriesByRegionGaul1 },
@@ -490,7 +371,7 @@ async function main() {
     console.log('Data saved successfully');
   } catch (error) {
     console.error('Error:', error);
-    process.exit(1);
+    process.exitCode = 1;
   } finally {
     await client.close();
   }

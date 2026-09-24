@@ -16,7 +16,7 @@ export const getElevation = (value) => {
   return value * 100;
 };
 
-export const getDistrictStyle = (feature, { isDarkTheme, opacity, selectedDistricts, gaulLevel = 'gaul2' }) => {
+export const getDistrictStyle = (feature, { opacity, selectedDistricts, gaulLevel = 'gaul2' }) => {
   const value = feature.properties.value || 0;
   const elevation = getElevation(value);
   const featureKey = getDistrictKey(feature.properties, gaulLevel);

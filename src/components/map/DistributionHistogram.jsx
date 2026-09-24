@@ -1,5 +1,5 @@
-import React, { useMemo, memo } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { useMemo, memo } from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { X } from 'lucide-react';
 import { SHARED_STYLES } from '../../utils/gridLayerConfig';
 import { getMetricInfo, formatRegionName } from '../../utils/formatters';
@@ -454,5 +454,7 @@ const DistributionHistogram = memo(({
     </div>
   );
 });
+
+DistributionHistogram.displayName = 'DistributionHistogram';
 
 export default DistributionHistogram; 

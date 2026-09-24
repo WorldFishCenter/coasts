@@ -1,98 +1,53 @@
-# CLAUDE.md
+# coasts (coasts portal)
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Public Western Indian Ocean fisheries map at coasts.peskas.org: a React + Vite single-page app (Mapbox GL, deck.gl, Tailwind, Radix) with no backend. It reads static JSON from `public/data/`, which GitHub Actions refresh daily from the Mongo and GCS outputs of the R package `peskas.coasts` (package name also `coasts`; a different repo) and commit here.
+Ecosystem context (other repos, data flow, cross-repo contracts): see PESKAS.md, loaded via CLAUDE.local.md.
 
-**Cursor users:** Use `.cursor/` and root `AGENTS.md` for the same setup (rules, agents, commands, skills, memory). Same depth and accuracy as this Claude Code setup.
+## Commands
 
-## Development Commands
+- `npm install`, then `npm run dev`. Also `npm run build`, `npm run preview`. There is no test framework.
+- `npm run lint` (ESLint, `--max-warnings 0`) must pass.
+- `npm run qa:clarity` (`scripts/qa/checkClarityGuardrails.js`) checks that `src/utils/metricMetadata.js` is complete, that the `/docs` anchors exist in `DocsHub.jsx`, and that the legend links to `/docs#layer-interpretation` and `MapClarityPanel` to `/docs#effort-grid`. No build step or workflow runs it, so run it yourself after touching metrics, layers, docs or legend links.
+- Refresh data by hand: `node scripts/data/fetchMongoData.js` and `npm run fetch-gcp-data`. Both overwrite committed files in `public/data/` and need the script env vars below.
+- Releases: `.github/workflows/release.yml` tags `v<version>` from the top `# coasts X.Y.Z` block of `NEWS.md` on every push to `main`.
 
-```bash
-# Development server
-npm run dev
+## Architecture
 
-# Build for production  
-npm run build
+- Data path: fetch script in CI, then `public/data/*.json` (committed), then the loaders in `src/services/dataService.js`, then `src/hooks/useMapData.js` / `CountryView.jsx`. The browser downloads those files from the static deploy. Nothing queries Mongo or GCS at runtime.
+- `.github/workflows/fetch-mongodb-data.yml` runs `scripts/data/fetchMongoData.js`. It reads Mongo database `portal` (hard-coded `DB_NAME`) through `MONGODB_URI`:
+  - `wio_gaul1`, `wio_gaul2`, `metrics_gaul1`, `metrics_gaul2` become `map_gaul1.json`, `map_gaul2.json`, `ts_gaul1.json`, `ts_gaul2.json`.
+  - All four are written by `peskas.coasts::export_geos()`. `portal` is that package's production database; its default profile writes `portal-dev`, which this portal never reads.
+- `.github/workflows/fetch-gcp-pds-data.yml` runs `scripts/data/fetchGcpPdsData.js`. It takes the newest versioned object per prefix from bucket `GCP_BUCKET_NAME` (a repo secret):
+  - `pds-fishing-grounds__*` and `pds-h3-effort-r9__*` come from `peskas.coasts::export_pds_spatial()`, which runs in that repo's pipeline.
+  - `frame-gears__*` comes from `export_frame_data()`, run by hand when a new census arrives (every few years), so it is deliberately not in a workflow. Before the next run, fix its input: since Aug 2026 the assets snapshot's frame table has no `country` column.
+- Both workflows commit to `main`. Vercel builds every push to `main` for production, so each data commit redeploys the site. See the workflow files for schedules.
+- Files in the app that no workflow writes: `public/data/bathymetry_contours_wio.geojson` and `kepler_style.json` (repo root).
+- Routes (`src/App.jsx`): `/` map, `/country`, `/docs`. All three stay mounted and are toggled with CSS `display`. `vercel.json` rewrites every path to `/`.
+- `src/utils/metricMetadata.js` is the single source for metric units and formulas, layer semantics, tooltip field order, the glossary and the `/docs` data dictionary.
+- Env vars:
+  - The client reads `VITE_MAPBOX_TOKEN`, `VITE_GA_MEASUREMENT_ID` and `VITE_GA_DEBUG` (see `.env.example`; GA setup is under "Analytics" in README).
+  - The fetch scripts read `MONGODB_URI`, `GCP_SA_KEY` (one-line JSON), `GCP_BUCKET_NAME` and the optional `GCP_PDS_*_PREFIX` overrides. These are GitHub secrets and are not in `.env.example`.
+- Decision history: `docs/decisions.md`. `docs/` is gitignored and exists only on machines that have a local copy.
 
-# Lint code
-npm run lint
+## Rules
 
-# Preview production build
-npm run preview
+- Load app data through a loader in `dataService.js`. For a new file, add a loader there rather than fetching `/data/...` from a component.
+- Build region keys with the dataService helpers (`getRegionKey`, `getTimeSeriesKey`, `getTimeSeriesKeyGaul1`), never by concatenating strings.
+- Define a new metric or layer in `metricMetadata.js`, then run `npm run qa:clarity`.
+- Leave workflow-written files in `public/data/` alone. Change the fetch script or the upstream producer in `peskas.coasts` instead.
+- Keep `MONGODB_URI` and `GCP_*` out of `src/`. Anything prefixed `VITE_` is compiled into the public bundle.
+- Bump `version` in `package.json` together with the new `NEWS.md` block.
 
-# Manual data fetch from MongoDB
-node scripts/data/fetchMongoData.js
-```
+## Gotchas
 
-## Architecture Overview
-
-This is a React-based interactive map application for visualizing coastal fisheries data, built with Vite and deployed on Vercel.
-
-### Core Technologies
-- **Frontend**: React 18 + Vite
-- **Maps**: Mapbox GL JS + deck.gl for 3D visualizations
-- **UI**: Tailwind CSS + Radix UI components
-- **Data**: Static JSON files updated daily from MongoDB via GitHub Actions
-
-### Data Architecture
-The application loads GAUL-level data and lets users switch between Admin 1 (provinces) and Admin 2 (districts). Primary data sources:
-1. **Map data**: `map_gaul1.json` (Admin 1), `map_gaul2.json` (Admin 2) — GeoJSON features for coastal regions
-2. **Time series**: `ts_gaul1.json` (Admin 1), `ts_gaul2.json` (Admin 2) — Historical fisheries metrics by region
-3. **PDS Grids** (`public/data/pds_grids.json`) — GPS movement data in 1km grid cells
-
-The fetch script also writes `wio_map.json` and `time_series.json` (legacy). See `.cursor/memory/data-models.md` for formats and dataService GAUL1/GAUL2 API.
-
-### GAUL Schema
-The app uses FAO GAUL (Global Administrative Unit Layers) for region identity:
-- **country** - Country name (lowercase, e.g. `kenya`, `tanzania`)
-- **gaul1_name** - Admin level 1 (state/province, e.g. `Tana River`, `Kilifi`)
-- **gaul2_name** - Admin level 2 (district, e.g. `Garsen`, `Kilifi North`)
-
-**Lookup key format**: `country_gaul1_name_gaul2_name` (e.g. `kenya_Tana River_Garsen`)
-
-MongoDB may use `gaul_2_name` (underscore before 2); fetch scripts normalize to `gaul2_name`. Map features may have `iso3_code` (e.g. KEN) instead of `country`; scripts map ISO3 to country.
-
-### Key Components Structure
-- **Map.jsx** - Main map container with state management for all visualizations
-- **Sidebar.jsx** - Left panel with controls, filters, and analysis panels
-- **dataService.js** - All data loading, validation, and processing functions
-- **hooks/** - Custom hooks for map data, layers, and tooltips
-- **components/map/** - Map-specific components (legends, overlays, histograms)
-
-### Data Flow
-1. Data is fetched daily from MongoDB collections (`wio_map`, `regional_metrics`, `pds_grids`)
-2. GitHub Actions workflow transforms and saves as static JSON files
-3. Frontend loads static files and processes them for visualization
-4. State management handles date ranges, country/region filters, and metric selection
-
-### Environment Variables
-Required for development:
-```
-VITE_MAPBOX_TOKEN=your_mapbox_token
-MONGODB_URI=your_mongodb_connection_string
-```
-
-### Automated Data Updates
-- GitHub Actions workflow runs daily at midnight UTC
-- Fetches data from MongoDB and commits updated JSON files
-- Manual trigger available via workflow_dispatch
-- Requires `MONGODB_URI` and `VITE_MAPBOX_TOKEN` repository secrets
-
-### Key State Management Patterns
-- Date range filtering uses start/end indices into sorted date arrays
-- Metrics are averaged over selected date ranges using `getAverageMetricsInRange()`
-- Region lookups use `getTimeSeriesForGaul(timeSeriesData, country, gaul1_name, gaul2_name)`
-- PDS grid data is transformed based on time range filters
-- All data processing uses memoization for performance
-
-### Testing and Linting
-- ESLint configuration in `eslint.config.js`
-- No specific test framework configured - check with maintainer before adding tests
-
-## Claude Code setup
-
-This project includes a Claude Code configuration in `.claude/` for consistent AI-assisted development.
-
-- **Quick start**: Read [.claude/QUICK_START.md](.claude/QUICK_START.md) for commands, paths, and workflow.
-- **Implementation guide**: See [.claude/FEATURE_IMPLEMENTATION_GUIDE.md](.claude/FEATURE_IMPLEMENTATION_GUIDE.md) for pre-edit checklist and where to put code.
-- **Commands**: `/plan` (implementation plan), `/code-review` (quality review), `/build-fix` (ESLint/build), `/document` (update architecture and context).
-- **Token optimization**: Check `.claude/memory/session-context.json` and `.claude/skills/` for patterns instead of re-reading the codebase.
+- `fetchMongoData.js` writes nothing if any output would keep less than half the records already on disk (`MIN_RETENTION_RATIO`). The job then fails and nothing is committed. The usual cause is a collection read while `peskas.coasts` was rewriting it, so re-run the workflow. A real shrink, such as a country being dropped, needs that guard handled on purpose. Each workflow has a concurrency group, so two runs of the same fetch never overlap.
+- The GCS fetch has no such guard. It only checks that the JSON parses, so an empty or wrong upstream file gets committed and deployed.
+- Region joins:
+  - The GAUL2 key is `country_gaul1_name_gaul2_name`, the GAUL1 key `country_gaul1_name`, with `country` lowercase. GAUL2 selection prefers `ADM2_PCODE` when a feature has one.
+  - `zanzibar` is keyed as `tanzania`. The fetch script maps Mongo's `gaul_2_name` and `iso3_code` to `gaul2_name` and `country`.
+  - `ISO3_TO_COUNTRY` and `COUNTRY_KEY_ALIASES` are copied in both `scripts/data/fetchMongoData.js` and `src/services/dataService.js`. Change both, or regions lose their metrics without any error.
+- RPUE and price per kg arrive already in USD, converted with hard-coded rates in `peskas.coasts::export_geos()`. Do not convert them again here.
+- Fishers and boats (from `frame-gears.json`) are static census counts and are meant to ignore the date filter.
+- H3 effort cells and fishing grounds are filtered in the client to `unique_trips >= PDS_MIN_UNIQUE_TRIPS` (`src/utils/pdsOverlayConfig.js`). Upstream, `export_pds_spatial(min_trips_grounds = 3)` already filters the grounds.
+- If `peskas.coasts` renames a collection, column or GCS prefix, this portal breaks or keeps serving stale data after the next scheduled fetch. Update the fetch scripts in the same piece of work.
+- The `installCommand` in `vercel.json` installs the Linux builds of `lightningcss` and `@tailwindcss/oxide` at pinned versions. Update those pins when you upgrade Tailwind.

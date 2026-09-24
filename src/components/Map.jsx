@@ -42,6 +42,7 @@ const BATHYMETRY_DATA_PATH = '/data/bathymetry_contours_wio.geojson';
 const DeckGLOverlay = (props) => {
   // Use a stable creator function to prevent destroying/recreating the overlay on every render.
   // react-map-gl's useControl will only call this once unless the function identity changes.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const overlay = useControl(useCallback(() => new MapboxOverlay(props), []));
   
   // Efficiently update deck.gl layers/props without recreating the Mapbox control.

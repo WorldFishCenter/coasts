@@ -1,7 +1,7 @@
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { Satellite, Map as MapIcon } from 'lucide-react';
 
-const MapStyleToggle = memo(({ isDarkTheme, isSatellite, onToggle }) => {
+const MapStyleToggle = memo(({ isSatellite, onToggle }) => {
   return (
     <button
       onClick={onToggle}
@@ -17,5 +17,7 @@ const MapStyleToggle = memo(({ isDarkTheme, isSatellite, onToggle }) => {
     </button>
   );
 });
+
+MapStyleToggle.displayName = 'MapStyleToggle';
 
 export default MapStyleToggle; 

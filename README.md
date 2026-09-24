@@ -1,105 +1,86 @@
-# Coasts Map
+# Peskas Coasts
 
-Interactive map visualization for coastal regions using React and Mapbox GL JS.
+A map for comparing small-scale fisheries across the coastal districts of Kenya, Zanzibar (Tanzania), Mozambique and Timor-Leste.
 
-## Features
+[coasts.peskas.org](https://coasts.peskas.org)
 
-- Interactive map visualization
-- District selection and analysis
-- Data visualization with charts
-- Static census overlays (fishers and boats by GAUL region)
-- In-app documentation hub (`/docs`) with metric and layer methodology
-- Dark/Light theme support
-- Mobile responsive design
-- Daily data updates from MongoDB and Google Cloud via GitHub Actions
+![Peskas Coasts map](.github/images/screenshot.png)
 
-## Technologies
+## What it is
 
-- React
-- Mapbox GL JS
-- Vite for build tooling
-- MongoDB for data storage
-- GitHub Actions for automated data updates
+Peskas Coasts puts catch, revenue, fish prices, fishing effort and the number of fishers and boats side by side for coastal provinces and districts in Kenya, Zanzibar (Tanzania), Mozambique and Timor-Leste. It is for fisheries managers, policy makers, researchers, conservation groups and fishing communities who want to compare places across countries. The [country dashboards](https://zanzibar.peskas.org) and the [Timor-Leste portal](https://timor.peskas.org) look at one country in depth; Peskas Coasts compares regions across countries. It is in English and open to everyone without a login.
 
-## Getting Started
+## What you can do
 
-1. Clone the repository
-2. Install dependencies: `npm install`
-3. Create a `.env` file with your Mapbox token and MongoDB URI (see `.env.example`). The map requires `VITE_MAPBOX_TOKEN` for local development; `.env` is gitignored and is not committed.
-   ```
-   VITE_MAPBOX_TOKEN=your_token_here
-   MONGODB_URI=your_mongodb_uri_here
-   ```
-4. Run development server: `npm run dev`
+- Shade provinces or districts on the map by catch per fisher, revenue per fisher or fish price, for one year or all years.
+- Click districts on the map to compare them side by side.
+- See where boats with GPS trackers fish: a fine grid of fishing effort and the main fishing grounds.
+- Compare the number of fishers (men and women) and boats by district and fishing gear.
+- On the Country Insights page, follow a country's or district's monthly trend and compare fishing gears.
+- Read how every number is produced in the [methods and data dictionary](https://coasts.peskas.org/docs).
 
-## Analytics
+## Where the data comes from
 
-Google Analytics 4 is wired through `src/lib/analytics.js` and loads only when `VITE_GA_MEASUREMENT_ID` is set:
+- **Landing surveys.** In each country, enumerators (trained data collectors) record landings at landing sites. A landing is a boat's return to shore with its catch. Each country's Peskas data pipeline turns them into monthly figures.
+- **GPS trackers (Pelagic Data Systems).** Small solar-powered devices on a sample of boats record where they travel. They produce the fishing-effort grid and the fishing grounds.
+- **Frame surveys.** Counts of fishers and boats by fishing gear at landing sites, for Kenya, Zanzibar and Mozambique. They come from national censuses repeated every few years, so they do not change with the year filter and are updated by hand when a new census arrives (last update: May 2026).
 
-```
-VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX
-```
+The [Peskas Coasts data pipeline](https://github.com/WorldFishCenter/peskas.coasts) combines all of this and converts money to US dollars. The website picks up the latest results every day.
 
-The tag is skipped in development so local sessions don't reach production reports; set `VITE_GA_DEBUG=true` to load it locally for testing.
+Terms used on the map:
 
-Because this is a single-page app, page views are sent manually from `usePageTracking` on every React Router navigation. GA4's own history-based page views must therefore stay disabled, otherwise each navigation is counted twice: in GA4 Admin → Data streams → your web stream → Enhanced measurement → Page views → Show advanced settings, clear **Page changes based on browser history events**.
+- **Administrative regions (GAUL)**: provinces and districts, using FAO's standard boundaries.
+- **Catch per unit effort**: kilograms of catch per fisher per day.
+- **Revenue per unit effort**: US dollars earned per fisher per day.
+- **Price per kilogram**: US dollars per kilogram of fish.
 
-Custom events go through `trackEvent(name, params)` from `src/lib/analytics.js`.
+## Who runs it
 
-## MongoDB Data Processing
+Peskas Coasts is developed and run by [WorldFish](https://worldfishcenter.org). For questions, write to <peskas.platform@gmail.com>.
 
-This project uses a GitHub Actions workflow to fetch data from MongoDB daily and store it as static JSON files. The data comes from two collections:
+## Part of Peskas
 
-1. `pds_grids` - Spatially aggregated GPS movement data
-2. `wio_summaries_geo` - Fisheries data from coastal regions in Kenya and Zanzibar
+Peskas is WorldFish's open-source platform for monitoring small-scale fisheries (https://peskas.org).
 
-### Manual Data Update
+- [Peskas Zanzibar](https://zanzibar.peskas.org), [Peskas Kenya](https://peskas-dashboard-kenya.vercel.app/en), [Peskas Mozambique](https://peskas-dashboard-mozambique.vercel.app): country dashboards
+- [Peskas Timor-Leste](https://timor.peskas.org): Timor-Leste portal
+- [Peskas Tracks](https://tracks.peskas.org): app for fishers to see their trips and log catches
+- [Peskas Kenya BMU dashboard](https://digitalfisheries.kenya.peskas.org): dashboard for Beach Management Units in Kenya
+- [Peskas Management Platform](https://validation.peskas.org): data review and download for survey teams
+- [Peskas Fishery Data API](https://api.peskas.org/docs): programmatic access to landing data
+- Data pipelines: [Kenya](https://github.com/WorldFishCenter/peskas.kenya.data.pipeline), [Zanzibar](https://github.com/WorldFishCenter/peskas.zanzibar.data.pipeline), [Mozambique](https://github.com/WorldFishCenter/peskas.mozambique.data.pipeline), [Timor-Leste](https://github.com/WorldFishCenter/peskas.timor.data.pipeline), [Coasts](https://github.com/WorldFishCenter/peskas.coasts)
 
-To manually update the data:
+## For developers
 
-```bash
-# MongoDB export refresh
-node scripts/data/fetchMongoData.js
+A React + Vite single-page app with no backend. It loads static JSON files from `public/data/`; nothing queries a database at runtime.
 
-# Google Cloud versioned datasets refresh
-npm run fetch-gcp-data
+**Requirements:** Node.js 18 or later.
 
-# Accuracy and clarity guardrails
-npm run qa:clarity
-```
-
-### GitHub Secrets Setup
-
-For the automated workflow to function, you need to set up the following secrets in your GitHub repository:
-
-1. `MONGODB_URI` - Your MongoDB connection string
-2. `VITE_MAPBOX_TOKEN` - Your Mapbox access token (client app)
-3. `GCP_SA_KEY` - Google Cloud service account JSON (single-line)
-4. `GCP_BUCKET_NAME` - Google Cloud bucket containing versioned PDS files
-5. `GCP_PDS_GROUNDS_PREFIX` - Prefix for fishing grounds files (optional)
-6. `GCP_PDS_EFFORT_PREFIX` - Prefix for H3 effort files (optional)
-7. `GCP_PDS_FRAME_GEARS_PREFIX` - Prefix for frame-gears files (optional)
-
-See `.github/README.md` for detailed instructions.
-
-## Building for Production
+**Setup**
 
 ```bash
-npm run build
+npm install
+cp .env.example .env    # set VITE_MAPBOX_TOKEN; the map does not load without it
+npm run dev
 ```
 
-## Deployment
+The app itself needs only `VITE_MAPBOX_TOKEN`. Anything prefixed `VITE_` is compiled into the public bundle.
 
-The project is configured for deployment on Vercel.
+**Data updates.** Two GitHub Actions workflows refresh `public/data/` every day and commit the changes to `main`:
 
-## License
+1. `.github/workflows/fetch-mongodb-data.yml` (00:00 UTC) runs `scripts/data/fetchMongoData.js`. It reads the MongoDB collections `wio_gaul1`, `wio_gaul2`, `metrics_gaul1` and `metrics_gaul2` (region boundaries and monthly fisheries metrics, written by the `peskas.coasts` pipeline).
+2. `.github/workflows/fetch-gcp-pds-data.yml` (00:15 UTC) runs `scripts/data/fetchGcpPdsData.js`. It downloads the latest fishing grounds, H3 fishing-effort and frame gears files from Google Cloud Storage.
 
-MIT
+To refresh by hand, run `node scripts/data/fetchMongoData.js` and `npm run fetch-gcp-data`. Both overwrite committed files. They read from `.env` or the environment: `MONGODB_URI` for the first; `GCP_SA_KEY` (service account JSON on one line), `GCP_BUCKET_NAME` and the optional `GCP_PDS_GROUNDS_PREFIX`, `GCP_PDS_EFFORT_PREFIX` and `GCP_PDS_FRAME_GEARS_PREFIX` for the second. In GitHub these are repository secrets; see [`.github/README.md`](.github/README.md).
 
-## Contributing
+**Production.** Vercel builds every push to `main` for production, so each data commit redeploys the site. Set `VITE_MAPBOX_TOKEN` and `VITE_GA_MEASUREMENT_ID` in the Vercel project's environment variables.
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+**Analytics.** Google Analytics 4 loads only when `VITE_GA_MEASUREMENT_ID` is set, and is skipped in development unless `VITE_GA_DEBUG=true`. Page views are sent by `usePageTracking` on each navigation, so GA4's own history-based page views must stay off: in GA4 Admin, go to Data streams, your web stream, Enhanced measurement, Page views, Show advanced settings, and clear "Page changes based on browser history events". Custom events go through `trackEvent(name, params)` in `src/lib/analytics.js`.
+
+**Before pushing:** run `npm run lint` (it must pass with zero warnings) and `npm run qa:clarity`, which checks that metric definitions and `/docs` links are complete.
+
+**Releases:** bump `version` in `package.json` and add a block at the top of [`NEWS.md`](NEWS.md). On every push to `main`, `.github/workflows/release.yml` tags a release from that block.
+
+**Tests:** no automated tests yet; `npm run qa:clarity` is the only check beyond lint.
+
+**AI-assisted work:** see [`CLAUDE.md`](CLAUDE.md).

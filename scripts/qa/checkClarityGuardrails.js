@@ -50,16 +50,16 @@ const checkLegendAndDocsLinks = () => {
   }
 
   const clarityPanelFile = fs.readFileSync(mapClarityPath, 'utf8');
-  if (!clarityPanelFile.includes('/docs#layer-interpretation')) {
+  if (!clarityPanelFile.includes('/docs#effort-grid')) {
     fail('Map clarity panel is not linked to docs hub anchor');
   }
 };
 
 const checkDataDictionaryRows = () => {
   if (!DATA_DICTIONARY_ROWS.length) fail('No data dictionary rows defined');
-  const hasGlobal = DATA_DICTIONARY_ROWS.some((row) => row.uiLabel === 'Global Map metric legend');
-  const hasH3 = DATA_DICTIONARY_ROWS.some((row) => row.uiLabel === 'Local Fishing Activity');
-  const hasGrounds = DATA_DICTIONARY_ROWS.some((row) => row.uiLabel === 'Fishing Grounds');
+  const hasGlobal = DATA_DICTIONARY_ROWS.some((row) => row.uiLabel === 'Region choropleth');
+  const hasH3 = DATA_DICTIONARY_ROWS.some((row) => row.uiLabel === 'Fishing effort grid');
+  const hasGrounds = DATA_DICTIONARY_ROWS.some((row) => row.uiLabel === 'Fishing grounds');
   const hasBath = DATA_DICTIONARY_ROWS.some((row) => row.uiLabel.includes('Bathymetry'));
   if (!hasGlobal || !hasH3 || !hasGrounds || !hasBath) {
     fail('Data dictionary is missing required map layer mappings');

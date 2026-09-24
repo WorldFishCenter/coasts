@@ -29,7 +29,6 @@ const Sidebar = memo(({
   visualizationMode,
   onVisualizationModeChange
 }) => {
-  const isGaul1 = gaulLevel === 'gaul1';
   const sectionCardClasses = cn(
     "rounded-2xl border p-4",
     isDarkTheme ? "bg-white/[0.02] border-white/30" : "bg-black/[0.02] border-black/30"

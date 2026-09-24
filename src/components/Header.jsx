@@ -2,7 +2,6 @@ import { useState, useMemo } from 'react';
 import { Info, Sun, Moon, Map, BarChart3, BookOpen } from 'lucide-react';
 import { getLatestDate, getUniqueCountries } from '../services/dataService';
 import { cn } from '../lib/utils';
-import { Button } from './ui/button';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useTheme } from './ThemeProvider';
 import AboutModal from './AboutModal';

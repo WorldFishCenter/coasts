@@ -30,7 +30,7 @@ const validateGeoJSON = (data) => {
 const validateTimeSeries = (data) => {
   if (!data || typeof data !== 'object') return false;
   
-  return Object.entries(data).every(([key, regionData]) => {
+  return Object.entries(data).every(([, regionData]) => {
     if (!regionData || typeof regionData !== 'object') return false;
     if (!Array.isArray(regionData.data)) return false;
     
@@ -67,7 +67,7 @@ const validateGeoJSONGaul1 = (data) => {
  */
 const validateTimeSeriesGaul1 = (data) => {
   if (!data || typeof data !== 'object') return false;
-  return Object.entries(data).every(([key, regionData]) => {
+  return Object.entries(data).every(([, regionData]) => {
     if (!regionData || typeof regionData !== 'object') return false;
     if (!Array.isArray(regionData.data)) return false;
     if (regionData.country === undefined || regionData.gaul1_name === undefined) return false;
@@ -262,48 +262,6 @@ const getFrameGearInsights = (rows, country, gaul1Name = null, gaul2Name = null)
     hasGearBreakdown: hasAnyGearName,
     gearBreakdown
   };
-};
-
-/**
- * Load WIO map data - Fisheries data in GeoJSON format
- * @returns {Promise<Object|null>} GeoJSON object or null if error
- */
-const loadWioMapData = async () => {
-  try {
-    const response = await fetch('/data/wio_map.json');
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    if (!validateGeoJSON(data)) {
-      throw new Error('Invalid GeoJSON data format');
-    }
-    return data;
-  } catch (error) {
-    console.error('Error loading WIO map data:', error);
-    return null;
-  }
-};
-
-/**
- * Load time series data for regions
- * @returns {Promise<Object|null>} Time series data object or null if error
- */
-const loadTimeSeriesData = async () => {
-  try {
-    const response = await fetch('/data/time_series.json');
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    if (!validateTimeSeries(data)) {
-      throw new Error('Invalid time series data format');
-    }
-    return data;
-  } catch (error) {
-    console.error('Error loading time series data:', error);
-    return null;
-  }
 };
 
 /**
@@ -506,43 +464,6 @@ const getRegionKey = (props, gaulLevel) => {
 const gaulKeyGaul1 = (country, gaul1Name) => `${country}_${gaul1Name}`;
 
 /**
- * Format PDS grid data for heatmap visualization
- * @param {Array} pdsGrids - The PDS grids data
- * @param {string} valueField - Field to use for values (e.g., 'avg_time_hours', 'total_visits')
- * @returns {Array} Formatted data for heatmap visualization
- */
-const formatPdsGridsForHeatmap = (pdsGrids, valueField = 'total_visits') => {
-  if (!pdsGrids || !pdsGrids.length) return [];
-
-  return pdsGrids.map(grid => ({
-    latitude: grid.lat_grid_1km,
-    longitude: grid.lng_grid_1km,
-    value: grid[valueField] || 0
-  }));
-};
-
-/**
- * Get min and max values for a specific field in PDS grid data
- * @param {Array} pdsGrids - The PDS grids data
- * @param {string} field - Field to get min/max for
- * @returns {Object} Object with min and max values
- */
-const getPdsGridsMinMax = (pdsGrids, field) => {
-  if (!pdsGrids || !pdsGrids.length) {
-    return { min: 0, max: 0 };
-  }
-
-  const values = pdsGrids
-    .map(grid => grid[field] || 0)
-    .filter(value => !isNaN(value));
-  
-  return {
-    min: Math.min(...values),
-    max: Math.max(...values)
-  };
-};
-
-/**
  * Get time series for a specific GAUL region
  * @param {Object} timeSeriesData - The time series data
  * @param {string} country - Country name
@@ -717,16 +638,12 @@ const getAverageMetricsInRange = (timeSeriesData, country, gaul1Name, gaul2Name,
   return avg;
 };
 
-export const loadMapData = loadWioMapData;
-
 export {
   loadPdsFishingGroundsData,
   loadPdsH3EffortData,
   loadFrameGearsData,
   aggregateFrameGearsData,
   getFrameGearInsights,
-  loadWioMapData,
-  loadTimeSeriesData,
   loadMapDataGaul1,
   loadMapDataGaul2,
   loadTimeSeriesGaul1,

@@ -4,14 +4,15 @@ This directory contains static data files that are updated daily via GitHub Acti
 
 Files in this directory:
 
-1. `pds_grids.json` - GPS movement data summarized in 1km grid cells
-2. `wio_map.json` - Fisheries data in GeoJSON format (used by the app)
-3. `time_series.json` - Time series data for each region (used by the app)
-4. `map_gaul1.json` - GAUL1 boundaries GeoJSON (for future map integration)
-5. `map_gaul2.json` - GAUL2 boundaries GeoJSON
-6. `ts_gaul1.json` - Time series by GAUL1 region
-7. `ts_gaul2.json` - Time series by GAUL2 region
+1. `map_gaul1.json` - GAUL1 boundaries GeoJSON
+2. `map_gaul2.json` - GAUL2 boundaries GeoJSON with time series
+3. `ts_gaul1.json` - Time series by GAUL1 region
+4. `ts_gaul2.json` - Time series by GAUL2 region
+5. `pds-fishing-grounds.geojson` - Latest fishing grounds
+6. `pds-h3-effort-r9.json` - Latest H3 fishing effort grid
+7. `frame-gears.json` - Latest frame survey gear counts
+8. `bathymetry_contours_wio.geojson` - Static bathymetry contours (not updated automatically)
 
-These files are automatically updated by the GitHub Actions workflow in `.github/workflows/fetch-mongodb-data.yml` which runs daily at midnight UTC.
+Files 1-4 are updated by `.github/workflows/fetch-mongodb-data.yml` and files 5-7 by `.github/workflows/fetch-gcp-pds-data.yml`, both daily.
 
 **Do not modify these files manually** as your changes will be overwritten by the automated process. 
