@@ -14941,11 +14941,11 @@
       },
       {
         "date": "2026-09-01T00:00:00Z",
-        "mean_cpue": 25.307526882,
+        "mean_cpue": 21.749603175,
         "mean_cpua": null,
-        "mean_rpue": 56.167774194,
+        "mean_rpue": 46.204583333,
         "mean_rpua": null,
-        "mean_price_kg": 1.627829912
+        "mean_price_kg": 1.493398268
       }
     ]
   },
