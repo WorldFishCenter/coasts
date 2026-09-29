@@ -1,7 +1,7 @@
 # coasts (coasts portal)
 
 Public Western Indian Ocean fisheries map at coasts.peskas.org: a React + Vite single-page app (Mapbox GL, deck.gl, Tailwind, Radix) with no backend. It reads static JSON from `public/data/`, which GitHub Actions refresh daily from the Mongo and GCS outputs of the R package `peskas.coasts` (package name also `coasts`; a different repo) and commit here.
-Ecosystem context (other repos, data flow, cross-repo contracts): see PESKAS.md, loaded via CLAUDE.local.md.
+Ecosystem context (other repos, data flow, cross-repo contracts): loaded by the `peskas` Claude Code plugin (repo `peskas-context`).
 
 ## Commands
 
