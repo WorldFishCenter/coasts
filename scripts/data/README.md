@@ -45,11 +45,11 @@ The script generates these files:
 
 ## Data Structure
 
-### PDS Grids
-Contains spatially aggregated GPS movement data with time, speed, and visitation patterns.
+### Region maps
+GAUL1 and GAUL2 region boundaries, as GeoJSON with MultiPolygon geometries, for every country on the portal.
 
-### WIO Map
-Contains fisheries data from coastal regions in Kenya and Zanzibar in GeoJSON format with MultiPolygon geometries.
+### Tracker layers
+Fishing grounds (GeoJSON) and fishing effort on an H3 grid (JSON), from boats carrying GPS trackers.
 
 ### Time Series
 Contains monthly metrics for each region including CPUE, RPUE, and price per kg. 

@@ -45,7 +45,7 @@ Ecosystem context (other repos, data flow, cross-repo contracts): loaded by the 
 - Region joins:
   - The GAUL2 key is `country_gaul1_name_gaul2_name`, the GAUL1 key `country_gaul1_name`, with `country` lowercase. GAUL2 selection prefers `ADM2_PCODE` when a feature has one.
   - `zanzibar` is keyed as `tanzania`. The fetch script maps Mongo's `gaul_2_name` and `iso3_code` to `gaul2_name` and `country`.
-  - `ISO3_TO_COUNTRY` and `COUNTRY_KEY_ALIASES` are copied in both `scripts/data/fetchMongoData.js` and `src/services/dataService.js`. Change both, or regions lose their metrics without any error.
+  - `COUNTRY_KEY_ALIASES` is copied in both `scripts/data/fetchMongoData.js` and `src/services/dataService.js`; change both, or regions lose their metrics without any error. `ISO3_TO_COUNTRY` lives only in `scripts/data/fetchMongoData.js`.
 - RPUE and price per kg arrive already in USD, converted with hard-coded rates in `peskas.coasts::export_geos()`. Do not convert them again here.
 - Fishers and boats (from `frame-gears.json`) are static census counts and are meant to ignore the date filter.
 - H3 effort cells and fishing grounds are filtered in the client to `unique_trips >= PDS_MIN_UNIQUE_TRIPS` (`src/utils/pdsOverlayConfig.js`). Upstream, `export_pds_spatial(min_trips_grounds = 3)` already filters the grounds.

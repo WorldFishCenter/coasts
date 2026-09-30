@@ -1,6 +1,7 @@
 import { Info } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { H3_EFFORT_GRID } from '../utils/metricMetadata';
+import { version } from '../../package.json';
 import {
     Dialog,
     DialogContent,
@@ -141,7 +142,7 @@ const AboutModal = ({ open, onOpenChange, isDarkTheme, dynamicStats }) => {
                 )}>
                     <div className="flex flex-col gap-1">
                         <span className="text-xs text-muted-foreground tracking-wide font-medium">
-                            PESKAS | COASTS v0.3.0
+                            Peskas Coasts v{version}
                         </span>
                         <span className="text-[11px] text-muted-foreground">
                             Data updated every 2 days • Last sync: {dynamicStats?.lastSyncDate || 'Loading...'}
