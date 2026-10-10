@@ -1,5 +1,5 @@
-import { Info } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { PeskasMark } from './PeskasLogo';
 import { H3_EFFORT_GRID } from '../utils/metricMetadata';
 import { version } from '../../package.json';
 import {
@@ -17,18 +17,17 @@ const AboutModal = ({ open, onOpenChange, isDarkTheme, dynamicStats }) => {
                 isDarkTheme ? "bg-zinc-900 border-white/10 text-foreground" : "bg-white border-black/10"
             )}>
                 <DialogHeader className="flex flex-row items-center gap-4 mb-2">
-                    <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-blue-500 to-blue-400 shadow-[0_4px_12px_#3b82f64d]">
-                        <Info className="w-6 h-6 text-white" />
-                    </div>
+                    {/* The title already names Peskas, so the mark is decorative here. */}
+                    <PeskasMark aria-hidden="true" className="h-8 w-auto shrink-0" />
                     <DialogTitle className="m-0 text-2xl font-bold flex-1 text-left">
-                        About COASTS
+                        About Peskas Coasts
                     </DialogTitle>
                 </DialogHeader>
 
                 <div className="max-h-[60vh] overflow-y-auto pr-2">
                     <div className="leading-relaxed space-y-5">
                         <p className="text-sm">
-                            <strong>COASTS</strong> is a research platform that transforms GPS tracking data and fisheries surveys into actionable insights for coastal communities, researchers, and policymakers across the Western Indian Ocean region.
+                            <strong>Peskas Coasts</strong> is a research platform that transforms GPS tracking data and fisheries surveys into actionable insights for coastal communities, researchers, and policymakers across the Western Indian Ocean region.
                         </p>
 
                         <div className={cn(

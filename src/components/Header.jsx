@@ -5,6 +5,7 @@ import { cn } from '../lib/utils';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useTheme } from './ThemeProvider';
 import AboutModal from './AboutModal';
+import { PeskasLogo, PeskasMark } from './PeskasLogo';
 
 const Header = ({
   boundaries,
@@ -63,24 +64,18 @@ const Header = ({
           ? "bg-[#060b19]/80 backdrop-blur-2xl border-b border-white/5 shadow-[0_4px_30px_rgba(0,0,0,0.5)]"
           : "bg-white/80 backdrop-blur-2xl border-b border-[#0a1930]/10 shadow-[0_4px_20px_rgba(0,0,0,0.05)]"
       )}>
-        {/* Left section with logo and title */}
-        <div className="flex items-center gap-5">
-          <Link to="/" className="h-11 px-4 rounded-xl flex items-center justify-center relative overflow-hidden bg-primary/10 border border-primary/20 shadow-inner group cursor-pointer transition-all duration-300 hover:bg-primary/20 no-underline">
-            <div className="absolute inset-0 bg-primary/20 mix-blend-overlay opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <span className="font-display font-extrabold text-[15px] tracking-[0.15em] text-primary relative z-10 drop-shadow-[0_0_8px_#00f5ff66]">
-              PESKAS
+        {/* Left: the Peskas logo and the product name, one link home that reads "Peskas Coasts";
+            below 640px the mark alone takes the logo's place. Beside the full logo the name drops
+            onto the wordmark's baseline. The h1 sets Sora and tight tracking, so the name resets both. */}
+        <h1 className="m-0 shrink-0">
+          <Link to="/" className="flex items-center gap-2.5">
+            <PeskasLogo className="hidden h-7 w-auto sm:block" />
+            <PeskasMark className="h-7 w-auto sm:hidden" />
+            <span className="font-sans text-base font-medium tracking-normal text-muted-foreground sm:translate-y-[0.2em]">
+              Coasts
             </span>
           </Link>
-
-          <div className="h-10 flex flex-col justify-center pl-5 border-l border-border/40">
-            <h1 className="m-0 text-[22px] font-display font-bold tracking-tight text-foreground leading-none">
-              COASTS
-            </h1>
-            <div className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground mt-1 opacity-70">
-              SSF Analysis Platform
-            </div>
-          </div>
-        </div>
+        </h1>
 
         {/* Center section: View Switcher */}
         <div className="flex-1 flex justify-center">

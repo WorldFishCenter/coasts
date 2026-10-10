@@ -28,6 +28,11 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-peskas-1: var(--peskas-1);
+  --color-peskas-2: var(--peskas-2);
+  --color-peskas-3: var(--peskas-3);
+  --color-peskas-4: var(--peskas-4);
+  --color-peskas-eye: var(--peskas-eye);
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -66,6 +71,15 @@
   --input: #cbd5e1;
   --ring: #0aaeb5;
   --radius: 0.75rem;
+
+  /* The Peskas logo (components/PeskasLogo.jsx; Peskas brand kit): its cells shade from the tail (1)
+     to the head (4), darkest at the head on a light page and lightest on a dark one; the wordmark
+     takes the head's colour and the eye is coral. */
+  --peskas-1: #a9d1d4;
+  --peskas-2: #5aa8af;
+  --peskas-3: #006d77;
+  --peskas-4: #0b2233;
+  --peskas-eye: #d96c50;
 }
 
 .dark {
@@ -97,6 +111,12 @@
   --border: #1e293b;
   --input: #1e293b;
   --ring: #00f5ff;
+
+  --peskas-1: #3a6c77;
+  --peskas-2: #3f8a93;
+  --peskas-3: #8ccbd0;
+  --peskas-4: #ffffff;
+  --peskas-eye: #e69f8d;
 }
 
 html,

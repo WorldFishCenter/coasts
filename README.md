@@ -1,3 +1,8 @@
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/images/peskas-logo-dark.svg">
+  <img src=".github/images/peskas-logo.svg" alt="Peskas" height="48">
+</picture>
+
 # Peskas Coasts
 
 A map for comparing small-scale fisheries across the coastal districts of Kenya, Zanzibar (Tanzania), Mozambique and Timor-Leste.
@@ -71,7 +76,7 @@ The app itself needs only `VITE_MAPBOX_TOKEN`. Anything prefixed `VITE_` is comp
 1. `.github/workflows/fetch-mongodb-data.yml` (00:00 UTC) runs `scripts/data/fetchMongoData.js`. It reads the MongoDB collections `wio_gaul1`, `wio_gaul2`, `metrics_gaul1` and `metrics_gaul2` (region boundaries and monthly fisheries metrics, written by the `peskas.coasts` pipeline).
 2. `.github/workflows/fetch-gcp-pds-data.yml` (00:15 UTC) runs `scripts/data/fetchGcpPdsData.js`. It downloads the latest fishing grounds, H3 fishing-effort and frame gears files from Google Cloud Storage.
 
-To refresh by hand, run `node scripts/data/fetchMongoData.js` and `npm run fetch-gcp-data`. Both overwrite committed files. They read from `.env` or the environment: `MONGODB_URI` for the first; `GCP_SA_KEY` (service account JSON on one line), `GCP_BUCKET_NAME` and the optional `GCP_PDS_GROUNDS_PREFIX`, `GCP_PDS_EFFORT_PREFIX` and `GCP_PDS_FRAME_GEARS_PREFIX` for the second. In GitHub these are repository secrets; see [`.github/README.md`](.github/README.md).
+To refresh by hand, run `node scripts/data/fetchMongoData.js` and `npm run fetch-gcp-data`. Both overwrite committed files. They read from `.env` or the environment: `MONGODB_URI` for the first; `GCP_SA_KEY` (service account JSON on one line), `GCP_BUCKET_NAME` and the optional `GCP_PDS_GROUNDS_PREFIX`, `GCP_PDS_EFFORT_PREFIX` and `GCP_PDS_FRAME_GEARS_PREFIX` for the second. In GitHub these are repository secrets; see [`.github/workflows/README.md`](.github/workflows/README.md).
 
 **Production.** Vercel builds every push to `main` for production, so each data commit redeploys the site. Set `VITE_MAPBOX_TOKEN` and `VITE_GA_MEASUREMENT_ID` in the Vercel project's environment variables.
 
