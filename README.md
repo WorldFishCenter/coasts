@@ -82,6 +82,8 @@ To refresh by hand, run `node scripts/data/fetchMongoData.js` and `npm run fetch
 
 **Analytics.** Google Analytics 4 loads only when `VITE_GA_MEASUREMENT_ID` is set, and is skipped in development unless `VITE_GA_DEBUG=true`. Page views are sent by `usePageTracking` on each navigation, so GA4's own history-based page views must stay off: in GA4 Admin, go to Data streams, your web stream, Enhanced measurement, Page views, Show advanced settings, and clear "Page changes based on browser history events". Custom events go through `trackEvent(name, params)` in `src/lib/analytics.js`.
 
+**PostHog.** PostHog runs beside GA4 when `VITE_POSTHOG_PROJECT_TOKEN` and `VITE_POSTHOG_HOST` are set (Vercel Production only). It is set up in `src/main.jsx` and records page views, clicks, session replays and crashes in the PostHog project the WIO country dashboards share; filter by Host `coasts.peskas.org` to see this portal alone.
+
 **Before pushing:** run `npm run lint` (it must pass with zero warnings) and `npm run qa:clarity`, which checks that metric definitions and `/docs` links are complete.
 
 **Releases:** bump `version` in `package.json` and add a block at the top of [`NEWS.md`](NEWS.md). On every push to `main`, `.github/workflows/release.yml` tags a release from that block.

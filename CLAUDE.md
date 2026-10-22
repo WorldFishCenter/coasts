@@ -25,7 +25,7 @@ Ecosystem context (other repos, data flow, cross-repo contracts): loaded by the 
 - Routes (`src/App.jsx`): `/` map, `/country`, `/docs`. All three stay mounted and are toggled with CSS `display`. `vercel.json` rewrites every path to `/`.
 - `src/utils/metricMetadata.js` is the single source for metric units and formulas, layer semantics, tooltip field order, the glossary and the `/docs` data dictionary.
 - Env vars:
-  - The client reads `VITE_MAPBOX_TOKEN`, `VITE_GA_MEASUREMENT_ID` and `VITE_GA_DEBUG` (see `.env.example`; GA setup is under "Analytics" in README).
+  - The client reads `VITE_MAPBOX_TOKEN`, `VITE_GA_MEASUREMENT_ID`, `VITE_GA_DEBUG`, `VITE_POSTHOG_PROJECT_TOKEN` and `VITE_POSTHOG_HOST` (see `.env.example`; GA and PostHog setup are under "Analytics" and "PostHog" in README).
   - The fetch scripts read `MONGODB_URI`, `GCP_SA_KEY` (one-line JSON), `GCP_BUCKET_NAME` and the optional `GCP_PDS_*_PREFIX` overrides. These are GitHub secrets and are not in `.env.example`.
 - Decision history: `docs/decisions.md`. `docs/` is gitignored and exists only on machines that have a local copy.
 
