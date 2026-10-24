@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import Header from './Header';
 import {
   DATA_DICTIONARY_ROWS,
   EFFORT_PIPELINE_STEPS,
@@ -12,34 +12,50 @@ import {
 } from '../utils/metricMetadata';
 
 const Section = ({ id, title, intro, children }) => (
-  <section id={id} className="glass-panel rounded-2xl p-5">
-    <h2 className="text-lg font-semibold mb-1">{title}</h2>
-    {intro && <p className="text-sm text-muted-foreground mt-0 mb-4 max-w-3xl">{intro}</p>}
+  <section id={id} className="scroll-mt-6 border-t-2 border-rule pt-5">
+    <h2 className="m-0 mb-2 text-2xl font-semibold">{title}</h2>
+    {intro && <p className="m-0 mb-5 max-w-[70ch] font-serif text-lg italic text-pretty text-muted-foreground">{intro}</p>}
     {children}
   </section>
 );
 
+// The sections in reading order, for the contents list.
+const CONTENTS = [
+  ['effort-grid', 'Fishing effort grid'],
+  ['how-numbers-are-made', 'How the effort numbers are made'],
+  ['fishing-grounds', 'Fishing grounds'],
+  ['reading-notes', 'Reading the effort layers'],
+  ['layer-interpretation', 'Layers on the map'],
+  ['metric-definitions', 'Survey metric definitions'],
+  ['methodology', 'From file to pixel'],
+  ['limitations', 'Known limitations'],
+  ['glossary', 'Glossary'],
+  ['data-sources', 'Source files']
+];
+
+const Code = ({ children }) => <code className="font-mono text-[13px]">{children}</code>;
+
 const VariableTable = ({ rows }) => (
   <div className="overflow-auto">
-    <table className="min-w-full text-sm">
+    <table className="min-w-full border-collapse text-[15px]">
       <thead>
-        <tr className="text-left border-b border-border">
-          <th className="py-2 pr-3 font-semibold whitespace-nowrap">Variable</th>
-          <th className="py-2 pr-3 font-semibold whitespace-nowrap">Unit</th>
+        <tr className="border-b border-rule text-left text-sm">
+          <th className="py-2 pr-4 font-semibold whitespace-nowrap">Variable</th>
+          <th className="py-2 pr-4 font-semibold whitespace-nowrap">Unit</th>
           <th className="py-2 font-semibold">What it means</th>
         </tr>
       </thead>
       <tbody>
         {rows.map((row) => (
-          <tr key={row.field} className="border-b border-border/40 align-top">
-            <td className="py-2 pr-3">
-              <code className="text-xs">{row.field}</code>
+          <tr key={row.field} className="border-b border-border align-top">
+            <td className="py-2.5 pr-4">
+              <Code>{row.field}</Code>
               {row.shownAs && (
-                <div className="text-[11px] text-muted-foreground mt-0.5">shown as “{row.shownAs}”</div>
+                <div className="mt-0.5 text-sm text-muted-foreground">shown as “{row.shownAs}”</div>
               )}
             </td>
-            <td className="py-2 pr-3 whitespace-nowrap text-muted-foreground">{row.unit}</td>
-            <td className="py-2">{row.definition}</td>
+            <td className="py-2.5 pr-4 whitespace-nowrap text-muted-foreground">{row.unit}</td>
+            <td className="py-2.5">{row.definition}</td>
           </tr>
         ))}
       </tbody>
@@ -55,17 +71,25 @@ const DocsHub = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <div className="max-w-5xl mx-auto px-6 py-8 flex flex-col gap-6">
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold">Coasts Documentation</h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              What each layer shows, how every number is produced, and how to avoid misreading it.
-            </p>
-          </div>
-          <Link to="/" className="text-sm text-primary hover:underline whitespace-nowrap">
-            Back to map
-          </Link>
+      <Header />
+      <div className="mx-auto flex max-w-6xl gap-12 px-6 py-10">
+        <nav aria-label="Contents" className="sticky top-10 hidden w-56 flex-none self-start lg:block">
+          <h2 className="m-0 mb-3 text-base font-semibold">Contents</h2>
+          <ol className="m-0 list-none space-y-1.5 border-l border-border p-0 pl-4 text-sm">
+            {CONTENTS.map(([id, label]) => (
+              <li key={id}>
+                <a href={`#${id}`} className="text-muted-foreground no-underline hover:text-foreground hover:underline">{label}</a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+
+        <main className="flex min-w-0 max-w-[52rem] flex-1 flex-col gap-12 text-base leading-relaxed">
+        <div>
+          <h1 className="m-0 text-4xl font-semibold">Methods and data dictionary</h1>
+          <p className="m-0 mt-2 max-w-[70ch] font-serif text-xl italic text-pretty text-muted-foreground">
+            What each layer shows, how every number is produced, and how to avoid misreading it.
+          </p>
         </div>
 
         <Section
@@ -73,7 +97,7 @@ const DocsHub = () => {
           title="Fishing effort grid"
           intro={effortLayer.summary}
         >
-          <div className="text-sm space-y-4">
+          <div className="space-y-4 [&>p]:max-w-[70ch]">
             <p>
               The grid answers one question: where did tracked boats spend time with their gear in the
               water? Every figure comes from GPS positions that a classifier labelled as fishing, so
@@ -92,7 +116,7 @@ const DocsHub = () => {
               leaving them in would stretch the colour scale over noise.
             </p>
 
-            <h3 className="text-base font-semibold mt-6 mb-2">Variables</h3>
+            <h3 className="m-0 mt-8 mb-2 text-lg font-semibold">Variables</h3>
             <VariableTable rows={H3_EFFORT_VARIABLES} />
           </div>
         </Section>
@@ -102,7 +126,7 @@ const DocsHub = () => {
           title="How the effort numbers are made"
           intro="Every variable in the grid rests on the same five steps."
         >
-          <ol className="text-sm space-y-3 m-0 pl-5 list-decimal">
+          <ol className="m-0 max-w-[70ch] list-decimal space-y-3 pl-5">
             {EFFORT_PIPELINE_STEPS.map((step) => (
               <li key={step.title}>
                 <span className="font-semibold">{step.title}.</span>{' '}
@@ -117,7 +141,7 @@ const DocsHub = () => {
           title="Fishing grounds"
           intro={groundsLayer.summary}
         >
-          <div className="text-sm space-y-4">
+          <div className="space-y-4 [&>p]:max-w-[70ch]">
             <p>
               Grounds turn the grid into places. Years are pooled, cells that fall short of three trips
               or of the median cell’s fishing time are dropped, and what survives is merged into single
@@ -132,7 +156,7 @@ const DocsHub = () => {
               active days.
             </p>
 
-            <h3 className="text-base font-semibold mt-6 mb-2">Variables</h3>
+            <h3 className="m-0 mt-8 mb-2 text-lg font-semibold">Variables</h3>
             <VariableTable rows={GROUNDS_VARIABLES} />
           </div>
         </Section>
@@ -142,7 +166,7 @@ const DocsHub = () => {
           title="Reading the effort layers"
           intro="The traps that most often produce a wrong conclusion."
         >
-          <div className="text-sm space-y-3">
+          <div className="max-w-[70ch] space-y-3">
             {EFFORT_READING_NOTES.map((note) => (
               <div key={note.title}>
                 <span className="font-semibold">{note.title}.</span>{' '}
@@ -157,15 +181,15 @@ const DocsHub = () => {
           title="Layers on the map"
           intro="What each layer draws, and how colour and height are assigned."
         >
-          <div className="space-y-3 text-sm">
+          <dl className="m-0 max-w-[70ch]">
             {layers.map((layer) => (
-              <div key={layer.id} className="border border-border/60 rounded-lg p-3">
-                <div className="font-semibold">{layer.label}</div>
-                <p className="m-0 mt-1">{layer.summary}</p>
-                <p className="m-0 mt-1 text-muted-foreground">{layer.encoding}</p>
+              <div key={layer.id} className="border-b border-border py-3 first:pt-0">
+                <dt className="font-semibold">{layer.label}</dt>
+                <dd className="m-0 mt-1">{layer.summary}</dd>
+                <dd className="m-0 mt-1 text-muted-foreground">{layer.encoding}</dd>
               </div>
             ))}
-          </div>
+          </dl>
         </Section>
 
         <Section
@@ -173,20 +197,20 @@ const DocsHub = () => {
           title="Survey metric definitions"
           intro="Metrics behind the region choropleth, drawn from landing-site surveys rather than GPS tracks."
         >
-          <div className="space-y-2 text-sm">
+          <dl className="m-0 max-w-[70ch]">
             {metrics.map((metric) => (
-              <div key={metric.id} className="border border-border/60 rounded-lg p-3">
-                <div className="font-semibold">
+              <div key={metric.id} className="border-b border-border py-3 first:pt-0">
+                <dt className="font-semibold">
                   {metric.shortLabel || metric.displayLabel}
                   <span className="font-normal text-muted-foreground"> · {metric.unit}</span>
-                </div>
-                <p className="m-0 mt-1">{metric.formula}</p>
-                <p className="m-0 mt-1 text-muted-foreground text-xs">
+                </dt>
+                <dd className="m-0 mt-1">{metric.formula}</dd>
+                <dd className="m-0 mt-1 text-sm text-muted-foreground">
                   {metric.cadence ?? 'Unknown cadence'}
-                </p>
+                </dd>
               </div>
             ))}
-          </div>
+          </dl>
         </Section>
 
         <Section
@@ -195,20 +219,20 @@ const DocsHub = () => {
           intro="What the app does to each dataset between loading it and drawing it."
         >
           <div className="overflow-auto">
-            <table className="min-w-full text-sm">
+            <table className="min-w-full border-collapse text-[15px]">
               <thead>
-                <tr className="text-left border-b border-border">
-                  <th className="py-2 pr-3 font-semibold">Layer</th>
-                  <th className="py-2 pr-3 font-semibold">Fields used</th>
+                <tr className="border-b border-rule text-left text-sm">
+                  <th className="py-2 pr-4 font-semibold">Layer</th>
+                  <th className="py-2 pr-4 font-semibold">Fields used</th>
                   <th className="py-2 font-semibold">Processing</th>
                 </tr>
               </thead>
               <tbody>
                 {DATA_DICTIONARY_ROWS.map((row) => (
-                  <tr key={row.uiLabel} className="border-b border-border/40 align-top">
-                    <td className="py-2 pr-3 whitespace-nowrap">{row.uiLabel}</td>
-                    <td className="py-2 pr-3"><code className="text-xs">{row.sourceField}</code></td>
-                    <td className="py-2">{row.transform}</td>
+                  <tr key={row.uiLabel} className="border-b border-border align-top">
+                    <td className="py-2.5 pr-4 whitespace-nowrap">{row.uiLabel}</td>
+                    <td className="py-2.5 pr-4"><Code>{row.sourceField}</Code></td>
+                    <td className="py-2.5">{row.transform}</td>
                   </tr>
                 ))}
               </tbody>
@@ -217,33 +241,33 @@ const DocsHub = () => {
         </Section>
 
         <Section id="limitations" title="Known limitations">
-          <ul className="text-sm list-disc pl-5 space-y-2 text-muted-foreground">
+          <ul className="m-0 max-w-[70ch] list-disc space-y-2 pl-5 text-muted-foreground">
             <li>
-              <span className="text-foreground font-medium">Coverage is partial.</span> Only vessels
+              <span className="font-semibold text-foreground">Coverage is partial.</span> Only vessels
               carrying a tracking device contribute. Blank water means no tracked fishing, which is not
               evidence that no fishing took place.
             </li>
             <li>
-              <span className="text-foreground font-medium">Colour classes move.</span> Bins are
+              <span className="font-semibold text-foreground">Colour classes move.</span> Bins are
               quantiles of whatever is currently on screen, so a cell’s colour can change when you
               switch year, metric or admin level. Compare colours within one view, not across views.
             </li>
             <li>
-              <span className="text-foreground font-medium">Column height is relative.</span> In 3D
+              <span className="font-semibold text-foreground">Column height is relative.</span> In 3D
               mode heights are scaled for visibility and differ per metric. Read them against each
               other, never as an absolute quantity.
             </li>
             <li>
-              <span className="text-foreground font-medium">Ground identifiers are not stable.</span> A
-              ground’s <code className="text-xs">FG_n</code> label can change between data refreshes as
+              <span className="font-semibold text-foreground">Ground identifiers are not stable.</span> A
+              ground’s <Code>FG_n</Code> label can change between data refreshes as
               cells cross the inclusion thresholds.
             </li>
             <li>
-              <span className="text-foreground font-medium">Some survey metrics are static.</span>
+              <span className="font-semibold text-foreground">Some survey metrics are static.</span>
               {' '}Census counts of fishers and boats are snapshots and do not vary with the year filter.
             </li>
             <li>
-              <span className="text-foreground font-medium">Effort and catch come from different
+              <span className="font-semibold text-foreground">Effort and catch come from different
               sources.</span> The grid is GPS-derived; the choropleth metrics come from landing-site
               surveys. They cover overlapping but not identical fleets.
             </li>
@@ -251,7 +275,7 @@ const DocsHub = () => {
         </Section>
 
         <Section id="glossary" title="Glossary">
-          <dl className="space-y-2 text-sm m-0">
+          <dl className="m-0 max-w-[70ch] space-y-2">
             {GLOSSARY_TERMS.map((entry) => (
               <div key={entry.term}>
                 <dt className="font-semibold inline">{entry.term}: </dt>
@@ -262,32 +286,33 @@ const DocsHub = () => {
         </Section>
 
         <Section id="data-sources" title="Source files">
-          <ul className="text-sm space-y-2 text-muted-foreground">
+          <ul className="m-0 max-w-[70ch] list-none space-y-2 p-0 text-muted-foreground">
             <li>
               <span className="text-foreground">Effort grid</span> —{' '}
-              <code className="text-xs">{effortLayer.source}</code>, refreshed from the tracking
+              <Code>{effortLayer.source}</Code>, refreshed from the tracking
               pipeline.
             </li>
             <li>
               <span className="text-foreground">Fishing grounds</span> —{' '}
-              <code className="text-xs">{groundsLayer.source}</code>, derived from the effort grid.
+              <Code>{groundsLayer.source}</Code>, derived from the effort grid.
             </li>
             <li>
               <span className="text-foreground">Survey metrics</span> —{' '}
-              <code className="text-xs">ts_gaul1.json</code>,{' '}
-              <code className="text-xs">ts_gaul2.json</code>.
+              <Code>ts_gaul1.json</Code>,{' '}
+              <Code>ts_gaul2.json</Code>.
             </li>
             <li>
               <span className="text-foreground">Administrative boundaries</span> —{' '}
-              <code className="text-xs">map_gaul1.json</code>,{' '}
-              <code className="text-xs">map_gaul2.json</code> (FAO GAUL).
+              <Code>map_gaul1.json</Code>,{' '}
+              <Code>map_gaul2.json</Code> (FAO GAUL).
             </li>
             <li>
               <span className="text-foreground">Bathymetry</span> —{' '}
-              <code className="text-xs">bathymetry_contours_wio.geojson</code>.
+              <Code>bathymetry_contours_wio.geojson</Code>.
             </li>
           </ul>
         </Section>
+        </main>
       </div>
     </div>
   );

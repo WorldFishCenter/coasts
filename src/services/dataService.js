@@ -3,6 +3,17 @@
  * These files are updated daily by GitHub Actions from MongoDB
  */
 
+// The map page and Country insights are mounted together and need the same files:
+// share one download per file instead of fetching it once per page.
+// A failed load resolves to null; drop it so the next call tries again.
+const once = (load) => {
+  let pending;
+  return () => (pending ??= load().then((result) => {
+    if (result == null) pending = undefined;
+    return result;
+  }));
+};
+
 /**
  * Validate GeoJSON structure
  * @param {Object} data - The data to validate
@@ -129,7 +140,7 @@ const loadPdsH3EffortData = async () => {
  * Each record is gear-level and will be aggregated later by GAUL.
  * @returns {Promise<Array|null>} Frame-gears rows or null on error
  */
-const loadFrameGearsData = async () => {
+const loadFrameGearsDataFresh = async () => {
   try {
     const response = await fetch('/data/frame-gears.json');
     if (!response.ok) {
@@ -289,7 +300,7 @@ const loadMapDataGaul1 = async () => {
  * Load GAUL2 map data (Admin 2 boundaries)
  * @returns {Promise<Object|null>} GeoJSON object or null if error
  */
-const loadMapDataGaul2 = async () => {
+const loadMapDataGaul2Fresh = async () => {
   try {
     const response = await fetch('/data/map_gaul2.json');
     if (!response.ok) {
@@ -310,7 +321,7 @@ const loadMapDataGaul2 = async () => {
  * Load GAUL1 time series data
  * @returns {Promise<Object|null>} Time series data keyed by country_gaul1_name or null if error
  */
-const loadTimeSeriesGaul1 = async () => {
+const loadTimeSeriesGaul1Fresh = async () => {
   try {
     const response = await fetch('/data/ts_gaul1.json');
     if (!response.ok) {
@@ -331,7 +342,7 @@ const loadTimeSeriesGaul1 = async () => {
  * Load GAUL2 time series data
  * @returns {Promise<Object|null>} Time series data keyed by country_gaul1_gaul2 or null if error
  */
-const loadTimeSeriesGaul2 = async () => {
+const loadTimeSeriesGaul2Fresh = async () => {
   try {
     const response = await fetch('/data/ts_gaul2.json');
     if (!response.ok) {
@@ -637,6 +648,11 @@ const getAverageMetricsInRange = (timeSeriesData, country, gaul1Name, gaul2Name,
   });
   return avg;
 };
+
+const loadMapDataGaul2 = once(loadMapDataGaul2Fresh);
+const loadTimeSeriesGaul1 = once(loadTimeSeriesGaul1Fresh);
+const loadTimeSeriesGaul2 = once(loadTimeSeriesGaul2Fresh);
+const loadFrameGearsData = once(loadFrameGearsDataFresh);
 
 export {
   loadPdsFishingGroundsData,

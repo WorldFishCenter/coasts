@@ -1,15 +1,43 @@
 import { memo, useState } from 'react';
-import { ChevronDown, Eye, EyeOff } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { ACTIVITY_METRICS } from '../../utils/gridLayerConfig';
-import { getMetricInfo } from '../../utils/formatters';
-import { PDS_EFFORT_COLOR_HEX, PDS_GROUNDS_COLOR_HEX } from '../../utils/pdsOverlayConfig';
-import { ACTIVITY_METRIC_METADATA, H3_EFFORT_GRID, isRatioActivityField } from '../../utils/metricMetadata';
+import { getMetricInfo, isCensusMetric } from '../../utils/formatters';
+import { ACTIVITY_METRIC_METADATA, isRatioActivityField } from '../../utils/metricMetadata';
+import {
+  getBathymetryColors,
+  getChoroplethColors,
+  getEffortColors,
+  getGroundsColors
+} from '../../utils/mapPalette';
 
-// Modern color palette for metrics
-export const COLORS = ['#ffffd9', '#edf8b1', '#c7e9b4', '#7fcdbb', '#41b6c4', '#1d91c0', '#225ea8', '#0c2c84'];
+const HATCH = 'repeating-linear-gradient(135deg, var(--card) 0 3px, var(--muted-foreground) 3px 4px)';
+
+const formatGradeValue = (value) => {
+  if (!Number.isFinite(value) || value === 0) return '0';
+  const absValue = Math.abs(value);
+  if (absValue >= 100) return Math.round(value).toLocaleString('en-US');
+  if (absValue >= 10) return value.toFixed(1);
+  if (absValue >= 1) return value.toFixed(1);
+  return value.toFixed(2);
+};
+
+const Ramp = ({ colors, start, end, label }) => (
+  <div>
+    <div className="flex h-2.5 border border-rule/40" role="img" aria-label={label}>
+      {colors.map((color) => (
+        <span key={color} className="flex-1" style={{ background: color }} />
+      ))}
+    </div>
+    <div className="mt-0.5 flex justify-between text-xs text-muted-foreground">
+      <span>{start}</span>
+      <span>{end}</span>
+    </div>
+  </div>
+);
 
 const EnhancedLegend = memo(({
   isDarkTheme,
+  isSatellite = false,
   grades,
   selectedMetric,
   selectedActivityMetric,
@@ -17,421 +45,139 @@ const EnhancedLegend = memo(({
   pdsH3EffortData,
   pdsFishingGroundsData,
   activeActivityLayers,
-  visualizationMode,
   showBathymetry = false,
   dataFreshnessLabel = 'Latest available export',
-  yearScope = { isAllYears: true, label: 'all years' }
+  surveyPeriodLabel = 'all years',
+  yearScope = { isAllYears: true, label: 'all years' },
+  gpsVisible = true,
+  defaultMinimized = false
 }) => {
-  const [expandedSections, setExpandedSections] = useState({
-    metrics: true,
-    activity: true,
-    grounds: true,
-    bathymetry: true
-  });
-  const [isMinimized, setIsMinimized] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(defaultMinimized);
 
   const metricInfo = getMetricInfo(selectedMetric);
-  const activeMetricConfig = ACTIVITY_METRICS.find(m => m.id === selectedActivityMetric) || ACTIVITY_METRICS[0];
+  const census = isCensusMetric(selectedMetric);
+  const activeMetricConfig = ACTIVITY_METRICS.find((m) => m.id === selectedActivityMetric) || ACTIVITY_METRICS[0];
   const activeMetricDocs = ACTIVITY_METRIC_METADATA[activeMetricConfig.id] ?? {};
-  const isRatioActivityMetric = isRatioActivityField(activeMetricConfig.id);
+  const choropleth = getChoroplethColors(isDarkTheme).slice(0, grades.length);
 
-  const toggleSection = (section) => {
-    setExpandedSections(prev => ({
-      ...prev,
-      [section]: !prev[section]
-    }));
-  };
-
-  const SectionHeader = ({ title, isExpanded, onToggle, icon }) => (
-    <div
-      onClick={onToggle}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '6px 0',
-        cursor: 'pointer',
-        borderBottom: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)'}`,
-        marginBottom: isExpanded ? '8px' : '0',
-        transition: 'all 0.2s ease'
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.backgroundColor = isDarkTheme
-          ? 'rgba(255, 255, 255, 0.03)'
-          : 'rgba(0, 0, 0, 0.02)';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.backgroundColor = 'transparent';
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-        {icon}
-        <h4 style={{
-          margin: 0,
-          fontSize: '11px',
-          fontWeight: 600,
-          color: isDarkTheme ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)',
-          textTransform: 'uppercase',
-          letterSpacing: '0.3px'
-        }}>
-          {title}
-        </h4>
-      </div>
-      <ChevronDown
-        size={14}
-        style={{
-          transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
-          transition: 'transform 0.2s ease',
-          color: isDarkTheme ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)'
-        }}
-      />
-    </div>
-  );
-
-  const ColorSwatch = ({ color, size = 'normal' }) => {
-    const dimensions = size === 'small' ? '14px' : '18px';
-    return (
-      <div style={{
-        width: dimensions,
-        height: dimensions,
-        backgroundColor: color,
-        borderRadius: '3px',
-        border: `1px solid ${isDarkTheme ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.15)'}`,
-        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-        flexShrink: 0
-      }} />
-    );
-  };
-
-  const GradientBar = ({ colors, height = '8px' }) => (
-    <div style={{
-      height,
-      background: `linear-gradient(to right, ${colors.map(color =>
-        typeof color === 'string' ? color : `rgba(${color.join(',')}, 0.8)`
-      ).join(', ')})`,
-      borderRadius: '4px',
-      border: `1px solid ${isDarkTheme ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.15)'}`,
-      boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.1)'
-    }} />
-  );
-
-  const captionStyle = {
-    fontSize: '10px',
-    lineHeight: 1.4,
-    marginBottom: '4px',
-    color: isDarkTheme ? 'rgba(255,255,255,0.65)' : 'rgba(0,0,0,0.65)'
-  };
-
-  const rampScaleStyle = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    marginTop: '3px',
-    marginBottom: '4px',
-    fontSize: '10px',
-    color: isDarkTheme ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)'
-  };
-
-  // Uses the metric's own formatter so the ramp ends carry their unit.
   const formatActivityValue = (value) => {
-    if (!Number.isFinite(value)) return 'N/A';
+    if (!Number.isFinite(value)) return 'no value';
     return activeMetricConfig.format ? activeMetricConfig.format(value) : value.toFixed(2);
   };
-
-  const formatGradeValue = (value) => {
-    if (!Number.isFinite(value)) return '0';
-    const absValue = Math.abs(value);
-    if (absValue >= 100) return value.toFixed(0);
-    if (absValue >= 10) return value.toFixed(1);
-    if (absValue >= 1) return value.toFixed(2);
-    return value.toFixed(3);
+  const extent = (values) => {
+    const numbers = values.filter((v) => typeof v === 'number' && Number.isFinite(v));
+    return numbers.length ? [Math.min(...numbers), Math.max(...numbers)] : [NaN, NaN];
   };
 
   if (isMinimized) {
     return (
-      <div
-        className="glass-panel p-2.5 rounded-xl cursor-pointer hover:bg-white/10 transition-colors backdrop-blur-xl border border-border/50 group"
+      <button
         onClick={() => setIsMinimized(false)}
+        className="plate flex items-center gap-2 px-3 py-1.5 text-sm font-semibold"
+        aria-label="Show legend"
       >
-        <Eye size={16} className="text-foreground/70 group-hover:text-primary transition-colors" />
-      </div>
+        Legend <ChevronUp size={14} aria-hidden="true" />
+      </button>
     );
   }
 
+  const showEffort = gpsVisible && hasGridData && activeActivityLayers?.hexagons !== false && pdsH3EffortData?.length > 0;
+  const showGrounds = gpsVisible && hasGridData && activeActivityLayers?.grounds !== false && pdsFishingGroundsData?.features?.length > 0;
+  const [effortMin, effortMax] = showEffort ? extent(pdsH3EffortData.map((d) => d[selectedActivityMetric])) : [];
+  const [groundsMin, groundsMax] = showGrounds
+    ? extent(pdsFishingGroundsData.features.map((f) => f.properties[selectedActivityMetric]))
+    : [];
+
   return (
-    <div className="glass-panel p-4 rounded-2xl min-w-[200px] max-w-[220px] max-h-[calc(100vh-8rem)] overflow-y-auto">
-      {/* Header with minimize button */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        marginBottom: '8px'
-      }}>
-        <h3 style={{
-          margin: 0,
-          fontSize: '13px',
-          fontWeight: 600,
-          color: isDarkTheme ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'
-        }}>
-          Legend
-        </h3>
-        <a
-          href="/docs#layer-interpretation"
-          style={{ fontSize: '10px', color: 'var(--primary)', textDecoration: 'none', marginRight: '6px' }}
-        >
-          Guide
-        </a>
+    <section className="plate w-[300px] max-h-[calc(100vh-9rem)] overflow-y-auto px-3.5 pb-3 pt-2.5 text-sm" aria-label="Legend">
+      <div className="flex items-start justify-between gap-3">
+        <h2 className="m-0 text-[15px] font-semibold leading-snug">
+          {metricInfo.plainLabel ?? metricInfo.label}
+          {metricInfo.plainUnit && !census ? <span className="font-normal text-muted-foreground">, {metricInfo.plainUnit}</span> : null}
+        </h2>
         <button
-          onClick={() => setIsMinimized(true)}
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: '4px',
-            borderRadius: '4px',
-            color: isDarkTheme ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
-            transition: 'all 0.2s ease'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = isDarkTheme
-              ? 'rgba(255, 255, 255, 0.1)'
-              : 'rgba(0, 0, 0, 0.1)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'transparent';
-          }}
-        >
-          <EyeOff size={14} />
-        </button>
+            onClick={() => setIsMinimized(true)}
+            className="rounded p-0.5 text-muted-foreground hover:text-foreground"
+            aria-label="Hide legend"
+          >
+            <ChevronDown size={16} aria-hidden="true" />
+          </button>
       </div>
+      <p className="m-0 mt-0.5 text-[13px] text-muted-foreground">
+        {census ? 'Frame survey (census). Not filtered by year.' : `Landing surveys, average for ${surveyPeriodLabel}.`}
+      </p>
 
-      {/* Metric Legend Section */}
-      <div style={{ marginBottom: hasGridData ? '10px' : '0' }}>
-        <SectionHeader
-          title={`${metricInfo.label} ${metricInfo.unit ? `(${metricInfo.unit})` : ''}`}
-          isExpanded={expandedSections.metrics}
-          onToggle={() => toggleSection('metrics')}
-          icon={<div className="w-2 h-2 rounded-full bg-primary" />}
-        />
-
-        {expandedSections.metrics && (
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '6px',
-            paddingLeft: '2px'
-          }}>
-            <div style={captionStyle}>
-              Coastal regions shaded by survey metric, averaged over the selected years.
-            </div>
-            {/* Gradient bar for overall visualization */}
-            <div style={{ marginBottom: '6px' }}>
-              <GradientBar colors={COLORS.slice(0, grades.length)} height="8px" />
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                marginTop: '3px',
-                fontSize: '10px',
-                color: isDarkTheme ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)'
-              }}>
-                <span>{formatGradeValue(grades[0])}</span>
-                <span>{formatGradeValue(grades[grades.length - 1])}+</span>
-              </div>
-            </div>
-
-            {/* Individual ranges */}
-            {grades.map((grade, i) => (
-              <div
-                key={i}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  padding: '2px 4px',
-                  borderRadius: '4px',
-                  transition: 'all 0.2s ease'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = isDarkTheme
-                    ? 'rgba(255, 255, 255, 0.05)'
-                    : 'rgba(0, 0, 0, 0.03)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                }}
-              >
-                <ColorSwatch color={COLORS[i]} size="small" />
-                <span style={{
-                  fontSize: '11px',
-                  fontWeight: 500,
-                  color: isDarkTheme ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)'
-                }}>
-                  {formatGradeValue(grade)}{i < grades.length - 1 ? ` - ${formatGradeValue(grades[i + 1])}` : '+'}
-                </span>
-              </div>
+      <div className="mt-2.5 flex items-end gap-3">
+        <div className="flex-1">
+          <div className="flex h-3 border border-rule/40" role="img" aria-label={`${choropleth.length} classes from ${formatGradeValue(grades[0])} upward`}>
+            {choropleth.map((color) => (
+              <span key={color} className="flex-1" style={{ background: color }} />
             ))}
           </div>
-        )}
+          <div className="mt-0.5 flex text-xs tracking-tight text-muted-foreground">
+            {grades.map((grade, i) => (
+              <span key={i} className="flex-1 whitespace-nowrap">
+                {formatGradeValue(grade)}{i === grades.length - 1 ? '+' : ''}
+              </span>
+            ))}
+          </div>
+        </div>
+        <div className="w-14 text-center">
+          <div className="h-3 border border-rule/40" style={{ background: HATCH }} />
+          <div className="mt-0.5 text-xs text-muted-foreground">No data</div>
+        </div>
       </div>
 
-      {/* Fishing Activity Legend Section */}
-      {hasGridData && (
-        <>
-          {/* H3 Effort Legend */}
-          {activeActivityLayers?.hexagons !== false && pdsH3EffortData?.length > 0 && (() => {
-            const values = pdsH3EffortData.map(d => d[selectedActivityMetric]).filter(v => typeof v === 'number');
-            const min = values.length ? Math.min(...values) : 0;
-            const max = values.length ? Math.max(...values) : 0;
-            return (
-              <div>
-                <SectionHeader
-                  title="Local Fishing Activity"
-                  isExpanded={expandedSections.activity}
-                  onToggle={() => toggleSection('activity')}
-                  icon={<div style={{
-                    width: '8px',
-                    height: '8px',
-                    borderRadius: '50%',
-                    backgroundColor: PDS_EFFORT_COLOR_HEX[PDS_EFFORT_COLOR_HEX.length - 1]
-                  }} />}
-                />
-
-                {expandedSections.activity && (
-                  <div style={{ paddingLeft: '2px', marginBottom: '10px' }}>
-                    <div style={captionStyle}>
-                      Hexagons of {H3_EFFORT_GRID.areaLabel} holding time that GPS-tracked boats
-                      spent fishing{visualizationMode === 'column' ? '. Height and colour show the same value' : ''}.
-                    </div>
-                    <div style={{ marginBottom: '8px' }}>
-                      <div style={{
-                        fontSize: '11px',
-                        fontWeight: 600,
-                        marginBottom: '2px',
-                        color: isDarkTheme ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.85)'
-                      }}>
-                        {activeMetricConfig.label}
-                        {activeMetricDocs.unit ? (
-                          <span style={{ fontWeight: 400, opacity: 0.65 }}> ({activeMetricDocs.unit})</span>
-                        ) : null}
-                      </div>
-                      {activeMetricDocs.short && (
-                        <div style={captionStyle}>{activeMetricDocs.short}</div>
-                      )}
-                      <GradientBar
-                        colors={PDS_EFFORT_COLOR_HEX}
-                        height="8px"
-                      />
-                      <div style={rampScaleStyle}>
-                        <span>{formatActivityValue(min)}</span>
-                        <span>{formatActivityValue(max)}</span>
-                      </div>
-                      <div style={captionStyle}>Showing {yearScope.label}.</div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          })()}
-
-          {/* Fishing Grounds Legend */}
-          {activeActivityLayers?.grounds !== false && pdsFishingGroundsData?.features?.length > 0 && (() => {
-            const values = pdsFishingGroundsData.features.map(f => f.properties[selectedActivityMetric]).filter(v => typeof v === 'number');
-            const min = values.length ? Math.min(...values) : 0;
-            const max = values.length ? Math.max(...values) : 0;
-            return (
-              <div>
-                <SectionHeader
-                  title="Fishing Grounds"
-                  isExpanded={expandedSections.grounds}
-                  onToggle={() => toggleSection('grounds')}
-                  icon={<div style={{
-                    width: '8px',
-                    height: '8px',
-                    borderRadius: '50%',
-                    backgroundColor: PDS_GROUNDS_COLOR_HEX[PDS_GROUNDS_COLOR_HEX.length - 1]
-                  }} />}
-                />
-
-                {expandedSections.grounds && (
-                  <div style={{ paddingLeft: '2px', marginBottom: '10px' }}>
-                    <div style={captionStyle}>
-                      Contiguous areas of sustained fishing, merged from neighbouring cells.
-                      Always all years.
-                    </div>
-                    <div style={{ marginBottom: '8px' }}>
-                      <div style={{
-                        fontSize: '11px',
-                        fontWeight: 600,
-                        marginBottom: '2px',
-                        color: isDarkTheme ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.85)'
-                      }}>
-                        {activeMetricConfig.label}
-                        {activeMetricDocs.unit ? (
-                          <span style={{ fontWeight: 400, opacity: 0.65 }}> ({activeMetricDocs.unit})</span>
-                        ) : null}
-                      </div>
-                      <GradientBar
-                        colors={PDS_GROUNDS_COLOR_HEX}
-                        height="8px"
-                      />
-                      <div style={rampScaleStyle}>
-                        <span>{formatActivityValue(min)}</span>
-                        <span>{formatActivityValue(max)}</span>
-                      </div>
-                      {isRatioActivityMetric && (
-                        <div style={captionStyle}>
-                          Averaged across each ground’s cells, not a ground total.
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          })()}
-        </>
-      )}
-
-      {/* Bathymetry Legend Section */}
-      {showBathymetry && (
-        <div style={{ marginTop: (hasGridData ? '10px' : '0') }}>
-          <SectionHeader
-            title="Bathymetry (Depth m)"
-            isExpanded={expandedSections.bathymetry}
-            onToggle={() => toggleSection('bathymetry')}
-            icon={<div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#55a9df' }} />}
-          />
-
-          {expandedSections.bathymetry && (
-            <div style={{ paddingLeft: '2px' }}>
-              <div style={{ marginBottom: '8px' }}>
-                <GradientBar
-                  colors={['#84d2f6', '#55a9df', '#2f7eb8', '#255c95', '#1e3f72', '#172f58']}
-                  height="8px"
-                />
-                <div style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  marginTop: '3px',
-                  fontSize: '10px',
-                  color: isDarkTheme ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)'
-                }}>
-                  <span>10m</span>
-                  <span>2000m</span>
-                </div>
-              </div>
-
+      {(showEffort || showGrounds) && (
+        <div className="mt-3 space-y-2 border-t border-border pt-2.5">
+          <div>
+            <h3 className="m-0 text-sm font-semibold">Where tracked boats fish</h3>
+            <p className="m-0 text-[13px] text-muted-foreground">{activeMetricConfig.label}, {activeMetricDocs.unit || 'GPS trackers'}</p>
+          </div>
+          {showEffort && (
+            <div>
+              <div className="mb-0.5 text-[13px]">Effort grid <span className="text-muted-foreground">· {yearScope.label}</span></div>
+              <Ramp colors={getEffortColors(isDarkTheme || isSatellite)} start={formatActivityValue(effortMin)} end={formatActivityValue(effortMax)} label="Effort grid colour scale" />
+            </div>
+          )}
+          {showGrounds && (
+            <div>
+              <div className="mb-0.5 text-[13px]">Fishing grounds <span className="text-muted-foreground">· all years</span></div>
+              <Ramp colors={getGroundsColors(isDarkTheme || isSatellite)} start={formatActivityValue(groundsMin)} end={formatActivityValue(groundsMax)} label="Fishing grounds colour scale" />
+              {isRatioActivityField(activeMetricConfig.id) && (
+                <p className="m-0 text-xs text-muted-foreground">Averaged across each ground’s cells, not a ground total.</p>
+              )}
             </div>
           )}
         </div>
       )}
-      <div style={{
-        marginTop: '10px',
-        fontSize: '10px',
-        color: isDarkTheme ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)'
-      }}>
-        Data as of: {dataFreshnessLabel}
-      </div>
-    </div>
+
+      {hasGridData && !gpsVisible && (
+        <p className="m-0 mt-3 border-t border-border pt-2.5 text-[13px] text-muted-foreground">
+          Zoom in on the coast to see where tracked boats fish.
+        </p>
+      )}
+
+      {showBathymetry && (
+        <div className="mt-3 border-t border-border pt-2.5">
+          <div className="mb-1 text-[13px]">Depth contours</div>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <span>5 m</span>
+            <svg width="120" height="10" aria-hidden="true" className="flex-1">
+              {getBathymetryColors(isDarkTheme).map((color, i) => (
+                <line key={color} x1={i * 20} x2={i * 20 + 16} y1="5" y2="5" stroke={color} strokeWidth="2" />
+              ))}
+            </svg>
+            <span>2,000 m</span>
+          </div>
+        </div>
+      )}
+
+      <p className="m-0 mt-3 flex justify-between text-xs text-muted-foreground">
+        <span>Data to {dataFreshnessLabel}</span>
+        <a href="/docs#layer-interpretation" className="font-semibold text-primary">How to read the map</a>
+      </p>
+    </section>
   );
 });
 

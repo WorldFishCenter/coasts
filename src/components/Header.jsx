@@ -1,8 +1,8 @@
 import { useState, useMemo } from 'react';
-import { Info, Sun, Moon, Map, BarChart3, BookOpen } from 'lucide-react';
+import { Info, Sun, Moon } from 'lucide-react';
 import { getLatestDate, getUniqueCountries } from '../services/dataService';
 import { cn } from '../lib/utils';
-import { useLocation, useNavigate, Link } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import { useTheme } from './ThemeProvider';
 import AboutModal from './AboutModal';
 import { PeskasLogo, PeskasMark } from './PeskasLogo';
@@ -14,12 +14,11 @@ const Header = ({
 }) => {
   const [showAbout, setShowAbout] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
   
   const isDarkTheme = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
-  const currentView = location.pathname === '/country' ? 'country' : 'map';
+  const currentView = location.pathname === '/country' ? 'country' : location.pathname === '/docs' ? 'docs' : 'map';
 
   const handleThemeToggle = () => {
     setTheme(isDarkTheme ? 'light' : 'dark');
@@ -56,105 +55,63 @@ const Header = ({
     return stats;
   }, [boundaries, timeSeriesData, pdsH3EffortData]);
 
+  const tabs = [
+    { to: '/', label: 'Map', active: currentView === 'map' },
+    { to: '/country', label: 'Country insights', short: 'Countries', active: currentView === 'country' },
+    { to: '/docs', label: 'Methods', active: currentView === 'docs' }
+  ];
+
   return (
     <>
-      <header className={cn(
-        "flex-none h-[72px] px-8 flex items-center justify-between z-50 transition-all duration-300 relative",
-        isDarkTheme
-          ? "bg-[#060b19]/80 backdrop-blur-2xl border-b border-white/5 shadow-[0_4px_30px_rgba(0,0,0,0.5)]"
-          : "bg-white/80 backdrop-blur-2xl border-b border-[#0a1930]/10 shadow-[0_4px_20px_rgba(0,0,0,0.05)]"
-      )}>
-        {/* Left: the Peskas logo and the product name, one link home that reads "Peskas Coasts";
-            below 640px the mark alone takes the logo's place. Beside the full logo the name drops
-            onto the wordmark's baseline. The h1 sets Sora and tight tracking, so the name resets both. */}
-        <h1 className="m-0 shrink-0">
-          <Link to="/" className="flex items-center gap-2.5">
-            <PeskasLogo className="hidden h-7 w-auto sm:block" />
-            <PeskasMark className="h-7 w-auto sm:hidden" />
-            <span className="font-sans text-base font-medium tracking-normal text-muted-foreground sm:translate-y-[0.2em]">
-              Coasts
-            </span>
+      <header className="relative z-50 flex h-14 flex-none items-stretch gap-4 border-b-2 border-rule bg-background px-4 sm:gap-10 sm:px-6">
+        {/* The Peskas logo and the product name, one link home that reads "Peskas Coasts";
+            below 640px the mark alone takes the logo's place. */}
+        <h1 className="m-0 flex shrink-0 items-center">
+          <Link to="/" className="flex items-baseline gap-1.5 text-foreground no-underline">
+            <PeskasLogo className="hidden h-7 w-auto self-center sm:block" />
+            <PeskasMark className="h-7 w-auto self-center sm:hidden" />
+            <span className="hidden font-serif text-lg italic text-primary sm:inline">Coasts</span>
           </Link>
         </h1>
 
-        {/* Center section: View Switcher */}
-        <div className="flex-1 flex justify-center">
-          <div className={cn(
-            "p-1 rounded-full flex items-center border shadow-inner transition-colors duration-300",
-            isDarkTheme ? "bg-[#0a1930]/50 border-white/5" : "bg-slate-100 border-slate-200"
-          )}>
-            <button
-              onClick={() => navigate('/')}
+        <nav aria-label="Main" className="flex items-stretch gap-4 sm:gap-7">
+          {tabs.map((tab) => (
+            <Link
+              key={tab.to}
+              to={tab.to}
+              aria-current={tab.active ? 'page' : undefined}
               className={cn(
-                "h-9 px-5 rounded-full text-xs font-bold tracking-wide transition-all duration-300 flex items-center gap-2",
-                currentView === 'map'
-                  ? "bg-primary text-primary-foreground shadow-[0_4px_12px_rgba(0,245,255,0.3)] ring-1 ring-primary/50"
-                  : "text-muted-foreground hover:text-foreground"
+                '-mb-[2px] flex items-center border-b-[3px] pt-[3px] text-[15px] font-semibold no-underline transition-colors',
+                tab.active
+                  ? 'border-primary text-foreground'
+                  : 'border-transparent text-muted-foreground hover:text-foreground'
               )}
             >
-              <Map size={14} />
-              Global Map
-            </button>
-            <button
-              onClick={() => navigate('/country')}
-              className={cn(
-                "h-9 px-5 rounded-full text-xs font-bold tracking-wide transition-all duration-300 flex items-center gap-2",
-                currentView === 'country'
-                  ? "bg-primary text-primary-foreground shadow-[0_4px_12px_rgba(0,245,255,0.3)] ring-1 ring-primary/50"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              <BarChart3 size={14} />
-              Country Insights
-            </button>
-          </div>
-        </div>
+              {tab.short ? (
+                <>
+                  <span className="sm:hidden">{tab.short}</span>
+                  <span className="hidden sm:inline">{tab.label}</span>
+                </>
+              ) : tab.label}
+            </Link>
+          ))}
+        </nav>
 
-        {/* Right section with actions */}
-        <div className="flex items-center gap-3">
+        <div className="ml-auto flex items-center gap-2 sm:gap-4">
           <button
             onClick={() => setShowAbout(true)}
-            className={cn(
-              "h-10 px-4 flex items-center gap-2 rounded-full font-bold text-xs tracking-wide transition-all duration-300 border",
-              isDarkTheme
-                ? "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 text-foreground"
-                : "bg-black/5 border-black/10 hover:bg-black/10 hover:border-black/20 text-foreground"
-            )}
+            className="flex items-center gap-1.5 rounded px-1 text-[15px] font-semibold text-muted-foreground transition-colors hover:text-foreground"
           >
-            <Info className="w-4 h-4 text-primary" />
-            About System
+            <Info className="h-4 w-4 sm:hidden" aria-hidden="true" />
+            <span className="sr-only sm:not-sr-only">About</span>
           </button>
-          <button
-            onClick={() => navigate('/docs')}
-            className={cn(
-              "h-10 px-4 flex items-center gap-2 rounded-full font-bold text-xs tracking-wide transition-all duration-300 border",
-              isDarkTheme
-                ? "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 text-foreground"
-                : "bg-black/5 border-black/10 hover:bg-black/10 hover:border-black/20 text-foreground"
-            )}
-          >
-            <BookOpen className="w-4 h-4 text-primary" />
-            Docs
-          </button>
-
-          <div className="w-px h-6 mx-2 bg-border/50" />
-
           <button
             onClick={handleThemeToggle}
-            className={cn(
-              "h-10 w-10 flex items-center justify-center rounded-full transition-all duration-300 border relative group overflow-hidden",
-              isDarkTheme
-                ? "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20"
-                : "bg-black/5 border-black/10 hover:bg-black/10 hover:border-black/20"
-            )}
-            aria-label="Toggle theme"
+            className="flex h-8 w-8 items-center justify-center rounded border border-input text-foreground transition-colors hover:border-foreground"
+            aria-label={isDarkTheme ? 'Switch to light theme' : 'Switch to dark theme'}
+            title={isDarkTheme ? 'Light theme' : 'Dark theme'}
           >
-            <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-            {isDarkTheme ? (
-              <Moon className="w-[18px] h-[18px] text-blue-400 relative z-10 transition-transform group-hover:scale-110" />
-            ) : (
-              <Sun className="w-[18px] h-[18px] text-amber-500 relative z-10 transition-transform group-hover:scale-110" />
-            )}
+            {isDarkTheme ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
         </div>
       </header>

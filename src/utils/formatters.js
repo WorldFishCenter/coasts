@@ -17,12 +17,16 @@ export const METRIC_CONFIG = {
   ...METRIC_METADATA_WITH_ALIASES,
   fishers: {
     label: 'Fishers',
+    pillLabel: 'Fishers',
+    plainLabel: 'Fishers',
     unit: 'number of fishers',
     description: 'Fishers by sex and total',
     format: METRIC_METADATA.fishers_total.format
   },
   boats: {
     label: 'Boats',
+    pillLabel: 'Boats',
+    plainLabel: 'Boats',
     unit: 'number of boats',
     description: 'Number of boats',
     format: METRIC_METADATA.boats_total.format
@@ -69,7 +73,10 @@ export const formatCountryName = (country) => {
   if (!country) return '';
   // Special cases for country names
   const specialCases = {
-    'tanzania': 'Tanzania',
+    // The Tanzania features are Zanzibar's islands only.
+    'tanzania': 'Zanzibar',
+    'zanzibar': 'Zanzibar',
+    'timor': 'Timor-Leste',
     'kenya': 'Kenya',
     'mozambique': 'Mozambique',
     'madagascar': 'Madagascar',
@@ -82,3 +89,27 @@ export const formatCountryName = (country) => {
   const lower = country.toLowerCase();
   return specialCases[lower] || capitalizeWords(country);
 }; 
+// A figure split for display: the number, its unit, and what it is per ("10.3", "kg", "per fisher per day").
+const FIGURE_PARTS = {
+  mean_cpue: { digits: 1, unit: 'kg', per: 'per fisher per day' },
+  mean_cpua: { digits: 1, unit: 'kg', per: 'per fisher per unit area' },
+  mean_rpue: { digits: 2, unit: 'USD', per: 'per fisher per day' },
+  mean_rpua: { digits: 2, unit: 'USD', per: 'per fisher per unit area' },
+  mean_price_kg: { digits: 2, unit: 'USD', per: 'per kg' },
+  fishers_total: { digits: 0, unit: 'fishers', per: '' },
+  fishers_male: { digits: 0, unit: 'men', per: '' },
+  fishers_female: { digits: 0, unit: 'women', per: '' },
+  boats_total: { digits: 0, unit: 'boats', per: '' }
+};
+
+export const formatFigure = (metricId, value) => {
+  if (value === null || value === undefined || Number.isNaN(Number(value))) return null;
+  const parts = FIGURE_PARTS[metricId] ?? { digits: 2, unit: '', per: '' };
+  const number = parts.digits === 0
+    ? Math.round(Number(value)).toLocaleString('en-US')
+    : Number(value).toLocaleString('en-US', { minimumFractionDigits: parts.digits, maximumFractionDigits: parts.digits });
+  return { number, unit: parts.unit, per: parts.per };
+};
+
+// Census metrics come from frame surveys and ignore the year filter.
+export const isCensusMetric = (metricId) => metricId.startsWith('fishers_') || metricId === 'boats_total';

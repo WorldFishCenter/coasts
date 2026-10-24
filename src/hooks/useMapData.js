@@ -23,6 +23,7 @@ export const useMapData = () => {
   const [pdsFishingGroundsData, setPdsFishingGroundsData] = useState(null);
   const [pdsH3EffortData, setPdsH3EffortData] = useState(null);
   const [frameGearsData, setFrameGearsData] = useState(null);
+  const [frameGearsRows, setFrameGearsRows] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [totalValueGaul1, setTotalValueGaul1] = useState(0);
@@ -139,6 +140,7 @@ export const useMapData = () => {
         setPdsFishingGroundsData(fishingGrounds);
         setPdsH3EffortData(Array.isArray(h3EffortData) ? h3EffortData : null);
         setFrameGearsData(frameGearsAggregates);
+        setFrameGearsRows(Array.isArray(frameGearsRows) ? frameGearsRows : null);
         setTotalValueGaul1(total1);
         setTotalValueGaul2(total2);
       } catch (err) {
@@ -160,6 +162,7 @@ export const useMapData = () => {
     pdsFishingGroundsData,
     pdsH3EffortData,
     frameGearsData,
+    frameGearsRows,
     loading,
     error,
     totalValueGaul1,

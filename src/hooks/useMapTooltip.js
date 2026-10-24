@@ -1,165 +1,119 @@
 import { useCallback } from 'react';
-import { getMetricInfo, formatRegionName, formatCountryName } from '../utils/formatters';
-import { COLORS } from '../components/map/EnhancedLegend';
+import { formatRegionName, formatCountryName, formatFigure, getMetricInfo, isCensusMetric } from '../utils/formatters';
 import { ACTIVITY_METRIC_METADATA, H3_EFFORT_GRID, isRatioActivityField } from '../utils/metricMetadata';
+
+const escapeHtml = (value) =>
+  String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
+// Tooltips are small plates: white sheet, ink rule on top, serif name, the figure in teal.
+const PLATE_STYLE = {
+  backgroundColor: 'var(--card)',
+  color: 'var(--card-foreground)',
+  border: '1px solid var(--border)',
+  borderTop: '2px solid var(--rule)',
+  padding: '10px 12px',
+  maxWidth: '280px',
+  fontFamily: 'var(--font-sans)',
+  fontSize: '13px',
+  lineHeight: '1.4',
+  fontVariantNumeric: 'tabular-nums'
+};
+
+const title = (name, place) => `
+  <div style="font-family:var(--font-serif); font-size:18px; font-weight:600">${escapeHtml(name)}</div>
+  ${place ? `<div style="font-family:var(--font-serif); font-style:italic; color:var(--muted-foreground)">${escapeHtml(place)}</div>` : ''}`;
+
+const figure = (number, unit, per) => `
+  <div style="margin-top:6px; color:var(--primary); font-size:22px; font-weight:700; line-height:1.2">
+    ${escapeHtml(number)} <span style="font-size:13px; font-weight:600">${escapeHtml(unit)}</span>
+    ${per ? `<span style="font-size:13px; font-weight:400; color:var(--muted-foreground)"> ${escapeHtml(per)}</span>` : ''}
+  </div>`;
+
+const note = (text) =>
+  `<div style="margin-top:6px; padding-top:6px; border-top:1px solid var(--border); color:var(--muted-foreground)">${text}</div>`;
+
+const row = (label, value) =>
+  `<div style="display:flex; justify-content:space-between; gap:12px"><span style="color:var(--muted-foreground)">${escapeHtml(label)}</span><span>${escapeHtml(value)}</span></div>`;
 
 export const useMapTooltip = ({
   selectedMetric,
   selectedActivityMetric = 'fishing_hours',
-  isDarkTheme,
-  metricStats,
+  surveyPeriodLabel = 'all years',
   yearScopeLabel = 'all years'
 }) => {
-  const escapeHtml = (value) =>
-    String(value ?? '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
-
-  return useCallback(({object, layer}) => {
+  return useCallback(({ object, layer }) => {
     if (!object) return null;
     const activityDocs = ACTIVITY_METRIC_METADATA[selectedActivityMetric] ?? {};
-    const selectedActivityLabel = activityDocs.label ?? selectedActivityMetric;
+    const activityLabel = activityDocs.label ?? selectedActivityMetric;
     const formatActivityValue = (value) => {
-      if (value === null || value === undefined || Number.isNaN(Number(value))) return 'N/A';
-      const formatter = activityDocs.format;
-      if (formatter) return formatter(Number(value));
-      return Number(value).toFixed(2);
+      if (value === null || value === undefined || Number.isNaN(Number(value))) return 'no value';
+      return activityDocs.format ? activityDocs.format(Number(value)) : Number(value).toFixed(2);
     };
-    const mutedColor = isDarkTheme ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.55)';
-    const footnote = (text) =>
-      `<div style="margin-top:6px; font-size:11px; line-height:1.35; color:${mutedColor}">${text}</div>`;
 
-    // Handle GeoJsonLayer (choropleth) tooltips
     if (layer.id === 'wio-regions') {
       const props = object.properties;
-      const metricValue = props[selectedMetric];
-      const metricInfo = getMetricInfo(selectedMetric);
-      const isFishersMetric = selectedMetric.startsWith('fishers_');
-      const isBoatsMetric = selectedMetric === 'boats_total';
-      
-      // Get the color for this value
-      let backgroundColor = isDarkTheme ? 'rgba(60, 60, 60, 0.95)' : 'rgba(240, 240, 240, 0.95)'; // Neutral background for NA
-      let textColor = isDarkTheme ? '#ffffff' : '#000000';
-      
-      if (metricValue !== null && metricValue !== undefined && !isNaN(metricValue)) {
-        // Find which grade this value falls into
-        const { grades } = metricStats;
-        let colorIndex = 0;
-        for (let i = 0; i < grades.length - 1; i++) {
-          if (metricValue >= grades[i] && metricValue < grades[i + 1]) {
-            colorIndex = i;
-            break;
-          } else if (metricValue >= grades[grades.length - 1]) {
-            colorIndex = grades.length - 1;
-          }
-        }
-        
-        // Convert hex color to RGB
-        const hexColor = COLORS[colorIndex];
-        const r = parseInt(hexColor.slice(1, 3), 16);
-        const g = parseInt(hexColor.slice(3, 5), 16);
-        const b = parseInt(hexColor.slice(5, 7), 16);
-        backgroundColor = `rgba(${r}, ${g}, ${b}, 0.95)`;
-        
-        // Use white text for darker colors (last 3 colors in YlGnBu-8)
-        textColor = colorIndex > 4 ? '#ffffff' : '#000000';
-      }
-      
+      const place = [props.gaul2_name ? props.gaul1_name : null, formatCountryName(props.country)]
+        .filter(Boolean)
+        .join(', ');
+      const value = formatFigure(selectedMetric, props[selectedMetric]);
+      const census = isCensusMetric(selectedMetric);
+      const body = value
+        ? figure(value.number, value.unit, value.per)
+        : `<div style="margin-top:6px; color:var(--muted-foreground)">No ${census ? 'census' : 'survey'} data for ${escapeHtml(getMetricInfo(selectedMetric).plainLabel?.toLowerCase() ?? 'this figure')}</div>`;
+      const fishersRows = selectedMetric.startsWith('fishers_') && props.fishers_total != null
+        ? `<div style="margin-top:4px">${row('Men', formatFigure('fishers_male', props.fishers_male)?.number ?? '–')}${row('Women', formatFigure('fishers_female', props.fishers_female)?.number ?? '–')}</div>`
+        : '';
+      const source = census
+        ? 'Frame survey (census), not filtered by year'
+        : `Landing surveys, average for ${escapeHtml(surveyPeriodLabel)}`;
       return {
-        html: `
-          <div style="padding: 8px">
-            <div style="font-weight: bold; margin-bottom: 4px">${escapeHtml(formatRegionName(props))}</div>
-            <div>Country: ${escapeHtml(formatCountryName(props.country))}</div>
-            <div>${metricInfo.label}: ${metricInfo.format(metricValue)}</div>
-            ${isFishersMetric ? `<div style="margin-top: 4px">Male: ${getMetricInfo('fishers_male').format(props.fishers_male)}</div>
-            <div>Female: ${getMetricInfo('fishers_female').format(props.fishers_female)}</div>
-            <div>Total: ${getMetricInfo('fishers_total').format(props.fishers_total)}</div>` : ''}
-            ${isBoatsMetric ? `<div style="margin-top: 4px">Boats Total: ${getMetricInfo('boats_total').format(props.boats_total)}</div>` : ''}
-          </div>
-        `,
-        style: {
-          backgroundColor,
-          color: textColor,
-          fontSize: '12px',
-          borderRadius: '4px',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-          border: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`
-        }
+        html: `${title(formatRegionName(props), place)}${body}${fishersRows}${note(`${source}<br>Click to open the district sheet`)}`,
+        style: PLATE_STYLE
       };
     }
 
-
-
     if (layer.id === 'pds-fishing-grounds-layer') {
       const props = object.properties || {};
-      const groundContextRows = [
-        `<div>Area: ${(props.area_km2 ?? 0).toFixed?.(2) ?? '0.00'} km²</div>`,
+      const rows = [
+        row('Area', `${Number(props.area_km2 ?? 0).toFixed(2)} km²`),
         selectedActivityMetric !== 'fishing_hours'
-          ? `<div>Fishing hours: ${(props.fishing_hours ?? 0).toLocaleString?.(undefined, {maximumFractionDigits: 1}) ?? '0'} vessel-h</div>`
+          ? row('Fishing hours', `${Number(props.fishing_hours ?? 0).toLocaleString('en-US', { maximumFractionDigits: 1 })} vessel-h`)
           : '',
-        selectedActivityMetric !== 'unique_trips'
-          ? `<div>Cell visits: ${(props.unique_trips ?? 0).toLocaleString?.() ?? '0'}</div>`
-          : '',
-        `<div>Active days: ${(props.n_active_days ?? 0).toLocaleString?.() ?? '0'}</div>`,
+        selectedActivityMetric !== 'unique_trips' ? row('Cell visits', Number(props.unique_trips ?? 0).toLocaleString('en-US')) : '',
+        row('Active days', Number(props.n_active_days ?? 0).toLocaleString('en-US'))
       ].join('');
-      const groundFootnote = isRatioActivityField(selectedActivityMetric)
-        ? `${escapeHtml(selectedActivityLabel)} is averaged across this ground’s cells, not derived from its totals.`
+      const groundNote = isRatioActivityField(selectedActivityMetric)
+        ? `${escapeHtml(activityLabel)} is averaged across this ground’s cells, not derived from its totals.`
         : 'Cell visits count a trip once per cell it crossed, so they exceed the number of distinct trips.';
       return {
-        html: `
-          <div style="padding: 8px; max-width: 260px">
-            <div><strong>Fishing ground</strong>${props.ground_id ? ` <span style="color:${mutedColor}">${escapeHtml(props.ground_id)}</span>` : ''}</div>
-            <div style="font-size:11px; color:${mutedColor}">All years${props.country ? ` · ${escapeHtml(formatCountryName(props.country))}` : ''}</div>
-            <div style="margin-top: 6px;">${escapeHtml(selectedActivityLabel)}: <strong>${formatActivityValue(props[selectedActivityMetric])}</strong></div>
-            ${groundContextRows}
-            ${footnote(groundFootnote)}
-          </div>
-        `,
-        style: {
-          backgroundColor: isDarkTheme ? 'rgba(30, 30, 30, 0.95)' : 'rgba(255, 255, 255, 0.95)',
-          color: isDarkTheme ? '#ffffff' : '#000000',
-          fontSize: '12px',
-          borderRadius: '4px',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-          border: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`
-        }
+        html: `${title('Fishing ground', ['All years', props.country ? formatCountryName(props.country) : null].filter(Boolean).join(', '))}
+          <div style="margin:6px 0 4px">${escapeHtml(activityLabel)}: <strong>${formatActivityValue(props[selectedActivityMetric])}</strong></div>
+          ${rows}${note(`GPS trackers. ${groundNote}`)}`,
+        style: PLATE_STYLE
       };
     }
 
     if (layer.id === 'pds-h3-effort-layer') {
-      const contextRows = [
+      const rows = [
         selectedActivityMetric !== 'fishing_hours'
-          ? `<div>Fishing hours: ${(object.fishing_hours ?? 0).toLocaleString?.(undefined, {maximumFractionDigits: 1}) ?? '0'} vessel-h</div>`
+          ? row('Fishing hours', `${Number(object.fishing_hours ?? 0).toLocaleString('en-US', { maximumFractionDigits: 1 })} vessel-h`)
           : '',
-        selectedActivityMetric !== 'unique_trips'
-          ? `<div>Trips: ${(object.unique_trips ?? 0).toLocaleString?.() ?? '0'}</div>`
-          : '',
-        `<div>Active days: ${(object.n_active_days ?? 0).toLocaleString?.() ?? '0'}</div>`,
+        selectedActivityMetric !== 'unique_trips' ? row('Trips', Number(object.unique_trips ?? 0).toLocaleString('en-US')) : '',
+        row('Active days', Number(object.n_active_days ?? 0).toLocaleString('en-US'))
       ].join('');
       return {
-        html: `
-          <div style="padding: 8px; max-width: 260px">
-            <div><strong>Fishing activity cell</strong></div>
-            <div style="font-size:11px; color:${mutedColor}">${H3_EFFORT_GRID.areaLabel} · ${escapeHtml(yearScopeLabel)}</div>
-            <div style="margin-top: 6px;">${escapeHtml(selectedActivityLabel)}: <strong>${formatActivityValue(object[selectedActivityMetric])}</strong></div>
-            ${contextRows}
-            ${footnote('Hours are summed across boats, so one day can exceed 24.')}
-          </div>
-        `,
-        style: {
-          backgroundColor: isDarkTheme ? 'rgba(30, 30, 30, 0.95)' : 'rgba(255, 255, 255, 0.95)',
-          color: isDarkTheme ? '#ffffff' : '#000000',
-          fontSize: '12px',
-          borderRadius: '4px',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-          border: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`
-        }
+        html: `${title('Fishing effort cell', `${H3_EFFORT_GRID.areaLabel}, ${yearScopeLabel}`)}
+          <div style="margin:6px 0 4px">${escapeHtml(activityLabel)}: <strong>${formatActivityValue(object[selectedActivityMetric])}</strong></div>
+          ${rows}${note('GPS trackers. Hours are summed across boats, so one day can exceed 24.')}`,
+        style: PLATE_STYLE
       };
     }
 
     return null;
-  }, [selectedMetric, selectedActivityMetric, isDarkTheme, metricStats, yearScopeLabel]);
-}; 
+  }, [selectedMetric, selectedActivityMetric, surveyPeriodLabel, yearScopeLabel]);
+};

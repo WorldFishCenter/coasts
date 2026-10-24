@@ -1,4 +1,6 @@
-import { COLORS } from '../components/map/EnhancedLegend';
+import { CHOROPLETH_CLASSES, getChoroplethColors } from './mapPalette';
+
+const COLORS = getChoroplethColors(false);
 
 /**
  * Calculate quantile breaks for better data distribution representation
@@ -8,8 +10,9 @@ const calculateQuantileBreaks = (values, numBreaks) => {
   const breaks = [];
   
   for (let i = 0; i < numBreaks; i++) {
-    const quantile = i / (numBreaks - 1);
-    const index = Math.floor(quantile * (sortedValues.length - 1));
+    // Class starts at 0, 1/n, ..., (n-1)/n, so the top class holds the top nth of districts, not just the maximum.
+    const quantile = i / numBreaks;
+    const index = Math.floor(quantile * sortedValues.length);
     breaks.push(sortedValues[index]);
   }
   
@@ -19,7 +22,7 @@ const calculateQuantileBreaks = (values, numBreaks) => {
 const calculateLinearBreaks = (min, max, numBreaks) => {
   if (max <= min) return Array.from({ length: numBreaks }, () => min);
   const span = max - min;
-  return Array.from({ length: numBreaks }, (_, i) => min + (span * i) / (numBreaks - 1));
+  return Array.from({ length: numBreaks }, (_, i) => min + (span * i) / numBreaks);
 };
 
 const ensureIncreasingBreaks = (breaks, min, max) => {
@@ -42,8 +45,9 @@ export const calculateMetricStats = (boundaries, selectedMetric) => {
   }
   
   const values = boundaries.features
-    .map(f => Number(f.properties[selectedMetric]))
-    .filter(v => !Number.isNaN(v));
+    .map(f => f.properties[selectedMetric])
+    .filter(v => v !== null && v !== undefined && !Number.isNaN(Number(v)))
+    .map(Number);
     
   if (values.length === 0) {
     return { 
@@ -56,13 +60,13 @@ export const calculateMetricStats = (boundaries, selectedMetric) => {
   const maxValue = Math.max(...values);
 
   // Start with quantiles, but fallback if too many duplicate breakpoints.
-  const quantileGrades = calculateQuantileBreaks(values, COLORS.length);
+  const quantileGrades = calculateQuantileBreaks(values, CHOROPLETH_CLASSES);
   const uniqueQuantiles = new Set(quantileGrades.map((v) => Number(v.toFixed(6))));
   const shouldFallbackToLinear =
-    uniqueQuantiles.size < Math.min(4, COLORS.length) && maxValue > minValue;
+    uniqueQuantiles.size < Math.min(4, CHOROPLETH_CLASSES) && maxValue > minValue;
 
   const rawGrades = shouldFallbackToLinear
-    ? calculateLinearBreaks(minValue, maxValue, COLORS.length)
+    ? calculateLinearBreaks(minValue, maxValue, CHOROPLETH_CLASSES)
     : quantileGrades;
 
   const grades = ensureIncreasingBreaks(rawGrades, minValue, maxValue);

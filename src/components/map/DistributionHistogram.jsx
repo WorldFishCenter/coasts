@@ -1,8 +1,6 @@
 import { useMemo, memo } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { X } from 'lucide-react';
-import { SHARED_STYLES } from '../../utils/gridLayerConfig';
-import { getMetricInfo, formatRegionName } from '../../utils/formatters';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
+import { getMetricInfo, formatFigure, formatRegionName } from '../../utils/formatters';
 import { getTimeSeriesForGaul, getTimeSeriesKey, getTimeSeriesForGaul1, getTimeSeriesKeyGaul1 } from '../../services/dataService';
 
 const DistributionHistogram = memo(({
@@ -11,19 +9,9 @@ const DistributionHistogram = memo(({
   selectedMetric,
   selectedRegion,
   timeSeriesData,
-  gaulLevel = 'gaul2',
-  onClose,
-  style
+  gaulLevel = 'gaul2'
 }) => {
   const isGaul1 = gaulLevel === 'gaul1';
-  // Helper function to extract numeric value from formatted metric string
-  const extractNumericValue = (formattedValue) => {
-    if (!formattedValue || formattedValue === 'N/A') return 'N/A';
-    // Remove currency symbols, units, and extract just the number
-    const match = formattedValue.match(/[\d.]+/);
-    return match ? match[0] : formattedValue;
-  };
-
   // Calculate density plot data for time series (GAUL level–aware)
   const densityData = useMemo(() => {
     if (!boundaries || !boundaries.features || !timeSeriesData || !selectedRegion) return null;
@@ -129,329 +117,62 @@ const DistributionHistogram = memo(({
   if (!densityData) return null;
 
   const metricInfo = getMetricInfo(selectedMetric);
-
-  const CustomTooltip = ({ active, payload }) => {
-    if (active && payload && payload[0]) {
-      const data = payload[0].payload;
-      return (
-        <div style={{
-          ...SHARED_STYLES.glassPanel(isDarkTheme),
-          padding: '8px 12px'
-        }}>
-          <div style={SHARED_STYLES.text.body(isDarkTheme)}>
-            Value: {metricInfo.format(parseFloat(data.value))}
-          </div>
-          {payload.map((entry, index) => (
-            <div key={index} style={{
-              ...SHARED_STYLES.text.muted(isDarkTheme),
-              color: entry.color
-            }}>
-              {entry.name}: {entry.value.toFixed(1)}%
-            </div>
-          ))}
-        </div>
-      );
-    }
-    return null;
+  const name = formatRegionName(selectedRegion?.properties);
+  const others = isGaul1 ? 'other provinces' : 'other districts';
+  const teal = isDarkTheme ? '#8ccbd0' : '#006d77';
+  const ink = isDarkTheme ? '#a4b1b3' : '#4b6170';
+  const grid = isDarkTheme ? '#2e3a3c' : '#d5dfe1';
+  const figure = (value) => {
+    const parts = formatFigure(selectedMetric, value);
+    return parts ? `${parts.number} ${parts.unit}` : 'no value';
   };
 
   return (
-    <div
-      className="glass-panel p-4 md:p-5 w-[min(92vw,560px)] md:w-[620px] rounded-2xl overflow-hidden relative"
-      style={style}
-    >
-      {/* Header */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: '16px'
-      }}>
-        <div>
-          <p style={{
-            ...SHARED_STYLES.text.muted(isDarkTheme),
-            margin: '4px 0 0 0'
-          }}>
-            {formatRegionName(selectedRegion?.properties)} vs all other {isGaul1 ? 'regions' : 'districts'}
-          </p>
-        </div>
-        <button
-          onClick={onClose}
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: '4px',
-            borderRadius: '4px',
-            transition: 'background-color 0.2s',
-            color: isDarkTheme ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)'
-          }}
-          onMouseEnter={(e) => {
-            e.target.style.backgroundColor = isDarkTheme
-              ? 'rgba(255, 255, 255, 0.1)'
-              : 'rgba(0, 0, 0, 0.05)';
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.backgroundColor = 'transparent';
-          }}
-        >
-          <X size={20} />
-        </button>
-      </div>
-
-      {/* Chart */}
-      <ResponsiveContainer width="100%" height={140}>
-        <LineChart data={densityData.points} margin={{ top: 5, right: 10, left: 10, bottom: 25 }}>
-          <CartesianGrid
-            strokeDasharray="3 3"
-            stroke={isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}
-            vertical={false}
-          />
-
+    <figure className="m-0 mt-5">
+      <figcaption className="font-serif text-[15px] italic text-muted-foreground">
+        Monthly {(metricInfo.plainLabel ?? metricInfo.label).toLowerCase()} in {name}, against all {others}
+      </figcaption>
+      <ResponsiveContainer width="100%" height={130}>
+        <LineChart data={densityData.points} margin={{ top: 8, right: 4, left: 4, bottom: 0 }}>
+          <CartesianGrid stroke={grid} vertical={false} />
           <XAxis
             dataKey="value"
             type="number"
             domain={[densityData.min, densityData.max]}
-            tickFormatter={(value) => value.toFixed(1)}
-            tick={{
-              fill: isDarkTheme ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
-              fontSize: 10
-            }}
-            label={{
-              value: metricInfo.unit,
-              position: 'insideBottom',
-              offset: -5,
-              style: {
-                fill: isDarkTheme ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
-                fontSize: 10
-              }
-            }}
+            tickFormatter={(value) => value.toFixed(value >= 100 ? 0 : 1)}
+            tick={{ fill: ink, fontSize: 12 }}
+            tickLine={false}
+            axisLine={{ stroke: grid }}
           />
-
-          <YAxis
-            label={{
-              value: 'Density (%)',
-              angle: -90,
-              position: 'insideLeft',
-              style: {
-                fill: isDarkTheme ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
-                fontSize: 10
-              }
-            }}
-            tick={{
-              fill: isDarkTheme ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
-              fontSize: 10
-            }}
-          />
-
-          <Tooltip
-            content={<CustomTooltip />}
-            cursor={true}
-          />
-
-          {/* <Legend 
-            wrapperStyle={{
-              paddingTop: '5px',
-              fontSize: '11px'
-            }}
-            iconType="line"
-          /> */}
-
-          {/* Selected region/district line */}
-          <Line
-            name={isGaul1 ? 'Selected Region' : 'Selected District'}
-            type="monotone"
-            dataKey="selectedDensity"
-            stroke={isDarkTheme ? '#60a5fa' : '#3b82f6'}
-            strokeWidth={2.5}
-            dot={false}
-            activeDot={{ r: 4 }}
-          />
-
-          {/* Other regions/districts line */}
-          <Line
-            name={isGaul1 ? 'Other Regions' : 'Other Districts'}
-            type="monotone"
-            dataKey="otherDensity"
-            stroke={isDarkTheme ? '#f87171' : '#ef4444'}
-            strokeWidth={2}
-            strokeDasharray="5 5"
-            dot={false}
-            activeDot={{ r: 4 }}
-          />
+          <YAxis hide domain={[0, 105]} />
+          <Line type="monotone" dataKey="otherDensity" stroke={ink} strokeWidth={1.5} strokeDasharray="4 4" dot={false} isAnimationActive={false} />
+          <Line type="monotone" dataKey="selectedDensity" stroke={teal} strokeWidth={2.5} dot={false} isAnimationActive={false} />
         </LineChart>
       </ResponsiveContainer>
-
-      {/* Stats - Horizontal Layout */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: '12px',
-        marginTop: '1px'
-      }}>
-        {/* Selected District Stats */}
-        <div style={{
-          backgroundColor: isDarkTheme ? 'rgba(59, 130, 246, 0.08)' : 'rgba(59, 130, 246, 0.06)',
-          border: `1px solid ${isDarkTheme ? 'rgba(59, 130, 246, 0.2)' : 'rgba(59, 130, 246, 0.15)'}`,
-          borderRadius: '8px',
-          padding: '12px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '16px'
-        }}>
-          <div style={{ flex: '0 0 auto' }}>
-            <div style={{
-              ...SHARED_STYLES.text.label(isDarkTheme),
-              fontSize: '12px',
-              marginBottom: '6px',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              opacity: 0.8,
-              color: isDarkTheme ? '#60a5fa' : '#3b82f6'
-            }}>
-              {formatRegionName(selectedRegion?.properties)}
-            </div>
-            <div style={{
-              ...SHARED_STYLES.text.body(isDarkTheme),
-              fontSize: '18px',
-              fontWeight: 700,
-              color: isDarkTheme ? '#60a5fa' : '#3b82f6'
-            }}>
-              {extractNumericValue(metricInfo.format(densityData.selectedStats.mean))}
-              <span style={{
-                fontSize: '11px',
-                fontWeight: 400,
-                marginLeft: '3px',
-                opacity: 0.7
-              }}>
-                {metricInfo.unit}
-              </span>
-            </div>
+      <div className="mt-1 grid grid-cols-2 gap-4 border-t border-border pt-2 text-[13px]">
+        <div>
+          <div className="flex items-center gap-1.5 font-semibold">
+            <span className="inline-block h-0.5 w-4" style={{ background: teal }} aria-hidden="true" />
+            {name}
           </div>
-          <div style={{
-            flex: 1,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            paddingLeft: '12px',
-            borderLeft: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)'}`
-          }}>
-            <div style={{ flex: 1 }}>
-              <div style={{
-                ...SHARED_STYLES.text.muted(isDarkTheme),
-                fontSize: '9px',
-                marginBottom: '2px'
-              }}>
-                Range
-              </div>
-              <div style={{
-                ...SHARED_STYLES.text.body(isDarkTheme),
-                fontSize: '11px'
-              }}>
-                {extractNumericValue(metricInfo.format(densityData.selectedStats.min))} - {extractNumericValue(metricInfo.format(densityData.selectedStats.max))}
-              </div>
-            </div>
-            <div>
-              <div style={{
-                ...SHARED_STYLES.text.muted(isDarkTheme),
-                fontSize: '9px',
-                marginBottom: '2px'
-              }}>
-                Samples
-              </div>
-              <div style={{
-                ...SHARED_STYLES.text.body(isDarkTheme),
-                fontSize: '14px',
-                fontWeight: 600
-              }}>
-                {densityData.selectedStats.count}
-              </div>
-            </div>
+          <div className="text-muted-foreground">
+            Mean {figure(densityData.selectedStats.mean)}, {densityData.selectedStats.count} months
           </div>
         </div>
-
-        {/* Other Districts Stats */}
-        <div style={{
-          backgroundColor: isDarkTheme ? 'rgba(239, 68, 68, 0.08)' : 'rgba(239, 68, 68, 0.06)',
-          border: `1px solid ${isDarkTheme ? 'rgba(239, 68, 68, 0.2)' : 'rgba(239, 68, 68, 0.15)'}`,
-          borderRadius: '8px',
-          padding: '12px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '16px'
-        }}>
-          <div style={{ flex: '0 0 auto' }}>
-            <div style={{
-              ...SHARED_STYLES.text.label(isDarkTheme),
-              fontSize: '12px',
-              marginBottom: '6px',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              opacity: 0.8,
-              color: isDarkTheme ? '#f87171' : '#ef4444'
-            }}>
-              Others
-            </div>
-            <div style={{
-              ...SHARED_STYLES.text.body(isDarkTheme),
-              fontSize: '18px',
-              fontWeight: 700,
-              color: isDarkTheme ? '#f87171' : '#ef4444'
-            }}>
-              {extractNumericValue(metricInfo.format(densityData.otherStats.mean))}
-              <span style={{
-                fontSize: '11px',
-                fontWeight: 400,
-                marginLeft: '3px',
-                opacity: 0.7
-              }}>
-                {metricInfo.unit}
-              </span>
-            </div>
+        <div>
+          <div className="flex items-center gap-1.5 font-semibold">
+            <span className="inline-block h-0 w-4 border-t-[1.5px] border-dashed" style={{ borderColor: ink }} aria-hidden="true" />
+            All {others}
           </div>
-          <div style={{
-            flex: 1,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            paddingLeft: '12px',
-            borderLeft: `1px solid ${isDarkTheme ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)'}`
-          }}>
-            <div style={{ flex: 1 }}>
-              <div style={{
-                ...SHARED_STYLES.text.muted(isDarkTheme),
-                fontSize: '9px',
-                marginBottom: '2px'
-              }}>
-                Range
-              </div>
-              <div style={{
-                ...SHARED_STYLES.text.body(isDarkTheme),
-                fontSize: '11px'
-              }}>
-                {extractNumericValue(metricInfo.format(densityData.otherStats.min))} - {extractNumericValue(metricInfo.format(densityData.otherStats.max))}
-              </div>
-            </div>
-            <div>
-              <div style={{
-                ...SHARED_STYLES.text.muted(isDarkTheme),
-                fontSize: '9px',
-                marginBottom: '2px'
-              }}>
-                Samples
-              </div>
-              <div style={{
-                ...SHARED_STYLES.text.body(isDarkTheme),
-                fontSize: '14px',
-                fontWeight: 600
-              }}>
-                {densityData.otherStats.count}
-              </div>
-            </div>
+          <div className="text-muted-foreground">
+            Mean {figure(densityData.otherStats.mean)}, {densityData.otherStats.count.toLocaleString('en-US')} months
           </div>
         </div>
       </div>
-    </div>
+      <p className="m-0 mt-1.5 text-xs text-muted-foreground">
+        How often each value occurs, as a smoothed curve. Units: {metricInfo.unit}.
+      </p>
+    </figure>
   );
 });
 
