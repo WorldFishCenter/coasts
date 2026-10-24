@@ -1,69 +1,158 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useLayoutEffect, useMemo, useRef, Fragment } from 'react';
+import { ChevronDown } from 'lucide-react';
 import Header from './Header';
-import { cn } from '../lib/utils';
-import { loadFrameGearsData, loadTimeSeriesGaul2, getFrameGearInsights } from '../services/dataService';
-import { ChevronDown, BarChart3, MapPin, Layers, Users, Ship, Activity, TrendingUp, SlidersHorizontal, Globe2 } from 'lucide-react';
+import { loadFrameGearsData, loadMapDataGaul2, loadTimeSeriesGaul1, loadTimeSeriesGaul2, getFrameGearInsights } from '../services/dataService';
 import CountryTimeSeriesChart from './CountryTimeSeriesChart';
-import { useTheme } from './ThemeProvider';
-import { getMetricInfo, formatCountryName } from '../utils/formatters';
+import { getMetricInfo, formatCountryName, formatFigure } from '../utils/formatters';
+import { outlineFor } from '../utils/geoOutline';
+import { cn } from '../lib/utils';
 
 const COUNTRY_VIEW_METRIC_IDS = ['mean_cpue', 'mean_rpue', 'mean_price_kg'];
-const MOZAMBIQUE_NO_GEAR = 'mozambique';
+const COUNTRY_ORDER = ['kenya', 'zanzibar', 'mozambique', 'timor'];
+// The time series keys Zanzibar as "zanzibar"; the map boundaries key it as "tanzania".
+const mapCountryKey = (country) => (country === 'zanzibar' ? 'tanzania' : country);
+const RECENT_YEARS = 3;
+const LEVELS = [
+    { id: 'gaul2', label: 'Districts', single: 'District', one: 'district', many: 'districts' },
+    { id: 'gaul1', label: 'Provinces', single: 'Province', one: 'province', many: 'provinces' }
+];
+// A district needs this many months in the period to be ranked; fewer are listed after, unranked.
+const MIN_MONTHS = 6;
 
 const toTitleCase = (value = '') =>
-    value
-        .toLowerCase()
-        .split(' ')
-        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-        .join(' ');
+    value.toLowerCase().split(' ').map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
 
-const formatMetricValue = (metricId, value) => {
-    if (typeof value !== 'number' || Number.isNaN(value)) return 'N/A';
-    const config = getMetricInfo(metricId);
-    if (!config?.format) return value.toFixed(2);
-    return config.format(value);
+const monthLabel = (date) =>
+    new Date(date).toLocaleDateString('en-GB', { month: 'short', year: 'numeric', timeZone: 'UTC' });
+
+const mean = (values) => (values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : null);
+
+const figureText = (metricId, value) => {
+    const parts = formatFigure(metricId, value);
+    return parts ? `${parts.number} ${parts.unit}` : '–';
 };
 
-const getPercentileBand = (percentile) => {
-    if (percentile >= 75) return 'Top Quartile';
-    if (percentile <= 25) return 'Bottom Quartile';
-    return 'Middle Band';
+// Rows glide to their new place when the ranking changes (FLIP on each row's offsetTop).
+const useRankMotion = (orderKey) => {
+    const rows = useRef(new Map());
+    const tops = useRef(new Map());
+    const lastOrder = useRef(orderKey);
+    useLayoutEffect(() => {
+        const reorder = lastOrder.current !== orderKey;
+        const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        rows.current.forEach((el, key) => {
+            const top = el.offsetTop;
+            const before = tops.current.get(key);
+            if (reorder && !still && before !== undefined && before !== top) {
+                el.animate(
+                    [{ transform: `translateY(${before - top}px)` }, { transform: 'translateY(0)' }],
+                    { duration: 480, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' }
+                );
+            }
+            tops.current.set(key, top);
+        });
+        lastOrder.current = orderKey;
+    });
+    return (key) => (el) => {
+        if (el) rows.current.set(key, el);
+        else rows.current.delete(key);
+    };
 };
 
-const getMedian = (values) => {
-    if (!values.length) return null;
-    const sorted = [...values].sort((a, b) => a - b);
-    const mid = Math.floor(sorted.length / 2);
-    if (sorted.length % 2 === 0) {
-        return (sorted[mid - 1] + sorted[mid]) / 2;
+const SORTS = {
+    avg: { label: 'Average', value: (row) => row.avg, defaultDir: 'desc' },
+    latest: { label: 'Latest month', value: (row) => row.latest?.value ?? null, defaultDir: 'desc' },
+    months: { label: 'Months', value: (row) => row.months, defaultDir: 'desc' },
+    fishers: { label: 'Fishers', value: (row) => row.fishers, defaultDir: 'desc' },
+    boats: { label: 'Boats', value: (row) => row.boats, defaultDir: 'desc' },
+    name: { label: 'District', value: (row) => row.name, defaultDir: 'asc' }
+};
+
+// The last 12 months on the row's own range: the shape, not the level (the level is in Average).
+const SPARK_MIN_POINTS = 6;
+const Sparkline = ({ values }) => {
+    const present = values.filter((value) => value != null);
+    if (present.length < SPARK_MIN_POINTS) {
+        return <span className="text-[13px] text-muted-foreground">{present.length} of 12 months</span>;
     }
-    return sorted[mid];
+    const width = 110;
+    const height = 24;
+    const low = Math.min(...present);
+    const span = Math.max(...present) - low || 1;
+    const step = width / Math.max(values.length - 1, 1);
+    const y = (value) => (height - 3 - ((value - low) / span) * (height - 6)).toFixed(1);
+    const segments = [];
+    let current = [];
+    values.forEach((value, i) => {
+        if (value == null) {
+            if (current.length) segments.push(current);
+            current = [];
+            return;
+        }
+        current.push([(i * step).toFixed(1), y(value)]);
+    });
+    if (current.length) segments.push(current);
+    return (
+        <svg width={width} height={height} aria-hidden="true" className="block">
+            {segments.map((points, i) =>
+                points.length > 1
+                    ? <polyline key={i} points={points.map((point) => point.join(',')).join(' ')} fill="none" stroke="var(--primary)" strokeWidth="1.5" />
+                    : <line key={i} x1={points[0][0]} x2={points[0][0]} y1={Number(points[0][1]) - 3} y2={Number(points[0][1]) + 3} stroke="var(--primary)" strokeWidth="2" />
+            )}
+        </svg>
+    );
+};
+
+const SortHeader = ({ id, sort, onSort, className, children }) => {
+    const active = sort.key === id;
+    return (
+        <th
+            scope="col"
+            aria-sort={active ? (sort.dir === 'asc' ? 'ascending' : 'descending') : 'none'}
+            className={cn('px-2 py-2 font-semibold', className)}
+        >
+            <button
+                type="button"
+                onClick={() => onSort(id)}
+                className={cn('group inline-flex items-center gap-1 rounded transition-colors hover:text-foreground focus-visible:text-foreground', active && 'text-foreground')}
+            >
+                {children}
+                <ChevronDown
+                    size={13}
+                    aria-hidden="true"
+                    className={cn('transition-transform', active ? 'opacity-100' : 'opacity-40 group-hover:opacity-100 group-focus-visible:opacity-100', active && sort.dir === 'asc' && 'rotate-180')}
+                />
+            </button>
+        </th>
+    );
 };
 
 const CountryView = () => {
-    const { theme } = useTheme();
-    const isDarkTheme = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-
     const [timeSeriesData, setTimeSeriesData] = useState(null);
+    const [timeSeriesGaul1, setTimeSeriesGaul1] = useState(null);
+    const [level, setLevel] = useState('gaul2');
+    const [boundaries, setBoundaries] = useState(null);
     const [frameGearRows, setFrameGearRows] = useState([]);
     const [selectedCountry, setSelectedCountry] = useState('');
     const [selectedMetric, setSelectedMetric] = useState('mean_cpue');
-    const [selectedGaul2Key, setSelectedGaul2Key] = useState('');
+    const [range, setRange] = useState('recent');
+    const [sort, setSort] = useState({ key: 'avg', dir: 'desc' });
+    const [openKey, setOpenKey] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [isCountryOpen, setIsCountryOpen] = useState(false);
-    const [isGaul2Open, setIsGaul2Open] = useState(false);
-    const [showExtendedComparison, setShowExtendedComparison] = useState(false);
-    const countryScopeRef = useRef(null);
 
     useEffect(() => {
         const initData = async () => {
             setIsLoading(true);
-            const [timeSeries, frameRows] = await Promise.all([
+            const [timeSeries, timeSeries1, frameRows, mapData] = await Promise.all([
                 loadTimeSeriesGaul2(),
-                loadFrameGearsData()
+                loadTimeSeriesGaul1(),
+                loadFrameGearsData(),
+                loadMapDataGaul2()
             ]);
             setTimeSeriesData(timeSeries);
+            setTimeSeriesGaul1(timeSeries1);
             setFrameGearRows(frameRows ?? []);
+            setBoundaries(mapData);
             setIsLoading(false);
         };
         initData();
@@ -71,594 +160,456 @@ const CountryView = () => {
 
     const availableCountries = useMemo(() => {
         if (!timeSeriesData) return [];
-        const countries = new Set();
-        Object.values(timeSeriesData).forEach(region => {
-            if (region.country) countries.add(region.country);
-        });
-        return Array.from(countries).sort();
+        const present = new Set(Object.values(timeSeriesData).map((region) => region.country).filter(Boolean));
+        return COUNTRY_ORDER.filter((country) => present.has(country));
     }, [timeSeriesData]);
 
     useEffect(() => {
-        if (!selectedCountry && availableCountries.length > 0) {
-            setSelectedCountry(availableCountries[0]);
-        }
+        if (!selectedCountry && availableCountries.length > 0) setSelectedCountry(availableCountries[0]);
     }, [selectedCountry, availableCountries]);
 
-    const gaul2Regions = useMemo(() => {
-        if (!selectedCountry || !timeSeriesData) return [];
-        return Object.entries(timeSeriesData)
-            .filter(([, region]) => region.country?.toLowerCase() === selectedCountry.toLowerCase())
-            .map(([key, region]) => ({
-                key,
-                country: region.country,
-                gaul1_name: region.gaul1_name,
-                gaul2_name: region.gaul2_name,
-                data: region.data
-            }))
-            .sort((a, b) => {
-                if (a.gaul1_name === b.gaul1_name) {
-                    return a.gaul2_name.localeCompare(b.gaul2_name);
-                }
-                return a.gaul1_name.localeCompare(b.gaul1_name);
+    useEffect(() => {
+        setOpenKey(null);
+    }, [selectedCountry, level]);
+
+    const noun = LEVELS.find((item) => item.id === level);
+
+    const silhouettes = useMemo(() => {
+        if (!boundaries?.features) return {};
+        return Object.fromEntries(availableCountries.map((country) => {
+            const features = boundaries.features.filter((feature) => feature.properties.country === mapCountryKey(country));
+            if (!features.length) return [country, []];
+            const { collection, path } = outlineFor(features, 40, 26, 1);
+            return [country, collection.features.map((feature) => path(feature))];
+        }));
+    }, [boundaries, availableCountries]);
+
+    const regions = useMemo(() => {
+        const series = level === 'gaul1' ? timeSeriesGaul1 : timeSeriesData;
+        if (!selectedCountry || !series) return [];
+        return Object.entries(series)
+            .filter(([, region]) => region.country === selectedCountry)
+            .map(([key, region]) => ({ key, ...region }));
+    }, [selectedCountry, timeSeriesData, timeSeriesGaul1, level]);
+
+    // Every month with a value for this figure, and where "recent" starts.
+    const { allMonths, firstYear, recentStart } = useMemo(() => {
+        const months = new Set();
+        regions.forEach((region) => region.data.forEach((entry) => {
+            if (typeof entry[selectedMetric] === 'number') months.add(entry.date.slice(0, 7));
+        }));
+        const sorted = Array.from(months).sort();
+        const lastYear = sorted.length ? Number(sorted[sorted.length - 1].slice(0, 4)) : null;
+        return {
+            allMonths: sorted,
+            firstYear: sorted.length ? Number(sorted[0].slice(0, 4)) : null,
+            recentStart: lastYear ? `${lastYear - RECENT_YEARS + 1}-01` : null
+        };
+    }, [regions, selectedMetric]);
+
+    const recentYear = recentStart ? Number(recentStart.slice(0, 4)) : null;
+    const hasOlderRecord = firstYear !== null && recentYear !== null && firstYear < recentYear;
+    // Strip and ranking always use the recent window, so districts are compared over one span;
+    // the period switch only widens the trend charts.
+    const periodStart = hasOlderRecord ? recentStart : allMonths[0];
+    const chartStart = range === 'full' ? allMonths[0] : periodStart;
+    const months = useMemo(() => allMonths.filter((month) => month >= periodStart), [allMonths, periodStart]);
+    const chartMonths = useMemo(() => allMonths.filter((month) => month >= chartStart), [allMonths, chartStart]);
+    const periodLabel = periodStart ? `${monthLabel(`${periodStart}-01`)} to ${monthLabel(`${months[months.length - 1] ?? periodStart}-01`)}` : '';
+
+    const rows = useMemo(() => {
+        const last12 = months.slice(-12);
+        return regions.map((region) => {
+            const allByMonth = new Map();
+            region.data.forEach((entry) => {
+                if (typeof entry[selectedMetric] === 'number') allByMonth.set(entry.date.slice(0, 7), entry[selectedMetric]);
             });
-    }, [selectedCountry, timeSeriesData]);
-
-    useEffect(() => {
-        setSelectedGaul2Key('');
-        setIsCountryOpen(false);
-        setIsGaul2Open(false);
-    }, [selectedCountry]);
-
-    useEffect(() => {
-        if (!gaul2Regions.some((region) => region.key === selectedGaul2Key)) {
-            setSelectedGaul2Key(gaul2Regions[0]?.key ?? '');
-        }
-    }, [gaul2Regions, selectedGaul2Key]);
-
-    useEffect(() => {
-        const handleDocumentMouseDown = (event) => {
-            if (!countryScopeRef.current?.contains(event.target)) {
-                setIsCountryOpen(false);
-                setIsGaul2Open(false);
-            }
-        };
-
-        const handleEscape = (event) => {
-            if (event.key === 'Escape') {
-                setIsCountryOpen(false);
-                setIsGaul2Open(false);
-            }
-        };
-
-        document.addEventListener('mousedown', handleDocumentMouseDown);
-        document.addEventListener('keydown', handleEscape);
-        return () => {
-            document.removeEventListener('mousedown', handleDocumentMouseDown);
-            document.removeEventListener('keydown', handleEscape);
-        };
-    }, []);
-
-    const selectedGaul2Region = useMemo(() => {
-        return gaul2Regions.find((region) => region.key === selectedGaul2Key) ?? null;
-    }, [gaul2Regions, selectedGaul2Key]);
-
-    const selectedGaul2MetricSummary = useMemo(() => {
-        if (!selectedGaul2Region?.data?.length) return null;
-        const validEntries = selectedGaul2Region.data.filter((entry) => typeof entry[selectedMetric] === 'number');
-        if (!validEntries.length) return null;
-
-        const latestEntry = [...validEntries].sort((a, b) => new Date(b.date) - new Date(a.date))[0];
-        const avgValue = validEntries.reduce((sum, entry) => sum + entry[selectedMetric], 0) / validEntries.length;
-
-        return {
-            latestValue: latestEntry[selectedMetric],
-            latestDate: latestEntry.date,
-            averageValue: avgValue,
-            observations: validEntries.length
-        };
-    }, [selectedGaul2Region, selectedMetric]);
-
-    const countryMetricSummary = useMemo(() => {
-        if (!gaul2Regions.length) return null;
-        const values = [];
-        gaul2Regions.forEach((region) => {
-            const numeric = region.data
-                .map((entry) => entry[selectedMetric])
-                .filter((value) => typeof value === 'number' && !Number.isNaN(value));
-            if (!numeric.length) return;
-            values.push(numeric.reduce((sum, value) => sum + value, 0) / numeric.length);
+            const byMonth = new Map(Array.from(allByMonth).filter(([month]) => month >= periodStart));
+            const values = Array.from(byMonth.values());
+            const latestMonth = Array.from(byMonth.keys()).sort().pop();
+            const frame = getFrameGearInsights(frameGearRows, selectedCountry, region.gaul1_name, level === 'gaul2' ? region.gaul2_name : null);
+            return {
+                key: region.key,
+                name: toTitleCase(level === 'gaul2' ? region.gaul2_name : region.gaul1_name),
+                province: level === 'gaul2' ? toTitleCase(region.gaul1_name) : '',
+                gaul1: region.gaul1_name,
+                gaul2: region.gaul2_name,
+                byMonth,
+                allByMonth,
+                avg: mean(values),
+                months: values.length,
+                latest: latestMonth ? { month: latestMonth, value: byMonth.get(latestMonth) } : null,
+                last12: last12.map((month) => byMonth.get(month) ?? null),
+                fishers: frame.totals.fishers_total || null,
+                fishersFemale: frame.totals.fishers_female || 0,
+                boats: frame.totals.boats_total || null,
+                gears: frame.hasGearBreakdown ? frame.gearBreakdown : []
+            };
         });
+    }, [regions, months, periodStart, selectedMetric, frameGearRows, selectedCountry, level]);
 
-        if (!values.length) return null;
-        return {
-            average: values.reduce((sum, value) => sum + value, 0) / values.length,
-            median: getMedian(values),
-            count: values.length
-        };
-    }, [gaul2Regions, selectedMetric]);
+    const withData = rows.filter((row) => row.avg !== null);
+    const withoutData = rows.filter((row) => row.avg === null);
+    const ranked = withData.filter((row) => row.months >= MIN_MONTHS);
+    const thin = withData.filter((row) => row.months < MIN_MONTHS);
+    const rankOf = useMemo(
+        () => new Map([...ranked].sort((a, b) => b.avg - a.avg).map((row, i) => [row.key, i + 1])),
+        [ranked]
+    );
+    const sortRows = (list) => {
+        const { value, defaultDir } = SORTS[sort.key];
+        const factor = (sort.dir ?? defaultDir) === 'asc' ? 1 : -1;
+        return [...list].sort((a, b) => {
+            const va = value(a);
+            const vb = value(b);
+            if (va == null && vb == null) return 0;
+            if (va == null) return 1;
+            if (vb == null) return -1;
+            return (typeof va === 'string' ? va.localeCompare(vb) : va - vb) * factor;
+        });
+    };
+    const sortedRanked = sortRows(ranked);
+    const sortedThin = sortRows(thin);
+    const sortedRows = [...sortedRanked, ...sortedThin];
+    // Bars share the ranked districts' scale; an unranked row past it runs to the end with a break mark.
+    const barMax = Math.max(...ranked.map((row) => row.avg), 0) || Math.max(...withData.map((row) => row.avg), 0) || 1;
+    const rowRef = useRankMotion(`${sortedRows.map((row) => row.key).join('|')}`);
 
-    const benchmarkData = useMemo(() => {
-        if (!selectedGaul2Region || !gaul2Regions.length) return null;
-        const entries = gaul2Regions.map((region) => {
-            const numeric = region.data
-                .map((entry) => entry[selectedMetric])
-                .filter((value) => typeof value === 'number' && !Number.isNaN(value));
-            const avg = numeric.length ? numeric.reduce((sum, value) => sum + value, 0) / numeric.length : null;
-            return { key: region.key, name: region.gaul2_name, avg };
-        }).filter((item) => item.avg !== null);
+    const countryPoints = useMemo(() => chartMonths.map((month) => {
+        const values = rows.map((row) => row.allByMonth.get(month)).filter((v) => v != null);
+        return { date: `${month}-01`, country: mean(values) };
+    }), [chartMonths, rows]);
 
-        if (!entries.length) return null;
-        const sorted = [...entries].sort((a, b) => b.avg - a.avg);
-        const selected = sorted.find((entry) => entry.key === selectedGaul2Region.key);
-        if (!selected) return null;
+    const countryFrame = useMemo(
+        () => (selectedCountry ? getFrameGearInsights(frameGearRows, selectedCountry) : null),
+        [frameGearRows, selectedCountry]
+    );
 
-        const rank = sorted.findIndex((entry) => entry.key === selected.key) + 1;
-        const percentile = Math.round(((sorted.length - rank) / Math.max(sorted.length - 1, 1)) * 100);
-        const median = getMedian(sorted.map((entry) => entry.avg));
-        const diffMedian = selected.avg - median;
-        return {
-            rank,
-            total: sorted.length,
-            percentile,
-            band: getPercentileBand(percentile),
-            diffMedian,
-            median,
-            top: sorted.slice(0, 3),
-            bottom: sorted.slice(-3).reverse()
-        };
-    }, [selectedGaul2Region, gaul2Regions, selectedMetric]);
+    const metricInfo = getMetricInfo(selectedMetric);
+    const metricName = metricInfo.plainLabel ?? metricInfo.description;
+    const unit = formatFigure(selectedMetric, 1);
+    const unitText = unit ? `${unit.unit} ${unit.per}`.trim() : metricInfo.unit;
+    const countryName = formatCountryName(selectedCountry);
+    const countryAverage = mean(withData.map((row) => row.avg));
+    const fishersTotal = countryFrame?.totals?.fishers_total || null;
+    const boatsTotal = countryFrame?.totals?.boats_total || null;
 
-    const countryFrameInsights = useMemo(() => {
-        if (!selectedCountry) return null;
-        return getFrameGearInsights(frameGearRows, selectedCountry);
-    }, [frameGearRows, selectedCountry]);
-
-    const selectedFrameInsights = useMemo(() => {
-        if (!selectedCountry || !selectedGaul2Region) return null;
-        return getFrameGearInsights(
-            frameGearRows,
-            selectedCountry,
-            selectedGaul2Region.gaul1_name,
-            selectedGaul2Region.gaul2_name
-        );
-    }, [frameGearRows, selectedCountry, selectedGaul2Region]);
-
-    const showGearBreakdown = useMemo(() => {
-        if (!selectedCountry || !selectedFrameInsights) return false;
-        if (selectedCountry.toLowerCase() === MOZAMBIQUE_NO_GEAR) return false;
-        return selectedFrameInsights.hasGearBreakdown && selectedFrameInsights.gearBreakdown.length > 0;
-    }, [selectedCountry, selectedFrameInsights]);
-
-    const metricInfoById = useMemo(() => (
-        COUNTRY_VIEW_METRIC_IDS.reduce((acc, id) => {
-            acc[id] = getMetricInfo(id);
-            return acc;
-        }, {})
-    ), []);
+    const onSort = (key) => setSort((prev) => (
+        prev.key === key ? { key, dir: prev.dir === 'asc' ? 'desc' : 'asc' } : { key, dir: SORTS[key].defaultDir }
+    ));
 
     return (
-        <div className={cn(
-            "min-h-screen w-full flex flex-col font-sans transition-colors duration-300",
-            isDarkTheme ? "bg-[#060b19] text-foreground" : "bg-[#f8fafc] text-slate-900"
-        )}>
-            <Header
-                boundaries={null}
-                timeSeriesData={null}
-                pdsH3EffortData={null}
-            />
+        <div className="flex min-h-screen w-full flex-col bg-background font-sans text-foreground">
+            <Header boundaries={null} timeSeriesData={timeSeriesData} pdsH3EffortData={null} />
 
-            <main className="flex-1 flex overflow-hidden">
-                <aside className={cn(
-                    "w-[380px] flex-none border-r flex flex-col overflow-hidden z-40 transition-all duration-300 shadow-2xl",
-                    isDarkTheme ? "bg-[#060b19]/90 border-white/5 backdrop-blur-2xl" : "bg-white/90 border-slate-200 backdrop-blur-2xl"
-                )}>
-                    <div className={cn(
-                        "px-6 pt-8 pb-6 border-b shrink-0",
-                        isDarkTheme ? "border-white/5 bg-black/20" : "border-black/5 bg-black/5"
-                    )}>
-                        <h2 className="m-0 text-xl font-display font-semibold flex items-center gap-3 text-foreground tracking-tight">
-                            <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center border border-primary/30">
-                                <SlidersHorizontal className="w-4 h-4 text-primary" />
+            <main className="mx-auto w-full max-w-[1400px] flex-1 px-4 pb-16 pt-6 sm:px-6 lg:px-10">
+                {!selectedCountry ? (
+                    <p className="m-0 py-16 text-center font-serif text-lg italic text-muted-foreground">
+                        {isLoading ? 'Loading the country figures…' : 'No country data is available.'}
+                    </p>
+                ) : (
+                    <>
+                        <div className="flex flex-wrap items-end justify-between gap-4">
+                            <div>
+                                <h1 className="m-0 text-4xl font-semibold leading-tight">{countryName}</h1>
+                                <p className="m-0 mt-1 font-serif text-lg italic text-muted-foreground">
+                                    {withData.length} {noun.many} with landing surveys{firstYear ? `, records since ${firstYear}` : ''}
+                                </p>
                             </div>
-                            Country Panel
-                        </h2>
-                        <p className="m-0 mt-3 text-xs text-muted-foreground font-medium uppercase tracking-widest opacity-80">
-                            Scope, metric and focus area
-                        </p>
-                    </div>
-
-                    <div className="flex-1 overflow-y-auto px-6 py-6">
-                        <div className="flex flex-col gap-6">
-                            <div className={cn(
-                                "rounded-2xl border p-4 flex flex-col gap-4",
-                                isDarkTheme ? "bg-white/[0.02] border-white/30" : "bg-black/[0.02] border-black/30"
-                            )} ref={countryScopeRef}>
-                                <div className="flex items-center gap-2 px-1">
-                                    <Globe2 size={14} className="text-primary" />
-                                    <span className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground opacity-80">Country Scope</span>
+                            <div className="flex flex-wrap items-center gap-3">
+                                <div className="inline-flex overflow-hidden rounded border border-input text-sm font-semibold" role="group" aria-label="Areas">
+                                    {LEVELS.map((item) => (
+                                        <button
+                                            key={item.id}
+                                            type="button"
+                                            aria-pressed={level === item.id}
+                                            onClick={() => setLevel(item.id)}
+                                            className={cn('px-3 py-1 transition-colors', level === item.id ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground')}
+                                        >
+                                            {item.label}
+                                        </button>
+                                    ))}
                                 </div>
-                                <div className="relative mt-2">
-                            <button
-                                onClick={() => {
-                                    setIsCountryOpen((prev) => !prev);
-                                    setIsGaul2Open(false);
-                                }}
-                                disabled={isLoading}
-                                className={cn(
-                                    "h-11 w-full rounded-xl border flex items-center justify-between px-4 transition-all duration-300",
-                                    isDarkTheme
-                                        ? "bg-white/5 border-white/10 hover:bg-white/10"
-                                        : "bg-black/5 border-black/10 hover:bg-black/10",
-                                    isCountryOpen && "ring-2 ring-primary border-primary"
-                                )}
-                            >
-                                <span className={cn(
-                                    "text-sm font-medium",
-                                    selectedCountry ? "text-foreground" : "text-muted-foreground opacity-70"
-                                )}>
-                                    {isLoading ? 'Loading data...' : (selectedCountry ? formatCountryName(selectedCountry) : 'Select a country...')}
-                                </span>
-                                <ChevronDown size={16} className={cn(
-                                    "text-muted-foreground transition-transform duration-300",
-                                    isCountryOpen && "rotate-180"
-                                )} />
-                            </button>
-
-                            {isCountryOpen && (
-                                <div className={cn(
-                                    "relative mt-2 w-full rounded-xl border shadow-xl overflow-hidden z-50 animate-in slide-in-from-top-2",
-                                    isDarkTheme ? "bg-[#0f172a] border-white/10" : "bg-white border-slate-200"
-                                )}>
-                                    <div className="max-h-[300px] overflow-y-auto py-2">
-                                        {availableCountries.map((country) => (
-                                            <button
-                                                key={country}
-                                                onClick={() => {
-                                                    setSelectedCountry(country);
-                                                    setIsCountryOpen(false);
-                                                }}
-                                                className={cn(
-                                                    "w-full px-4 py-2.5 text-left text-sm transition-colors",
-                                                    selectedCountry === country
-                                                        ? "bg-primary/20 text-primary font-bold"
-                                                        : isDarkTheme ? "text-foreground hover:bg-white/5" : "text-slate-700 hover:bg-slate-50"
-                                                )}
-                                            >
-                                                {formatCountryName(country)}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                            {selectedCountry && (
-                                <div className="relative mt-4 pt-4 border-t border-border/40">
-                                    <div className="text-[10px] uppercase tracking-widest text-muted-foreground/80 font-semibold px-1 mb-2">GAUL2 Area</div>
-                                    <button
-                                        onClick={() => {
-                                            setIsGaul2Open((prev) => !prev);
-                                            setIsCountryOpen(false);
-                                        }}
-                                        className={cn(
-                                            "h-11 w-full rounded-xl border flex items-center justify-between px-4 transition-all duration-300",
-                                            isDarkTheme
-                                                ? "bg-white/5 border-white/10 hover:bg-white/10"
-                                                : "bg-black/5 border-black/10 hover:bg-black/10",
-                                            isGaul2Open && "ring-2 ring-primary border-primary"
-                                        )}
-                                    >
-                                        <span className={cn(
-                                            "text-sm font-medium truncate",
-                                            selectedGaul2Region ? "text-foreground" : "text-muted-foreground opacity-70"
-                                        )}>
-                                            {selectedGaul2Region ? `${selectedGaul2Region.gaul2_name} (${selectedGaul2Region.gaul1_name})` : 'No GAUL2 available'}
-                                        </span>
-                                        <ChevronDown size={14} className={cn(
-                                            "text-muted-foreground transition-transform duration-300",
-                                            isGaul2Open && "rotate-180"
-                                        )} />
-                                    </button>
-                                    {isGaul2Open && (
-                                        <div className={cn(
-                                            "relative mt-2 w-full rounded-xl border shadow-xl overflow-hidden z-50 animate-in slide-in-from-top-2",
-                                            isDarkTheme ? "bg-[#0f172a] border-white/10" : "bg-white border-slate-200"
-                                        )}>
-                                            <div className="max-h-[260px] overflow-y-auto py-2">
-                                                {gaul2Regions.map((region) => (
-                                                    <button
-                                                        key={region.key}
-                                                        onClick={() => {
-                                                            setSelectedGaul2Key(region.key);
-                                                            setIsGaul2Open(false);
-                                                        }}
-                                                        className={cn(
-                                                            "w-full px-4 py-2 text-left text-sm transition-colors",
-                                                            selectedGaul2Key === region.key
-                                                                ? "bg-primary/20 text-primary font-bold"
-                                                                : isDarkTheme ? "text-foreground hover:bg-white/5" : "text-slate-700 hover:bg-slate-50"
-                                                        )}
-                                                    >
-                                                        {region.gaul2_name}
-                                                        <span className="ml-1 text-xs opacity-60">({region.gaul1_name})</span>
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-                                </div>
-                            </div>
-
-                            {selectedCountry && (
-                                <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-left-4 duration-500">
-                                    <div className={cn(
-                                        "rounded-2xl border p-4 flex flex-col gap-3",
-                                        isDarkTheme ? "bg-white/[0.02] border-white/30" : "bg-black/[0.02] border-black/30"
-                                    )}>
-                                <div className="px-1 flex items-center gap-2">
-                                    <Layers size={12} className="text-primary" />
-                                    <span className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground opacity-70">Analysis Metric</span>
-                                </div>
-                                <div className="grid grid-cols-1 gap-2">
-                                    {COUNTRY_VIEW_METRIC_IDS.map(id => {
-                                        const config = metricInfoById[id];
-                                        const isActive = selectedMetric === id;
+                                <div className="flex flex-wrap gap-2" role="group" aria-label="Figure">
+                                    {COUNTRY_VIEW_METRIC_IDS.map((id) => {
+                                        const info = getMetricInfo(id);
                                         return (
-                                            <button
-                                                key={id}
-                                                onClick={() => setSelectedMetric(id)}
-                                                className={cn(
-                                                    "px-4 py-3 rounded-xl border text-left transition-all duration-300 flex flex-col gap-0.5",
-                                                    isActive
-                                                        ? "bg-primary/10 border-primary/40 shadow-[0_0_15px_rgba(0,245,255,0.1)]"
-                                                        : isDarkTheme ? "bg-white/5 border-white/5 hover:bg-white/10" : "bg-black/5 border-black/5 hover:bg-black/10"
-                                                )}
-                                            >
-                                                <div className="flex items-center justify-between">
-                                                    <span className={cn("text-xs font-bold", isActive ? "text-primary" : "text-foreground")}>{config.label}</span>
-                                                    {isActive && <div className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(0,245,255,1)]" />}
-                                                </div>
-                                                <span className="text-[10px] text-muted-foreground opacity-70">{config.description}</span>
+                                            <button key={id} type="button" className="pill" aria-pressed={selectedMetric === id} onClick={() => setSelectedMetric(id)}>
+                                                {info.pillLabel ?? info.label}
                                             </button>
                                         );
                                     })}
                                 </div>
                             </div>
-
-                                </div>
-                            )}
-
-                            {selectedCountry && countryMetricSummary && (
-                                <div className={cn(
-                                    "rounded-2xl border p-4 flex flex-col gap-3 animate-in fade-in slide-in-from-bottom-2 duration-500",
-                                    isDarkTheme ? "bg-white/[0.02] border-white/30" : "bg-black/[0.02] border-black/30"
-                                )}>
-                                    <div className="px-1 text-[10px] uppercase font-bold tracking-widest text-muted-foreground opacity-70">
-                                Country Snapshot
-                                    </div>
-
-                            <div className="glass-panel p-4 rounded-xl flex items-center justify-between border-l-2 border-primary">
-                                <div>
-                                    <div className="text-[10px] text-muted-foreground uppercase font-semibold">Avg. {metricInfoById[selectedMetric].label}</div>
-                                    <div className="text-xl font-display font-bold text-primary">{formatMetricValue(selectedMetric, countryMetricSummary.average)}</div>
-                                </div>
-                                <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                                    <BarChart3 size={16} className="text-primary" />
-                                </div>
-                            </div>
-
-                            <div className="glass-panel p-4 rounded-xl flex items-center justify-between">
-                                <div>
-                                    <div className="text-[10px] text-muted-foreground uppercase font-semibold">Tracked GAUL2</div>
-                                    <div className="text-xl font-display font-extrabold text-foreground">{countryMetricSummary.count}</div>
-                                </div>
-                                <div className="h-8 w-8 rounded-lg bg-white/5 flex items-center justify-center text-muted-foreground">
-                                    <MapPin size={16} />
-                                </div>
-                            </div>
-
-                            <div className="glass-panel p-4 rounded-xl flex items-center justify-between">
-                                <div>
-                                    <div className="text-[10px] text-muted-foreground uppercase font-semibold">Fishers / Boats</div>
-                                    <div className="text-sm font-bold text-foreground">
-                                        {(countryFrameInsights?.totals?.fishers_total ?? 0).toLocaleString()} / {(countryFrameInsights?.totals?.boats_total ?? 0).toLocaleString()}
-                                    </div>
-                                </div>
-                                <div className="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                                    FRAME
-                                </div>
-                            </div>
-                                </div>
-                            )}
                         </div>
-                    </div>
-                </aside>
 
-                <div className="flex-1 p-8 overflow-y-auto">
-                    <div className="max-w-7xl mx-auto flex flex-col gap-6">
-                        {!selectedCountry ? (
-                            <div className="glass-panel p-8 rounded-2xl min-h-[400px] flex items-center justify-center">
-                                <div className="text-center">
-                                    <h3 className="font-display font-medium text-xl text-muted-foreground mb-2">No Country Selected</h3>
-                                    <p className="text-muted-foreground/60 text-sm">Please select a country from the sidebar to view insights.</p>
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="min-h-[400px]">
-                                <h2 className="font-display font-bold text-2xl text-foreground mb-1">{formatCountryName(selectedCountry)}</h2>
-                                <p className="text-muted-foreground text-sm mb-6">Country and GAUL2 details with trend, comparison and gear data.</p>
-
-                                <div className="glass-panel p-5 rounded-2xl mb-6">
-                                    <div className="flex items-center justify-between mb-3">
-                                        <h3 className="text-base font-display font-semibold text-foreground m-0">Time Series</h3>
-                                    </div>
-                                    <CountryTimeSeriesChart
-                                        data={timeSeriesData}
-                                        selectedCountry={selectedCountry}
-                                        selectedMetric={selectedMetric}
-                                        selectedGaul2={selectedGaul2Region}
-                                        isDarkTheme={isDarkTheme}
-                                        compact
-                                    />
-                                </div>
-
-                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-                                    <div className="glass-panel p-4 rounded-xl">
-                                        <div className="text-[10px] uppercase text-muted-foreground tracking-widest font-bold mb-2">Selected Metric</div>
-                                        <div className="text-lg font-display font-bold text-primary">{metricInfoById[selectedMetric].label}</div>
-                                        <div className="text-xs text-muted-foreground mt-1">{metricInfoById[selectedMetric].description}</div>
-                                    </div>
-                                    <div className="glass-panel p-4 rounded-xl">
-                                        <div className="flex items-center gap-2 text-[10px] uppercase text-muted-foreground tracking-widest font-bold mb-2"><Users size={12} /> Fishers</div>
-                                        <div className="text-lg font-display font-bold text-foreground">{(selectedFrameInsights?.totals?.fishers_total ?? 0).toLocaleString()}</div>
-                                        <div className="text-xs text-muted-foreground mt-1">
-                                            Male {(selectedFrameInsights?.totals?.fishers_male ?? 0).toLocaleString()} | Female {(selectedFrameInsights?.totals?.fishers_female ?? 0).toLocaleString()}
-                                        </div>
-                                    </div>
-                                    <div className="glass-panel p-4 rounded-xl">
-                                        <div className="flex items-center gap-2 text-[10px] uppercase text-muted-foreground tracking-widest font-bold mb-2"><Ship size={12} /> Boats</div>
-                                        <div className="text-lg font-display font-bold text-foreground">{(selectedFrameInsights?.totals?.boats_total ?? 0).toLocaleString()}</div>
-                                        <div className="text-xs text-muted-foreground mt-1">For selected GAUL2 area</div>
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-2">
-                                    <div className="glass-panel p-6 rounded-2xl flex flex-col gap-4">
-                                        <div className="flex items-center justify-between">
-                                            <h3 className="text-lg font-display font-bold text-foreground m-0">GAUL2 Informative Card</h3>
-                                            <span className="text-xs px-2 py-1 rounded bg-primary/10 text-primary border border-primary/20">Selected Area</span>
-                                        </div>
-                                        {selectedGaul2Region ? (
-                                            <>
-                                                <div className="text-sm text-muted-foreground">
-                                                    <span className="font-semibold text-foreground">{toTitleCase(selectedGaul2Region.gaul2_name)}</span>
-                                                    <span className="mx-1.5">·</span>
-                                                    {toTitleCase(selectedGaul2Region.gaul1_name)}
-                                                </div>
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                                    <div className="rounded-xl border border-border/20 p-3">
-                                                        <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">Latest {metricInfoById[selectedMetric].label}</div>
-                                                        <div className="text-base font-semibold mt-1">{formatMetricValue(selectedMetric, selectedGaul2MetricSummary?.latestValue)}</div>
-                                                        <div className="text-xs text-muted-foreground mt-1">{selectedGaul2MetricSummary?.latestDate ?? 'N/A'}</div>
-                                                    </div>
-                                                    <div className="rounded-xl border border-border/20 p-3">
-                                                        <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">Average in Series</div>
-                                                        <div className="text-base font-semibold mt-1">{formatMetricValue(selectedMetric, selectedGaul2MetricSummary?.averageValue)}</div>
-                                                        <div className="text-xs text-muted-foreground mt-1">{selectedGaul2MetricSummary?.observations ?? 0} observations</div>
-                                                    </div>
-                                                </div>
-                                                <div className="rounded-xl border border-border/20 p-3">
-                                                    <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-2">Quick Comparison</div>
-                                                    {benchmarkData ? (
-                                                        <div className="flex flex-wrap gap-2">
-                                                            <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-primary/15 text-primary">Rank {benchmarkData.rank}/{benchmarkData.total}</span>
-                                                            <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/15 text-emerald-400">{benchmarkData.band}</span>
-                                                            <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/15 text-amber-400">
-                                                                {benchmarkData.diffMedian >= 0 ? '+' : ''}{benchmarkData.diffMedian.toFixed(2)} vs median
-                                                            </span>
-                                                        </div>
-                                                    ) : (
-                                                        <div className="text-sm text-muted-foreground">Not enough data to compare.</div>
-                                                    )}
-                                                </div>
-                                            </>
-                                        ) : (
-                                            <div className="text-sm text-muted-foreground">Select a GAUL2 area to view details.</div>
+                        <div role="tablist" aria-label="Country" className="mt-4 flex flex-wrap gap-1 border-b-2 border-rule">
+                            {availableCountries.map((country) => {
+                                const active = country === selectedCountry;
+                                return (
+                                    <button
+                                        key={country}
+                                        type="button"
+                                        role="tab"
+                                        aria-selected={active}
+                                        onClick={() => setSelectedCountry(country)}
+                                        className={cn(
+                                            '-mb-[2px] flex items-center gap-2 border-b-[3px] px-3 py-2 text-[15px] font-semibold transition-colors',
+                                            active ? 'border-primary text-foreground' : 'border-transparent text-muted-foreground hover:bg-secondary hover:text-foreground'
                                         )}
-                                    </div>
+                                    >
+                                        <svg width="40" height="26" aria-hidden="true">
+                                            {(silhouettes[country] ?? []).map((d, i) => (
+                                                <path key={i} d={d} fill="var(--primary)" stroke="var(--primary)" strokeWidth="0.9" strokeLinejoin="round" />
+                                            ))}
+                                        </svg>
+                                        {formatCountryName(country)}
+                                    </button>
+                                );
+                            })}
+                        </div>
 
-                                    <div className="glass-panel p-6 rounded-2xl flex flex-col gap-4 xl:col-span-2">
-                                        <div className="flex items-center justify-between">
-                                            <h3 className="text-lg font-display font-bold text-foreground m-0">Comparison and Gear</h3>
-                                            <button
-                                                onClick={() => setShowExtendedComparison((prev) => !prev)}
-                                                className="text-xs px-2.5 py-1 rounded-lg border border-border/25 hover:border-primary/40 transition-colors text-muted-foreground hover:text-foreground"
-                                            >
-                                                {showExtendedComparison ? 'Hide details' : 'See full comparison'}
-                                            </button>
-                                        </div>
-
-                                        <div className="rounded-xl border border-border/20 p-3">
-                                            <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-2"><TrendingUp size={12} /> Benchmark chips</div>
-                                            {benchmarkData ? (
-                                                <div className="flex flex-wrap gap-2">
-                                                    <span className="px-2 py-1 rounded-full text-xs bg-primary/15 text-primary">{benchmarkData.percentile}th percentile</span>
-                                                    <span className="px-2 py-1 rounded-full text-xs bg-sky-500/15 text-sky-300">Median {benchmarkData.median.toFixed(2)}</span>
-                                                    <span className="px-2 py-1 rounded-full text-xs bg-violet-500/15 text-violet-300">{benchmarkData.total} GAUL2 compared</span>
-                                                </div>
-                                            ) : (
-                                                <div className="text-sm text-muted-foreground">Benchmark data unavailable for current filter.</div>
-                                            )}
-                                            {showExtendedComparison && benchmarkData && (
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
-                                                    <div className="rounded-lg border border-border/20 p-3">
-                                                        <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-2">Top peers</div>
-                                                        <div className="space-y-1.5 text-sm">
-                                                            {benchmarkData.top.map((item) => (
-                                                                <div key={item.key} className="flex items-center justify-between">
-                                                                    <span>{item.name}</span>
-                                                                    <span className="font-medium">{item.avg.toFixed(2)}</span>
-                                                                </div>
-                                                            ))}
-                                                        </div>
-                                                    </div>
-                                                    <div className="rounded-lg border border-border/20 p-3">
-                                                        <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-2">Bottom peers</div>
-                                                        <div className="space-y-1.5 text-sm">
-                                                            {benchmarkData.bottom.map((item) => (
-                                                                <div key={item.key} className="flex items-center justify-between">
-                                                                    <span>{item.name}</span>
-                                                                    <span className="font-medium">{item.avg.toFixed(2)}</span>
-                                                                </div>
-                                                            ))}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </div>
-
-                                        <div className="rounded-xl border border-border/20 p-3">
-                                            <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-2"><Activity size={12} /> Gear composition</div>
-                                            {showGearBreakdown ? (
-                                                <div className="space-y-2">
-                                                    {selectedFrameInsights.gearBreakdown.slice(0, 6).map((gear) => {
-                                                        const fishersShare = selectedFrameInsights.totals.fishers_total > 0
-                                                            ? (gear.fishers_total / selectedFrameInsights.totals.fishers_total) * 100
-                                                            : 0;
-                                                        return (
-                                                            <div key={gear.gear_name} className="rounded-lg border border-border/20 p-2.5">
-                                                                <div className="flex items-center justify-between text-sm">
-                                                                    <span className="font-medium">{gear.gear_name}</span>
-                                                                    <span className="text-muted-foreground">{gear.fishers_total.toLocaleString()} fishers</span>
-                                                                </div>
-                                                                <div className="mt-2 h-1.5 rounded-full bg-white/10 overflow-hidden">
-                                                                    <div className="h-full bg-primary rounded-full" style={{ width: `${Math.min(fishersShare, 100)}%` }} />
-                                                                </div>
-                                                                <div className="mt-1 text-[11px] text-muted-foreground">{fishersShare.toFixed(1)}% of fishers | {gear.boats_total.toLocaleString()} boats</div>
-                                                            </div>
-                                                        );
-                                                    })}
-                                                </div>
-                                            ) : (
-                                                <div className="text-sm text-muted-foreground">
-                                                    {selectedCountry.toLowerCase() === MOZAMBIQUE_NO_GEAR
-                                                        ? 'Gear-level breakdown unavailable for Mozambique; only fishers and boats totals are provided.'
-                                                        : 'No gear-level breakdown available for this area.'}
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
+                        <section aria-label={`${countryName} figures`} className="mt-4 grid items-start gap-x-10 gap-y-5 xl:grid-cols-[auto_minmax(420px,1fr)]">
+                            <dl className="m-0 grid grid-cols-2 gap-x-10 gap-y-3 sm:grid-cols-3">
+                                <div className="col-span-2 sm:col-span-1">
+                                    <dt className="text-[13px] text-muted-foreground">Average {(metricInfo.pillLabel ?? metricName).toLowerCase()}</dt>
+                                    <dd className="m-0 whitespace-nowrap text-[28px] font-bold leading-tight text-primary">
+                                        {formatFigure(selectedMetric, countryAverage)?.number ?? '–'}
+                                        <span className="ml-1 text-base font-semibold">{unitText}</span>
+                                    </dd>
                                 </div>
-
+                                {(fishersTotal ? [
+                                    ['Fishers', fishersTotal.toLocaleString('en-US')],
+                                    ['Boats', boatsTotal ? boatsTotal.toLocaleString('en-US') : '–']
+                                ] : []).map(([label, value]) => (
+                                    <div key={label}>
+                                        <dt className="text-[13px] text-muted-foreground">{label}</dt>
+                                        <dd className="m-0 text-[28px] font-bold leading-tight text-primary">{value}</dd>
+                                    </div>
+                                ))}
+                                <p className="col-span-2 m-0 max-w-[60ch] text-xs text-muted-foreground sm:col-span-3">
+                                    Average: mean of the {noun.one} averages, {periodLabel}. Fishers and boats from the frame survey (census){fishersTotal ? '' : ', none on file for this country'}.{' '}
+                                    <a href="/docs#metric-definitions" className="font-semibold text-primary">How these are measured</a>
+                                </p>
+                            </dl>
+                            <div className="min-w-0">
+                                <div className="flex flex-wrap items-center justify-between gap-2">
+                                    <p className="m-0 font-serif italic text-muted-foreground">Monthly {metricName.toLowerCase()}, {countryName}</p>
+                                    {hasOlderRecord && (
+                                        <div className="inline-flex overflow-hidden rounded border border-input text-sm font-semibold" role="group" aria-label="Chart period">
+                                            {[['recent', `Since ${recentYear}`], ['full', `Full record, from ${firstYear}`]].map(([id, label]) => (
+                                                <button
+                                                    key={id}
+                                                    type="button"
+                                                    aria-pressed={range === id}
+                                                    onClick={() => setRange(id)}
+                                                    className={cn('px-3 py-1 transition-colors', range === id ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground')}
+                                                >
+                                                    {label}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                                <CountryTimeSeriesChart
+                                    points={countryPoints}
+                                    unit={unitText}
+                                    countryLabel={`${countryName}, average of ${noun.many}`}
+                                    height={150}
+                                    showLegend={false}
+                                />
                             </div>
-                        )}
+                        </section>
 
-                    </div>
-                </div>
+                        <section aria-labelledby="districts-title" className="mt-8">
+                            <div className="flex flex-wrap items-baseline justify-between gap-2 border-b-2 border-rule pb-2">
+                                <h2 id="districts-title" className="m-0 text-2xl font-semibold">{noun.label} ranked by {metricName.toLowerCase()}</h2>
+                                <p className="m-0 text-[13px] text-muted-foreground">
+                                    Average for {periodLabel}, {unitText}. {noun.label} need {MIN_MONTHS} months of data to be ranked. <span className="sm:hidden">Tap</span><span className="hidden sm:inline">Click</span> a {noun.one} to see its trend and gears.
+                                </p>
+                            </div>
+                            <div className="overflow-x-auto">
+                                <table className="w-full border-collapse text-[15px]">
+                                    <thead>
+                                        <tr className="border-b border-rule text-left text-[13px] text-muted-foreground">
+                                            <th scope="col" className="w-10 px-2 py-2 font-semibold">#</th>
+                                            <SortHeader id="name" sort={sort} onSort={onSort}>{noun.single}</SortHeader>
+                                            <SortHeader id="avg" sort={sort} onSort={onSort} className="min-w-[200px]">
+                                                Average <span className="hidden font-normal sm:inline">· line marks the country average</span>
+                                            </SortHeader>
+                                            <SortHeader id="latest" sort={sort} onSort={onSort} className="hidden text-right md:table-cell">Latest month</SortHeader>
+                                            <th scope="col" className="hidden px-2 py-2 font-semibold lg:table-cell">Last 12 months</th>
+                                            <SortHeader id="months" sort={sort} onSort={onSort} className="hidden text-right lg:table-cell">Months</SortHeader>
+                                            <SortHeader id="fishers" sort={sort} onSort={onSort} className="hidden text-right md:table-cell">Fishers</SortHeader>
+                                            <SortHeader id="boats" sort={sort} onSort={onSort} className="hidden text-right md:table-cell">Boats</SortHeader>
+                                            <th scope="col" className="w-10 px-2 py-2"><span className="sr-only">Details</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {sortedRows.map((row) => {
+                                            const open = openKey === row.key;
+                                            const toggle = () => setOpenKey(open ? null : row.key);
+                                            const districtPoints = countryPoints.map((point) => ({
+                                                ...point,
+                                                district: row.allByMonth.get(point.date.slice(0, 7)) ?? null
+                                            }));
+                                            const isThin = row.months < MIN_MONTHS;
+                                            return (
+                                                <Fragment key={row.key}>
+                                                    {isThin && row.key === sortedThin[0]?.key && (
+                                                        <tr className="border-b border-rule">
+                                                            <td colSpan={9} className="px-2 pb-1.5 pt-4 text-[13px] font-semibold text-muted-foreground">
+                                                                Fewer than {MIN_MONTHS} months of data in this period, so not ranked
+                                                            </td>
+                                                        </tr>
+                                                    )}
+                                                    <tr
+                                                        ref={rowRef(row.key)}
+                                                        onClick={toggle}
+                                                        className={cn('cursor-pointer border-b border-border transition-colors hover:bg-secondary', open && 'bg-card')}
+                                                    >
+                                                        <td className="px-2 py-2 text-muted-foreground">{rankOf.get(row.key) ?? '–'}</td>
+                                                        <td className="px-2 py-2">
+                                                            <button
+                                                                type="button"
+                                                                aria-expanded={open}
+                                                                aria-controls={`detail-${row.key}`}
+                                                                onClick={(event) => { event.stopPropagation(); toggle(); }}
+                                                                className="rounded text-left"
+                                                            >
+                                                                <span className="font-semibold">{row.name}</span>{' '}
+                                                                {row.province && row.province !== row.name && <span className="font-serif italic text-muted-foreground">{row.province}</span>}
+                                                            </button>
+                                                        </td>
+                                                        <td className="px-2 py-2">
+                                                            <div className="flex items-center gap-3">
+                                                                <div className="relative h-2.5 flex-1 bg-secondary" aria-hidden="true">
+                                                                    <div className={cn('absolute inset-y-0 left-0', isThin ? 'bg-muted-foreground/50' : 'bg-primary')} style={{ width: `${Math.min(row.avg / barMax, 1) * 100}%` }} />
+                                                                    {row.avg > barMax && (
+                                                                        <span className="absolute -inset-y-0.5 right-3 w-1.5 -skew-x-[24deg] bg-background" title="Beyond the scale of the ranked districts" />
+                                                                    )}
+                                                                    {countryAverage != null && (
+                                                                        <div className="absolute -inset-y-1 w-0.5 bg-foreground" style={{ left: `${(countryAverage / barMax) * 100}%` }} />
+                                                                    )}
+                                                                </div>
+                                                                <span className="w-16 text-right font-semibold">{formatFigure(selectedMetric, row.avg)?.number}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td className="hidden px-2 py-2 text-right md:table-cell">
+                                                            {row.latest ? (
+                                                                <>
+                                                                    {formatFigure(selectedMetric, row.latest.value)?.number}{' '}
+                                                                    <span className="text-[13px] text-muted-foreground">{monthLabel(`${row.latest.month}-01`)}</span>
+                                                                </>
+                                                            ) : '–'}
+                                                        </td>
+                                                        <td className="hidden px-2 py-2 lg:table-cell"><Sparkline values={row.last12} /></td>
+                                                        <td className="hidden px-2 py-2 text-right lg:table-cell">{row.months}</td>
+                                                        <td className="hidden px-2 py-2 text-right md:table-cell">{row.fishers ? row.fishers.toLocaleString('en-US') : <span className="text-muted-foreground">–</span>}</td>
+                                                        <td className="hidden px-2 py-2 text-right md:table-cell">{row.boats ? row.boats.toLocaleString('en-US') : <span className="text-muted-foreground">–</span>}</td>
+                                                        <td className="px-2 py-2 text-right">
+                                                            <ChevronDown size={16} aria-hidden="true" className={cn('inline text-muted-foreground transition-transform', open && 'rotate-180 text-foreground')} />
+                                                        </td>
+                                                    </tr>
+                                                    {open && (
+                                                        <tr id={`detail-${row.key}`} className="border-b border-t-2 border-border border-t-rule bg-card">
+                                                            <td />
+                                                            <td colSpan={8} className="px-2 pb-5 pt-2">
+                                                                <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+                                                                    <div className="min-w-0">
+                                                                        <p className="m-0 font-serif italic text-muted-foreground">
+                                                                            Monthly {metricName.toLowerCase()}, {row.name} against the {countryName} average
+                                                                        </p>
+                                                                        <CountryTimeSeriesChart
+                                                                            points={districtPoints}
+                                                                            unit={unitText}
+                                                                            countryLabel={`${countryName} average`}
+                                                                            districtLabel={row.name}
+                                                                            height={180}
+                                                                            dashedCountry
+                                                                        />
+                                                                    </div>
+                                                                    <div className="text-sm">
+                                                                        <p className="m-0 font-semibold">{row.months} months with data, average {figureText(selectedMetric, row.avg)}</p>
+                                                                        {row.fishers ? (
+                                                                            <p className="m-0 mt-2">
+                                                                                <span className="font-semibold">{row.fishers.toLocaleString('en-US')} fishers</span>
+                                                                                <span className="text-muted-foreground"> ({row.fishersFemale.toLocaleString('en-US')} women)</span>
+                                                                                {row.boats ? <span className="font-semibold"> · {row.boats.toLocaleString('en-US')} boats</span> : null}
+                                                                            </p>
+                                                                        ) : (
+                                                                            <p className="m-0 mt-2 text-muted-foreground">No frame survey (census) for this {noun.one}.</p>
+                                                                        )}
+                                                                        {row.gears.length > 0 && (
+                                                                            <ul className="m-0 mt-3 list-none space-y-1.5 p-0">
+                                                                                {row.gears.slice(0, 5).map((gear) => {
+                                                                                    const share = row.fishers ? (gear.fishers_total / row.fishers) * 100 : 0;
+                                                                                    return (
+                                                                                        <li key={gear.gear_name}>
+                                                                                            <div className="flex justify-between text-[13px]"><span>{gear.gear_name}</span><span className="text-muted-foreground">{share.toFixed(0)}%</span></div>
+                                                                                            <div className="h-1.5 bg-secondary"><div className="h-full bg-primary" style={{ width: `${share}%` }} /></div>
+                                                                                        </li>
+                                                                                    );
+                                                                                })}
+                                                                            </ul>
+                                                                        )}
+                                                                        <p className="m-0 mt-2 text-xs text-muted-foreground">Fishers, boats and gears: frame survey (census), not filtered by date.</p>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    )}
+                                                </Fragment>
+                                            );
+                                        })}
+                                        {withoutData.map((row) => (
+                                            <tr key={row.key} className="border-b border-border text-muted-foreground">
+                                                <td className="px-2 py-2">–</td>
+                                                <td className="px-2 py-2"><span className="font-semibold">{row.name}</span> {row.province && row.province !== row.name && <span className="font-serif italic">{row.province}</span>}</td>
+                                                <td className="px-2 py-2" colSpan={7}>No surveys in this period</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <p className="m-0 mt-2 text-[13px] text-muted-foreground">
+                                Each {noun.one}’s average is the mean of its monthly values in the period. <a href="/docs#metric-definitions" className="font-semibold text-primary">How these figures are made</a>
+                            </p>
+                        </section>
+
+                        <section aria-labelledby="gears-title" className="mt-10 border-t-2 border-rule pt-4">
+                            <h2 id="gears-title" className="m-0 text-2xl font-semibold">Fishing gears in {countryName}</h2>
+                            <p className="m-0 mb-3 text-[13px] text-muted-foreground">Share of fishers by main gear. Frame survey (census), not filtered by date.</p>
+                            {countryFrame?.hasGearBreakdown && countryFrame.gearBreakdown.length > 0 ? (
+                                <ul className="m-0 grid list-none gap-x-10 gap-y-2 p-0 md:grid-cols-2">
+                                    {countryFrame.gearBreakdown.slice(0, 8).map((gear) => {
+                                        const share = countryFrame.totals.fishers_total ? (gear.fishers_total / countryFrame.totals.fishers_total) * 100 : 0;
+                                        return (
+                                            <li key={gear.gear_name}>
+                                                <div className="flex items-baseline justify-between gap-4 text-sm">
+                                                    <span className="font-semibold">{gear.gear_name}</span>
+                                                    <span className="text-muted-foreground">
+                                                        {gear.fishers_total.toLocaleString('en-US')} fishers · {share.toFixed(1)}% · {gear.boats_total.toLocaleString('en-US')} boats
+                                                    </span>
+                                                </div>
+                                                <div className="mt-1 h-1.5 bg-secondary"><div className="h-full bg-primary" style={{ width: `${share}%` }} /></div>
+                                            </li>
+                                        );
+                                    })}
+                                </ul>
+                            ) : (
+                                <p className="m-0 text-sm text-muted-foreground">
+                                    {fishersTotal
+                                        ? 'The census here counts fishers and boats but not their gears.'
+                                        : 'No frame survey (census) of fishers, boats and gears here.'}
+                                </p>
+                            )}
+                        </section>
+                    </>
+                )}
             </main>
         </div>
     );
 };
 
 export default CountryView;
-

@@ -1,18 +1,14 @@
-import { useState, useCallback, useEffect, useMemo, useRef, lazy, Suspense } from 'react';
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { Map as MapGL, useControl } from 'react-map-gl';
 import { MapboxOverlay } from '@deck.gl/mapbox';
-import { Waves } from 'lucide-react';
+import { ArrowRight, Minus, MousePointerClick, Plus, SlidersHorizontal, Waves, X } from 'lucide-react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
-// Components - Lazy load heavy components
 import Header from './Header';
 import Sidebar from './Sidebar';
 import EnhancedLegend from './map/EnhancedLegend';
 import MapClarityPanel from './map/MapClarityPanel';
 import MapStyleToggle from './map/MapStyleToggle';
-
-// Lazy loaded components
-const DistributionHistogram = lazy(() => import('./map/DistributionHistogram'));
 
 import { useTheme } from './ThemeProvider';
 
@@ -25,69 +21,125 @@ import { useMapTooltip } from '../hooks/useMapTooltip';
 import { getMapStyles } from '../styles/mapStyles';
 import { processH3EffortData } from '../utils/pdsDataProcessor';
 import { calculateMetricStats } from '../utils/metricCalculations';
-import { getAverageMetricsInRange, getAverageMetricsInRangeGaul1 } from '../services/dataService';
-import { KEPLER_INITIAL_VIEW_STATE, PDS_MIN_UNIQUE_TRIPS } from '../utils/pdsOverlayConfig';
+import { BATHYMETRY_DEPTHS, getBathymetryColors } from '../utils/mapPalette';
+import { boundsOf, outlineFor } from '../utils/geoOutline';
+import { formatCountryName } from '../utils/formatters';
+import { getAverageMetricsInRange, getAverageMetricsInRangeGaul1, getRegionKey } from '../services/dataService';
+import { PDS_MIN_UNIQUE_TRIPS } from '../utils/pdsOverlayConfig';
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
-// Initial viewport configuration
-const INITIAL_VIEW_STATE = {
-  ...KEPLER_INITIAL_VIEW_STATE
-};
+// The map opens on the whole coast from Kenya to Maputo; the right padding keeps the
+// coast clear of the legend and the Timor-Leste locator.
+const WIO_BOUNDS = [[32.0, -27.0], [42.2, -1.5]];
+const DESKTOP_PADDING = { top: 40, bottom: 40, left: 72, right: 340 };
+const MOBILE_PADDING = { top: 24, bottom: 24, left: 64, right: 16 };
+const mapPadding = () => (window.innerWidth <= 768 ? MOBILE_PADDING : DESKTOP_PADDING);
+const COLUMN_PITCH = 50;
+// Below this zoom the GPS cells and grounds shrink to specks, so they wait until the visitor zooms in.
+const GPS_MIN_ZOOM = 6;
+const COUNTRY_ORDER = ['kenya', 'tanzania', 'mozambique', 'timor'];
+const HINT_STORAGE_KEY = 'coasts-hint-district-click';
+
 const BATHYMETRY_SOURCE_ID = 'bathymetry-source';
 const BATHYMETRY_LINE_LAYER_ID = 'bathymetry-lines';
 const BATHYMETRY_LABEL_LAYER_ID = 'bathymetry-labels';
 const BATHYMETRY_DATA_PATH = '/data/bathymetry_contours_wio.geojson';
+const COASTLINE_LAYER_ID = 'coastline-hairline';
 
 const DeckGLOverlay = (props) => {
   // Use a stable creator function to prevent destroying/recreating the overlay on every render.
   // react-map-gl's useControl will only call this once unless the function identity changes.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const overlay = useControl(useCallback(() => new MapboxOverlay(props), []));
-  
   // Efficiently update deck.gl layers/props without recreating the Mapbox control.
   overlay.setProps(props);
-  
   return null;
 };
 
+// Repaint the vector basemap as plate paper: white land, pale sea, an ink hairline on the coast.
+// Only sets a value that differs, because every paint change fires another styledata event.
+const paintBasemap = (map, isDark) => {
+  const setPaint = (layer, property, value) => {
+    if (map.getLayer(layer) && map.getPaintProperty(layer, property) !== value) {
+      map.setPaintProperty(layer, property, value);
+    }
+  };
+  setPaint('land', 'background-color', isDark ? '#182022' : '#ffffff');
+  setPaint('water', 'fill-color', isDark ? '#0d1416' : '#e9f3f4');
+  setPaint('landuse', 'fill-color', isDark ? '#1b2426' : '#f3f7f7');
+  setPaint('national-park', 'fill-color', isDark ? '#1b2426' : '#f3f7f7');
+  if (!map.getLayer(COASTLINE_LAYER_ID) && map.getSource('composite') && map.getLayer('water')) {
+    const firstSymbol = map.getStyle().layers.find((layer) => layer.type === 'symbol')?.id;
+    map.addLayer({
+      id: COASTLINE_LAYER_ID,
+      type: 'line',
+      source: 'composite',
+      'source-layer': 'water',
+      paint: { 'line-color': isDark ? '#8ccbd0' : '#0b2233', 'line-width': 0.7, 'line-opacity': isDark ? 0.5 : 0.55 }
+    }, firstSymbol);
+  }
+  setPaint(COASTLINE_LAYER_ID, 'line-color', isDark ? '#8ccbd0' : '#0b2233');
+  setPaint(COASTLINE_LAYER_ID, 'line-opacity', isDark ? 0.5 : 0.55);
+};
+
+const featuresOf = (boundaries, countries) =>
+  (boundaries?.features ?? []).filter((feature) => countries.includes(feature.properties.country));
+
 const MapComponent = ({ isActive = true }) => {
-  // Device detection
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-  
-  // Theme and visualization states
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   const { theme } = useTheme();
   const isDarkTheme = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
   // Default to the vector basemap (light-v11/dark-v11): cheap map loads.
   // Satellite (satellite-v9) bills against the Raster Tiles API, so it is opt-in via MapStyleToggle.
   const [isSatellite, setIsSatellite] = useState(false);
+  // 3D columns by default: the map opens tilted, and the effort columns stand up once the visitor zooms in.
   const [visualizationMode, setVisualizationMode] = useState('column');
   const [showBathymetry, setShowBathymetry] = useState(true);
-  const [bathymetryLoading, setBathymetryLoading] = useState(false);
-  
-  // Map interaction states
+  const [viewRegion, setViewRegion] = useState('wio');
+  const [zoom, setZoom] = useState(0);
+  const gpsVisible = zoom >= GPS_MIN_ZOOM;
+
   const [hoveredFeatureIndex, setHoveredFeatureIndex] = useState(null);
-  
-  // Analysis states
-  const [opacity] = useState(0.7);
+  const [hoveredCountry, setHoveredCountry] = useState(null);
+  // A first-visit hint on the map, until the first district click or a dismissal.
+  const [showHint, setShowHint] = useState(() => {
+    try {
+      return localStorage.getItem(HINT_STORAGE_KEY) !== 'done';
+    } catch {
+      return true;
+    }
+  });
+  const dismissHint = useCallback(() => {
+    setShowHint(false);
+    try {
+      localStorage.setItem(HINT_STORAGE_KEY, 'done');
+    } catch {
+      // Private mode: the hint just comes back next visit.
+    }
+  }, []);
+
+  const [opacity] = useState(0.85);
   const [selectedMetric, setSelectedMetric] = useState('mean_cpue');
   const [selectedFishersMetric, setSelectedFishersMetric] = useState('fishers_total');
   const [selectedYear, setSelectedYear] = useState('all');
   const [selectedActivityMetric, setSelectedActivityMetric] = useState('avg_hours_per_day');
   const [activeActivityLayers, setActiveActivityLayers] = useState({ hexagons: true, grounds: true });
   const [selectedRegion, setSelectedRegion] = useState(null);
-  
-  // Selection and filter states
-  const [selectedCountries, setSelectedCountries] = useState([]);
-  
+
   // Admin level: gaul1 = Admin 1 (provinces), gaul2 = Admin 2 (districts)
   const [gaulLevel, setGaulLevel] = useState('gaul2');
-  
 
-  // Refs
   const mapRef = useRef(null);
+  const [initialViewState] = useState(() => ({
+    bounds: WIO_BOUNDS,
+    fitBoundsOptions: { padding: mapPadding(), pitch: COLUMN_PITCH },
+    pitch: COLUMN_PITCH,
+    bearing: 0
+  }));
 
-  // Load map data (both GAUL levels)
   const {
     boundariesGaul1,
     boundariesGaul2,
@@ -95,11 +147,11 @@ const MapComponent = ({ isActive = true }) => {
     timeSeriesGaul2,
     pdsFishingGroundsData,
     pdsH3EffortData,
+    frameGearsRows,
     loading,
     error
   } = useMapData();
 
-  // Active data based on selected admin level
   const boundaries = gaulLevel === 'gaul1' ? boundariesGaul1 : boundariesGaul2;
   const timeSeriesData = gaulLevel === 'gaul1' ? timeSeriesGaul1 : timeSeriesGaul2;
 
@@ -108,7 +160,7 @@ const MapComponent = ({ isActive = true }) => {
     setSelectedRegion(null);
   }, [gaulLevel]);
 
-  // Extract all unique sorted dates from timeSeriesData (from 2020 onwards)
+  // All unique sorted dates from 2020 onwards: what "All" years averages over.
   const allDates = useMemo(() => {
     if (!timeSeriesData) return [];
     const dates = Object.values(timeSeriesData)
@@ -118,24 +170,21 @@ const MapComponent = ({ isActive = true }) => {
     return Array.from(new Set(dates)).sort((a, b) => new Date(a) - new Date(b));
   }, [timeSeriesData]);
   const dataFreshnessLabel = useMemo(() => {
-    if (!allDates.length) return 'Unknown';
+    if (!allDates.length) return 'unknown';
     const latest = new Date(allDates[allDates.length - 1]);
-    return latest.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    return latest.toLocaleDateString('en-US', { year: 'numeric', month: 'long', timeZone: 'UTC' });
   }, [allDates]);
+  const surveyPeriodLabel = useMemo(() => {
+    if (selectedYear !== 'all') return selectedYear;
+    if (!allDates.length) return 'all years';
+    return `${new Date(allDates[0]).getUTCFullYear()}–${new Date(allDates[allDates.length - 1]).getUTCFullYear()}`;
+  }, [selectedYear, allDates]);
 
-  // Helper to enrich boundaries with average metrics in range (GAUL level–aware)
-  const getBoundariesWithAveragedMetrics = useCallback(() => {
+  // Enrich boundaries with average metrics in range (GAUL level–aware)
+  const enrichedBoundaries = useMemo(() => {
     if (!boundaries || !timeSeriesData || allDates.length === 0) return boundaries;
-
-    let startDate, endDate;
-    if (selectedYear === 'all') {
-      startDate = allDates[0];
-      endDate = allDates[allDates.length - 1];
-    } else {
-      startDate = `${selectedYear}-01-01`;
-      endDate = `${selectedYear}-12-31`;
-    }
-
+    const startDate = selectedYear === 'all' ? allDates[0] : `${selectedYear}-01-01`;
+    const endDate = selectedYear === 'all' ? allDates[allDates.length - 1] : `${selectedYear}-12-31`;
     return {
       ...boundaries,
       features: boundaries.features.map((feature) => {
@@ -159,40 +208,56 @@ const MapComponent = ({ isActive = true }) => {
     };
   }, [boundaries, timeSeriesData, allDates, selectedYear, gaulLevel]);
 
-  // Use enriched boundaries for map and sidebar
-  const enrichedBoundaries = useMemo(() => getBoundariesWithAveragedMetrics(), [getBoundariesWithAveragedMetrics]);
+  // The open sheet follows the year choice, so read the selected district from the enriched data.
+  const selectedFeature = useMemo(() => {
+    if (!selectedRegion || !enrichedBoundaries?.features) return null;
+    const key = getRegionKey(selectedRegion.properties, gaulLevel);
+    return enrichedBoundaries.features.find((feature) => getRegionKey(feature.properties, gaulLevel) === key) ?? null;
+  }, [selectedRegion, enrichedBoundaries, gaulLevel]);
 
+  // Reach: districts with survey data per country, the year surveys began, and census fishers.
+  const coverage = useMemo(() => {
+    if (!timeSeriesGaul2) return null;
+    const byCountry = new Map();
+    Object.values(timeSeriesGaul2).forEach((series) => {
+      const country = series.country === 'zanzibar' ? 'tanzania' : series.country;
+      const dated = (series.data ?? []).filter((entry) => entry.mean_cpue != null || entry.mean_price_kg != null);
+      if (!dated.length) return;
+      const row = byCountry.get(country) ?? { districts: 0, since: Infinity, fishers: 0 };
+      row.districts += 1;
+      row.since = Math.min(row.since, new Date(dated[0].date).getUTCFullYear());
+      byCountry.set(country, row);
+    });
+    (frameGearsRows ?? []).forEach((frameRow) => {
+      const raw = String(frameRow.country).toLowerCase();
+      const row = byCountry.get(raw === 'zanzibar' ? 'tanzania' : raw);
+      if (row) row.fishers += (Number(frameRow.fishers_male) || 0) + (Number(frameRow.fishers_female) || 0);
+    });
+    const countries = COUNTRY_ORDER.filter((country) => byCountry.has(country)).map((country) => {
+      const features = featuresOf(boundariesGaul2, [country]);
+      const { collection, path } = outlineFor(features, 44, 32, 1);
+      return {
+        country,
+        name: formatCountryName(country),
+        silhouette: features.length ? collection.features.map((feature) => path(feature)) : [],
+        ...byCountry.get(country)
+      };
+    });
+    return { countries, districts: countries.reduce((sum, row) => sum + row.districts, 0) };
+  }, [timeSeriesGaul2, frameGearsRows, boundariesGaul2]);
 
-
-  // Handle window resize
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Adjust pitch when switching visualization modes
+  // Tilt for 3D columns, flatten for the flat view.
   useEffect(() => {
     const map = mapRef.current?.getMap?.();
     if (!map) return;
-    const targetPitch = visualizationMode === 'heatmap' ? 0 : KEPLER_INITIAL_VIEW_STATE.pitch;
-    map.setPitch(targetPitch);
-    map.triggerRepaint();
+    map.easeTo({ pitch: visualizationMode === 'column' ? COLUMN_PITCH : 0, duration: 600 });
   }, [visualizationMode]);
-
-  // Filter enriched boundaries by selected countries
-  const filteredBoundaries = useMemo(() => {
-    if (!enrichedBoundaries || selectedCountries.length === 0) return enrichedBoundaries;
-    return {
-      ...enrichedBoundaries,
-      features: enrichedBoundaries.features.filter(f => 
-        selectedCountries.includes(f.properties.country)
-      )
-    };
-  }, [enrichedBoundaries, selectedCountries]);
 
   // Transform H3 data based on selected year
   const transformedH3Data = useMemo(() => {
@@ -228,49 +293,74 @@ const MapComponent = ({ isActive = true }) => {
     };
   }, [pdsFishingGroundsData]);
 
-  // Calculate metric statistics based on enriched boundaries
-  const metricStats = useMemo(() => {
-    return calculateMetricStats(enrichedBoundaries, selectedMetric);
-  }, [enrichedBoundaries, selectedMetric]);
+  const metricStats = useMemo(() => calculateMetricStats(enrichedBoundaries, selectedMetric), [enrichedBoundaries, selectedMetric]);
 
-  // Create map layers
   const layers = useMapLayers({
-    filteredBoundaries,
+    filteredBoundaries: enrichedBoundaries,
     selectedMetric,
     metricStats,
     opacity,
     isSatellite,
     isDarkTheme,
     hoveredFeatureIndex,
+    selectedRegion: selectedFeature,
+    gaulLevel,
     visualizationMode,
     pdsFishingGroundsData: filteredPdsFishingGroundsData,
     pdsH3EffortData: transformedH3Data,
     selectedActivityMetric,
-    activeActivityLayers
+    activeActivityLayers: gpsVisible ? activeActivityLayers : { hexagons: false, grounds: false },
+    highlightCountry: hoveredCountry
   });
 
-  // Create tooltip handler
   const getTooltip = useMapTooltip({
     selectedMetric,
     selectedActivityMetric,
-    isDarkTheme,
-    metricStats,
-    visualizationMode,
+    surveyPeriodLabel,
     yearScopeLabel: activityYearScope.label
   });
 
+  // The locator plate shows whichever region is not on screen, and flies there.
+  const locator = useMemo(() => {
+    const target = viewRegion === 'timor' ? 'wio' : 'timor';
+    const countries = target === 'timor' ? ['timor'] : ['kenya', 'tanzania', 'mozambique'];
+    const features = featuresOf(boundariesGaul2, countries);
+    if (!features.length) return null;
+    const { collection, path } = outlineFor(features, 220, target === 'timor' ? 64 : 120, 4);
+    const rows = coverage?.countries.filter((row) => countries.includes(row.country)) ?? [];
+    return {
+      target,
+      title: target === 'timor' ? 'Timor-Leste' : 'Kenya to Mozambique',
+      detail: rows.length
+        ? `${rows.reduce((sum, row) => sum + row.districts, 0)} districts, surveys since ${Math.min(...rows.map((row) => row.since))}`
+        : '',
+      height: target === 'timor' ? 64 : 120,
+      paths: collection.features.map((feature) => path(feature))
+    };
+  }, [viewRegion, boundariesGaul2, coverage]);
 
-
-  const onHover = useCallback((info) => {
-    if (info.object && info.layer.id === 'wio-regions') {
-      setHoveredFeatureIndex(info.index);
-    } else {
-      setHoveredFeatureIndex(null);
+  const showCountry = useCallback((country) => {
+    const map = mapRef.current?.getMap?.();
+    if (!map) return;
+    // fitBounds resets the pitch unless told otherwise, so pass the view the visitor chose.
+    const pitch = visualizationMode === 'column' ? COLUMN_PITCH : 0;
+    if (country === 'wio') {
+      map.fitBounds(WIO_BOUNDS, { padding: mapPadding(), pitch, duration: 1200 });
+      return;
     }
+    const features = featuresOf(boundariesGaul2, [country]);
+    if (!features.length) return;
+    map.fitBounds(boundsOf(features), { padding: mapPadding(), pitch, duration: 1200, maxZoom: 9 });
+    if (isMobile) setSidebarOpen(false);
+  }, [boundariesGaul2, isMobile, visualizationMode]);
+
+  const handleMoveEnd = useCallback((event) => {
+    setViewRegion(event.viewState.longitude > 100 ? 'timor' : 'wio');
+    setZoom(event.viewState.zoom);
   }, []);
 
-  const handleMapStyleToggle = useCallback(() => {
-    setIsSatellite(prev => !prev);
+  const onHover = useCallback((info) => {
+    setHoveredFeatureIndex(info.object && info.layer.id === 'wio-regions' ? info.index : null);
   }, []);
 
   const handleSelectedMetricChange = useCallback((metricId) => {
@@ -287,35 +377,34 @@ const MapComponent = ({ isActive = true }) => {
 
   const removeBathymetryLayers = useCallback((map) => {
     if (!map) return;
-    if (map.getLayer(BATHYMETRY_LABEL_LAYER_ID)) {
-      map.removeLayer(BATHYMETRY_LABEL_LAYER_ID);
-    }
-    if (map.getLayer(BATHYMETRY_LINE_LAYER_ID)) {
-      map.removeLayer(BATHYMETRY_LINE_LAYER_ID);
-    }
-    if (map.getSource(BATHYMETRY_SOURCE_ID)) {
-      map.removeSource(BATHYMETRY_SOURCE_ID);
-    }
+    if (map.getLayer(BATHYMETRY_LABEL_LAYER_ID)) map.removeLayer(BATHYMETRY_LABEL_LAYER_ID);
+    if (map.getLayer(BATHYMETRY_LINE_LAYER_ID)) map.removeLayer(BATHYMETRY_LINE_LAYER_ID);
+    if (map.getSource(BATHYMETRY_SOURCE_ID)) map.removeSource(BATHYMETRY_SOURCE_ID);
   }, []);
 
+  // Not gated on map.isStyleLoaded(): that stays false while basemap tiles are still loading, which
+  // skipped the contours on first load. Adding layers needs only the style itself; before that,
+  // addSource throws and the next style.load/styledata event tries again.
   const ensureBathymetryLayers = useCallback((map) => {
-    if (!map || !map.isStyleLoaded()) return;
-    
-    // Only proceed if layers are actually missing to avoid redundant style updates
+    if (!map) return;
+
     const hasSource = !!map.getSource(BATHYMETRY_SOURCE_ID);
     const hasLineLayer = !!map.getLayer(BATHYMETRY_LINE_LAYER_ID);
     const hasLabelLayer = !!map.getLayer(BATHYMETRY_LABEL_LAYER_ID);
-    
+    const contourColors = getBathymetryColors(isDarkTheme);
+    const lineColor = ['interpolate', ['linear'], ['get', 'depth_m'],
+      ...BATHYMETRY_DEPTHS.flatMap((depth, i) => [depth, contourColors[i]])];
+
+    // A theme switch can keep the layer through style diffing: recolour it in place.
+    if (hasLineLayer && JSON.stringify(map.getPaintProperty(BATHYMETRY_LINE_LAYER_ID, 'line-color')) !== JSON.stringify(lineColor)) {
+      map.setPaintProperty(BATHYMETRY_LINE_LAYER_ID, 'line-color', lineColor);
+    }
     if (hasSource && hasLineLayer && hasLabelLayer) return;
 
     try {
       if (!hasSource) {
-        map.addSource(BATHYMETRY_SOURCE_ID, {
-          type: 'geojson',
-          data: BATHYMETRY_DATA_PATH
-        });
+        map.addSource(BATHYMETRY_SOURCE_ID, { type: 'geojson', data: BATHYMETRY_DATA_PATH });
       }
-
       if (!hasLineLayer) {
         map.addLayer({
           id: BATHYMETRY_LINE_LAYER_ID,
@@ -323,46 +412,23 @@ const MapComponent = ({ isActive = true }) => {
           source: BATHYMETRY_SOURCE_ID,
           minzoom: 4,
           paint: {
-            'line-color': [
-              'interpolate',
-              ['linear'],
-              ['get', 'depth_m'],
-              5, '#84d2f6',
-              40, '#55a9df',
-              120, '#2f7eb8',
-              300, '#255c95',
-              1000, '#1e3f72',
-              2000, '#172f58'
-            ],
-            'line-width': [
-              'match',
-              ['get', 'depth_m'],
-              [5, 10, 20, 40, 60, 90, 120, 150, 200, 300, 500, 1000, 2000], 1.5,
-              1
-            ],
-            'line-opacity': isDarkTheme ? 0.65 : 0.5
+            'line-color': lineColor,
+            'line-width': ['match', ['get', 'depth_m'], [10, 40, 200, 1000], 1, 0.6],
+            'line-opacity': isDarkTheme ? 0.8 : 0.9
           },
-          layout: {
-            'line-join': 'round',
-            'line-cap': 'round'
-          }
+          layout: { 'line-join': 'round', 'line-cap': 'round' }
         });
       }
-
       if (!hasLabelLayer) {
         map.addLayer({
           id: BATHYMETRY_LABEL_LAYER_ID,
           type: 'symbol',
           source: BATHYMETRY_SOURCE_ID,
           minzoom: 8,
-          filter: [
-            'in',
-            ['get', 'depth_m'],
-            ['literal', [10, 40, 90, 200, 500, 1000, 2000]]
-          ],
+          filter: ['in', ['get', 'depth_m'], ['literal', [10, 40, 90, 200, 500, 1000, 2000]]],
           layout: {
             'text-field': ['get', 'depth_label'],
-            'text-font': ['Open Sans Regular', 'Arial Unicode MS Regular'],
+            'text-font': ['Open Sans Italic', 'Arial Unicode MS Regular'],
             'text-size': 11,
             'text-anchor': 'center',
             'symbol-placement': 'line',
@@ -370,8 +436,8 @@ const MapComponent = ({ isActive = true }) => {
             'text-max-angle': 45
           },
           paint: {
-            'text-color': isDarkTheme ? '#d9f2ff' : '#154368',
-            'text-halo-color': isDarkTheme ? 'rgba(0,0,0,0.65)' : 'rgba(255,255,255,0.8)',
+            'text-color': isDarkTheme ? '#a4b1b3' : '#4b6170',
+            'text-halo-color': isDarkTheme ? '#0d1416' : '#e9f3f4',
             'text-halo-width': 1.5
           }
         });
@@ -388,15 +454,44 @@ const MapComponent = ({ isActive = true }) => {
       ensureBathymetryLayers(map);
     } else {
       removeBathymetryLayers(map);
-      setBathymetryLoading(false);
     }
   }, [showBathymetry, ensureBathymetryLayers, removeBathymetryLayers]);
 
   const handleStyleData = useCallback(() => {
     const map = mapRef.current?.getMap?.();
-    if (!map || !showBathymetry) return;
-    ensureBathymetryLayers(map);
-  }, [showBathymetry, ensureBathymetryLayers]);
+    if (!map) return;
+    try {
+      if (!isSatellite) paintBasemap(map, isDarkTheme);
+    } catch {
+      // Style not parsed yet; style.load repaints.
+    }
+    if (showBathymetry) ensureBathymetryLayers(map);
+  }, [isSatellite, isDarkTheme, showBathymetry, ensureBathymetryLayers]);
+
+  // style.load fires once a new style (theme or satellite switch) is ready for our layers.
+  const styleHandlerRef = useRef(handleStyleData);
+  useEffect(() => {
+    styleHandlerRef.current = handleStyleData;
+    handleStyleData();
+  }, [handleStyleData]);
+
+  // All pages stay mounted, so a visit that starts on another page creates the map hidden, at
+  // zero size, where the opening fit to the coast cannot work and falls back to the whole world.
+  // Frame the coast the first time the map is actually visible.
+  const needsFramingRef = useRef(!isActive);
+  const visualizationModeRef = useRef(visualizationMode);
+  visualizationModeRef.current = visualizationMode;
+  const frameIfNeeded = useCallback(() => {
+    const map = mapRef.current?.getMap?.();
+    if (!needsFramingRef.current || !map || !map.getContainer().clientWidth) return;
+    map.resize();
+    map.fitBounds(WIO_BOUNDS, {
+      padding: mapPadding(),
+      pitch: visualizationModeRef.current === 'column' ? COLUMN_PITCH : 0,
+      duration: 0
+    });
+    needsFramingRef.current = false;
+  }, []);
 
   // Resize map when it becomes active (e.g. returning from Country Insights)
   useEffect(() => {
@@ -405,12 +500,13 @@ const MapComponent = ({ isActive = true }) => {
         const map = mapRef.current?.getMap?.();
         if (map) {
           map.resize();
+          frameIfNeeded();
           map.triggerRepaint();
         }
-      }, 100); // Small delay to ensure CSS transition has started
+      }, 100);
       return () => clearTimeout(timer);
     }
-  }, [isActive]);
+  }, [isActive, frameIfNeeded]);
 
   const handleMapLoad = useCallback(() => {
     const map = mapRef.current?.getMap?.();
@@ -420,96 +516,64 @@ const MapComponent = ({ isActive = true }) => {
     map.touchZoomRotate.enable();
     map.touchZoomRotate.disableRotation();
     map.keyboard.enable();
-    if (showBathymetry) {
-      ensureBathymetryLayers(map);
-    }
-  }, [showBathymetry, ensureBathymetryLayers]);
+    frameIfNeeded();
+    setZoom(map.getZoom());
+    map.on('style.load', () => styleHandlerRef.current());
+    styleHandlerRef.current();
+  }, [frameIfNeeded]);
 
-  // Selection handlers
   const handleLayerToggle = useCallback((layer) => {
-    setActiveActivityLayers(prev => ({
-      ...prev,
-      [layer]: !prev[layer]
-    }));
-  }, []);
-
-  const handleCountryToggle = useCallback((country) => {
-    setSelectedCountries(prev => {
-      const isSelected = prev.includes(country);
-      if (isSelected) {
-        return prev.filter(c => c !== country);
-      }
-      return [...prev, country];
-    });
+    setActiveActivityLayers(prev => ({ ...prev, [layer]: !prev[layer] }));
   }, []);
 
   const handleRegionClick = useCallback((info) => {
     if (info.object && info.layer.id === 'wio-regions') {
       setSelectedRegion(info.object);
+      dismissHint();
+      if (isMobile) setSidebarOpen(true);
     }
+  }, [isMobile, dismissHint]);
+
+  const zoomBy = useCallback((delta) => {
+    const map = mapRef.current?.getMap?.();
+    if (map) map.easeTo({ zoom: map.getZoom() + delta, duration: 300 });
   }, []);
 
-  // Get map style (satellite-v9 = bare imagery, no roads/labels)
-  const getMapStyle = useCallback(() => {
-    if (isSatellite) {
-      return 'mapbox://styles/mapbox/satellite-v9';
-    }
-    return getMapStyles(isDarkTheme);
-  }, [isSatellite, isDarkTheme]);
+  const mapStyle = isSatellite ? 'mapbox://styles/mapbox/satellite-v9' : getMapStyles(isDarkTheme);
 
-  const getCursor = useCallback(({isDragging, isHovering}) => 
+  const getCursor = useCallback(({ isDragging, isHovering }) =>
     isDragging ? 'grabbing' : isHovering ? 'pointer' : 'grab'
   , []);
 
-  // Loading and error states
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
-  if (!boundaries) return <div>No data available</div>;
-  if (!MAPBOX_TOKEN?.trim()) {
+  if (loading || error || !boundaries || !MAPBOX_TOKEN?.trim()) {
+    const message = loading
+      ? 'Loading the map data…'
+      : error
+        ? `The map data could not be loaded (${error}). Reload the page to try again.`
+        : !boundaries
+          ? 'No map data is available.'
+          : 'The map cannot load: the Mapbox token is missing. Set VITE_MAPBOX_TOKEN in .env for local development.';
     return (
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh',
-        backgroundColor: '#1a1a1a',
-        color: '#e0e0e0',
-        fontFamily: 'system-ui, sans-serif',
-        padding: '1rem',
-        textAlign: 'center'
-      }}>
-        Map unavailable: missing Mapbox token. Set VITE_MAPBOX_TOKEN in .env for local development.
+      <div className="flex h-full items-center justify-center bg-background p-6 text-center">
+        <p className={loading ? 'font-serif text-lg italic text-muted-foreground' : 'max-w-md text-[15px]'}>{message}</p>
       </div>
     );
   }
 
   return (
-    <div style={{
-      position: 'relative',
-      height: '100vh',
-      width: '100%',
-      backgroundColor: isDarkTheme ? '#1a1a1a' : '#f8f9fa',
-      display: 'flex',
-      flexDirection: 'column',
-      transition: 'background-color 0.3s ease'
-    }}>
-      <Header 
+    <div className="relative flex h-screen w-full flex-col bg-background">
+      <Header
         boundaries={enrichedBoundaries}
         timeSeriesData={timeSeriesData}
         pdsH3EffortData={transformedH3Data}
       />
-      
-      <div style={{
-        position: 'relative',
-        flex: '1 1 auto',
-        display: 'flex',
-        minHeight: 0
-      }}>
+
+      <div className="relative flex min-h-0 flex-1">
         <Sidebar
           isDarkTheme={isDarkTheme}
           isMobile={isMobile}
-          isOpen={!isMobile}
-          boundaries={enrichedBoundaries}
+          isOpen={!isMobile || sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
           selectedMetric={selectedMetric}
           onMetricChange={handleSelectedMetricChange}
           selectedFishersMetric={selectedFishersMetric}
@@ -522,36 +586,35 @@ const MapComponent = ({ isActive = true }) => {
           onActivityMetricChange={setSelectedActivityMetric}
           activeActivityLayers={activeActivityLayers}
           onLayerToggle={handleLayerToggle}
-          selectedCountries={selectedCountries}
-          onCountryToggle={handleCountryToggle}
           gaulLevel={gaulLevel}
           onGaulLevelChange={setGaulLevel}
           visualizationMode={visualizationMode}
           onVisualizationModeChange={setVisualizationMode}
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            height: '100%'
-          }}
+          surveyPeriodLabel={surveyPeriodLabel}
+          dataFreshnessLabel={dataFreshnessLabel}
+          coverage={coverage}
+          onShowCountry={showCountry}
+          onHoverCountry={setHoveredCountry}
+          selectedFeature={selectedFeature}
+          onCloseSheet={() => setSelectedRegion(null)}
+          boundaries={enrichedBoundaries}
+          timeSeriesData={timeSeriesData}
+          frameGearsRows={frameGearsRows}
         />
 
-        <div style={{
-          flexGrow: 1,
-          position: 'relative',
-          transition: 'margin-left 0.3s ease'
-        }}>
+        <div className="relative flex-1">
           <MapGL
             ref={mapRef}
-            initialViewState={INITIAL_VIEW_STATE}
+            initialViewState={initialViewState}
             projection="mercator"
-            // Default bearingSnap is 7°: small non-zero bearings (e.g. Kepler ~-2°) get eased to north
-            // after zoom/pan inertia ends. Disable so zoom never "corrects" bearing unexpectedly.
+            // Default bearingSnap is 7°: small non-zero bearings get eased to north after
+            // zoom/pan inertia ends. Disable so zoom never "corrects" bearing unexpectedly.
             bearingSnap={0}
-            mapStyle={getMapStyle()}
+            mapStyle={mapStyle}
             mapboxAccessToken={MAPBOX_TOKEN}
             onLoad={handleMapLoad}
             onStyleData={handleStyleData}
+            onMoveEnd={handleMoveEnd}
             style={{ position: 'absolute', width: '100%', height: '100%' }}
           >
             <DeckGLOverlay
@@ -564,61 +627,40 @@ const MapComponent = ({ isActive = true }) => {
             />
           </MapGL>
 
-          <div style={{
-            position: 'absolute',
-            bottom: '24px',
-            right: '24px',
-            zIndex: 1000
-          }}>
-            <EnhancedLegend 
-              isDarkTheme={isDarkTheme}
-              grades={metricStats.grades}
-              selectedMetric={selectedMetric}
-              selectedActivityMetric={selectedActivityMetric}
-              hasGridData={transformedH3Data.length > 0 || filteredPdsFishingGroundsData?.features?.length > 0}
-              pdsH3EffortData={transformedH3Data}
-              pdsFishingGroundsData={filteredPdsFishingGroundsData}
-              activeActivityLayers={activeActivityLayers}
-              visualizationMode={visualizationMode}
-              showBathymetry={showBathymetry}
-              dataFreshnessLabel={dataFreshnessLabel}
-              yearScope={activityYearScope}
-            />
-          </div>
-
-          <div
-            style={{
-              position: 'absolute',
-              top: '24px',
-              left: '24px',
-              zIndex: 1000,
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '8px'
-            }}
-          >
-            <MapStyleToggle
-              isDarkTheme={isDarkTheme}
-              isSatellite={isSatellite}
-              onToggle={handleMapStyleToggle}
-            />
-
+          <div className="absolute left-4 top-4 z-[1000] flex flex-col gap-2 sm:left-6 sm:top-6">
+            {isMobile && (
+              <button onClick={() => setSidebarOpen(true)} className="map-button" aria-label="Figures and districts" title="Figures and districts">
+                <SlidersHorizontal size={18} strokeWidth={1.75} aria-hidden="true" />
+              </button>
+            )}
+            <div className="flex flex-col">
+              <button onClick={() => zoomBy(1)} className="map-button" aria-label="Zoom in" title="Zoom in">
+                <Plus size={18} strokeWidth={1.75} aria-hidden="true" />
+              </button>
+              <button onClick={() => zoomBy(-1)} className="map-button -mt-px" aria-label="Zoom out" title="Zoom out">
+                <Minus size={18} strokeWidth={1.75} aria-hidden="true" />
+              </button>
+            </div>
+            <button
+              onClick={() => setVisualizationMode((mode) => (mode === 'column' ? 'heatmap' : 'column'))}
+              className="map-button text-[13px] font-bold"
+              aria-pressed={visualizationMode === 'column'}
+              aria-label="3D view"
+              title={visualizationMode === 'column' ? 'Flat view' : '3D view'}
+            >
+              3D
+            </button>
+            <MapStyleToggle isSatellite={isSatellite} onToggle={() => setIsSatellite((prev) => !prev)} />
             <button
               onClick={() => setShowBathymetry((prev) => !prev)}
-              title={showBathymetry ? 'Hide bathymetry contours' : 'Show bathymetry contours'}
-              className="relative w-12 h-12 p-2 glass-panel rounded-xl flex items-center justify-center transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/10 group cursor-pointer"
-              aria-label={showBathymetry ? 'Hide bathymetry contours' : 'Show bathymetry contours'}
+              className="map-button"
+              aria-pressed={showBathymetry}
+              aria-label="Depth contours"
+              title="Depth contours"
             >
-              <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl pointer-events-none" />
-              <Waves
-                size={22}
-                strokeWidth={2}
-                className={`${showBathymetry ? 'text-primary' : 'text-foreground/70'} group-hover:text-primary transition-colors relative z-10`}
-              />
+              <Waves size={18} strokeWidth={1.75} aria-hidden="true" />
             </button>
-
             <MapClarityPanel
-              isDarkTheme={isDarkTheme}
               selectedActivityMetric={selectedActivityMetric}
               showBathymetry={showBathymetry}
               h3Records={transformedH3Data?.length ?? 0}
@@ -628,38 +670,64 @@ const MapComponent = ({ isActive = true }) => {
             />
           </div>
 
-          {bathymetryLoading && (
-            <div
-              className="px-3 py-1.5 rounded-lg glass-panel z-[1000] text-xs text-foreground/80"
-              style={{ position: 'absolute', top: '132px', left: '24px' }}
+          {locator && (
+            <button
+              onClick={() => showCountry(locator.target)}
+              className="plate group absolute right-4 top-4 z-[1000] hidden w-[252px] px-3 pb-3 pt-2 text-left transition-colors hover:border-primary hover:bg-secondary sm:right-6 sm:top-6 sm:block"
             >
-              Loading bathymetry...
+              <span className="block font-serif text-base font-semibold">{locator.title}</span>
+              <span className="block text-[13px] text-muted-foreground">{locator.detail}</span>
+              <svg width="226" height={locator.height} className="mt-1.5 block" aria-hidden="true">
+                {locator.paths.map((d, i) => (
+                  <path key={i} d={d} fill="var(--primary)" stroke="var(--card)" strokeWidth="0.4" />
+                ))}
+              </svg>
+              <span className="mt-2 inline-flex items-center gap-1.5 rounded bg-primary px-2.5 py-1 text-[13px] font-semibold text-primary-foreground">
+                Show on the map
+                <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+              </span>
+            </button>
+          )}
+
+          {showHint && !selectedFeature && (
+            <div className="plate absolute bottom-16 left-4 z-[1000] flex max-w-[300px] items-start gap-2.5 py-2.5 pl-3 pr-2 sm:bottom-auto sm:left-[72px] sm:top-6">
+              <MousePointerClick size={20} className="mt-0.5 shrink-0 text-coral" aria-hidden="true" />
+              <p className="m-0 text-[15px] font-semibold leading-snug">
+                {isMobile ? 'Tap' : 'Click'} a district to open its sheet
+                <span className="block text-[13px] font-normal text-muted-foreground">
+                  Its catch, price and revenue, and where each figure comes from.
+                </span>
+              </p>
+              <button onClick={dismissHint} className="rounded p-1 text-muted-foreground hover:text-foreground" aria-label="Dismiss hint">
+                <X size={16} aria-hidden="true" />
+              </button>
             </div>
           )}
-          {selectedRegion && !selectedMetric.startsWith('fishers_') && selectedMetric !== 'boats_total' && (
-            <Suspense fallback={<div>Loading distribution histogram...</div>}>
-              <DistributionHistogram
-                isDarkTheme={isDarkTheme}
-                boundaries={enrichedBoundaries}
-                selectedMetric={selectedMetric}
-                selectedRegion={selectedRegion}
-                timeSeriesData={timeSeriesData}
-                gaulLevel={gaulLevel}
-                onClose={() => setSelectedRegion(null)}
-                style={{
-                  position: 'absolute',
-                  bottom: '12px',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  zIndex: 1001
-                }}
-              />
-            </Suspense>
-          )}
+
+          <div className="absolute bottom-4 right-4 z-[1000] sm:bottom-6 sm:right-6">
+            <EnhancedLegend
+              key={isMobile ? 'mobile' : 'desktop'}
+              isSatellite={isSatellite}
+              defaultMinimized={isMobile}
+              isDarkTheme={isDarkTheme}
+              grades={metricStats.grades}
+              selectedMetric={selectedMetric}
+              selectedActivityMetric={selectedActivityMetric}
+              hasGridData={transformedH3Data.length > 0 || filteredPdsFishingGroundsData?.features?.length > 0}
+              pdsH3EffortData={transformedH3Data}
+              pdsFishingGroundsData={filteredPdsFishingGroundsData}
+              activeActivityLayers={activeActivityLayers}
+              showBathymetry={showBathymetry}
+              dataFreshnessLabel={dataFreshnessLabel}
+              surveyPeriodLabel={surveyPeriodLabel}
+              yearScope={activityYearScope}
+              gpsVisible={gpsVisible}
+            />
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default MapComponent; 
+export default MapComponent;

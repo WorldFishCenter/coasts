@@ -1,0 +1,43 @@
+{
+  "title": "Choose the layout for Country insights",
+  "question": "Same look as the rest of the portal; this choice is how the page is organised. Country first, then districts, recent years by default, district details on demand. Pick one, or re-roll.",
+  "options": [
+    {
+      "id": "country-overlay",
+      "kind": "assigned",
+      "label": "Compare on one chart",
+      "kicker": "THE ROLL",
+      "thesis": "The country's trend leads; districts join the same chart when you pick them, so comparison is reading one picture.",
+      "palette": ["#121819", "#192122", "#8ccbd0", "#e69f8d", "#f1f4f4"],
+      "materials": ["country tabs", "overlay chart", "district chips"],
+      "viewport": "Country tabs with silhouettes across the top. A wide trend chart (since 2024, full record one click away) with the country line in teal; chosen districts (up to three) drawn over it in coral tones. To the right, every district as a chip with its average, highest first: tap to add it to the chart. Below: the country's figures and fishing gears.",
+      "risk": "With three districts drawn, the chart can get busy; the district list must stay short enough to scan.",
+      "html": ".impeccable/mocks/decision/country-overlay.html"
+    },
+    {
+      "id": "country-ranked",
+      "kind": "dealt",
+      "label": "Ranked district table",
+      "thesis": "A country header and compact trend, then every district in one ranked table; a row opens in place to show that district.",
+      "palette": ["#121819", "#192122", "#8ccbd0", "#e69f8d", "#f1f4f4"],
+      "materials": ["figure strip", "ranked rows", "inline bars"],
+      "viewport": "Country tabs; a strip of the country's figures (average, districts, fishers, boats, since) beside a compact trend. Below, the main element: all districts ranked, each row with an inline bar against the country median, latest month, a 12-month sparkline, fishers and boats. Rows re-rank in place when you switch Catch, Revenue or Price; a row opens to show the district's chart and gears.",
+      "risk": "Table-first can read as a spreadsheet in a meeting; the bars and sparklines must carry it.",
+      "html": ".impeccable/mocks/decision/country-ranked.html"
+    },
+    {
+      "id": "country-sheet",
+      "kind": "dealt",
+      "label": "Country sheet beside the chart",
+      "thesis": "The left column becomes the country's sheet, like the map's district sheet; click any district and the sheet turns into that district's.",
+      "palette": ["#121819", "#192122", "#8ccbd0", "#e69f8d", "#f1f4f4"],
+      "materials": ["outline drawing", "coral callouts", "dot ranking"],
+      "viewport": "Left column: the country drawn as an outline with coral callouts to its catch, price and revenue, then coverage and fishing gears. Right: the trend chart on top, then every district as a dot on one scale with the country median marked. Clicking a dot swaps the left sheet to that district, with a way back to the country.",
+      "risk": "Swapping the left sheet is less obvious than an inline change; the dot scale needs labels that stay readable.",
+      "html": ".impeccable/mocks/decision/country-sheet.html"
+    }
+  ],
+  "reroll": true,
+  "buildPath": { "value": "code", "toggle": false },
+  "steer": true
+}

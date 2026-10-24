@@ -1,3 +1,12 @@
+# coasts 0.5.0
+
+## A new look and a clearer Country insights page
+
+* **NEW** New look across the site, built on the Peskas brand colours, with a dark theme by default and a light one.
+* **NEW** The map opens on the whole coast from Kenya to Mozambique, with Timor-Leste one click away, and clicking a district opens a sheet with its main figures.
+* **NEW** Country insights rebuilt: each country's trend and all its districts or provinces ranked in one table.
+* **FIXED** Districts without survey data no longer look like districts with low values.
+
 # coasts 0.4.1
 
 ## Clearer fishing activity maps

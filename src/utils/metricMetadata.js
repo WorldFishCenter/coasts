@@ -13,6 +13,9 @@ const integerWithUnit = (value, unitLabel) => {
 export const METRIC_METADATA = Object.freeze({
   mean_cpue: {
     id: 'mean_cpue',
+    pillLabel: 'Catch',
+    plainLabel: 'Catch per fisher per day',
+    plainUnit: 'kg',
     shortLabel: 'CPUE',
     displayLabel: 'Catch per unit effort',
     unit: 'kg/fisher/day',
@@ -23,6 +26,9 @@ export const METRIC_METADATA = Object.freeze({
   },
   mean_cpua: {
     id: 'mean_cpua',
+    pillLabel: 'Catch per area',
+    plainLabel: 'Catch per fisher per unit area',
+    plainUnit: 'kg',
     shortLabel: 'CPUA',
     displayLabel: 'Catch per unit area',
     unit: 'kg/fisher/area',
@@ -33,6 +39,9 @@ export const METRIC_METADATA = Object.freeze({
   },
   mean_rpue: {
     id: 'mean_rpue',
+    pillLabel: 'Revenue',
+    plainLabel: 'Revenue per fisher per day',
+    plainUnit: 'USD',
     shortLabel: 'RPUE',
     displayLabel: 'Revenue per unit effort',
     unit: '$/fisher/day',
@@ -45,6 +54,9 @@ export const METRIC_METADATA = Object.freeze({
   },
   mean_rpua: {
     id: 'mean_rpua',
+    pillLabel: 'Revenue per area',
+    plainLabel: 'Revenue per fisher per unit area',
+    plainUnit: 'USD',
     shortLabel: 'RPUA',
     displayLabel: 'Revenue per unit area',
     unit: '$/fisher/area',
@@ -57,6 +69,9 @@ export const METRIC_METADATA = Object.freeze({
   },
   mean_price_kg: {
     id: 'mean_price_kg',
+    pillLabel: 'Price',
+    plainLabel: 'Price per kilogram',
+    plainUnit: 'USD',
     shortLabel: 'Price',
     displayLabel: 'Price per kilogram',
     unit: '$/kg',
@@ -69,6 +84,9 @@ export const METRIC_METADATA = Object.freeze({
   },
   fishers_total: {
     id: 'fishers_total',
+    pillLabel: 'Fishers',
+    plainLabel: 'Fishers',
+    plainUnit: 'fishers',
     shortLabel: 'Fishers (Total)',
     displayLabel: 'Total fishers',
     unit: 'fishers',
@@ -79,6 +97,9 @@ export const METRIC_METADATA = Object.freeze({
   },
   fishers_male: {
     id: 'fishers_male',
+    pillLabel: 'Men',
+    plainLabel: 'Fishers, men',
+    plainUnit: 'fishers',
     shortLabel: 'Fishers (Male)',
     displayLabel: 'Male fishers',
     unit: 'fishers',
@@ -89,6 +110,9 @@ export const METRIC_METADATA = Object.freeze({
   },
   fishers_female: {
     id: 'fishers_female',
+    pillLabel: 'Women',
+    plainLabel: 'Fishers, women',
+    plainUnit: 'fishers',
     shortLabel: 'Fishers (Female)',
     displayLabel: 'Female fishers',
     unit: 'fishers',
@@ -99,6 +123,9 @@ export const METRIC_METADATA = Object.freeze({
   },
   boats_total: {
     id: 'boats_total',
+    pillLabel: 'Boats',
+    plainLabel: 'Boats',
+    plainUnit: 'boats',
     shortLabel: 'Boats',
     displayLabel: 'Total boats',
     unit: 'boats',
@@ -460,6 +487,9 @@ export const getMetricDisplayInfo = (metricId) => {
     sourceField: metric.sourceField,
     formula: metric.formula,
     cadence: metric.cadence ?? 'Unknown cadence',
-    format: metric.format
+    format: metric.format,
+    pillLabel: metric.pillLabel,
+    plainLabel: metric.plainLabel,
+    plainUnit: metric.plainUnit
   };
 };

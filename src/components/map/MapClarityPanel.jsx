@@ -9,7 +9,6 @@ import {
 import { PDS_MIN_UNIQUE_TRIPS } from '../../utils/pdsOverlayConfig';
 
 const MapClarityPanel = ({
-  isDarkTheme,
   selectedActivityMetric,
   showBathymetry,
   h3Records,
@@ -19,8 +18,8 @@ const MapClarityPanel = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef(null);
-  const mutedClass = isDarkTheme ? 'text-white/60' : 'text-black/55';
-  const bodyClass = isDarkTheme ? 'text-white/75' : 'text-black/70';
+  const mutedClass = 'text-muted-foreground';
+  const bodyClass = 'text-foreground';
   const activeMetric = ACTIVITY_METRIC_METADATA[selectedActivityMetric] ?? {};
   const activeMetricLabel = activeMetric.label ?? selectedActivityMetric;
   const layers = [
@@ -53,33 +52,31 @@ const MapClarityPanel = ({
     <div ref={containerRef} className="relative">
       <button
         onClick={() => setIsOpen((prev) => !prev)}
-        className="w-12 h-12 p-2 glass-panel rounded-xl z-[1000] flex items-center justify-center transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/10 group cursor-pointer"
-        aria-label="Show layer and metric details"
+        className="map-button"
+        aria-pressed={isOpen}
+        aria-expanded={isOpen}
+        aria-label="Layer details"
         title="Layer details"
       >
-        <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl pointer-events-none" />
-        <Info size={22} strokeWidth={2} className="text-foreground/75 group-hover:text-primary transition-colors relative z-10" />
+        <Info size={18} strokeWidth={1.75} aria-hidden="true" />
       </button>
 
       {isOpen && (
-        <div className="absolute top-14 left-0 glass-panel rounded-xl p-3.5 w-[340px] text-xs space-y-3 z-[1001] max-h-[calc(100vh-9rem)] overflow-y-auto">
+        <div className="plate absolute left-12 top-0 z-[1001] max-h-[calc(100vh-9rem)] w-[340px] space-y-3 overflow-y-auto px-4 pb-4 pt-3 text-[13px] leading-relaxed">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 font-semibold text-[13px]">
-              <Info size={14} className="text-primary" />
-              Layer details
-            </div>
+            <h2 className="m-0 text-base font-semibold">Layer details</h2>
             <button
               onClick={() => setIsOpen(false)}
-              className="rounded-md p-1 hover:bg-white/10 transition-colors"
+              className="rounded p-1 text-muted-foreground hover:text-foreground"
               aria-label="Close layer details"
             >
-              <X size={12} />
+              <X size={14} aria-hidden="true" />
             </button>
           </div>
 
           <div className="space-y-1">
             <div className="font-semibold">
-              {activeMetricLabel}
+              GPS trackers: {activeMetricLabel}
               {activeMetric.unit ? <span className={`font-normal ${mutedClass}`}> · {activeMetric.unit}</span> : null}
             </div>
             {activeMetric.definition && (
@@ -135,7 +132,7 @@ const MapClarityPanel = ({
             fishing. Empty water means no tracked fishing, not no fishing.
           </p>
 
-          <a href="/docs#effort-grid" className="text-primary hover:underline inline-flex items-center gap-1">
+          <a href="/docs#effort-grid" className="inline-flex items-center gap-1 font-semibold text-primary">
             Full data dictionary
             <ExternalLink size={12} />
           </a>

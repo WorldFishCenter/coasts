@@ -1,7 +1,8 @@
 import { createContext, useContext, useEffect, useState } from "react"
 
 const DEFAULT_THEME = "dark"
-const DEFAULT_STORAGE_KEY = "coasts-ui-theme"
+// Renamed with the 2026 redesign so every visitor starts in the default theme once, whatever the old site saved.
+const DEFAULT_STORAGE_KEY = "coasts-theme"
 
 const ThemeContext = createContext({
     theme: DEFAULT_THEME,

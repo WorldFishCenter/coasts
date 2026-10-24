@@ -6,8 +6,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-sans: "Albert Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Sora", var(--font-sans);
+  --font-sans: "Source Sans 3", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Source Serif 4", ui-serif, Georgia, serif;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -28,75 +28,85 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-rule: var(--rule);
+  --color-coral: var(--coral);
+  --color-coral-ink: var(--coral-ink);
+  --color-sea: var(--sea);
 
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-xl: calc(var(--radius) + 2px);
+  --radius-2xl: calc(var(--radius) + 4px);
 }
 
+/* Species-sheet world: white plate paper, navy ink, teal figures, coral callouts.
+   Colours come from the Peskas brand kit (peskas-context/brand). */
 :root {
-  /* Oceanic Light Theme (Sand & Seafoam) */
-  --background: #f4f6f8;
-  --foreground: #081121;
+  --background: #ffffff;
+  --foreground: #0b2233;
   --card: #ffffff;
-  --card-foreground: #081121;
+  --card-foreground: #0b2233;
   --popover: #ffffff;
-  --popover-foreground: #081121;
+  --popover-foreground: #0b2233;
 
-  /* Deep Navy Accent */
-  --primary: #0a1930;
+  --primary: #006d77;
   --primary-foreground: #ffffff;
 
-  /* Seafoam / Cyan soft accents */
-  --secondary: #e6f7f8;
-  --secondary-foreground: #06727a;
+  --secondary: #eef6f6;
+  --secondary-foreground: #0b2233;
 
-  --muted: #e2e8f0;
-  --muted-foreground: #64748b;
+  --muted: #f3f7f7;
+  --muted-foreground: #4b6170;
 
-  --accent: #e2e8f0;
-  --accent-foreground: #081121;
+  --accent: #eef6f6;
+  --accent-foreground: #0b2233;
 
-  --destructive: #ff4d4f;
+  --destructive: #b42318;
   --destructive-foreground: #ffffff;
 
-  --border: #cbd5e1;
-  --input: #cbd5e1;
-  --ring: #0aaeb5;
-  --radius: 0.75rem;
+  --border: #d5dfe1;
+  --input: #b6c6ca;
+  --ring: #006d77;
+  --rule: #0b2233;
+  --coral: #d96c50;
+  --coral-ink: #a8452c;
+  --sea: #e9f3f4;
+  --radius: 0.25rem;
 }
 
+/* Dark: charcoal with a faint sea-teal tint, not brand navy, so long sessions and projectors
+   read neutral; teal and coral stay the only colours. */
 .dark {
-  /* Oceanic Dark Theme (Deep Sea) */
-  --background: #020617;
-  --foreground: #f8fafc;
-  --card: #081121;
-  --card-foreground: #f8fafc;
-  --popover: #081121;
-  --popover-foreground: #f8fafc;
+  --background: #121819;
+  --foreground: #f1f4f4;
+  --card: #192122;
+  --card-foreground: #f1f4f4;
+  --popover: #192122;
+  --popover-foreground: #f1f4f4;
 
-  /* Bioluminescent Cyan */
-  --primary: #00f5ff;
-  --primary-foreground: #020617;
+  --primary: #8ccbd0;
+  --primary-foreground: #121819;
 
-  /* Deep Trench Navy */
-  --secondary: #0f172a;
-  --secondary-foreground: #f8fafc;
+  --secondary: #202a2c;
+  --secondary-foreground: #f1f4f4;
 
-  --muted: #0f172a;
-  --muted-foreground: #94a3b8;
+  --muted: #202a2c;
+  --muted-foreground: #a4b1b3;
 
-  --accent: #1e293b;
-  --accent-foreground: #f8fafc;
+  --accent: #202a2c;
+  --accent-foreground: #f1f4f4;
 
-  --destructive: #ef4444;
-  --destructive-foreground: #ffffff;
+  --destructive: #f97066;
+  --destructive-foreground: #121819;
 
-  --border: #1e293b;
-  --input: #1e293b;
-  --ring: #00f5ff;
+  --border: #2e3a3c;
+  --input: #47565a;
+  --ring: #8ccbd0;
+  --rule: #d9e1e2;
+  --coral: #e69f8d;
+  --coral-ink: #f0b5a6;
+  --sea: #0d1416;
 }
 
 html,
@@ -109,11 +119,12 @@ body,
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
   }
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
+    font-variant-numeric: tabular-nums;
   }
 
   h1,
@@ -121,17 +132,70 @@ body,
   h3,
   h4,
   h5,
-  h6,
-  .font-display {
-    @apply font-display tracking-tight text-foreground;
+  h6 {
+    @apply font-serif text-foreground;
+    letter-spacing: -0.005em;
+    text-wrap: balance;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: #a9d1d4;
+    color: #0b2233;
+  }
+
+  .dark ::selection {
+    background: #3f8a93;
+    color: #ffffff;
+  }
+
+  a {
+    text-underline-offset: 0.2em;
+  }
+
+  * {
+    scrollbar-color: var(--input) transparent;
+    scrollbar-width: thin;
   }
 }
 
-/* Glassmorphic Utilities */
-@utility glass-panel {
-  @apply bg-white/70 dark:bg-[#020617]/70 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-[0_8px_32px_#0000001a] transition-all duration-300 ease-in-out;
+/* A map plate: a solid sheet laid on the map, ruled at the top in ink. */
+@utility plate {
+  @apply bg-card text-card-foreground border border-border;
+  border-top: 2px solid var(--rule);
 }
 
-@utility glass-card {
-  @apply bg-white/50 dark:bg-white/5 backdrop-blur-md border border-white/20 dark:border-white/10 shadow-sm transition-all hover:bg-white/80 dark:hover:bg-white/10;
+/* Square map control, stacked in one column on the map. */
+@utility map-button {
+  @apply flex h-9 w-9 items-center justify-center bg-card text-foreground border border-border transition-colors cursor-pointer;
+  &:hover {
+    @apply bg-secondary;
+  }
+  &[aria-pressed="true"] {
+    @apply bg-primary text-primary-foreground border-primary;
+  }
+}
+
+/* Segmented choice used across the sheets: one row of small pills. */
+@utility pill {
+  @apply inline-flex items-center justify-center rounded-full border border-input px-3 py-1 text-sm font-semibold text-muted-foreground transition-colors cursor-pointer;
+  &:hover {
+    @apply text-foreground border-foreground/50;
+  }
+  &[aria-pressed="true"] {
+    @apply bg-primary border-primary text-primary-foreground;
+  }
+}
+
+.simplebar-scrollbar::before {
+  background: var(--input);
+}
+
+/* Mapbox controls and attribution follow the sheet. */
+.mapboxgl-ctrl-attrib {
+  font-family: var(--font-sans);
 }

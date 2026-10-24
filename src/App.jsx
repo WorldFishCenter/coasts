@@ -77,7 +77,7 @@ function AppContent() {
 
 function App() {
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="coasts-ui-theme">
+    <ThemeProvider defaultTheme="dark" storageKey="coasts-theme">
       <Router>
         <AppContent />
       </Router>
