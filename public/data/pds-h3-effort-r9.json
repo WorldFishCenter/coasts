@@ -34449,28 +34449,64 @@
     "hours_per_trip": 0.0072
   },
   {
-    "h3_index": "897a74c2d43ffff",
+    "h3_index": "897a74c2d1bffff",
     "year": 2026,
-    "fishing_hours": 0.2753,
+    "fishing_hours": 0.0247,
     "unique_trips": 1,
     "n_active_days": 1,
-    "avg_fidelity": 0.1569,
+    "avg_fidelity": 0.0054,
     "constancy": 0.0032,
-    "avg_hours_per_day": 0.2753,
+    "avg_hours_per_day": 0.0247,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.2753
+    "hours_per_trip": 0.0247
+  },
+  {
+    "h3_index": "897a74c2d43ffff",
+    "year": 2026,
+    "fishing_hours": 0.6094,
+    "unique_trips": 2,
+    "n_active_days": 2,
+    "avg_fidelity": 0.115,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.3047,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.3047
+  },
+  {
+    "h3_index": "897a74c2d53ffff",
+    "year": 2026,
+    "fishing_hours": 0.0189,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0041,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.0189,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.0189
   },
   {
     "h3_index": "897a74c2d57ffff",
     "year": 2026,
-    "fishing_hours": 0.3883,
+    "fishing_hours": 0.6231,
+    "unique_trips": 2,
+    "n_active_days": 2,
+    "avg_fidelity": 0.1363,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.3115,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.3115
+  },
+  {
+    "h3_index": "897a74c2d5bffff",
+    "year": 2026,
+    "fishing_hours": 0.2697,
     "unique_trips": 1,
     "n_active_days": 1,
-    "avg_fidelity": 0.2213,
+    "avg_fidelity": 0.059,
     "constancy": 0.0032,
-    "avg_hours_per_day": 0.3883,
+    "avg_hours_per_day": 0.2697,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.3883
+    "hours_per_trip": 0.2697
   },
   {
     "h3_index": "897a74c2d87ffff",
@@ -35183,14 +35219,14 @@
   {
     "h3_index": "897a74c8587ffff",
     "year": 2026,
-    "fishing_hours": 2.8611,
-    "unique_trips": 2,
-    "n_active_days": 5,
-    "avg_fidelity": 0.516,
-    "constancy": 0.016,
-    "avg_hours_per_day": 0.5722,
-    "avg_visits_per_day": 0.4,
-    "hours_per_trip": 1.4306
+    "fishing_hours": 3.5542,
+    "unique_trips": 3,
+    "n_active_days": 6,
+    "avg_fidelity": 0.6773,
+    "constancy": 0.0192,
+    "avg_hours_per_day": 0.5924,
+    "avg_visits_per_day": 0.5,
+    "hours_per_trip": 1.1847
   },
   {
     "h3_index": "897a74c858bffff",
@@ -35819,14 +35855,26 @@
   {
     "h3_index": "897a74d4283ffff",
     "year": 2026,
-    "fishing_hours": 0.1783,
+    "fishing_hours": 0.2381,
+    "unique_trips": 2,
+    "n_active_days": 2,
+    "avg_fidelity": 0.0796,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.119,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.119
+  },
+  {
+    "h3_index": "897a74d4287ffff",
+    "year": 2026,
+    "fishing_hours": 0.7889,
     "unique_trips": 1,
     "n_active_days": 1,
-    "avg_fidelity": 0.1461,
+    "avg_fidelity": 0.1725,
     "constancy": 0.0032,
-    "avg_hours_per_day": 0.1783,
+    "avg_hours_per_day": 0.7889,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.1783
+    "hours_per_trip": 0.7889
   },
   {
     "h3_index": "897a74d428fffff",
@@ -35839,6 +35887,30 @@
     "avg_hours_per_day": 0.2994,
     "avg_visits_per_day": 1,
     "hours_per_trip": 0.2994
+  },
+  {
+    "h3_index": "897a74d4293ffff",
+    "year": 2026,
+    "fishing_hours": 0.3831,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0838,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.3831,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.3831
+  },
+  {
+    "h3_index": "897a74d4297ffff",
+    "year": 2026,
+    "fishing_hours": 0.5522,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.1208,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.5522,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.5522
   },
   {
     "h3_index": "897a74d42a3ffff",
@@ -36897,16 +36969,40 @@
     "hours_per_trip": 0.6817
   },
   {
-    "h3_index": "897a74d5197ffff",
+    "h3_index": "897a74d5193ffff",
     "year": 2026,
-    "fishing_hours": 0.4044,
+    "fishing_hours": 1.0436,
     "unique_trips": 1,
     "n_active_days": 1,
-    "avg_fidelity": 0.0529,
+    "avg_fidelity": 0.2283,
     "constancy": 0.0032,
-    "avg_hours_per_day": 0.4044,
+    "avg_hours_per_day": 1.0436,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.4044
+    "hours_per_trip": 1.0436
+  },
+  {
+    "h3_index": "897a74d5197ffff",
+    "year": 2026,
+    "fishing_hours": 0.84,
+    "unique_trips": 2,
+    "n_active_days": 2,
+    "avg_fidelity": 0.0741,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.42,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.42
+  },
+  {
+    "h3_index": "897a74d519bffff",
+    "year": 2026,
+    "fishing_hours": 0.2919,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0639,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.2919,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.2919
   },
   {
     "h3_index": "897a74d51afffff",
@@ -36947,14 +37043,14 @@
   {
     "h3_index": "897a74d552fffff",
     "year": 2026,
-    "fishing_hours": 0.285,
-    "unique_trips": 1,
-    "n_active_days": 1,
-    "avg_fidelity": 0.0372,
-    "constancy": 0.0032,
-    "avg_hours_per_day": 0.285,
+    "fishing_hours": 0.42,
+    "unique_trips": 2,
+    "n_active_days": 2,
+    "avg_fidelity": 0.0334,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.21,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.285
+    "hours_per_trip": 0.21
   },
   {
     "h3_index": "897a74d55d3ffff",
@@ -38567,14 +38663,14 @@
   {
     "h3_index": "897b4848ed7ffff",
     "year": 2026,
-    "fishing_hours": 6.2178,
-    "unique_trips": 1,
-    "n_active_days": 2,
-    "avg_fidelity": 0.2801,
-    "constancy": 0.0064,
-    "avg_hours_per_day": 3.1089,
-    "avg_visits_per_day": 0.5,
-    "hours_per_trip": 6.2178
+    "fishing_hours": 8.4172,
+    "unique_trips": 2,
+    "n_active_days": 3,
+    "avg_fidelity": 0.2477,
+    "constancy": 0.0096,
+    "avg_hours_per_day": 2.8057,
+    "avg_visits_per_day": 0.6667,
+    "hours_per_trip": 4.2086
   },
   {
     "h3_index": "897b484a143ffff",
@@ -49209,6 +49305,18 @@
     "hours_per_trip": 1.6989
   },
   {
+    "h3_index": "897b4899083ffff",
+    "year": 2026,
+    "fishing_hours": 0.9383,
+    "unique_trips": 1,
+    "n_active_days": 2,
+    "avg_fidelity": 0.117,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.4692,
+    "avg_visits_per_day": 0.5,
+    "hours_per_trip": 0.9383
+  },
+  {
     "h3_index": "897b489908bffff",
     "year": 2026,
     "fishing_hours": 0.4697,
@@ -49223,26 +49331,38 @@
   {
     "h3_index": "897b4899093ffff",
     "year": 2026,
-    "fishing_hours": 0.1267,
+    "fishing_hours": 0.4822,
+    "unique_trips": 2,
+    "n_active_days": 2,
+    "avg_fidelity": 0.0448,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.2411,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.2411
+  },
+  {
+    "h3_index": "897b4899097ffff",
+    "year": 2026,
+    "fishing_hours": 0.0528,
     "unique_trips": 1,
     "n_active_days": 1,
-    "avg_fidelity": 0.0453,
+    "avg_fidelity": 0.0066,
     "constancy": 0.0032,
-    "avg_hours_per_day": 0.1267,
+    "avg_hours_per_day": 0.0528,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.1267
+    "hours_per_trip": 0.0528
   },
   {
     "h3_index": "897b489909bffff",
     "year": 2026,
-    "fishing_hours": 0.3,
-    "unique_trips": 1,
-    "n_active_days": 1,
-    "avg_fidelity": 0.1073,
-    "constancy": 0.0032,
-    "avg_hours_per_day": 0.3,
+    "fishing_hours": 0.3689,
+    "unique_trips": 2,
+    "n_active_days": 2,
+    "avg_fidelity": 0.0579,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.1844,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.3
+    "hours_per_trip": 0.1844
   },
   {
     "h3_index": "897b48990c3ffff",
@@ -50205,6 +50325,30 @@
     "hours_per_trip": 0.2703
   },
   {
+    "h3_index": "897b4899547ffff",
+    "year": 2026,
+    "fishing_hours": 0.6106,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0761,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.6106,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.6106
+  },
+  {
+    "h3_index": "897b489954fffff",
+    "year": 2026,
+    "fishing_hours": 0.3044,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0379,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.3044,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.3044
+  },
+  {
     "h3_index": "897b4899553ffff",
     "year": 2025,
     "fishing_hours": 0.0081,
@@ -50215,6 +50359,18 @@
     "avg_hours_per_day": 0.0081,
     "avg_visits_per_day": 1,
     "hours_per_trip": 0.0081
+  },
+  {
+    "h3_index": "897b4899553ffff",
+    "year": 2026,
+    "fishing_hours": 3.8394,
+    "unique_trips": 1,
+    "n_active_days": 2,
+    "avg_fidelity": 0.4786,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 1.9197,
+    "avg_visits_per_day": 0.5,
+    "hours_per_trip": 3.8394
   },
   {
     "h3_index": "897b4899583ffff",
@@ -50311,6 +50467,18 @@
     "avg_hours_per_day": 0.6511,
     "avg_visits_per_day": 1,
     "hours_per_trip": 0.6511
+  },
+  {
+    "h3_index": "897b48995cbffff",
+    "year": 2026,
+    "fishing_hours": 0.0219,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0027,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.0219,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.0219
   },
   {
     "h3_index": "897b48995cfffff",
@@ -52598,7 +52766,7 @@
     "fishing_hours": 0.4333,
     "unique_trips": 1,
     "n_active_days": 1,
-    "avg_fidelity": 0.0746,
+    "avg_fidelity": 0.0741,
     "constancy": 0.0032,
     "avg_hours_per_day": 0.4333,
     "avg_visits_per_day": 1,
@@ -52622,7 +52790,7 @@
     "fishing_hours": 0.4239,
     "unique_trips": 1,
     "n_active_days": 1,
-    "avg_fidelity": 0.073,
+    "avg_fidelity": 0.0725,
     "constancy": 0.0032,
     "avg_hours_per_day": 0.4239,
     "avg_visits_per_day": 1,
@@ -52718,7 +52886,7 @@
     "fishing_hours": 1.2472,
     "unique_trips": 4,
     "n_active_days": 4,
-    "avg_fidelity": 0.0557,
+    "avg_fidelity": 0.0556,
     "constancy": 0.0128,
     "avg_hours_per_day": 0.3118,
     "avg_visits_per_day": 1,
@@ -52970,7 +53138,7 @@
     "fishing_hours": 0.5114,
     "unique_trips": 1,
     "n_active_days": 1,
-    "avg_fidelity": 0.0881,
+    "avg_fidelity": 0.0874,
     "constancy": 0.0032,
     "avg_hours_per_day": 0.5114,
     "avg_visits_per_day": 1,
@@ -52994,7 +53162,7 @@
     "fishing_hours": 0.2303,
     "unique_trips": 1,
     "n_active_days": 1,
-    "avg_fidelity": 0.0397,
+    "avg_fidelity": 0.0394,
     "constancy": 0.0032,
     "avg_hours_per_day": 0.2303,
     "avg_visits_per_day": 1,
@@ -53006,7 +53174,7 @@
     "fishing_hours": 3.1828,
     "unique_trips": 1,
     "n_active_days": 1,
-    "avg_fidelity": 0.5482,
+    "avg_fidelity": 0.5442,
     "constancy": 0.0032,
     "avg_hours_per_day": 3.1828,
     "avg_visits_per_day": 1,
@@ -67485,6 +67653,18 @@
     "hours_per_trip": 0.3331
   },
   {
+    "h3_index": "897b48d186fffff",
+    "year": 2026,
+    "fishing_hours": 1.9081,
+    "unique_trips": 1,
+    "n_active_days": 2,
+    "avg_fidelity": 0.55,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.954,
+    "avg_visits_per_day": 0.5,
+    "hours_per_trip": 1.9081
+  },
+  {
     "h3_index": "897b48d1917ffff",
     "year": 2024,
     "fishing_hours": 0.3864,
@@ -68025,6 +68205,18 @@
     "hours_per_trip": 0.4922
   },
   {
+    "h3_index": "897b48d1bd3ffff",
+    "year": 2026,
+    "fishing_hours": 0.1364,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0393,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.1364,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.1364
+  },
+  {
     "h3_index": "897b48d1bd7ffff",
     "year": 2025,
     "fishing_hours": 0.8036,
@@ -68035,6 +68227,18 @@
     "avg_hours_per_day": 0.8036,
     "avg_visits_per_day": 1,
     "hours_per_trip": 0.8036
+  },
+  {
+    "h3_index": "897b48d1bd7ffff",
+    "year": 2026,
+    "fishing_hours": 1.4247,
+    "unique_trips": 1,
+    "n_active_days": 2,
+    "avg_fidelity": 0.4107,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.7124,
+    "avg_visits_per_day": 0.5,
+    "hours_per_trip": 1.4247
   },
   {
     "h3_index": "897b48d1c43ffff",
@@ -75021,6 +75225,66 @@
     "hours_per_trip": 1.4406
   },
   {
+    "h3_index": "897b48d60a3ffff",
+    "year": 2026,
+    "fishing_hours": 0.3197,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0553,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.3197,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.3197
+  },
+  {
+    "h3_index": "897b48d60a7ffff",
+    "year": 2026,
+    "fishing_hours": 0.0164,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0028,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.0164,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.0164
+  },
+  {
+    "h3_index": "897b48d60afffff",
+    "year": 2026,
+    "fishing_hours": 0.8267,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.143,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.8267,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.8267
+  },
+  {
+    "h3_index": "897b48d60b3ffff",
+    "year": 2026,
+    "fishing_hours": 0.2842,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0491,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.2842,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.2842
+  },
+  {
+    "h3_index": "897b48d60b7ffff",
+    "year": 2026,
+    "fishing_hours": 0.0158,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0027,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.0158,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.0158
+  },
+  {
     "h3_index": "897b48d60c3ffff",
     "year": 2024,
     "fishing_hours": 3.3325,
@@ -76029,6 +76293,18 @@
     "hours_per_trip": 1.4271
   },
   {
+    "h3_index": "897b48d654fffff",
+    "year": 2026,
+    "fishing_hours": 0.0089,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0015,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.0089,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.0089
+  },
+  {
     "h3_index": "897b48d6557ffff",
     "year": 2026,
     "fishing_hours": 2.3231,
@@ -76043,14 +76319,14 @@
   {
     "h3_index": "897b48d6563ffff",
     "year": 2026,
-    "fishing_hours": 0.1314,
-    "unique_trips": 1,
-    "n_active_days": 1,
-    "avg_fidelity": 0.0223,
-    "constancy": 0.0032,
-    "avg_hours_per_day": 0.1314,
+    "fishing_hours": 0.4306,
+    "unique_trips": 2,
+    "n_active_days": 2,
+    "avg_fidelity": 0.037,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.2153,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.1314
+    "hours_per_trip": 0.2153
   },
   {
     "h3_index": "897b48d6567ffff",
@@ -76087,6 +76363,42 @@
     "avg_hours_per_day": 4.1353,
     "avg_visits_per_day": 1,
     "hours_per_trip": 4.1353
+  },
+  {
+    "h3_index": "897b48d6573ffff",
+    "year": 2026,
+    "fishing_hours": 0.0367,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0063,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.0367,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.0367
+  },
+  {
+    "h3_index": "897b48d6577ffff",
+    "year": 2026,
+    "fishing_hours": 0.0375,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0065,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.0375,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.0375
+  },
+  {
+    "h3_index": "897b48d657bffff",
+    "year": 2026,
+    "fishing_hours": 3.9378,
+    "unique_trips": 1,
+    "n_active_days": 2,
+    "avg_fidelity": 0.6809,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 1.9689,
+    "avg_visits_per_day": 0.5,
+    "hours_per_trip": 3.9378
   },
   {
     "h3_index": "897b48d65abffff",
@@ -81959,14 +82271,14 @@
   {
     "h3_index": "897b4a10093ffff",
     "year": 2026,
-    "fishing_hours": 1.4842,
-    "unique_trips": 2,
-    "n_active_days": 2,
-    "avg_fidelity": 0.206,
-    "constancy": 0.0064,
-    "avg_hours_per_day": 0.7421,
+    "fishing_hours": 1.6933,
+    "unique_trips": 3,
+    "n_active_days": 3,
+    "avg_fidelity": 0.1704,
+    "constancy": 0.0096,
+    "avg_hours_per_day": 0.5644,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.7421
+    "hours_per_trip": 0.5644
   },
   {
     "h3_index": "897b4a10097ffff",
@@ -83747,14 +84059,14 @@
   {
     "h3_index": "897b4a1042bffff",
     "year": 2026,
-    "fishing_hours": 3.2653,
-    "unique_trips": 3,
-    "n_active_days": 3,
-    "avg_fidelity": 0.2462,
-    "constancy": 0.0096,
-    "avg_hours_per_day": 1.0884,
+    "fishing_hours": 4.8583,
+    "unique_trips": 4,
+    "n_active_days": 4,
+    "avg_fidelity": 0.3738,
+    "constancy": 0.0128,
+    "avg_hours_per_day": 1.2146,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 1.0884
+    "hours_per_trip": 1.2146
   },
   {
     "h3_index": "897b4a10433ffff",
@@ -83867,14 +84179,14 @@
   {
     "h3_index": "897b4a10467ffff",
     "year": 2026,
-    "fishing_hours": 6.2283,
-    "unique_trips": 5,
-    "n_active_days": 5,
-    "avg_fidelity": 0.2883,
-    "constancy": 0.016,
-    "avg_hours_per_day": 1.2457,
+    "fishing_hours": 6.2603,
+    "unique_trips": 6,
+    "n_active_days": 6,
+    "avg_fidelity": 0.2428,
+    "constancy": 0.0192,
+    "avg_hours_per_day": 1.0434,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 1.2457
+    "hours_per_trip": 1.0434
   },
   {
     "h3_index": "897b4a1046bffff",
@@ -84335,14 +84647,14 @@
   {
     "h3_index": "897b4a10607ffff",
     "year": 2026,
-    "fishing_hours": 1.1928,
-    "unique_trips": 3,
+    "fishing_hours": 3.4119,
+    "unique_trips": 4,
     "n_active_days": 3,
-    "avg_fidelity": 0.097,
+    "avg_fidelity": 0.1696,
     "constancy": 0.0096,
-    "avg_hours_per_day": 0.3976,
-    "avg_visits_per_day": 1,
-    "hours_per_trip": 0.3976
+    "avg_hours_per_day": 1.1373,
+    "avg_visits_per_day": 1.3333,
+    "hours_per_trip": 0.853
   },
   {
     "h3_index": "897b4a1060bffff",
@@ -84403,6 +84715,30 @@
     "avg_hours_per_day": 0.1179,
     "avg_visits_per_day": 1,
     "hours_per_trip": 0.1179
+  },
+  {
+    "h3_index": "897b4a10613ffff",
+    "year": 2026,
+    "fishing_hours": 0.0192,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0033,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.0192,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.0192
+  },
+  {
+    "h3_index": "897b4a10617ffff",
+    "year": 2026,
+    "fishing_hours": 1.0244,
+    "unique_trips": 1,
+    "n_active_days": 2,
+    "avg_fidelity": 0.1789,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.5122,
+    "avg_visits_per_day": 0.5,
+    "hours_per_trip": 1.0244
   },
   {
     "h3_index": "897b4a1061bffff",
@@ -84863,14 +85199,14 @@
   {
     "h3_index": "897b4a106a3ffff",
     "year": 2026,
-    "fishing_hours": 4.9883,
-    "unique_trips": 10,
-    "n_active_days": 9,
-    "avg_fidelity": 0.11,
-    "constancy": 0.0288,
-    "avg_hours_per_day": 0.5543,
-    "avg_visits_per_day": 1.1111,
-    "hours_per_trip": 0.4988
+    "fishing_hours": 5.1331,
+    "unique_trips": 11,
+    "n_active_days": 10,
+    "avg_fidelity": 0.1023,
+    "constancy": 0.0321,
+    "avg_hours_per_day": 0.5133,
+    "avg_visits_per_day": 1.1,
+    "hours_per_trip": 0.4666
   },
   {
     "h3_index": "897b4a106a7ffff",
@@ -84911,14 +85247,14 @@
   {
     "h3_index": "897b4a106abffff",
     "year": 2026,
-    "fishing_hours": 0.2583,
-    "unique_trips": 2,
-    "n_active_days": 2,
-    "avg_fidelity": 0.0359,
-    "constancy": 0.0064,
-    "avg_hours_per_day": 0.1292,
+    "fishing_hours": 2.0725,
+    "unique_trips": 3,
+    "n_active_days": 3,
+    "avg_fidelity": 0.1295,
+    "constancy": 0.0096,
+    "avg_hours_per_day": 0.6908,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.1292
+    "hours_per_trip": 0.6908
   },
   {
     "h3_index": "897b4a106afffff",
@@ -84979,6 +85315,18 @@
     "avg_hours_per_day": 0.2406,
     "avg_visits_per_day": 1,
     "hours_per_trip": 0.2406
+  },
+  {
+    "h3_index": "897b4a106bbffff",
+    "year": 2026,
+    "fishing_hours": 0.5039,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.088,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.5039,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.5039
   },
   {
     "h3_index": "897b4a10807ffff",
@@ -85459,6 +85807,18 @@
     "avg_hours_per_day": 0.3909,
     "avg_visits_per_day": 1,
     "hours_per_trip": 0.3909
+  },
+  {
+    "h3_index": "897b4a108bbffff",
+    "year": 2026,
+    "fishing_hours": 0.2708,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.1287,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.2708,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.2708
   },
   {
     "h3_index": "897b4a108d3ffff",
@@ -88187,14 +88547,14 @@
   {
     "h3_index": "897b4a11063ffff",
     "year": 2026,
-    "fishing_hours": 6.5928,
-    "unique_trips": 6,
-    "n_active_days": 8,
-    "avg_fidelity": 0.2106,
-    "constancy": 0.0256,
-    "avg_hours_per_day": 0.8241,
-    "avg_visits_per_day": 0.75,
-    "hours_per_trip": 1.0988
+    "fishing_hours": 7.6122,
+    "unique_trips": 7,
+    "n_active_days": 9,
+    "avg_fidelity": 0.2221,
+    "constancy": 0.0288,
+    "avg_hours_per_day": 0.8458,
+    "avg_visits_per_day": 0.7778,
+    "hours_per_trip": 1.0875
   },
   {
     "h3_index": "897b4a11067ffff",
@@ -88211,14 +88571,14 @@
   {
     "h3_index": "897b4a11067ffff",
     "year": 2026,
-    "fishing_hours": 3.8997,
-    "unique_trips": 3,
-    "n_active_days": 5,
-    "avg_fidelity": 0.2603,
-    "constancy": 0.016,
-    "avg_hours_per_day": 0.7799,
-    "avg_visits_per_day": 0.6,
-    "hours_per_trip": 1.2999
+    "fishing_hours": 4.3833,
+    "unique_trips": 4,
+    "n_active_days": 6,
+    "avg_fidelity": 0.2297,
+    "constancy": 0.0192,
+    "avg_hours_per_day": 0.7306,
+    "avg_visits_per_day": 0.6667,
+    "hours_per_trip": 1.0958
   },
   {
     "h3_index": "897b4a1106bffff",
@@ -88235,14 +88595,14 @@
   {
     "h3_index": "897b4a1106bffff",
     "year": 2026,
-    "fishing_hours": 14.8583,
-    "unique_trips": 10,
-    "n_active_days": 14,
-    "avg_fidelity": 0.3033,
-    "constancy": 0.0449,
-    "avg_hours_per_day": 1.0613,
-    "avg_visits_per_day": 0.7143,
-    "hours_per_trip": 1.4858
+    "fishing_hours": 15.2486,
+    "unique_trips": 11,
+    "n_active_days": 15,
+    "avg_fidelity": 0.2858,
+    "constancy": 0.0481,
+    "avg_hours_per_day": 1.0166,
+    "avg_visits_per_day": 0.7333,
+    "hours_per_trip": 1.3862
   },
   {
     "h3_index": "897b4a1106fffff",
@@ -88259,14 +88619,14 @@
   {
     "h3_index": "897b4a1106fffff",
     "year": 2026,
-    "fishing_hours": 9.2572,
-    "unique_trips": 4,
-    "n_active_days": 6,
-    "avg_fidelity": 0.2165,
-    "constancy": 0.0192,
-    "avg_hours_per_day": 1.5429,
-    "avg_visits_per_day": 0.6667,
-    "hours_per_trip": 2.3143
+    "fishing_hours": 9.4133,
+    "unique_trips": 5,
+    "n_active_days": 7,
+    "avg_fidelity": 0.1821,
+    "constancy": 0.0224,
+    "avg_hours_per_day": 1.3448,
+    "avg_visits_per_day": 0.7143,
+    "hours_per_trip": 1.8827
   },
   {
     "h3_index": "897b4a11073ffff",
@@ -88307,14 +88667,14 @@
   {
     "h3_index": "897b4a11077ffff",
     "year": 2026,
-    "fishing_hours": 1.4008,
-    "unique_trips": 4,
-    "n_active_days": 4,
-    "avg_fidelity": 0.1081,
-    "constancy": 0.0128,
-    "avg_hours_per_day": 0.3502,
+    "fishing_hours": 1.75,
+    "unique_trips": 5,
+    "n_active_days": 5,
+    "avg_fidelity": 0.1065,
+    "constancy": 0.016,
+    "avg_hours_per_day": 0.35,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.3502
+    "hours_per_trip": 0.35
   },
   {
     "h3_index": "897b4a1107bffff",
@@ -89759,14 +90119,14 @@
   {
     "h3_index": "897b4a112a3ffff",
     "year": 2026,
-    "fishing_hours": 0.2914,
-    "unique_trips": 1,
-    "n_active_days": 1,
-    "avg_fidelity": 0.0505,
-    "constancy": 0.0032,
-    "avg_hours_per_day": 0.2914,
+    "fishing_hours": 0.3128,
+    "unique_trips": 2,
+    "n_active_days": 2,
+    "avg_fidelity": 0.0283,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.1564,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.2914
+    "hours_per_trip": 0.1564
   },
   {
     "h3_index": "897b4a112a7ffff",
@@ -89783,14 +90143,14 @@
   {
     "h3_index": "897b4a112a7ffff",
     "year": 2026,
-    "fishing_hours": 0.7006,
-    "unique_trips": 3,
-    "n_active_days": 3,
-    "avg_fidelity": 0.0482,
-    "constancy": 0.0096,
-    "avg_hours_per_day": 0.2335,
+    "fishing_hours": 1.2006,
+    "unique_trips": 4,
+    "n_active_days": 4,
+    "avg_fidelity": 0.0718,
+    "constancy": 0.0128,
+    "avg_hours_per_day": 0.3001,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.2335
+    "hours_per_trip": 0.3001
   },
   {
     "h3_index": "897b4a112abffff",
@@ -89807,14 +90167,14 @@
   {
     "h3_index": "897b4a112abffff",
     "year": 2026,
-    "fishing_hours": 0.2511,
-    "unique_trips": 1,
-    "n_active_days": 1,
-    "avg_fidelity": 0.0535,
-    "constancy": 0.0032,
-    "avg_hours_per_day": 0.2511,
+    "fishing_hours": 0.2525,
+    "unique_trips": 2,
+    "n_active_days": 2,
+    "avg_fidelity": 0.027,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.1262,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.2511
+    "hours_per_trip": 0.1262
   },
   {
     "h3_index": "897b4a112afffff",
@@ -89831,14 +90191,14 @@
   {
     "h3_index": "897b4a112afffff",
     "year": 2026,
-    "fishing_hours": 1.9717,
-    "unique_trips": 3,
-    "n_active_days": 4,
-    "avg_fidelity": 0.0905,
-    "constancy": 0.0128,
-    "avg_hours_per_day": 0.4929,
-    "avg_visits_per_day": 0.75,
-    "hours_per_trip": 0.6572
+    "fishing_hours": 2.2433,
+    "unique_trips": 4,
+    "n_active_days": 5,
+    "avg_fidelity": 0.0873,
+    "constancy": 0.016,
+    "avg_hours_per_day": 0.4487,
+    "avg_visits_per_day": 0.8,
+    "hours_per_trip": 0.5608
   },
   {
     "h3_index": "897b4a112b3ffff",
@@ -89867,14 +90227,14 @@
   {
     "h3_index": "897b4a112b7ffff",
     "year": 2026,
-    "fishing_hours": 0.3758,
-    "unique_trips": 2,
-    "n_active_days": 2,
-    "avg_fidelity": 0.0952,
-    "constancy": 0.0064,
-    "avg_hours_per_day": 0.1879,
+    "fishing_hours": 0.6836,
+    "unique_trips": 3,
+    "n_active_days": 3,
+    "avg_fidelity": 0.0928,
+    "constancy": 0.0096,
+    "avg_hours_per_day": 0.2279,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.1879
+    "hours_per_trip": 0.2279
   },
   {
     "h3_index": "897b4a112bbffff",
@@ -93227,14 +93587,14 @@
   {
     "h3_index": "897b4a12e8bffff",
     "year": 2023,
-    "fishing_hours": 0.0478,
-    "unique_trips": 1,
-    "n_active_days": 1,
-    "avg_fidelity": 0.148,
-    "constancy": 0.0027,
-    "avg_hours_per_day": 0.0478,
+    "fishing_hours": 0.0983,
+    "unique_trips": 2,
+    "n_active_days": 2,
+    "avg_fidelity": 0.2511,
+    "constancy": 0.0055,
+    "avg_hours_per_day": 0.0492,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.0478
+    "hours_per_trip": 0.0492
   },
   {
     "h3_index": "897b4a12e8fffff",
@@ -93323,14 +93683,14 @@
   {
     "h3_index": "897b4a12ed7ffff",
     "year": 2023,
-    "fishing_hours": 0.125,
-    "unique_trips": 1,
-    "n_active_days": 1,
-    "avg_fidelity": 1,
-    "constancy": 0.0027,
-    "avg_hours_per_day": 0.125,
+    "fishing_hours": 0.2172,
+    "unique_trips": 2,
+    "n_active_days": 2,
+    "avg_fidelity": 0.823,
+    "constancy": 0.0055,
+    "avg_hours_per_day": 0.1086,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.125
+    "hours_per_trip": 0.1086
   },
   {
     "h3_index": "897b4a14003ffff",
@@ -115994,7 +116354,7 @@
     "fishing_hours": 1.5247,
     "unique_trips": 5,
     "n_active_days": 5,
-    "avg_fidelity": 0.1117,
+    "avg_fidelity": 0.1116,
     "constancy": 0.016,
     "avg_hours_per_day": 0.3049,
     "avg_visits_per_day": 1,
@@ -117374,7 +117734,7 @@
     "fishing_hours": 9.3603,
     "unique_trips": 26,
     "n_active_days": 24,
-    "avg_fidelity": 0.1135,
+    "avg_fidelity": 0.1134,
     "constancy": 0.0769,
     "avg_hours_per_day": 0.39,
     "avg_visits_per_day": 1.0833,
@@ -117506,7 +117866,7 @@
     "fishing_hours": 51.7714,
     "unique_trips": 64,
     "n_active_days": 55,
-    "avg_fidelity": 0.2316,
+    "avg_fidelity": 0.2321,
     "constancy": 0.1763,
     "avg_hours_per_day": 0.9413,
     "avg_visits_per_day": 1.1636,
@@ -117530,7 +117890,7 @@
     "fishing_hours": 4.6664,
     "unique_trips": 12,
     "n_active_days": 10,
-    "avg_fidelity": 0.1342,
+    "avg_fidelity": 0.1385,
     "constancy": 0.0321,
     "avg_hours_per_day": 0.4666,
     "avg_visits_per_day": 1.2,
@@ -117734,7 +118094,7 @@
     "fishing_hours": 30.2356,
     "unique_trips": 54,
     "n_active_days": 50,
-    "avg_fidelity": 0.1492,
+    "avg_fidelity": 0.1497,
     "constancy": 0.1603,
     "avg_hours_per_day": 0.6047,
     "avg_visits_per_day": 1.08,
@@ -118319,14 +118679,14 @@
   {
     "h3_index": "897b4a48da7ffff",
     "year": 2026,
-    "fishing_hours": 33.5939,
-    "unique_trips": 50,
-    "n_active_days": 50,
-    "avg_fidelity": 0.3434,
-    "constancy": 0.1603,
-    "avg_hours_per_day": 0.6719,
+    "fishing_hours": 34.1983,
+    "unique_trips": 51,
+    "n_active_days": 51,
+    "avg_fidelity": 0.3547,
+    "constancy": 0.1635,
+    "avg_hours_per_day": 0.6706,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.6719
+    "hours_per_trip": 0.6706
   },
   {
     "h3_index": "897b4a48dabffff",
@@ -118367,14 +118727,14 @@
   {
     "h3_index": "897b4a48dafffff",
     "year": 2026,
-    "fishing_hours": 23.0592,
-    "unique_trips": 50,
-    "n_active_days": 50,
-    "avg_fidelity": 0.2946,
-    "constancy": 0.1603,
-    "avg_hours_per_day": 0.4612,
+    "fishing_hours": 23.1086,
+    "unique_trips": 51,
+    "n_active_days": 51,
+    "avg_fidelity": 0.2903,
+    "constancy": 0.1635,
+    "avg_hours_per_day": 0.4531,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.4612
+    "hours_per_trip": 0.4531
   },
   {
     "h3_index": "897b4a48db3ffff",
@@ -118994,7 +119354,7 @@
     "fishing_hours": 0.3689,
     "unique_trips": 1,
     "n_active_days": 1,
-    "avg_fidelity": 0.0891,
+    "avg_fidelity": 0.0895,
     "constancy": 0.0032,
     "avg_hours_per_day": 0.3689,
     "avg_visits_per_day": 1,
@@ -119006,7 +119366,7 @@
     "fishing_hours": 1.6331,
     "unique_trips": 3,
     "n_active_days": 3,
-    "avg_fidelity": 0.1834,
+    "avg_fidelity": 0.1826,
     "constancy": 0.0096,
     "avg_hours_per_day": 0.5444,
     "avg_visits_per_day": 1,
@@ -119630,7 +119990,7 @@
     "fishing_hours": 0.7678,
     "unique_trips": 3,
     "n_active_days": 2,
-    "avg_fidelity": 0.0945,
+    "avg_fidelity": 0.0952,
     "constancy": 0.0064,
     "avg_hours_per_day": 0.3839,
     "avg_visits_per_day": 1.5,
@@ -119654,7 +120014,7 @@
     "fishing_hours": 0.6511,
     "unique_trips": 3,
     "n_active_days": 3,
-    "avg_fidelity": 0.1749,
+    "avg_fidelity": 0.1751,
     "constancy": 0.0096,
     "avg_hours_per_day": 0.217,
     "avg_visits_per_day": 1,
@@ -119702,7 +120062,7 @@
     "fishing_hours": 0.6206,
     "unique_trips": 2,
     "n_active_days": 1,
-    "avg_fidelity": 0.1478,
+    "avg_fidelity": 0.1497,
     "constancy": 0.0032,
     "avg_hours_per_day": 0.6206,
     "avg_visits_per_day": 2,
@@ -120626,7 +120986,7 @@
     "fishing_hours": 2.2775,
     "unique_trips": 3,
     "n_active_days": 3,
-    "avg_fidelity": 0.2837,
+    "avg_fidelity": 0.2835,
     "constancy": 0.0096,
     "avg_hours_per_day": 0.7592,
     "avg_visits_per_day": 1,
@@ -121295,14 +121655,14 @@
   {
     "h3_index": "897b4a4f66bffff",
     "year": 2026,
-    "fishing_hours": 7.7408,
-    "unique_trips": 15,
-    "n_active_days": 15,
-    "avg_fidelity": 0.2102,
-    "constancy": 0.0481,
-    "avg_hours_per_day": 0.5161,
+    "fishing_hours": 7.7439,
+    "unique_trips": 16,
+    "n_active_days": 16,
+    "avg_fidelity": 0.1973,
+    "constancy": 0.0513,
+    "avg_hours_per_day": 0.484,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.5161
+    "hours_per_trip": 0.484
   },
   {
     "h3_index": "897b4a4f66fffff",
@@ -127211,26 +127571,26 @@
   {
     "h3_index": "897b4a84027ffff",
     "year": 2026,
-    "fishing_hours": 2.7631,
-    "unique_trips": 1,
-    "n_active_days": 3,
-    "avg_fidelity": 0.1245,
-    "constancy": 0.0096,
-    "avg_hours_per_day": 0.921,
-    "avg_visits_per_day": 0.3333,
-    "hours_per_trip": 2.7631
+    "fishing_hours": 3.8203,
+    "unique_trips": 2,
+    "n_active_days": 4,
+    "avg_fidelity": 0.114,
+    "constancy": 0.0128,
+    "avg_hours_per_day": 0.9551,
+    "avg_visits_per_day": 0.5,
+    "hours_per_trip": 1.9101
   },
   {
     "h3_index": "897b4a84037ffff",
     "year": 2026,
-    "fishing_hours": 0.1419,
-    "unique_trips": 1,
-    "n_active_days": 1,
-    "avg_fidelity": 0.0064,
-    "constancy": 0.0032,
-    "avg_hours_per_day": 0.1419,
+    "fishing_hours": 0.2797,
+    "unique_trips": 2,
+    "n_active_days": 2,
+    "avg_fidelity": 0.0099,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.1399,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.1419
+    "hours_per_trip": 0.1399
   },
   {
     "h3_index": "897b4a8414bffff",
@@ -127283,14 +127643,14 @@
   {
     "h3_index": "897b4a84387ffff",
     "year": 2026,
-    "fishing_hours": 0.4978,
-    "unique_trips": 1,
-    "n_active_days": 2,
-    "avg_fidelity": 0.0224,
-    "constancy": 0.0064,
-    "avg_hours_per_day": 0.2489,
-    "avg_visits_per_day": 0.5,
-    "hours_per_trip": 0.4978
+    "fishing_hours": 7.3211,
+    "unique_trips": 2,
+    "n_active_days": 3,
+    "avg_fidelity": 0.3451,
+    "constancy": 0.0096,
+    "avg_hours_per_day": 2.4404,
+    "avg_visits_per_day": 0.6667,
+    "hours_per_trip": 3.6606
   },
   {
     "h3_index": "897b4a84397ffff",
@@ -133653,6 +134013,18 @@
     "hours_per_trip": 0.8917
   },
   {
+    "h3_index": "897b4ac251bffff",
+    "year": 2026,
+    "fishing_hours": 0.0478,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0741,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.0478,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.0478
+  },
+  {
     "h3_index": "897b4ac2523ffff",
     "year": 2024,
     "fishing_hours": 0.0106,
@@ -134001,6 +134373,18 @@
     "hours_per_trip": 1.3281
   },
   {
+    "h3_index": "897b4ac25c3ffff",
+    "year": 2026,
+    "fishing_hours": 0.04,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0621,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.04,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.04
+  },
+  {
     "h3_index": "897b4ac25c7ffff",
     "year": 2024,
     "fishing_hours": 0.6517,
@@ -134035,6 +134419,18 @@
     "avg_hours_per_day": 0.1781,
     "avg_visits_per_day": 1,
     "hours_per_trip": 0.1781
+  },
+  {
+    "h3_index": "897b4ac25cfffff",
+    "year": 2026,
+    "fishing_hours": 0.5306,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.8233,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.5306,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.5306
   },
   {
     "h3_index": "897b4ac25d3ffff",
@@ -139355,14 +139751,14 @@
   {
     "h3_index": "897b4ad090bffff",
     "year": 2026,
-    "fishing_hours": 17.835,
-    "unique_trips": 12,
-    "n_active_days": 14,
-    "avg_fidelity": 0.2711,
-    "constancy": 0.0449,
-    "avg_hours_per_day": 1.2739,
-    "avg_visits_per_day": 0.8571,
-    "hours_per_trip": 1.4863
+    "fishing_hours": 26.1817,
+    "unique_trips": 14,
+    "n_active_days": 16,
+    "avg_fidelity": 0.2937,
+    "constancy": 0.0513,
+    "avg_hours_per_day": 1.6364,
+    "avg_visits_per_day": 0.875,
+    "hours_per_trip": 1.8701
   },
   {
     "h3_index": "897b4ad090fffff",
@@ -139499,14 +139895,14 @@
   {
     "h3_index": "897b4ad0943ffff",
     "year": 2026,
-    "fishing_hours": 32.2711,
-    "unique_trips": 35,
-    "n_active_days": 31,
-    "avg_fidelity": 0.1255,
-    "constancy": 0.0994,
-    "avg_hours_per_day": 1.041,
-    "avg_visits_per_day": 1.129,
-    "hours_per_trip": 0.922
+    "fishing_hours": 33.1411,
+    "unique_trips": 36,
+    "n_active_days": 32,
+    "avg_fidelity": 0.126,
+    "constancy": 0.1026,
+    "avg_hours_per_day": 1.0357,
+    "avg_visits_per_day": 1.125,
+    "hours_per_trip": 0.9206
   },
   {
     "h3_index": "897b4ad0947ffff",
@@ -139523,14 +139919,14 @@
   {
     "h3_index": "897b4ad0947ffff",
     "year": 2026,
-    "fishing_hours": 36.2542,
-    "unique_trips": 30,
-    "n_active_days": 28,
-    "avg_fidelity": 0.2317,
-    "constancy": 0.0897,
-    "avg_hours_per_day": 1.2948,
-    "avg_visits_per_day": 1.0714,
-    "hours_per_trip": 1.2085
+    "fishing_hours": 37.3422,
+    "unique_trips": 32,
+    "n_active_days": 29,
+    "avg_fidelity": 0.2207,
+    "constancy": 0.0929,
+    "avg_hours_per_day": 1.2877,
+    "avg_visits_per_day": 1.1034,
+    "hours_per_trip": 1.1669
   },
   {
     "h3_index": "897b4ad094bffff",
@@ -139547,26 +139943,26 @@
   {
     "h3_index": "897b4ad094bffff",
     "year": 2026,
-    "fishing_hours": 1.0094,
-    "unique_trips": 8,
-    "n_active_days": 9,
-    "avg_fidelity": 0.0353,
-    "constancy": 0.0288,
-    "avg_hours_per_day": 0.1122,
-    "avg_visits_per_day": 0.8889,
-    "hours_per_trip": 0.1262
+    "fishing_hours": 1.0161,
+    "unique_trips": 9,
+    "n_active_days": 10,
+    "avg_fidelity": 0.0315,
+    "constancy": 0.0321,
+    "avg_hours_per_day": 0.1016,
+    "avg_visits_per_day": 0.9,
+    "hours_per_trip": 0.1129
   },
   {
     "h3_index": "897b4ad094fffff",
     "year": 2026,
-    "fishing_hours": 7.5258,
-    "unique_trips": 22,
-    "n_active_days": 24,
-    "avg_fidelity": 0.0507,
-    "constancy": 0.0769,
-    "avg_hours_per_day": 0.3136,
-    "avg_visits_per_day": 0.9167,
-    "hours_per_trip": 0.3421
+    "fishing_hours": 7.9908,
+    "unique_trips": 23,
+    "n_active_days": 25,
+    "avg_fidelity": 0.0519,
+    "constancy": 0.0801,
+    "avg_hours_per_day": 0.3196,
+    "avg_visits_per_day": 0.92,
+    "hours_per_trip": 0.3474
   },
   {
     "h3_index": "897b4ad0953ffff",
@@ -139595,14 +139991,14 @@
   {
     "h3_index": "897b4ad0953ffff",
     "year": 2026,
-    "fishing_hours": 29.2133,
-    "unique_trips": 23,
+    "fishing_hours": 30.0828,
+    "unique_trips": 24,
     "n_active_days": 27,
-    "avg_fidelity": 0.2416,
+    "avg_fidelity": 0.2376,
     "constancy": 0.0865,
-    "avg_hours_per_day": 1.082,
-    "avg_visits_per_day": 0.8519,
-    "hours_per_trip": 1.2701
+    "avg_hours_per_day": 1.1142,
+    "avg_visits_per_day": 0.8889,
+    "hours_per_trip": 1.2534
   },
   {
     "h3_index": "897b4ad0957ffff",
@@ -139619,14 +140015,14 @@
   {
     "h3_index": "897b4ad0957ffff",
     "year": 2026,
-    "fishing_hours": 28.6439,
-    "unique_trips": 24,
-    "n_active_days": 26,
-    "avg_fidelity": 0.2362,
-    "constancy": 0.0833,
-    "avg_hours_per_day": 1.1017,
-    "avg_visits_per_day": 0.9231,
-    "hours_per_trip": 1.1935
+    "fishing_hours": 31.3694,
+    "unique_trips": 26,
+    "n_active_days": 28,
+    "avg_fidelity": 0.2354,
+    "constancy": 0.0897,
+    "avg_hours_per_day": 1.1203,
+    "avg_visits_per_day": 0.9286,
+    "hours_per_trip": 1.2065
   },
   {
     "h3_index": "897b4ad095bffff",
@@ -139655,14 +140051,14 @@
   {
     "h3_index": "897b4ad095bffff",
     "year": 2026,
-    "fishing_hours": 16.2397,
-    "unique_trips": 18,
-    "n_active_days": 24,
-    "avg_fidelity": 0.155,
-    "constancy": 0.0769,
-    "avg_hours_per_day": 0.6767,
-    "avg_visits_per_day": 0.75,
-    "hours_per_trip": 0.9022
+    "fishing_hours": 16.6203,
+    "unique_trips": 19,
+    "n_active_days": 25,
+    "avg_fidelity": 0.1502,
+    "constancy": 0.0801,
+    "avg_hours_per_day": 0.6648,
+    "avg_visits_per_day": 0.76,
+    "hours_per_trip": 0.8748
   },
   {
     "h3_index": "897b4ad0963ffff",
@@ -139787,14 +140183,14 @@
   {
     "h3_index": "897b4ad0973ffff",
     "year": 2026,
-    "fishing_hours": 21.0433,
-    "unique_trips": 6,
-    "n_active_days": 9,
-    "avg_fidelity": 0.4751,
-    "constancy": 0.0288,
-    "avg_hours_per_day": 2.3381,
-    "avg_visits_per_day": 0.6667,
-    "hours_per_trip": 3.5072
+    "fishing_hours": 21.6694,
+    "unique_trips": 7,
+    "n_active_days": 10,
+    "avg_fidelity": 0.4163,
+    "constancy": 0.0321,
+    "avg_hours_per_day": 2.1669,
+    "avg_visits_per_day": 0.7,
+    "hours_per_trip": 3.0956
   },
   {
     "h3_index": "897b4ad0977ffff",
@@ -139823,14 +140219,14 @@
   {
     "h3_index": "897b4ad097bffff",
     "year": 2026,
-    "fishing_hours": 1.5953,
-    "unique_trips": 8,
-    "n_active_days": 8,
-    "avg_fidelity": 0.0336,
-    "constancy": 0.0256,
-    "avg_hours_per_day": 0.1994,
-    "avg_visits_per_day": 1,
-    "hours_per_trip": 0.1994
+    "fishing_hours": 1.6997,
+    "unique_trips": 10,
+    "n_active_days": 9,
+    "avg_fidelity": 0.0285,
+    "constancy": 0.0288,
+    "avg_hours_per_day": 0.1889,
+    "avg_visits_per_day": 1.1111,
+    "hours_per_trip": 0.17
   },
   {
     "h3_index": "897b4ad0983ffff",
@@ -140015,14 +140411,14 @@
   {
     "h3_index": "897b4ad09cfffff",
     "year": 2026,
-    "fishing_hours": 10.0994,
-    "unique_trips": 10,
-    "n_active_days": 13,
-    "avg_fidelity": 0.1681,
-    "constancy": 0.0417,
-    "avg_hours_per_day": 0.7769,
-    "avg_visits_per_day": 0.7692,
-    "hours_per_trip": 1.0099
+    "fishing_hours": 10.4928,
+    "unique_trips": 11,
+    "n_active_days": 14,
+    "avg_fidelity": 0.1588,
+    "constancy": 0.0449,
+    "avg_hours_per_day": 0.7495,
+    "avg_visits_per_day": 0.7857,
+    "hours_per_trip": 0.9539
   },
   {
     "h3_index": "897b4ad09d3ffff",
@@ -141407,14 +141803,14 @@
   {
     "h3_index": "897b4ad0cafffff",
     "year": 2026,
-    "fishing_hours": 0.3639,
-    "unique_trips": 2,
-    "n_active_days": 2,
-    "avg_fidelity": 0.147,
-    "constancy": 0.0064,
-    "avg_hours_per_day": 0.1819,
+    "fishing_hours": 0.39,
+    "unique_trips": 3,
+    "n_active_days": 3,
+    "avg_fidelity": 0.1115,
+    "constancy": 0.0096,
+    "avg_hours_per_day": 0.13,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.1819
+    "hours_per_trip": 0.13
   },
   {
     "h3_index": "897b4ad0cbbffff",
@@ -183622,14 +184018,14 @@
   {
     "h3_index": "897b4c192c3ffff",
     "year": 2026,
-    "fishing_hours": 4.2936,
-    "unique_trips": 14,
-    "n_active_days": 14,
-    "avg_fidelity": 0.1246,
-    "constancy": 0.0449,
-    "avg_hours_per_day": 0.3067,
+    "fishing_hours": 4.4439,
+    "unique_trips": 15,
+    "n_active_days": 15,
+    "avg_fidelity": 0.1231,
+    "constancy": 0.0481,
+    "avg_hours_per_day": 0.2963,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.3067
+    "hours_per_trip": 0.2963
   },
   {
     "h3_index": "897b4c192c7ffff",
@@ -183670,14 +184066,14 @@
   {
     "h3_index": "897b4c192cbffff",
     "year": 2026,
-    "fishing_hours": 4.6089,
-    "unique_trips": 14,
-    "n_active_days": 13,
-    "avg_fidelity": 0.1375,
-    "constancy": 0.0417,
-    "avg_hours_per_day": 0.3545,
-    "avg_visits_per_day": 1.0769,
-    "hours_per_trip": 0.3292
+    "fishing_hours": 4.7597,
+    "unique_trips": 15,
+    "n_active_days": 14,
+    "avg_fidelity": 0.1352,
+    "constancy": 0.0449,
+    "avg_hours_per_day": 0.34,
+    "avg_visits_per_day": 1.0714,
+    "hours_per_trip": 0.3173
   },
   {
     "h3_index": "897b4c192cfffff",
@@ -183694,14 +184090,14 @@
   {
     "h3_index": "897b4c192d3ffff",
     "year": 2026,
-    "fishing_hours": 1.3958,
-    "unique_trips": 7,
-    "n_active_days": 7,
-    "avg_fidelity": 0.1128,
-    "constancy": 0.0224,
-    "avg_hours_per_day": 0.1994,
+    "fishing_hours": 1.4075,
+    "unique_trips": 8,
+    "n_active_days": 8,
+    "avg_fidelity": 0.0997,
+    "constancy": 0.0256,
+    "avg_hours_per_day": 0.1759,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.1994
+    "hours_per_trip": 0.1759
   },
   {
     "h3_index": "897b4c192d7ffff",
@@ -183742,14 +184138,14 @@
   {
     "h3_index": "897b4c192dbffff",
     "year": 2026,
-    "fishing_hours": 4.3592,
-    "unique_trips": 14,
-    "n_active_days": 14,
-    "avg_fidelity": 0.168,
-    "constancy": 0.0449,
-    "avg_hours_per_day": 0.3114,
+    "fishing_hours": 4.8475,
+    "unique_trips": 15,
+    "n_active_days": 15,
+    "avg_fidelity": 0.1789,
+    "constancy": 0.0481,
+    "avg_hours_per_day": 0.3232,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.3114
+    "hours_per_trip": 0.3232
   },
   {
     "h3_index": "897b4c19843ffff",
@@ -191168,6 +191564,30 @@
     "hours_per_trip": 0.0572
   },
   {
+    "h3_index": "897b4c39a4fffff",
+    "year": 2026,
+    "fishing_hours": 0.2872,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.2027,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.2872,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.2872
+  },
+  {
+    "h3_index": "897b4c39a6bffff",
+    "year": 2026,
+    "fishing_hours": 0.25,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.1764,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.25,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.25
+  },
+  {
     "h3_index": "897b4c39ac3ffff",
     "year": 2024,
     "fishing_hours": 0.0208,
@@ -191178,6 +191598,18 @@
     "avg_hours_per_day": 0.0208,
     "avg_visits_per_day": 1,
     "hours_per_trip": 0.0208
+  },
+  {
+    "h3_index": "897b4c39ac3ffff",
+    "year": 2026,
+    "fishing_hours": 0.0019,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0014,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.0019,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.0019
   },
   {
     "h3_index": "897b4c39ac7ffff",
@@ -191202,6 +191634,18 @@
     "avg_hours_per_day": 0.2931,
     "avg_visits_per_day": 1,
     "hours_per_trip": 0.2931
+  },
+  {
+    "h3_index": "897b4c39acfffff",
+    "year": 2026,
+    "fishing_hours": 0.5811,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.41,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.5811,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.5811
   },
   {
     "h3_index": "897b4c39adbffff",
@@ -192560,6 +193004,18 @@
     "hours_per_trip": 0.0246
   },
   {
+    "h3_index": "897b4c45403ffff",
+    "year": 2026,
+    "fishing_hours": 0.2539,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.1787,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.2539,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.2539
+  },
+  {
     "h3_index": "897b4c45413ffff",
     "year": 2026,
     "fishing_hours": 0.3681,
@@ -192742,14 +193198,14 @@
   {
     "h3_index": "897b4c45613ffff",
     "year": 2026,
-    "fishing_hours": 0.7233,
-    "unique_trips": 5,
-    "n_active_days": 5,
-    "avg_fidelity": 0.1524,
-    "constancy": 0.016,
-    "avg_hours_per_day": 0.1447,
+    "fishing_hours": 0.9417,
+    "unique_trips": 6,
+    "n_active_days": 6,
+    "avg_fidelity": 0.1756,
+    "constancy": 0.0192,
+    "avg_hours_per_day": 0.1569,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.1447
+    "hours_per_trip": 0.1569
   },
   {
     "h3_index": "897b4c4561bffff",
@@ -192778,38 +193234,38 @@
   {
     "h3_index": "897b4c45647ffff",
     "year": 2026,
-    "fishing_hours": 14.145,
-    "unique_trips": 40,
-    "n_active_days": 34,
-    "avg_fidelity": 0.2645,
-    "constancy": 0.109,
-    "avg_hours_per_day": 0.416,
-    "avg_visits_per_day": 1.1765,
-    "hours_per_trip": 0.3536
+    "fishing_hours": 14.9761,
+    "unique_trips": 41,
+    "n_active_days": 35,
+    "avg_fidelity": 0.2723,
+    "constancy": 0.1122,
+    "avg_hours_per_day": 0.4279,
+    "avg_visits_per_day": 1.1714,
+    "hours_per_trip": 0.3653
   },
   {
     "h3_index": "897b4c4564fffff",
     "year": 2026,
-    "fishing_hours": 5.5156,
-    "unique_trips": 32,
-    "n_active_days": 30,
-    "avg_fidelity": 0.1462,
-    "constancy": 0.0962,
-    "avg_hours_per_day": 0.1839,
-    "avg_visits_per_day": 1.0667,
-    "hours_per_trip": 0.1724
+    "fishing_hours": 5.5286,
+    "unique_trips": 33,
+    "n_active_days": 31,
+    "avg_fidelity": 0.1421,
+    "constancy": 0.0994,
+    "avg_hours_per_day": 0.1783,
+    "avg_visits_per_day": 1.0645,
+    "hours_per_trip": 0.1675
   },
   {
     "h3_index": "897b4c45657ffff",
     "year": 2026,
-    "fishing_hours": 5.7872,
-    "unique_trips": 27,
-    "n_active_days": 25,
-    "avg_fidelity": 0.1616,
-    "constancy": 0.0801,
-    "avg_hours_per_day": 0.2315,
-    "avg_visits_per_day": 1.08,
-    "hours_per_trip": 0.2143
+    "fishing_hours": 6.1228,
+    "unique_trips": 28,
+    "n_active_days": 26,
+    "avg_fidelity": 0.1643,
+    "constancy": 0.0833,
+    "avg_hours_per_day": 0.2355,
+    "avg_visits_per_day": 1.0769,
+    "hours_per_trip": 0.2187
   },
   {
     "h3_index": "897b4c4567bffff",
@@ -192862,14 +193318,14 @@
   {
     "h3_index": "897b4c4568fffff",
     "year": 2026,
-    "fishing_hours": 4.0789,
-    "unique_trips": 10,
-    "n_active_days": 10,
-    "avg_fidelity": 0.3619,
-    "constancy": 0.0321,
-    "avg_hours_per_day": 0.4079,
+    "fishing_hours": 4.61,
+    "unique_trips": 11,
+    "n_active_days": 11,
+    "avg_fidelity": 0.3934,
+    "constancy": 0.0353,
+    "avg_hours_per_day": 0.4191,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.4079
+    "hours_per_trip": 0.4191
   },
   {
     "h3_index": "897b4c45697ffff",
@@ -193594,26 +194050,26 @@
   {
     "h3_index": "897b4c4e523ffff",
     "year": 2026,
-    "fishing_hours": 0.7828,
-    "unique_trips": 11,
-    "n_active_days": 9,
-    "avg_fidelity": 0.0537,
-    "constancy": 0.0288,
-    "avg_hours_per_day": 0.087,
-    "avg_visits_per_day": 1.2222,
-    "hours_per_trip": 0.0712
+    "fishing_hours": 0.8028,
+    "unique_trips": 12,
+    "n_active_days": 10,
+    "avg_fidelity": 0.0503,
+    "constancy": 0.0321,
+    "avg_hours_per_day": 0.0803,
+    "avg_visits_per_day": 1.2,
+    "hours_per_trip": 0.0669
   },
   {
     "h3_index": "897b4c4e527ffff",
     "year": 2026,
-    "fishing_hours": 47.0069,
-    "unique_trips": 78,
-    "n_active_days": 56,
-    "avg_fidelity": 0.5785,
-    "constancy": 0.1795,
-    "avg_hours_per_day": 0.8394,
-    "avg_visits_per_day": 1.3929,
-    "hours_per_trip": 0.6027
+    "fishing_hours": 47.4603,
+    "unique_trips": 79,
+    "n_active_days": 57,
+    "avg_fidelity": 0.5749,
+    "constancy": 0.1827,
+    "avg_hours_per_day": 0.8326,
+    "avg_visits_per_day": 1.386,
+    "hours_per_trip": 0.6008
   },
   {
     "h3_index": "897b4c4e52fffff",
@@ -193642,14 +194098,14 @@
   {
     "h3_index": "897b4c4e537ffff",
     "year": 2026,
-    "fishing_hours": 12.5472,
-    "unique_trips": 53,
-    "n_active_days": 39,
-    "avg_fidelity": 0.1922,
-    "constancy": 0.125,
-    "avg_hours_per_day": 0.3217,
-    "avg_visits_per_day": 1.359,
-    "hours_per_trip": 0.2367
+    "fishing_hours": 13.3611,
+    "unique_trips": 54,
+    "n_active_days": 40,
+    "avg_fidelity": 0.1985,
+    "constancy": 0.1282,
+    "avg_hours_per_day": 0.334,
+    "avg_visits_per_day": 1.35,
+    "hours_per_trip": 0.2474
   },
   {
     "h3_index": "897b4c4e5a3ffff",
@@ -193702,26 +194158,26 @@
   {
     "h3_index": "897b4c4e5b3ffff",
     "year": 2026,
-    "fishing_hours": 0.2811,
-    "unique_trips": 4,
-    "n_active_days": 4,
-    "avg_fidelity": 0.0584,
-    "constancy": 0.0128,
-    "avg_hours_per_day": 0.0703,
+    "fishing_hours": 0.3075,
+    "unique_trips": 5,
+    "n_active_days": 5,
+    "avg_fidelity": 0.0502,
+    "constancy": 0.016,
+    "avg_hours_per_day": 0.0615,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.0703
+    "hours_per_trip": 0.0615
   },
   {
     "h3_index": "897b4c4e5b7ffff",
     "year": 2026,
-    "fishing_hours": 10.8203,
-    "unique_trips": 42,
-    "n_active_days": 38,
-    "avg_fidelity": 0.2017,
-    "constancy": 0.1218,
-    "avg_hours_per_day": 0.2847,
-    "avg_visits_per_day": 1.1053,
-    "hours_per_trip": 0.2576
+    "fishing_hours": 11.0214,
+    "unique_trips": 43,
+    "n_active_days": 39,
+    "avg_fidelity": 0.2,
+    "constancy": 0.125,
+    "avg_hours_per_day": 0.2826,
+    "avg_visits_per_day": 1.1026,
+    "hours_per_trip": 0.2563
   },
   {
     "h3_index": "897b4c4e8c3ffff",
@@ -194482,14 +194938,14 @@
   {
     "h3_index": "897b4c56527ffff",
     "year": 2026,
-    "fishing_hours": 1.0406,
-    "unique_trips": 4,
-    "n_active_days": 4,
-    "avg_fidelity": 0.0951,
-    "constancy": 0.0128,
-    "avg_hours_per_day": 0.2601,
+    "fishing_hours": 1.0942,
+    "unique_trips": 5,
+    "n_active_days": 5,
+    "avg_fidelity": 0.0834,
+    "constancy": 0.016,
+    "avg_hours_per_day": 0.2188,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.2601
+    "hours_per_trip": 0.2188
   },
   {
     "h3_index": "897b4c5652bffff",
@@ -194542,14 +194998,14 @@
   {
     "h3_index": "897b4c56537ffff",
     "year": 2026,
-    "fishing_hours": 5.9281,
-    "unique_trips": 13,
-    "n_active_days": 13,
-    "avg_fidelity": 0.2169,
-    "constancy": 0.0417,
-    "avg_hours_per_day": 0.456,
+    "fishing_hours": 6.3331,
+    "unique_trips": 14,
+    "n_active_days": 14,
+    "avg_fidelity": 0.2211,
+    "constancy": 0.0449,
+    "avg_hours_per_day": 0.4524,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.456
+    "hours_per_trip": 0.4524
   },
   {
     "h3_index": "897b4c56543ffff",
@@ -194610,6 +195066,18 @@
     "avg_hours_per_day": 0.2617,
     "avg_visits_per_day": 1,
     "hours_per_trip": 0.2617
+  },
+  {
+    "h3_index": "897b4c565afffff",
+    "year": 2026,
+    "fishing_hours": 0.2111,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.1435,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.2111,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.2111
   },
   {
     "h3_index": "897b4c565cbffff",
@@ -195322,14 +195790,14 @@
   {
     "h3_index": "897b4c60183ffff",
     "year": 2026,
-    "fishing_hours": 1.5986,
-    "unique_trips": 22,
-    "n_active_days": 20,
-    "avg_fidelity": 0.0471,
-    "constancy": 0.0641,
-    "avg_hours_per_day": 0.0799,
-    "avg_visits_per_day": 1.1,
-    "hours_per_trip": 0.0727
+    "fishing_hours": 1.6178,
+    "unique_trips": 23,
+    "n_active_days": 21,
+    "avg_fidelity": 0.0452,
+    "constancy": 0.0673,
+    "avg_hours_per_day": 0.077,
+    "avg_visits_per_day": 1.0952,
+    "hours_per_trip": 0.0703
   },
   {
     "h3_index": "897b4c60187ffff",
@@ -195358,14 +195826,14 @@
   {
     "h3_index": "897b4c60187ffff",
     "year": 2026,
-    "fishing_hours": 2.4814,
-    "unique_trips": 8,
-    "n_active_days": 9,
-    "avg_fidelity": 0.0739,
-    "constancy": 0.0288,
-    "avg_hours_per_day": 0.2757,
-    "avg_visits_per_day": 0.8889,
-    "hours_per_trip": 0.3102
+    "fishing_hours": 2.7433,
+    "unique_trips": 9,
+    "n_active_days": 10,
+    "avg_fidelity": 0.0699,
+    "constancy": 0.0321,
+    "avg_hours_per_day": 0.2743,
+    "avg_visits_per_day": 0.9,
+    "hours_per_trip": 0.3048
   },
   {
     "h3_index": "897b4c6018bffff",
@@ -195430,14 +195898,14 @@
   {
     "h3_index": "897b4c6018fffff",
     "year": 2026,
-    "fishing_hours": 3.3989,
+    "fishing_hours": 3.4006,
     "unique_trips": 10,
     "n_active_days": 11,
-    "avg_fidelity": 0.0533,
+    "avg_fidelity": 0.0534,
     "constancy": 0.0353,
-    "avg_hours_per_day": 0.309,
+    "avg_hours_per_day": 0.3091,
     "avg_visits_per_day": 0.9091,
-    "hours_per_trip": 0.3399
+    "hours_per_trip": 0.3401
   },
   {
     "h3_index": "897b4c60193ffff",
@@ -197014,14 +197482,14 @@
   {
     "h3_index": "897b4c60a43ffff",
     "year": 2026,
-    "fishing_hours": 0.0456,
-    "unique_trips": 1,
-    "n_active_days": 1,
-    "avg_fidelity": 0.0059,
-    "constancy": 0.0032,
-    "avg_hours_per_day": 0.0456,
+    "fishing_hours": 0.0642,
+    "unique_trips": 2,
+    "n_active_days": 2,
+    "avg_fidelity": 0.0041,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.0321,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.0456
+    "hours_per_trip": 0.0321
   },
   {
     "h3_index": "897b4c60a47ffff",
@@ -197034,6 +197502,18 @@
     "avg_hours_per_day": 0.0786,
     "avg_visits_per_day": 1,
     "hours_per_trip": 0.0786
+  },
+  {
+    "h3_index": "897b4c60a47ffff",
+    "year": 2026,
+    "fishing_hours": 0.9961,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.1248,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.9961,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.9961
   },
   {
     "h3_index": "897b4c60a4bffff",
@@ -197086,14 +197566,14 @@
   {
     "h3_index": "897b4c60a4fffff",
     "year": 2026,
-    "fishing_hours": 11.8589,
-    "unique_trips": 3,
-    "n_active_days": 5,
-    "avg_fidelity": 0.5677,
-    "constancy": 0.016,
-    "avg_hours_per_day": 2.3718,
-    "avg_visits_per_day": 0.6,
-    "hours_per_trip": 3.953
+    "fishing_hours": 17.8711,
+    "unique_trips": 4,
+    "n_active_days": 6,
+    "avg_fidelity": 0.614,
+    "constancy": 0.0192,
+    "avg_hours_per_day": 2.9785,
+    "avg_visits_per_day": 0.6667,
+    "hours_per_trip": 4.4678
   },
   {
     "h3_index": "897b4c60a53ffff",
@@ -198646,14 +199126,14 @@
   {
     "h3_index": "897b4c60d07ffff",
     "year": 2026,
-    "fishing_hours": 0.33,
-    "unique_trips": 2,
-    "n_active_days": 2,
-    "avg_fidelity": 0.0193,
-    "constancy": 0.0064,
-    "avg_hours_per_day": 0.165,
+    "fishing_hours": 0.3319,
+    "unique_trips": 3,
+    "n_active_days": 3,
+    "avg_fidelity": 0.013,
+    "constancy": 0.0096,
+    "avg_hours_per_day": 0.1106,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.165
+    "hours_per_trip": 0.1106
   },
   {
     "h3_index": "897b4c60d0bffff",
@@ -198826,14 +199306,14 @@
   {
     "h3_index": "897b4c60d23ffff",
     "year": 2026,
-    "fishing_hours": 19.3197,
-    "unique_trips": 8,
-    "n_active_days": 9,
-    "avg_fidelity": 0.3442,
-    "constancy": 0.0288,
-    "avg_hours_per_day": 2.1466,
-    "avg_visits_per_day": 0.8889,
-    "hours_per_trip": 2.415
+    "fishing_hours": 19.3647,
+    "unique_trips": 9,
+    "n_active_days": 10,
+    "avg_fidelity": 0.3067,
+    "constancy": 0.0321,
+    "avg_hours_per_day": 1.9365,
+    "avg_visits_per_day": 0.9,
+    "hours_per_trip": 2.1516
   },
   {
     "h3_index": "897b4c60d27ffff",
@@ -198946,14 +199426,14 @@
   {
     "h3_index": "897b4c60d33ffff",
     "year": 2026,
-    "fishing_hours": 8.125,
-    "unique_trips": 5,
-    "n_active_days": 7,
-    "avg_fidelity": 0.2829,
-    "constancy": 0.0224,
-    "avg_hours_per_day": 1.1607,
-    "avg_visits_per_day": 0.7143,
-    "hours_per_trip": 1.625
+    "fishing_hours": 14.7125,
+    "unique_trips": 6,
+    "n_active_days": 9,
+    "avg_fidelity": 0.3945,
+    "constancy": 0.0288,
+    "avg_hours_per_day": 1.6347,
+    "avg_visits_per_day": 0.6667,
+    "hours_per_trip": 2.4521
   },
   {
     "h3_index": "897b4c60d37ffff",
@@ -200482,14 +200962,14 @@
   {
     "h3_index": "897b4c61933ffff",
     "year": 2026,
-    "fishing_hours": 20.8317,
-    "unique_trips": 12,
-    "n_active_days": 13,
-    "avg_fidelity": 0.3049,
-    "constancy": 0.0417,
-    "avg_hours_per_day": 1.6024,
-    "avg_visits_per_day": 0.9231,
-    "hours_per_trip": 1.736
+    "fishing_hours": 21.4733,
+    "unique_trips": 13,
+    "n_active_days": 14,
+    "avg_fidelity": 0.2876,
+    "constancy": 0.0449,
+    "avg_hours_per_day": 1.5338,
+    "avg_visits_per_day": 0.9286,
+    "hours_per_trip": 1.6518
   },
   {
     "h3_index": "897b4c61937ffff",
@@ -200566,14 +201046,14 @@
   {
     "h3_index": "897b4c61983ffff",
     "year": 2026,
-    "fishing_hours": 2.5408,
-    "unique_trips": 8,
-    "n_active_days": 7,
-    "avg_fidelity": 0.0447,
-    "constancy": 0.0224,
-    "avg_hours_per_day": 0.363,
-    "avg_visits_per_day": 1.1429,
-    "hours_per_trip": 0.3176
+    "fishing_hours": 2.5533,
+    "unique_trips": 9,
+    "n_active_days": 8,
+    "avg_fidelity": 0.0399,
+    "constancy": 0.0256,
+    "avg_hours_per_day": 0.3192,
+    "avg_visits_per_day": 1.125,
+    "hours_per_trip": 0.2837
   },
   {
     "h3_index": "897b4c61987ffff",
@@ -200614,14 +201094,14 @@
   {
     "h3_index": "897b4c6198bffff",
     "year": 2026,
-    "fishing_hours": 0.5492,
-    "unique_trips": 2,
-    "n_active_days": 1,
-    "avg_fidelity": 0.0529,
-    "constancy": 0.0032,
-    "avg_hours_per_day": 0.5492,
-    "avg_visits_per_day": 2,
-    "hours_per_trip": 0.2746
+    "fishing_hours": 0.5558,
+    "unique_trips": 3,
+    "n_active_days": 2,
+    "avg_fidelity": 0.0356,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.2779,
+    "avg_visits_per_day": 1.5,
+    "hours_per_trip": 0.1853
   },
   {
     "h3_index": "897b4c6198fffff",
@@ -200761,7 +201241,7 @@
     "fishing_hours": 2.3306,
     "unique_trips": 2,
     "n_active_days": 3,
-    "avg_fidelity": 0.4362,
+    "avg_fidelity": 0.436,
     "constancy": 0.0096,
     "avg_hours_per_day": 0.7769,
     "avg_visits_per_day": 0.6667,
@@ -200770,14 +201250,14 @@
   {
     "h3_index": "897b4c619abffff",
     "year": 2026,
-    "fishing_hours": 15.8822,
-    "unique_trips": 6,
-    "n_active_days": 8,
-    "avg_fidelity": 0.3658,
-    "constancy": 0.0256,
-    "avg_hours_per_day": 1.9853,
-    "avg_visits_per_day": 0.75,
-    "hours_per_trip": 2.647
+    "fishing_hours": 16.1789,
+    "unique_trips": 7,
+    "n_active_days": 9,
+    "avg_fidelity": 0.3189,
+    "constancy": 0.0288,
+    "avg_hours_per_day": 1.7977,
+    "avg_visits_per_day": 0.7778,
+    "hours_per_trip": 2.3113
   },
   {
     "h3_index": "897b4c619afffff",
@@ -201550,14 +202030,14 @@
   {
     "h3_index": "897b4c6292fffff",
     "year": 2026,
-    "fishing_hours": 5.28,
-    "unique_trips": 6,
-    "n_active_days": 6,
-    "avg_fidelity": 0.2355,
-    "constancy": 0.0192,
-    "avg_hours_per_day": 0.88,
+    "fishing_hours": 5.3461,
+    "unique_trips": 7,
+    "n_active_days": 7,
+    "avg_fidelity": 0.2053,
+    "constancy": 0.0224,
+    "avg_hours_per_day": 0.7637,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.88
+    "hours_per_trip": 0.7637
   },
   {
     "h3_index": "897b4c62933ffff",
@@ -206396,6 +206876,18 @@
     "hours_per_trip": 0.5728
   },
   {
+    "h3_index": "897b4c64223ffff",
+    "year": 2026,
+    "fishing_hours": 0.2039,
+    "unique_trips": 1,
+    "n_active_days": 2,
+    "avg_fidelity": 0.0289,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.1019,
+    "avg_visits_per_day": 0.5,
+    "hours_per_trip": 0.2039
+  },
+  {
     "h3_index": "897b4c64227ffff",
     "year": 2025,
     "fishing_hours": 1.0944,
@@ -206406,6 +206898,18 @@
     "avg_hours_per_day": 0.5472,
     "avg_visits_per_day": 1,
     "hours_per_trip": 0.5472
+  },
+  {
+    "h3_index": "897b4c64227ffff",
+    "year": 2026,
+    "fishing_hours": 0.6078,
+    "unique_trips": 1,
+    "n_active_days": 2,
+    "avg_fidelity": 0.0862,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.3039,
+    "avg_visits_per_day": 0.5,
+    "hours_per_trip": 0.6078
   },
   {
     "h3_index": "897b4c6422fffff",
@@ -206422,14 +206926,14 @@
   {
     "h3_index": "897b4c6422fffff",
     "year": 2026,
-    "fishing_hours": 1.3675,
-    "unique_trips": 1,
-    "n_active_days": 1,
-    "avg_fidelity": 0.2704,
-    "constancy": 0.0032,
-    "avg_hours_per_day": 1.3675,
+    "fishing_hours": 1.6942,
+    "unique_trips": 2,
+    "n_active_days": 2,
+    "avg_fidelity": 0.1584,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.8471,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 1.3675
+    "hours_per_trip": 0.8471
   },
   {
     "h3_index": "897b4c64233ffff",
@@ -207066,6 +207570,18 @@
     "avg_hours_per_day": 0.5275,
     "avg_visits_per_day": 1,
     "hours_per_trip": 0.5275
+  },
+  {
+    "h3_index": "897b4c6431bffff",
+    "year": 2026,
+    "fishing_hours": 0.9197,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.1304,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.9197,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.9197
   },
   {
     "h3_index": "897b4c64323ffff",
@@ -207836,6 +208352,30 @@
     "hours_per_trip": 0.3303
   },
   {
+    "h3_index": "897b4c643c7ffff",
+    "year": 2026,
+    "fishing_hours": 0.1303,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0185,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.1303,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.1303
+  },
+  {
+    "h3_index": "897b4c643cbffff",
+    "year": 2026,
+    "fishing_hours": 3.1994,
+    "unique_trips": 1,
+    "n_active_days": 2,
+    "avg_fidelity": 0.4536,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 1.5997,
+    "avg_visits_per_day": 0.5,
+    "hours_per_trip": 3.1994
+  },
+  {
     "h3_index": "897b4c643cfffff",
     "year": 2024,
     "fishing_hours": 0.2478,
@@ -207858,6 +208398,18 @@
     "avg_hours_per_day": 0.4258,
     "avg_visits_per_day": 1,
     "hours_per_trip": 0.4258
+  },
+  {
+    "h3_index": "897b4c643cfffff",
+    "year": 2026,
+    "fishing_hours": 1.6656,
+    "unique_trips": 1,
+    "n_active_days": 2,
+    "avg_fidelity": 0.2361,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.8328,
+    "avg_visits_per_day": 0.5,
+    "hours_per_trip": 1.6656
   },
   {
     "h3_index": "897b4c643d3ffff",
@@ -210310,14 +210862,14 @@
   {
     "h3_index": "897b4c64b07ffff",
     "year": 2026,
-    "fishing_hours": 0.0725,
-    "unique_trips": 2,
-    "n_active_days": 3,
-    "avg_fidelity": 0.0122,
-    "constancy": 0.0096,
-    "avg_hours_per_day": 0.0242,
-    "avg_visits_per_day": 0.6667,
-    "hours_per_trip": 0.0363
+    "fishing_hours": 0.0672,
+    "unique_trips": 1,
+    "n_active_days": 2,
+    "avg_fidelity": 0.0222,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.0336,
+    "avg_visits_per_day": 0.5,
+    "hours_per_trip": 0.0672
   },
   {
     "h3_index": "897b4c64b0fffff",
@@ -210334,14 +210886,14 @@
   {
     "h3_index": "897b4c64b0fffff",
     "year": 2026,
-    "fishing_hours": 1.5911,
-    "unique_trips": 3,
-    "n_active_days": 3,
-    "avg_fidelity": 0.2104,
-    "constancy": 0.0096,
-    "avg_hours_per_day": 0.5304,
+    "fishing_hours": 0.0506,
+    "unique_trips": 2,
+    "n_active_days": 2,
+    "avg_fidelity": 0.007,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.0253,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.5304
+    "hours_per_trip": 0.0253
   },
   {
     "h3_index": "897b4c64b13ffff",
@@ -228658,14 +229210,14 @@
   {
     "h3_index": "897b4c6744bffff",
     "year": 2026,
-    "fishing_hours": 3.0125,
-    "unique_trips": 2,
-    "n_active_days": 2,
-    "avg_fidelity": 0.3754,
-    "constancy": 0.0064,
-    "avg_hours_per_day": 1.5063,
+    "fishing_hours": 5.2542,
+    "unique_trips": 3,
+    "n_active_days": 3,
+    "avg_fidelity": 0.5222,
+    "constancy": 0.0096,
+    "avg_hours_per_day": 1.7514,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 1.5063
+    "hours_per_trip": 1.7514
   },
   {
     "h3_index": "897b4c6744fffff",
@@ -228726,6 +229278,18 @@
     "avg_hours_per_day": 0.1391,
     "avg_visits_per_day": 1,
     "hours_per_trip": 0.1391
+  },
+  {
+    "h3_index": "897b4c6745bffff",
+    "year": 2026,
+    "fishing_hours": 0.3719,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.1353,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.3719,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.3719
   },
   {
     "h3_index": "897b4c67467ffff",
@@ -230386,14 +230950,14 @@
   {
     "h3_index": "897b4c67697ffff",
     "year": 2026,
-    "fishing_hours": 0.1967,
-    "unique_trips": 2,
-    "n_active_days": 2,
-    "avg_fidelity": 0.0239,
-    "constancy": 0.0064,
-    "avg_hours_per_day": 0.0983,
+    "fishing_hours": 0.265,
+    "unique_trips": 3,
+    "n_active_days": 3,
+    "avg_fidelity": 0.0242,
+    "constancy": 0.0096,
+    "avg_hours_per_day": 0.0883,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.0983
+    "hours_per_trip": 0.0883
   },
   {
     "h3_index": "897b4c6769bffff",
@@ -230758,14 +231322,14 @@
   {
     "h3_index": "897b4c6b0c7ffff",
     "year": 2026,
-    "fishing_hours": 0.0506,
-    "unique_trips": 2,
-    "n_active_days": 2,
-    "avg_fidelity": 0.2737,
-    "constancy": 0.0064,
-    "avg_hours_per_day": 0.0253,
+    "fishing_hours": 0.3006,
+    "unique_trips": 3,
+    "n_active_days": 3,
+    "avg_fidelity": 0.3154,
+    "constancy": 0.0096,
+    "avg_hours_per_day": 0.1002,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.0253
+    "hours_per_trip": 0.1002
   },
   {
     "h3_index": "897b4c6b0cfffff",
@@ -230924,6 +231488,18 @@
     "hours_per_trip": 0.0892
   },
   {
+    "h3_index": "897b4c6b66bffff",
+    "year": 2026,
+    "fishing_hours": 0.0589,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0939,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.0589,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.0589
+  },
+  {
     "h3_index": "897b4c6b67bffff",
     "year": 2026,
     "fishing_hours": 0.3214,
@@ -230996,16 +231572,28 @@
     "hours_per_trip": 0.2119
   },
   {
+    "h3_index": "897b4c6c00bffff",
+    "year": 2026,
+    "fishing_hours": 1.1256,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.1179,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 1.1256,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 1.1256
+  },
+  {
     "h3_index": "897b4c6c013ffff",
     "year": 2026,
-    "fishing_hours": 2.0356,
-    "unique_trips": 2,
-    "n_active_days": 3,
-    "avg_fidelity": 0.348,
-    "constancy": 0.0096,
-    "avg_hours_per_day": 0.6785,
-    "avg_visits_per_day": 0.6667,
-    "hours_per_trip": 1.0178
+    "fishing_hours": 7.6997,
+    "unique_trips": 3,
+    "n_active_days": 4,
+    "avg_fidelity": 0.4297,
+    "constancy": 0.0128,
+    "avg_hours_per_day": 1.9249,
+    "avg_visits_per_day": 0.75,
+    "hours_per_trip": 2.5666
   },
   {
     "h3_index": "897b4c6c017ffff",
@@ -231140,6 +231728,30 @@
     "hours_per_trip": 2.9689
   },
   {
+    "h3_index": "897b4c6c053ffff",
+    "year": 2026,
+    "fishing_hours": 0.3828,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0401,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.3828,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.3828
+  },
+  {
+    "h3_index": "897b4c6c057ffff",
+    "year": 2026,
+    "fishing_hours": 0.0764,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.008,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.0764,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.0764
+  },
+  {
     "h3_index": "897b4c6c05bffff",
     "year": 2025,
     "fishing_hours": 0.2842,
@@ -231260,6 +231872,18 @@
     "hours_per_trip": 3.1289
   },
   {
+    "h3_index": "897b4c6c08bffff",
+    "year": 2026,
+    "fishing_hours": 0.6244,
+    "unique_trips": 1,
+    "n_active_days": 2,
+    "avg_fidelity": 0.0654,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.3122,
+    "avg_visits_per_day": 0.5,
+    "hours_per_trip": 0.6244
+  },
+  {
     "h3_index": "897b4c6c08fffff",
     "year": 2024,
     "fishing_hours": 0.7892,
@@ -231322,26 +231946,26 @@
   {
     "h3_index": "897b4c6c0abffff",
     "year": 2026,
-    "fishing_hours": 0.4261,
-    "unique_trips": 2,
-    "n_active_days": 2,
-    "avg_fidelity": 0.0942,
-    "constancy": 0.0064,
-    "avg_hours_per_day": 0.2131,
+    "fishing_hours": 0.4322,
+    "unique_trips": 3,
+    "n_active_days": 3,
+    "avg_fidelity": 0.0632,
+    "constancy": 0.0096,
+    "avg_hours_per_day": 0.1441,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.2131
+    "hours_per_trip": 0.1441
   },
   {
     "h3_index": "897b4c6c0b3ffff",
     "year": 2026,
-    "fishing_hours": 6.4667,
-    "unique_trips": 8,
-    "n_active_days": 9,
-    "avg_fidelity": 0.2375,
-    "constancy": 0.0288,
-    "avg_hours_per_day": 0.7185,
-    "avg_visits_per_day": 0.8889,
-    "hours_per_trip": 0.8083
+    "fishing_hours": 9.6358,
+    "unique_trips": 9,
+    "n_active_days": 10,
+    "avg_fidelity": 0.2875,
+    "constancy": 0.0321,
+    "avg_hours_per_day": 0.9636,
+    "avg_visits_per_day": 0.9,
+    "hours_per_trip": 1.0706
   },
   {
     "h3_index": "897b4c6c0b7ffff",
@@ -231378,6 +232002,54 @@
     "avg_hours_per_day": 0.2508,
     "avg_visits_per_day": 1,
     "hours_per_trip": 0.2508
+  },
+  {
+    "h3_index": "897b4c6c0c3ffff",
+    "year": 2026,
+    "fishing_hours": 0.6011,
+    "unique_trips": 1,
+    "n_active_days": 2,
+    "avg_fidelity": 0.0629,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.3006,
+    "avg_visits_per_day": 0.5,
+    "hours_per_trip": 0.6011
+  },
+  {
+    "h3_index": "897b4c6c0c7ffff",
+    "year": 2026,
+    "fishing_hours": 0.0319,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0033,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.0319,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.0319
+  },
+  {
+    "h3_index": "897b4c6c0cbffff",
+    "year": 2026,
+    "fishing_hours": 0.0722,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0076,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.0722,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.0722
+  },
+  {
+    "h3_index": "897b4c6c0cfffff",
+    "year": 2026,
+    "fishing_hours": 0.9617,
+    "unique_trips": 1,
+    "n_active_days": 2,
+    "avg_fidelity": 0.1007,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.4808,
+    "avg_visits_per_day": 0.5,
+    "hours_per_trip": 0.9617
   },
   {
     "h3_index": "897b4c6c0d3ffff",
@@ -232700,6 +233372,18 @@
     "hours_per_trip": 0.2675
   },
   {
+    "h3_index": "897b4c6c427ffff",
+    "year": 2026,
+    "fishing_hours": 0.3761,
+    "unique_trips": 1,
+    "n_active_days": 2,
+    "avg_fidelity": 0.0816,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.1881,
+    "avg_visits_per_day": 0.5,
+    "hours_per_trip": 0.3761
+  },
+  {
     "h3_index": "897b4c6c42bffff",
     "year": 2024,
     "fishing_hours": 0.6786,
@@ -233050,26 +233734,38 @@
   {
     "h3_index": "897b4c6c54bffff",
     "year": 2026,
-    "fishing_hours": 4.6786,
-    "unique_trips": 3,
-    "n_active_days": 4,
-    "avg_fidelity": 0.3994,
-    "constancy": 0.0128,
-    "avg_hours_per_day": 1.1697,
-    "avg_visits_per_day": 0.75,
-    "hours_per_trip": 1.5595
+    "fishing_hours": 4.9636,
+    "unique_trips": 4,
+    "n_active_days": 6,
+    "avg_fidelity": 0.315,
+    "constancy": 0.0192,
+    "avg_hours_per_day": 0.8273,
+    "avg_visits_per_day": 0.6667,
+    "hours_per_trip": 1.2409
   },
   {
     "h3_index": "897b4c6c54fffff",
     "year": 2026,
-    "fishing_hours": 0.9108,
-    "unique_trips": 2,
-    "n_active_days": 2,
-    "avg_fidelity": 0.1509,
-    "constancy": 0.0064,
-    "avg_hours_per_day": 0.4554,
+    "fishing_hours": 1.1653,
+    "unique_trips": 3,
+    "n_active_days": 3,
+    "avg_fidelity": 0.119,
+    "constancy": 0.0096,
+    "avg_hours_per_day": 0.3884,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.4554
+    "hours_per_trip": 0.3884
+  },
+  {
+    "h3_index": "897b4c6c55bffff",
+    "year": 2026,
+    "fishing_hours": 0.5175,
+    "unique_trips": 1,
+    "n_active_days": 2,
+    "avg_fidelity": 0.1123,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.2588,
+    "avg_visits_per_day": 0.5,
+    "hours_per_trip": 0.5175
   },
   {
     "h3_index": "897b4c6c567ffff",
@@ -240082,14 +240778,14 @@
   {
     "h3_index": "897b4c6e203ffff",
     "year": 2026,
-    "fishing_hours": 2.4064,
+    "fishing_hours": 2.4086,
     "unique_trips": 3,
     "n_active_days": 3,
-    "avg_fidelity": 0.0475,
+    "avg_fidelity": 0.0477,
     "constancy": 0.0096,
-    "avg_hours_per_day": 0.8021,
+    "avg_hours_per_day": 0.8029,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.8021
+    "hours_per_trip": 0.8029
   },
   {
     "h3_index": "897b4c6e207ffff",
@@ -240154,14 +240850,14 @@
   {
     "h3_index": "897b4c6e20bffff",
     "year": 2026,
-    "fishing_hours": 17.8492,
+    "fishing_hours": 18.355,
     "unique_trips": 16,
     "n_active_days": 11,
-    "avg_fidelity": 0.1202,
+    "avg_fidelity": 0.1185,
     "constancy": 0.0353,
-    "avg_hours_per_day": 1.6227,
+    "avg_hours_per_day": 1.6686,
     "avg_visits_per_day": 1.4545,
-    "hours_per_trip": 1.1156
+    "hours_per_trip": 1.1472
   },
   {
     "h3_index": "897b4c6e20fffff",
@@ -240286,14 +240982,14 @@
   {
     "h3_index": "897b4c6e21bffff",
     "year": 2026,
-    "fishing_hours": 12.8847,
+    "fishing_hours": 12.9244,
     "unique_trips": 11,
     "n_active_days": 13,
-    "avg_fidelity": 0.0953,
+    "avg_fidelity": 0.0959,
     "constancy": 0.0417,
-    "avg_hours_per_day": 0.9911,
+    "avg_hours_per_day": 0.9942,
     "avg_visits_per_day": 0.8462,
-    "hours_per_trip": 1.1713
+    "hours_per_trip": 1.1749
   },
   {
     "h3_index": "897b4c6e223ffff",
@@ -240502,14 +241198,14 @@
   {
     "h3_index": "897b4c6e247ffff",
     "year": 2026,
-    "fishing_hours": 20.7033,
-    "unique_trips": 5,
-    "n_active_days": 7,
-    "avg_fidelity": 0.1512,
-    "constancy": 0.0224,
-    "avg_hours_per_day": 2.9576,
-    "avg_visits_per_day": 0.7143,
-    "hours_per_trip": 4.1407
+    "fishing_hours": 21.3814,
+    "unique_trips": 6,
+    "n_active_days": 9,
+    "avg_fidelity": 0.1401,
+    "constancy": 0.0288,
+    "avg_hours_per_day": 2.3757,
+    "avg_visits_per_day": 0.6667,
+    "hours_per_trip": 3.5636
   },
   {
     "h3_index": "897b4c6e24bffff",
@@ -240610,14 +241306,14 @@
   {
     "h3_index": "897b4c6e257ffff",
     "year": 2026,
-    "fishing_hours": 12.0697,
+    "fishing_hours": 11.7667,
     "unique_trips": 22,
     "n_active_days": 24,
-    "avg_fidelity": 0.083,
+    "avg_fidelity": 0.0734,
     "constancy": 0.0769,
-    "avg_hours_per_day": 0.5029,
+    "avg_hours_per_day": 0.4903,
     "avg_visits_per_day": 0.9167,
-    "hours_per_trip": 0.5486
+    "hours_per_trip": 0.5348
   },
   {
     "h3_index": "897b4c6e26fffff",
@@ -240994,14 +241690,14 @@
   {
     "h3_index": "897b4c6e2cfffff",
     "year": 2026,
-    "fishing_hours": 2.8556,
-    "unique_trips": 10,
+    "fishing_hours": 2.8644,
+    "unique_trips": 11,
     "n_active_days": 11,
-    "avg_fidelity": 0.1225,
+    "avg_fidelity": 0.1114,
     "constancy": 0.0353,
-    "avg_hours_per_day": 0.2596,
-    "avg_visits_per_day": 0.9091,
-    "hours_per_trip": 0.2856
+    "avg_hours_per_day": 0.2604,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.2604
   },
   {
     "h3_index": "897b4c6e2d7ffff",
@@ -251611,6 +252307,18 @@
     "hours_per_trip": 0.1581
   },
   {
+    "h3_index": "897b4c74a03ffff",
+    "year": 2026,
+    "fishing_hours": 0.4103,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0895,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.4103,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.4103
+  },
+  {
     "h3_index": "897b4c74a07ffff",
     "year": 2025,
     "fishing_hours": 0.0225,
@@ -251635,6 +252343,18 @@
     "hours_per_trip": 0.2139
   },
   {
+    "h3_index": "897b4c74a0bffff",
+    "year": 2026,
+    "fishing_hours": 0.2797,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.061,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.2797,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.2797
+  },
+  {
     "h3_index": "897b4c74a13ffff",
     "year": 2025,
     "fishing_hours": 0.9508,
@@ -251647,6 +252367,18 @@
     "hours_per_trip": 0.3169
   },
   {
+    "h3_index": "897b4c74a13ffff",
+    "year": 2026,
+    "fishing_hours": 0.005,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0011,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.005,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.005
+  },
+  {
     "h3_index": "897b4c74a17ffff",
     "year": 2025,
     "fishing_hours": 0.8567,
@@ -251657,6 +252389,18 @@
     "avg_hours_per_day": 0.2856,
     "avg_visits_per_day": 1,
     "hours_per_trip": 0.2856
+  },
+  {
+    "h3_index": "897b4c74a17ffff",
+    "year": 2026,
+    "fishing_hours": 0.7372,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.1608,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.7372,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.7372
   },
   {
     "h3_index": "897b4c74a1bffff",
@@ -251861,6 +252605,18 @@
     "avg_hours_per_day": 0.1361,
     "avg_visits_per_day": 1,
     "hours_per_trip": 0.1361
+  },
+  {
+    "h3_index": "897b4c74a4fffff",
+    "year": 2026,
+    "fishing_hours": 3.1533,
+    "unique_trips": 1,
+    "n_active_days": 2,
+    "avg_fidelity": 0.6877,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 1.5767,
+    "avg_visits_per_day": 0.5,
+    "hours_per_trip": 3.1533
   },
   {
     "h3_index": "897b4c74a63ffff",
@@ -254205,14 +254961,14 @@
   {
     "h3_index": "897b4c750c3ffff",
     "year": 2026,
-    "fishing_hours": 7.7125,
-    "unique_trips": 17,
-    "n_active_days": 19,
-    "avg_fidelity": 0.2044,
-    "constancy": 0.0609,
-    "avg_hours_per_day": 0.4059,
-    "avg_visits_per_day": 0.8947,
-    "hours_per_trip": 0.4537
+    "fishing_hours": 7.7236,
+    "unique_trips": 18,
+    "n_active_days": 20,
+    "avg_fidelity": 0.1934,
+    "constancy": 0.0641,
+    "avg_hours_per_day": 0.3862,
+    "avg_visits_per_day": 0.9,
+    "hours_per_trip": 0.4291
   },
   {
     "h3_index": "897b4c750c7ffff",
@@ -262807,6 +263563,18 @@
     "hours_per_trip": 0.0192
   },
   {
+    "h3_index": "897b4c769b7ffff",
+    "year": 2026,
+    "fishing_hours": 0.2858,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.2017,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.2858,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.2858
+  },
+  {
     "h3_index": "897b4c769c7ffff",
     "year": 2024,
     "fishing_hours": 0.645,
@@ -264657,14 +265425,14 @@
   {
     "h3_index": "897b4c7864bffff",
     "year": 2026,
-    "fishing_hours": 0.5606,
+    "fishing_hours": 0.5922,
     "unique_trips": 6,
     "n_active_days": 6,
-    "avg_fidelity": 0.1289,
+    "avg_fidelity": 0.1247,
     "constancy": 0.0192,
-    "avg_hours_per_day": 0.0934,
+    "avg_hours_per_day": 0.0987,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.0934
+    "hours_per_trip": 0.0987
   },
   {
     "h3_index": "897b4c7865bffff",
@@ -264801,26 +265569,26 @@
   {
     "h3_index": "897b4c79087ffff",
     "year": 2026,
-    "fishing_hours": 2.1556,
-    "unique_trips": 8,
-    "n_active_days": 8,
-    "avg_fidelity": 0.2065,
-    "constancy": 0.0256,
-    "avg_hours_per_day": 0.2694,
+    "fishing_hours": 2.1606,
+    "unique_trips": 9,
+    "n_active_days": 9,
+    "avg_fidelity": 0.1838,
+    "constancy": 0.0288,
+    "avg_hours_per_day": 0.2401,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.2694
+    "hours_per_trip": 0.2401
   },
   {
     "h3_index": "897b4c79097ffff",
     "year": 2026,
-    "fishing_hours": 0.0425,
-    "unique_trips": 1,
-    "n_active_days": 1,
-    "avg_fidelity": 0.1094,
-    "constancy": 0.0032,
-    "avg_hours_per_day": 0.0425,
+    "fishing_hours": 0.3147,
+    "unique_trips": 2,
+    "n_active_days": 2,
+    "avg_fidelity": 0.2646,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.1574,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.0425
+    "hours_per_trip": 0.1574
   },
   {
     "h3_index": "897b4c790a3ffff",
@@ -265005,26 +265773,26 @@
   {
     "h3_index": "897b4c7942fffff",
     "year": 2026,
-    "fishing_hours": 0.0661,
-    "unique_trips": 1,
-    "n_active_days": 1,
-    "avg_fidelity": 0.1702,
-    "constancy": 0.0032,
-    "avg_hours_per_day": 0.0661,
+    "fishing_hours": 1.205,
+    "unique_trips": 2,
+    "n_active_days": 2,
+    "avg_fidelity": 0.5928,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.6025,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.0661
+    "hours_per_trip": 0.6025
   },
   {
     "h3_index": "897b4c7954bffff",
     "year": 2026,
-    "fishing_hours": 9.0286,
-    "unique_trips": 12,
-    "n_active_days": 12,
-    "avg_fidelity": 0.5889,
-    "constancy": 0.0385,
-    "avg_hours_per_day": 0.7524,
+    "fishing_hours": 9.0478,
+    "unique_trips": 13,
+    "n_active_days": 13,
+    "avg_fidelity": 0.5443,
+    "constancy": 0.0417,
+    "avg_hours_per_day": 0.696,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.7524
+    "hours_per_trip": 0.696
   },
   {
     "h3_index": "897b4c7954fffff",
@@ -265041,14 +265809,14 @@
   {
     "h3_index": "897b4c7955bffff",
     "year": 2026,
-    "fishing_hours": 0.7042,
-    "unique_trips": 6,
-    "n_active_days": 6,
-    "avg_fidelity": 0.0948,
-    "constancy": 0.0192,
-    "avg_hours_per_day": 0.1174,
+    "fishing_hours": 0.8719,
+    "unique_trips": 7,
+    "n_active_days": 7,
+    "avg_fidelity": 0.0934,
+    "constancy": 0.0224,
+    "avg_hours_per_day": 0.1246,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.1174
+    "hours_per_trip": 0.1246
   },
   {
     "h3_index": "897b4c79583ffff",
@@ -265077,14 +265845,14 @@
   {
     "h3_index": "897b4c79597ffff",
     "year": 2026,
-    "fishing_hours": 2.3,
+    "fishing_hours": 2.36,
     "unique_trips": 9,
     "n_active_days": 8,
-    "avg_fidelity": 0.2499,
+    "avg_fidelity": 0.1935,
     "constancy": 0.0256,
-    "avg_hours_per_day": 0.2875,
+    "avg_hours_per_day": 0.295,
     "avg_visits_per_day": 1.125,
-    "hours_per_trip": 0.2556
+    "hours_per_trip": 0.2622
   },
   {
     "h3_index": "897b4c795c3ffff",
@@ -270849,14 +271617,14 @@
   {
     "h3_index": "897b4e29423ffff",
     "year": 2026,
-    "fishing_hours": 2.1456,
-    "unique_trips": 14,
-    "n_active_days": 16,
-    "avg_fidelity": 0.0207,
-    "constancy": 0.0513,
-    "avg_hours_per_day": 0.1341,
-    "avg_visits_per_day": 0.875,
-    "hours_per_trip": 0.1533
+    "fishing_hours": 3.0256,
+    "unique_trips": 15,
+    "n_active_days": 17,
+    "avg_fidelity": 0.0246,
+    "constancy": 0.0545,
+    "avg_hours_per_day": 0.178,
+    "avg_visits_per_day": 0.8824,
+    "hours_per_trip": 0.2017
   },
   {
     "h3_index": "897b4e29427ffff",
@@ -270885,14 +271653,14 @@
   {
     "h3_index": "897b4e29427ffff",
     "year": 2026,
-    "fishing_hours": 12.4228,
-    "unique_trips": 22,
-    "n_active_days": 24,
-    "avg_fidelity": 0.0782,
-    "constancy": 0.0769,
-    "avg_hours_per_day": 0.5176,
-    "avg_visits_per_day": 0.9167,
-    "hours_per_trip": 0.5647
+    "fishing_hours": 13.4703,
+    "unique_trips": 23,
+    "n_active_days": 26,
+    "avg_fidelity": 0.0789,
+    "constancy": 0.0833,
+    "avg_hours_per_day": 0.5181,
+    "avg_visits_per_day": 0.8846,
+    "hours_per_trip": 0.5857
   },
   {
     "h3_index": "897b4e2942bffff",
@@ -270957,14 +271725,14 @@
   {
     "h3_index": "897b4e29433ffff",
     "year": 2026,
-    "fishing_hours": 4.1092,
-    "unique_trips": 23,
-    "n_active_days": 25,
-    "avg_fidelity": 0.0215,
-    "constancy": 0.0801,
-    "avg_hours_per_day": 0.1644,
-    "avg_visits_per_day": 0.92,
-    "hours_per_trip": 0.1787
+    "fishing_hours": 4.5436,
+    "unique_trips": 24,
+    "n_active_days": 26,
+    "avg_fidelity": 0.0222,
+    "constancy": 0.0833,
+    "avg_hours_per_day": 0.1748,
+    "avg_visits_per_day": 0.9231,
+    "hours_per_trip": 0.1893
   },
   {
     "h3_index": "897b4e29437ffff",
@@ -270993,26 +271761,38 @@
   {
     "h3_index": "897b4e29437ffff",
     "year": 2026,
-    "fishing_hours": 176.5078,
-    "unique_trips": 39,
-    "n_active_days": 44,
-    "avg_fidelity": 0.549,
-    "constancy": 0.141,
-    "avg_hours_per_day": 4.0115,
-    "avg_visits_per_day": 0.8864,
-    "hours_per_trip": 4.5258
+    "fishing_hours": 179.5703,
+    "unique_trips": 40,
+    "n_active_days": 45,
+    "avg_fidelity": 0.5421,
+    "constancy": 0.1442,
+    "avg_hours_per_day": 3.9905,
+    "avg_visits_per_day": 0.8889,
+    "hours_per_trip": 4.4893
   },
   {
     "h3_index": "897b4e2943bffff",
     "year": 2026,
-    "fishing_hours": 0.4608,
-    "unique_trips": 5,
-    "n_active_days": 5,
-    "avg_fidelity": 0.0147,
-    "constancy": 0.016,
-    "avg_hours_per_day": 0.0922,
+    "fishing_hours": 0.5158,
+    "unique_trips": 6,
+    "n_active_days": 6,
+    "avg_fidelity": 0.0131,
+    "constancy": 0.0192,
+    "avg_hours_per_day": 0.086,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.0922
+    "hours_per_trip": 0.086
+  },
+  {
+    "h3_index": "897b4e29443ffff",
+    "year": 2026,
+    "fishing_hours": 0.2594,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0232,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.2594,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.2594
   },
   {
     "h3_index": "897b4e29447ffff",
@@ -271149,14 +271929,14 @@
   {
     "h3_index": "897b4e2945bffff",
     "year": 2026,
-    "fishing_hours": 0.8664,
-    "unique_trips": 2,
-    "n_active_days": 2,
-    "avg_fidelity": 0.0385,
-    "constancy": 0.0064,
-    "avg_hours_per_day": 0.4332,
+    "fishing_hours": 1.6547,
+    "unique_trips": 3,
+    "n_active_days": 3,
+    "avg_fidelity": 0.0491,
+    "constancy": 0.0096,
+    "avg_hours_per_day": 0.5516,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.4332
+    "hours_per_trip": 0.5516
   },
   {
     "h3_index": "897b4e29463ffff",
@@ -271293,14 +272073,14 @@
   {
     "h3_index": "897b4e294abffff",
     "year": 2026,
-    "fishing_hours": 1.3356,
-    "unique_trips": 10,
-    "n_active_days": 12,
-    "avg_fidelity": 0.0149,
-    "constancy": 0.0385,
-    "avg_hours_per_day": 0.1113,
-    "avg_visits_per_day": 0.8333,
-    "hours_per_trip": 0.1336
+    "fishing_hours": 1.3372,
+    "unique_trips": 11,
+    "n_active_days": 13,
+    "avg_fidelity": 0.0135,
+    "constancy": 0.0417,
+    "avg_hours_per_day": 0.1029,
+    "avg_visits_per_day": 0.8462,
+    "hours_per_trip": 0.1216
   },
   {
     "h3_index": "897b4e294afffff",
@@ -271329,14 +272109,14 @@
   {
     "h3_index": "897b4e294afffff",
     "year": 2026,
-    "fishing_hours": 80.1564,
-    "unique_trips": 32,
-    "n_active_days": 34,
-    "avg_fidelity": 0.2923,
-    "constancy": 0.109,
-    "avg_hours_per_day": 2.3575,
-    "avg_visits_per_day": 0.9412,
-    "hours_per_trip": 2.5049
+    "fishing_hours": 84.5167,
+    "unique_trips": 33,
+    "n_active_days": 35,
+    "avg_fidelity": 0.2953,
+    "constancy": 0.1122,
+    "avg_hours_per_day": 2.4148,
+    "avg_visits_per_day": 0.9429,
+    "hours_per_trip": 2.5611
   },
   {
     "h3_index": "897b4e294b7ffff",
@@ -271977,14 +272757,14 @@
   {
     "h3_index": "897b4e2a00fffff",
     "year": 2026,
-    "fishing_hours": 6.1894,
-    "unique_trips": 12,
-    "n_active_days": 13,
-    "avg_fidelity": 0.0769,
-    "constancy": 0.0417,
-    "avg_hours_per_day": 0.4761,
-    "avg_visits_per_day": 0.9231,
-    "hours_per_trip": 0.5158
+    "fishing_hours": 6.4569,
+    "unique_trips": 13,
+    "n_active_days": 14,
+    "avg_fidelity": 0.0747,
+    "constancy": 0.0449,
+    "avg_hours_per_day": 0.4612,
+    "avg_visits_per_day": 0.9286,
+    "hours_per_trip": 0.4967
   },
   {
     "h3_index": "897b4e2a013ffff",
@@ -272253,14 +273033,14 @@
   {
     "h3_index": "897b4e2a073ffff",
     "year": 2026,
-    "fishing_hours": 6.6858,
-    "unique_trips": 8,
-    "n_active_days": 9,
-    "avg_fidelity": 0.1744,
-    "constancy": 0.0288,
-    "avg_hours_per_day": 0.7429,
-    "avg_visits_per_day": 0.8889,
-    "hours_per_trip": 0.8357
+    "fishing_hours": 6.7414,
+    "unique_trips": 9,
+    "n_active_days": 10,
+    "avg_fidelity": 0.1561,
+    "constancy": 0.0321,
+    "avg_hours_per_day": 0.6741,
+    "avg_visits_per_day": 0.9,
+    "hours_per_trip": 0.749
   },
   {
     "h3_index": "897b4e2a077ffff",
@@ -272277,14 +273057,14 @@
   {
     "h3_index": "897b4e2a077ffff",
     "year": 2026,
-    "fishing_hours": 3.4336,
-    "unique_trips": 9,
-    "n_active_days": 11,
-    "avg_fidelity": 0.0936,
-    "constancy": 0.0353,
-    "avg_hours_per_day": 0.3121,
-    "avg_visits_per_day": 0.8182,
-    "hours_per_trip": 0.3815
+    "fishing_hours": 3.5933,
+    "unique_trips": 10,
+    "n_active_days": 12,
+    "avg_fidelity": 0.0871,
+    "constancy": 0.0385,
+    "avg_hours_per_day": 0.2994,
+    "avg_visits_per_day": 0.8333,
+    "hours_per_trip": 0.3593
   },
   {
     "h3_index": "897b4e2a07bffff",
@@ -272853,14 +273633,14 @@
   {
     "h3_index": "897b4e2a607ffff",
     "year": 2026,
-    "fishing_hours": 0.0525,
-    "unique_trips": 1,
-    "n_active_days": 1,
-    "avg_fidelity": 0.01,
-    "constancy": 0.0032,
-    "avg_hours_per_day": 0.0525,
+    "fishing_hours": 0.3811,
+    "unique_trips": 2,
+    "n_active_days": 2,
+    "avg_fidelity": 0.0346,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.1906,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.0525
+    "hours_per_trip": 0.1906
   },
   {
     "h3_index": "897b4e2a60bffff",
@@ -272949,14 +273729,14 @@
   {
     "h3_index": "897b4e2a61bffff",
     "year": 2026,
-    "fishing_hours": 0.1933,
-    "unique_trips": 1,
-    "n_active_days": 1,
-    "avg_fidelity": 0.0318,
-    "constancy": 0.0032,
-    "avg_hours_per_day": 0.1933,
+    "fishing_hours": 0.2717,
+    "unique_trips": 2,
+    "n_active_days": 2,
+    "avg_fidelity": 0.0208,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.1358,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.1933
+    "hours_per_trip": 0.1358
   },
   {
     "h3_index": "897b4e2a623ffff",
@@ -273031,6 +273811,18 @@
     "hours_per_trip": 0.155
   },
   {
+    "h3_index": "897b4e2a633ffff",
+    "year": 2026,
+    "fishing_hours": 0.0103,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0019,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.0103,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.0103
+  },
+  {
     "h3_index": "897b4e2a637ffff",
     "year": 2025,
     "fishing_hours": 0.0611,
@@ -273069,14 +273861,14 @@
   {
     "h3_index": "897b4e2a63bffff",
     "year": 2026,
-    "fishing_hours": 0.1064,
-    "unique_trips": 2,
-    "n_active_days": 3,
-    "avg_fidelity": 0.01,
-    "constancy": 0.0096,
-    "avg_hours_per_day": 0.0355,
-    "avg_visits_per_day": 0.6667,
-    "hours_per_trip": 0.0532
+    "fishing_hours": 0.3167,
+    "unique_trips": 3,
+    "n_active_days": 5,
+    "avg_fidelity": 0.0171,
+    "constancy": 0.016,
+    "avg_hours_per_day": 0.0633,
+    "avg_visits_per_day": 0.6,
+    "hours_per_trip": 0.1056
   },
   {
     "h3_index": "897b4e2a643ffff",
@@ -273105,14 +273897,14 @@
   {
     "h3_index": "897b4e2a643ffff",
     "year": 2026,
-    "fishing_hours": 0.9192,
-    "unique_trips": 6,
-    "n_active_days": 6,
-    "avg_fidelity": 0.0247,
-    "constancy": 0.0192,
-    "avg_hours_per_day": 0.1532,
-    "avg_visits_per_day": 1,
-    "hours_per_trip": 0.1532
+    "fishing_hours": 4.2731,
+    "unique_trips": 9,
+    "n_active_days": 8,
+    "avg_fidelity": 0.0643,
+    "constancy": 0.0256,
+    "avg_hours_per_day": 0.5341,
+    "avg_visits_per_day": 1.125,
+    "hours_per_trip": 0.4748
   },
   {
     "h3_index": "897b4e2a647ffff",
@@ -273141,14 +273933,14 @@
   {
     "h3_index": "897b4e2a647ffff",
     "year": 2026,
-    "fishing_hours": 6.1764,
-    "unique_trips": 8,
-    "n_active_days": 7,
-    "avg_fidelity": 0.1047,
-    "constancy": 0.0224,
-    "avg_hours_per_day": 0.8823,
-    "avg_visits_per_day": 1.1429,
-    "hours_per_trip": 0.772
+    "fishing_hours": 7.4206,
+    "unique_trips": 9,
+    "n_active_days": 9,
+    "avg_fidelity": 0.1102,
+    "constancy": 0.0288,
+    "avg_hours_per_day": 0.8245,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.8245
   },
   {
     "h3_index": "897b4e2a64bffff",
@@ -273177,14 +273969,14 @@
   {
     "h3_index": "897b4e2a64bffff",
     "year": 2026,
-    "fishing_hours": 11.1064,
-    "unique_trips": 21,
-    "n_active_days": 19,
-    "avg_fidelity": 0.077,
-    "constancy": 0.0609,
-    "avg_hours_per_day": 0.5845,
-    "avg_visits_per_day": 1.1053,
-    "hours_per_trip": 0.5289
+    "fishing_hours": 14.0558,
+    "unique_trips": 23,
+    "n_active_days": 21,
+    "avg_fidelity": 0.0877,
+    "constancy": 0.0673,
+    "avg_hours_per_day": 0.6693,
+    "avg_visits_per_day": 1.0952,
+    "hours_per_trip": 0.6111
   },
   {
     "h3_index": "897b4e2a64fffff",
@@ -273213,14 +274005,14 @@
   {
     "h3_index": "897b4e2a64fffff",
     "year": 2026,
-    "fishing_hours": 22.7975,
-    "unique_trips": 24,
-    "n_active_days": 22,
-    "avg_fidelity": 0.1227,
-    "constancy": 0.0705,
-    "avg_hours_per_day": 1.0362,
-    "avg_visits_per_day": 1.0909,
-    "hours_per_trip": 0.9499
+    "fishing_hours": 25.2344,
+    "unique_trips": 25,
+    "n_active_days": 23,
+    "avg_fidelity": 0.1299,
+    "constancy": 0.0737,
+    "avg_hours_per_day": 1.0971,
+    "avg_visits_per_day": 1.087,
+    "hours_per_trip": 1.0094
   },
   {
     "h3_index": "897b4e2a653ffff",
@@ -273249,14 +274041,14 @@
   {
     "h3_index": "897b4e2a657ffff",
     "year": 2026,
-    "fishing_hours": 1.2161,
-    "unique_trips": 2,
-    "n_active_days": 2,
-    "avg_fidelity": 0.0987,
-    "constancy": 0.0064,
-    "avg_hours_per_day": 0.6081,
+    "fishing_hours": 1.7519,
+    "unique_trips": 3,
+    "n_active_days": 3,
+    "avg_fidelity": 0.088,
+    "constancy": 0.0096,
+    "avg_hours_per_day": 0.584,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.6081
+    "hours_per_trip": 0.584
   },
   {
     "h3_index": "897b4e2a65bffff",
@@ -273285,14 +274077,14 @@
   {
     "h3_index": "897b4e2a65bffff",
     "year": 2026,
-    "fishing_hours": 0.3956,
-    "unique_trips": 2,
-    "n_active_days": 2,
-    "avg_fidelity": 0.0205,
-    "constancy": 0.0064,
-    "avg_hours_per_day": 0.1978,
-    "avg_visits_per_day": 1,
-    "hours_per_trip": 0.1978
+    "fishing_hours": 1.4317,
+    "unique_trips": 3,
+    "n_active_days": 4,
+    "avg_fidelity": 0.0574,
+    "constancy": 0.0128,
+    "avg_hours_per_day": 0.3579,
+    "avg_visits_per_day": 0.75,
+    "hours_per_trip": 0.4772
   },
   {
     "h3_index": "897b4e2a663ffff",
@@ -273321,14 +274113,14 @@
   {
     "h3_index": "897b4e2a663ffff",
     "year": 2026,
-    "fishing_hours": 22.9672,
+    "fishing_hours": 26.2183,
     "unique_trips": 16,
     "n_active_days": 14,
-    "avg_fidelity": 0.1897,
+    "avg_fidelity": 0.2185,
     "constancy": 0.0449,
-    "avg_hours_per_day": 1.6405,
+    "avg_hours_per_day": 1.8727,
     "avg_visits_per_day": 1.1429,
-    "hours_per_trip": 1.4355
+    "hours_per_trip": 1.6386
   },
   {
     "h3_index": "897b4e2a667ffff",
@@ -273360,7 +274152,7 @@
     "fishing_hours": 4.2278,
     "unique_trips": 10,
     "n_active_days": 10,
-    "avg_fidelity": 0.0851,
+    "avg_fidelity": 0.0652,
     "constancy": 0.0321,
     "avg_hours_per_day": 0.4228,
     "avg_visits_per_day": 1,
@@ -273420,7 +274212,7 @@
     "fishing_hours": 28.1708,
     "unique_trips": 17,
     "n_active_days": 14,
-    "avg_fidelity": 0.2663,
+    "avg_fidelity": 0.2639,
     "constancy": 0.0449,
     "avg_hours_per_day": 2.0122,
     "avg_visits_per_day": 1.2143,
@@ -273489,14 +274281,14 @@
   {
     "h3_index": "897b4e2a677ffff",
     "year": 2026,
-    "fishing_hours": 0.7978,
-    "unique_trips": 5,
-    "n_active_days": 4,
-    "avg_fidelity": 0.0258,
-    "constancy": 0.0128,
-    "avg_hours_per_day": 0.1994,
-    "avg_visits_per_day": 1.25,
-    "hours_per_trip": 0.1596
+    "fishing_hours": 0.8236,
+    "unique_trips": 6,
+    "n_active_days": 5,
+    "avg_fidelity": 0.0222,
+    "constancy": 0.016,
+    "avg_hours_per_day": 0.1647,
+    "avg_visits_per_day": 1.2,
+    "hours_per_trip": 0.1373
   },
   {
     "h3_index": "897b4e2a67bffff",
@@ -273525,14 +274317,14 @@
   {
     "h3_index": "897b4e2a67bffff",
     "year": 2026,
-    "fishing_hours": 2.4569,
-    "unique_trips": 8,
-    "n_active_days": 9,
-    "avg_fidelity": 0.0469,
-    "constancy": 0.0288,
-    "avg_hours_per_day": 0.273,
-    "avg_visits_per_day": 0.8889,
-    "hours_per_trip": 0.3071
+    "fishing_hours": 3.4036,
+    "unique_trips": 9,
+    "n_active_days": 10,
+    "avg_fidelity": 0.0548,
+    "constancy": 0.0321,
+    "avg_hours_per_day": 0.3404,
+    "avg_visits_per_day": 0.9,
+    "hours_per_trip": 0.3782
   },
   {
     "h3_index": "897b4e2a6a3ffff",
@@ -273593,6 +274385,18 @@
     "avg_hours_per_day": 0.25,
     "avg_visits_per_day": 1,
     "hours_per_trip": 0.25
+  },
+  {
+    "h3_index": "897b4e2a6abffff",
+    "year": 2026,
+    "fishing_hours": 0.0139,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0025,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.0139,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.0139
   },
   {
     "h3_index": "897b4e2a6afffff",
@@ -275373,14 +276177,14 @@
   {
     "h3_index": "897b4e2b583ffff",
     "year": 2026,
-    "fishing_hours": 1.1317,
-    "unique_trips": 5,
-    "n_active_days": 6,
-    "avg_fidelity": 0.0409,
-    "constancy": 0.0192,
-    "avg_hours_per_day": 0.1886,
-    "avg_visits_per_day": 0.8333,
-    "hours_per_trip": 0.2263
+    "fishing_hours": 1.3814,
+    "unique_trips": 6,
+    "n_active_days": 7,
+    "avg_fidelity": 0.0393,
+    "constancy": 0.0224,
+    "avg_hours_per_day": 0.1973,
+    "avg_visits_per_day": 0.8571,
+    "hours_per_trip": 0.2302
   },
   {
     "h3_index": "897b4e2b587ffff",
@@ -275409,14 +276213,14 @@
   {
     "h3_index": "897b4e2b587ffff",
     "year": 2026,
-    "fishing_hours": 29.7706,
-    "unique_trips": 36,
-    "n_active_days": 30,
-    "avg_fidelity": 0.131,
-    "constancy": 0.0962,
-    "avg_hours_per_day": 0.9924,
-    "avg_visits_per_day": 1.2,
-    "hours_per_trip": 0.827
+    "fishing_hours": 31.7131,
+    "unique_trips": 38,
+    "n_active_days": 31,
+    "avg_fidelity": 0.125,
+    "constancy": 0.0994,
+    "avg_hours_per_day": 1.023,
+    "avg_visits_per_day": 1.2258,
+    "hours_per_trip": 0.8346
   },
   {
     "h3_index": "897b4e2b58bffff",
@@ -275481,14 +276285,14 @@
   {
     "h3_index": "897b4e2b58fffff",
     "year": 2026,
-    "fishing_hours": 9.2744,
-    "unique_trips": 16,
-    "n_active_days": 18,
-    "avg_fidelity": 0.0885,
-    "constancy": 0.0577,
-    "avg_hours_per_day": 0.5152,
-    "avg_visits_per_day": 0.8889,
-    "hours_per_trip": 0.5797
+    "fishing_hours": 9.4186,
+    "unique_trips": 17,
+    "n_active_days": 19,
+    "avg_fidelity": 0.0844,
+    "constancy": 0.0609,
+    "avg_hours_per_day": 0.4957,
+    "avg_visits_per_day": 0.8947,
+    "hours_per_trip": 0.554
   },
   {
     "h3_index": "897b4e2b593ffff",
@@ -275553,14 +276357,14 @@
   {
     "h3_index": "897b4e2b597ffff",
     "year": 2026,
-    "fishing_hours": 0.7253,
-    "unique_trips": 7,
-    "n_active_days": 8,
-    "avg_fidelity": 0.0168,
-    "constancy": 0.0256,
-    "avg_hours_per_day": 0.0907,
-    "avg_visits_per_day": 0.875,
-    "hours_per_trip": 0.1036
+    "fishing_hours": 2.8689,
+    "unique_trips": 8,
+    "n_active_days": 9,
+    "avg_fidelity": 0.0487,
+    "constancy": 0.0288,
+    "avg_hours_per_day": 0.3188,
+    "avg_visits_per_day": 0.8889,
+    "hours_per_trip": 0.3586
   },
   {
     "h3_index": "897b4e2b59bffff",
@@ -275757,14 +276561,14 @@
   {
     "h3_index": "897b4e2b5b3ffff",
     "year": 2026,
-    "fishing_hours": 61.3536,
-    "unique_trips": 38,
-    "n_active_days": 31,
-    "avg_fidelity": 0.2382,
-    "constancy": 0.0994,
-    "avg_hours_per_day": 1.9791,
-    "avg_visits_per_day": 1.2258,
-    "hours_per_trip": 1.6146
+    "fishing_hours": 64.7192,
+    "unique_trips": 40,
+    "n_active_days": 32,
+    "avg_fidelity": 0.2409,
+    "constancy": 0.1026,
+    "avg_hours_per_day": 2.0225,
+    "avg_visits_per_day": 1.25,
+    "hours_per_trip": 1.618
   },
   {
     "h3_index": "897b4e2b5b7ffff",
@@ -275829,14 +276633,14 @@
   {
     "h3_index": "897b4e2b5bbffff",
     "year": 2026,
-    "fishing_hours": 46.5964,
-    "unique_trips": 37,
-    "n_active_days": 31,
-    "avg_fidelity": 0.2004,
-    "constancy": 0.0994,
-    "avg_hours_per_day": 1.5031,
-    "avg_visits_per_day": 1.1935,
-    "hours_per_trip": 1.2594
+    "fishing_hours": 46.7664,
+    "unique_trips": 38,
+    "n_active_days": 32,
+    "avg_fidelity": 0.1959,
+    "constancy": 0.1026,
+    "avg_hours_per_day": 1.4614,
+    "avg_visits_per_day": 1.1875,
+    "hours_per_trip": 1.2307
   },
   {
     "h3_index": "897b4e2b5c3ffff",
@@ -276081,14 +276885,14 @@
   {
     "h3_index": "897b4e2b60bffff",
     "year": 2026,
-    "fishing_hours": 10.2825,
-    "unique_trips": 6,
-    "n_active_days": 7,
-    "avg_fidelity": 0.2816,
-    "constancy": 0.0224,
-    "avg_hours_per_day": 1.4689,
-    "avg_visits_per_day": 0.8571,
-    "hours_per_trip": 1.7138
+    "fishing_hours": 10.2989,
+    "unique_trips": 7,
+    "n_active_days": 8,
+    "avg_fidelity": 0.2417,
+    "constancy": 0.0256,
+    "avg_hours_per_day": 1.2874,
+    "avg_visits_per_day": 0.875,
+    "hours_per_trip": 1.4713
   },
   {
     "h3_index": "897b4e2b60fffff",
@@ -276105,14 +276909,14 @@
   {
     "h3_index": "897b4e2b61bffff",
     "year": 2026,
-    "fishing_hours": 0.0764,
-    "unique_trips": 1,
-    "n_active_days": 1,
-    "avg_fidelity": 0.0099,
-    "constancy": 0.0032,
-    "avg_hours_per_day": 0.0764,
+    "fishing_hours": 1.6719,
+    "unique_trips": 2,
+    "n_active_days": 2,
+    "avg_fidelity": 0.1284,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.836,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.0764
+    "hours_per_trip": 0.836
   },
   {
     "h3_index": "897b4e2b62bffff",
@@ -276225,14 +277029,14 @@
   {
     "h3_index": "897b4e2b657ffff",
     "year": 2026,
-    "fishing_hours": 8.5661,
-    "unique_trips": 7,
-    "n_active_days": 7,
-    "avg_fidelity": 0.1898,
-    "constancy": 0.0224,
-    "avg_hours_per_day": 1.2237,
+    "fishing_hours": 9.3811,
+    "unique_trips": 8,
+    "n_active_days": 8,
+    "avg_fidelity": 0.1818,
+    "constancy": 0.0256,
+    "avg_hours_per_day": 1.1726,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 1.2237
+    "hours_per_trip": 1.1726
   },
   {
     "h3_index": "897b4e2b65bffff",
@@ -276357,14 +277161,14 @@
   {
     "h3_index": "897b4e2b6cfffff",
     "year": 2026,
-    "fishing_hours": 6.5439,
-    "unique_trips": 2,
-    "n_active_days": 3,
-    "avg_fidelity": 0.4837,
-    "constancy": 0.0096,
-    "avg_hours_per_day": 2.1813,
-    "avg_visits_per_day": 0.6667,
-    "hours_per_trip": 3.2719
+    "fishing_hours": 7.3214,
+    "unique_trips": 3,
+    "n_active_days": 4,
+    "avg_fidelity": 0.3625,
+    "constancy": 0.0128,
+    "avg_hours_per_day": 1.8303,
+    "avg_visits_per_day": 0.75,
+    "hours_per_trip": 2.4405
   },
   {
     "h3_index": "897b4e2d24bffff",
@@ -278479,6 +279283,18 @@
     "hours_per_trip": 0.6911
   },
   {
+    "h3_index": "897b4e39b2fffff",
+    "year": 2026,
+    "fishing_hours": 0.0353,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0045,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.0353,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.0353
+  },
+  {
     "h3_index": "897b4e39b33ffff",
     "year": 2025,
     "fishing_hours": 0.1242,
@@ -278901,14 +279717,14 @@
   {
     "h3_index": "897b4e39cabffff",
     "year": 2026,
-    "fishing_hours": 0.1322,
-    "unique_trips": 15,
-    "n_active_days": 15,
-    "avg_fidelity": 0.2406,
-    "constancy": 0.0481,
-    "avg_hours_per_day": 0.0088,
-    "avg_visits_per_day": 1,
-    "hours_per_trip": 0.0088
+    "fishing_hours": 0.1425,
+    "unique_trips": 16,
+    "n_active_days": 17,
+    "avg_fidelity": 0.2276,
+    "constancy": 0.0545,
+    "avg_hours_per_day": 0.0084,
+    "avg_visits_per_day": 0.9412,
+    "hours_per_trip": 0.0089
   },
   {
     "h3_index": "897b4e39cafffff",
@@ -278925,14 +279741,14 @@
   {
     "h3_index": "897b4e39cafffff",
     "year": 2026,
-    "fishing_hours": 0.9231,
-    "unique_trips": 13,
-    "n_active_days": 13,
-    "avg_fidelity": 0.5936,
-    "constancy": 0.0417,
-    "avg_hours_per_day": 0.071,
-    "avg_visits_per_day": 1,
-    "hours_per_trip": 0.071
+    "fishing_hours": 0.9772,
+    "unique_trips": 14,
+    "n_active_days": 15,
+    "avg_fidelity": 0.5634,
+    "constancy": 0.0481,
+    "avg_hours_per_day": 0.0651,
+    "avg_visits_per_day": 0.9333,
+    "hours_per_trip": 0.0698
   },
   {
     "h3_index": "897b4e39cb7ffff",
@@ -279129,14 +279945,14 @@
   {
     "h3_index": "897b4e39ddbffff",
     "year": 2026,
-    "fishing_hours": 0.0317,
-    "unique_trips": 1,
-    "n_active_days": 1,
-    "avg_fidelity": 0.8976,
-    "constancy": 0.0032,
-    "avg_hours_per_day": 0.0317,
+    "fishing_hours": 0.2831,
+    "unique_trips": 2,
+    "n_active_days": 2,
+    "avg_fidelity": 0.8468,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.1415,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.0317
+    "hours_per_trip": 0.1415
   },
   {
     "h3_index": "897b4e3a483ffff",
@@ -281660,14 +282476,14 @@
   {
     "h3_index": "897b4e65207ffff",
     "year": 2026,
-    "fishing_hours": 0.0778,
-    "unique_trips": 1,
-    "n_active_days": 1,
-    "avg_fidelity": 0.0072,
-    "constancy": 0.0032,
-    "avg_hours_per_day": 0.0778,
+    "fishing_hours": 0.0794,
+    "unique_trips": 2,
+    "n_active_days": 2,
+    "avg_fidelity": 0.0037,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.0397,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.0778
+    "hours_per_trip": 0.0397
   },
   {
     "h3_index": "897b4e65213ffff",
@@ -281816,14 +282632,14 @@
   {
     "h3_index": "897b4e65237ffff",
     "year": 2026,
-    "fishing_hours": 3.0028,
-    "unique_trips": 3,
-    "n_active_days": 5,
-    "avg_fidelity": 0.1276,
-    "constancy": 0.016,
-    "avg_hours_per_day": 0.6006,
-    "avg_visits_per_day": 0.6,
-    "hours_per_trip": 1.0009
+    "fishing_hours": 4.3511,
+    "unique_trips": 4,
+    "n_active_days": 7,
+    "avg_fidelity": 0.1415,
+    "constancy": 0.0224,
+    "avg_hours_per_day": 0.6216,
+    "avg_visits_per_day": 0.5714,
+    "hours_per_trip": 1.0878
   },
   {
     "h3_index": "897b4e6528fffff",
@@ -281912,14 +282728,14 @@
   {
     "h3_index": "897b4e652abffff",
     "year": 2026,
-    "fishing_hours": 2.6328,
-    "unique_trips": 3,
-    "n_active_days": 5,
-    "avg_fidelity": 0.1047,
-    "constancy": 0.016,
-    "avg_hours_per_day": 0.5266,
-    "avg_visits_per_day": 0.6,
-    "hours_per_trip": 0.8776
+    "fishing_hours": 3.2792,
+    "unique_trips": 4,
+    "n_active_days": 7,
+    "avg_fidelity": 0.1004,
+    "constancy": 0.0224,
+    "avg_hours_per_day": 0.4685,
+    "avg_visits_per_day": 0.5714,
+    "hours_per_trip": 0.8198
   },
   {
     "h3_index": "897b4e652afffff",
@@ -281948,14 +282764,14 @@
   {
     "h3_index": "897b4e652afffff",
     "year": 2026,
-    "fishing_hours": 8.4403,
-    "unique_trips": 5,
-    "n_active_days": 7,
-    "avg_fidelity": 0.2104,
-    "constancy": 0.0224,
-    "avg_hours_per_day": 1.2058,
-    "avg_visits_per_day": 0.7143,
-    "hours_per_trip": 1.6881
+    "fishing_hours": 12.4631,
+    "unique_trips": 6,
+    "n_active_days": 9,
+    "avg_fidelity": 0.2663,
+    "constancy": 0.0288,
+    "avg_hours_per_day": 1.3848,
+    "avg_visits_per_day": 0.6667,
+    "hours_per_trip": 2.0772
   },
   {
     "h3_index": "897b4e652b7ffff",
@@ -282044,14 +282860,14 @@
   {
     "h3_index": "897b4e652cfffff",
     "year": 2026,
-    "fishing_hours": 6.3578,
-    "unique_trips": 43,
-    "n_active_days": 37,
-    "avg_fidelity": 0.021,
-    "constancy": 0.1186,
-    "avg_hours_per_day": 0.1718,
-    "avg_visits_per_day": 1.1622,
-    "hours_per_trip": 0.1479
+    "fishing_hours": 6.6694,
+    "unique_trips": 44,
+    "n_active_days": 38,
+    "avg_fidelity": 0.0214,
+    "constancy": 0.1218,
+    "avg_hours_per_day": 0.1755,
+    "avg_visits_per_day": 1.1579,
+    "hours_per_trip": 0.1516
   },
   {
     "h3_index": "897b4e65303ffff",
@@ -282548,14 +283364,14 @@
   {
     "h3_index": "897b4e653c3ffff",
     "year": 2026,
-    "fishing_hours": 12.1414,
-    "unique_trips": 15,
-    "n_active_days": 19,
-    "avg_fidelity": 0.1812,
-    "constancy": 0.0609,
-    "avg_hours_per_day": 0.639,
-    "avg_visits_per_day": 0.7895,
-    "hours_per_trip": 0.8094
+    "fishing_hours": 12.2803,
+    "unique_trips": 16,
+    "n_active_days": 20,
+    "avg_fidelity": 0.1711,
+    "constancy": 0.0641,
+    "avg_hours_per_day": 0.614,
+    "avg_visits_per_day": 0.8,
+    "hours_per_trip": 0.7675
   },
   {
     "h3_index": "897b4e653c7ffff",
@@ -282632,14 +283448,14 @@
   {
     "h3_index": "897b4e653d3ffff",
     "year": 2026,
-    "fishing_hours": 4.6269,
-    "unique_trips": 7,
-    "n_active_days": 8,
-    "avg_fidelity": 0.1025,
-    "constancy": 0.0256,
-    "avg_hours_per_day": 0.5784,
-    "avg_visits_per_day": 0.875,
-    "hours_per_trip": 0.661
+    "fishing_hours": 4.7103,
+    "unique_trips": 8,
+    "n_active_days": 9,
+    "avg_fidelity": 0.0911,
+    "constancy": 0.0288,
+    "avg_hours_per_day": 0.5234,
+    "avg_visits_per_day": 0.8889,
+    "hours_per_trip": 0.5888
   },
   {
     "h3_index": "897b4e653d7ffff",
@@ -282704,14 +283520,14 @@
   {
     "h3_index": "897b4e653dbffff",
     "year": 2026,
-    "fishing_hours": 0.6817,
-    "unique_trips": 5,
-    "n_active_days": 6,
-    "avg_fidelity": 0.0163,
-    "constancy": 0.0192,
-    "avg_hours_per_day": 0.1136,
-    "avg_visits_per_day": 0.8333,
-    "hours_per_trip": 0.1363
+    "fishing_hours": 1.4928,
+    "unique_trips": 6,
+    "n_active_days": 7,
+    "avg_fidelity": 0.0319,
+    "constancy": 0.0224,
+    "avg_hours_per_day": 0.2133,
+    "avg_visits_per_day": 0.8571,
+    "hours_per_trip": 0.2488
   },
   {
     "h3_index": "897b4e65507ffff",
@@ -287875,14 +288691,14 @@
   {
     "h3_index": "897b4e6e943ffff",
     "year": 2026,
-    "fishing_hours": 45.6833,
-    "unique_trips": 16,
-    "n_active_days": 23,
-    "avg_fidelity": 0.5395,
-    "constancy": 0.0737,
-    "avg_hours_per_day": 1.9862,
-    "avg_visits_per_day": 0.6957,
-    "hours_per_trip": 2.8552
+    "fishing_hours": 49.3353,
+    "unique_trips": 17,
+    "n_active_days": 24,
+    "avg_fidelity": 0.5331,
+    "constancy": 0.0769,
+    "avg_hours_per_day": 2.0556,
+    "avg_visits_per_day": 0.7083,
+    "hours_per_trip": 2.9021
   },
   {
     "h3_index": "897b4e6e947ffff",
@@ -287935,14 +288751,14 @@
   {
     "h3_index": "897b4e6e94bffff",
     "year": 2026,
-    "fishing_hours": 8.4578,
-    "unique_trips": 11,
-    "n_active_days": 13,
-    "avg_fidelity": 0.1022,
-    "constancy": 0.0417,
-    "avg_hours_per_day": 0.6506,
-    "avg_visits_per_day": 0.8462,
-    "hours_per_trip": 0.7689
+    "fishing_hours": 8.6017,
+    "unique_trips": 12,
+    "n_active_days": 14,
+    "avg_fidelity": 0.0951,
+    "constancy": 0.0449,
+    "avg_hours_per_day": 0.6144,
+    "avg_visits_per_day": 0.8571,
+    "hours_per_trip": 0.7168
   },
   {
     "h3_index": "897b4e6e94fffff",
@@ -287971,14 +288787,14 @@
   {
     "h3_index": "897b4e6e94fffff",
     "year": 2026,
-    "fishing_hours": 14.6731,
-    "unique_trips": 15,
-    "n_active_days": 18,
-    "avg_fidelity": 0.241,
-    "constancy": 0.0577,
-    "avg_hours_per_day": 0.8152,
-    "avg_visits_per_day": 0.8333,
-    "hours_per_trip": 0.9782
+    "fishing_hours": 14.675,
+    "unique_trips": 16,
+    "n_active_days": 19,
+    "avg_fidelity": 0.2259,
+    "constancy": 0.0609,
+    "avg_hours_per_day": 0.7724,
+    "avg_visits_per_day": 0.8421,
+    "hours_per_trip": 0.9172
   },
   {
     "h3_index": "897b4e6e953ffff",
@@ -287995,14 +288811,14 @@
   {
     "h3_index": "897b4e6e953ffff",
     "year": 2026,
-    "fishing_hours": 2.6175,
-    "unique_trips": 5,
-    "n_active_days": 6,
-    "avg_fidelity": 0.0873,
-    "constancy": 0.0192,
-    "avg_hours_per_day": 0.4362,
-    "avg_visits_per_day": 0.8333,
-    "hours_per_trip": 0.5235
+    "fishing_hours": 3.1767,
+    "unique_trips": 6,
+    "n_active_days": 7,
+    "avg_fidelity": 0.0837,
+    "constancy": 0.0224,
+    "avg_hours_per_day": 0.4538,
+    "avg_visits_per_day": 0.8571,
+    "hours_per_trip": 0.5294
   },
   {
     "h3_index": "897b4e6e957ffff",
@@ -288031,14 +288847,14 @@
   {
     "h3_index": "897b4e6e957ffff",
     "year": 2026,
-    "fishing_hours": 7.6736,
-    "unique_trips": 8,
-    "n_active_days": 14,
-    "avg_fidelity": 0.1956,
-    "constancy": 0.0449,
-    "avg_hours_per_day": 0.5481,
-    "avg_visits_per_day": 0.5714,
-    "hours_per_trip": 0.9592
+    "fishing_hours": 10.5739,
+    "unique_trips": 9,
+    "n_active_days": 15,
+    "avg_fidelity": 0.2117,
+    "constancy": 0.0481,
+    "avg_hours_per_day": 0.7049,
+    "avg_visits_per_day": 0.6,
+    "hours_per_trip": 1.1749
   },
   {
     "h3_index": "897b4e6e987ffff",
@@ -288091,14 +288907,14 @@
   {
     "h3_index": "897b4e6e9cfffff",
     "year": 2026,
-    "fishing_hours": 0.8808,
-    "unique_trips": 2,
-    "n_active_days": 2,
-    "avg_fidelity": 0.3962,
-    "constancy": 0.0064,
-    "avg_hours_per_day": 0.4404,
+    "fishing_hours": 1.8969,
+    "unique_trips": 3,
+    "n_active_days": 3,
+    "avg_fidelity": 0.304,
+    "constancy": 0.0096,
+    "avg_hours_per_day": 0.6323,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.4404
+    "hours_per_trip": 0.6323
   },
   {
     "h3_index": "897b4e6e9d3ffff",
@@ -288211,14 +289027,14 @@
   {
     "h3_index": "897b4e6eba3ffff",
     "year": 2026,
-    "fishing_hours": 4.5564,
-    "unique_trips": 14,
-    "n_active_days": 14,
-    "avg_fidelity": 0.1423,
-    "constancy": 0.0449,
-    "avg_hours_per_day": 0.3255,
+    "fishing_hours": 4.5997,
+    "unique_trips": 15,
+    "n_active_days": 15,
+    "avg_fidelity": 0.1331,
+    "constancy": 0.0481,
+    "avg_hours_per_day": 0.3066,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.3255
+    "hours_per_trip": 0.3066
   },
   {
     "h3_index": "897b4e6ebb3ffff",
@@ -288247,14 +289063,14 @@
   {
     "h3_index": "897b4e6ebb3ffff",
     "year": 2026,
-    "fishing_hours": 3.9869,
-    "unique_trips": 19,
-    "n_active_days": 20,
-    "avg_fidelity": 0.0553,
-    "constancy": 0.0641,
-    "avg_hours_per_day": 0.1993,
-    "avg_visits_per_day": 0.95,
-    "hours_per_trip": 0.2098
+    "fishing_hours": 4.1717,
+    "unique_trips": 20,
+    "n_active_days": 21,
+    "avg_fidelity": 0.0536,
+    "constancy": 0.0673,
+    "avg_hours_per_day": 0.1987,
+    "avg_visits_per_day": 0.9524,
+    "hours_per_trip": 0.2086
   },
   {
     "h3_index": "897b4e6ebbbffff",
@@ -288823,14 +289639,14 @@
   {
     "h3_index": "897b4e74307ffff",
     "year": 2026,
-    "fishing_hours": 0.3722,
-    "unique_trips": 2,
-    "n_active_days": 2,
-    "avg_fidelity": 0.0271,
-    "constancy": 0.0064,
-    "avg_hours_per_day": 0.1861,
+    "fishing_hours": 1.3644,
+    "unique_trips": 3,
+    "n_active_days": 3,
+    "avg_fidelity": 0.0711,
+    "constancy": 0.0096,
+    "avg_hours_per_day": 0.4548,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.1861
+    "hours_per_trip": 0.4548
   },
   {
     "h3_index": "897b4e7430bffff",
@@ -288883,14 +289699,14 @@
   {
     "h3_index": "897b4e74323ffff",
     "year": 2026,
-    "fishing_hours": 1.1414,
-    "unique_trips": 3,
-    "n_active_days": 3,
-    "avg_fidelity": 0.0553,
-    "constancy": 0.0096,
-    "avg_hours_per_day": 0.3805,
-    "avg_visits_per_day": 1,
-    "hours_per_trip": 0.3805
+    "fishing_hours": 1.6136,
+    "unique_trips": 4,
+    "n_active_days": 5,
+    "avg_fidelity": 0.0604,
+    "constancy": 0.016,
+    "avg_hours_per_day": 0.3227,
+    "avg_visits_per_day": 0.8,
+    "hours_per_trip": 0.4034
   },
   {
     "h3_index": "897b4e74327ffff",
@@ -288907,14 +289723,14 @@
   {
     "h3_index": "897b4e74327ffff",
     "year": 2026,
-    "fishing_hours": 2.105,
-    "unique_trips": 3,
-    "n_active_days": 3,
-    "avg_fidelity": 0.1145,
-    "constancy": 0.0096,
-    "avg_hours_per_day": 0.7017,
+    "fishing_hours": 4.5619,
+    "unique_trips": 4,
+    "n_active_days": 4,
+    "avg_fidelity": 0.1844,
+    "constancy": 0.0128,
+    "avg_hours_per_day": 1.1405,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.7017
+    "hours_per_trip": 1.1405
   },
   {
     "h3_index": "897b4e74333ffff",
@@ -288931,14 +289747,14 @@
   {
     "h3_index": "897b4e74333ffff",
     "year": 2026,
-    "fishing_hours": 0.3869,
-    "unique_trips": 1,
-    "n_active_days": 1,
-    "avg_fidelity": 0.0564,
-    "constancy": 0.0032,
-    "avg_hours_per_day": 0.3869,
+    "fishing_hours": 0.8564,
+    "unique_trips": 2,
+    "n_active_days": 2,
+    "avg_fidelity": 0.0658,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.4282,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.3869
+    "hours_per_trip": 0.4282
   },
   {
     "h3_index": "897b4e74337ffff",
@@ -288991,14 +289807,14 @@
   {
     "h3_index": "897b4e7433bffff",
     "year": 2026,
-    "fishing_hours": 4.9528,
-    "unique_trips": 3,
-    "n_active_days": 4,
-    "avg_fidelity": 0.2408,
-    "constancy": 0.0128,
-    "avg_hours_per_day": 1.2382,
-    "avg_visits_per_day": 0.75,
-    "hours_per_trip": 1.6509
+    "fishing_hours": 5.8989,
+    "unique_trips": 4,
+    "n_active_days": 6,
+    "avg_fidelity": 0.2185,
+    "constancy": 0.0192,
+    "avg_hours_per_day": 0.9831,
+    "avg_visits_per_day": 0.6667,
+    "hours_per_trip": 1.4747
   },
   {
     "h3_index": "897b4e74343ffff",
@@ -289999,14 +290815,14 @@
   {
     "h3_index": "897b4e7490fffff",
     "year": 2026,
-    "fishing_hours": 3.9703,
-    "unique_trips": 5,
-    "n_active_days": 5,
-    "avg_fidelity": 0.1901,
-    "constancy": 0.016,
-    "avg_hours_per_day": 0.7941,
+    "fishing_hours": 4.2681,
+    "unique_trips": 6,
+    "n_active_days": 6,
+    "avg_fidelity": 0.1661,
+    "constancy": 0.0192,
+    "avg_hours_per_day": 0.7113,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.7941
+    "hours_per_trip": 0.7113
   },
   {
     "h3_index": "897b4e74913ffff",
@@ -290179,14 +290995,14 @@
   {
     "h3_index": "897b4e74927ffff",
     "year": 2026,
-    "fishing_hours": 1.7214,
-    "unique_trips": 6,
-    "n_active_days": 6,
-    "avg_fidelity": 0.0251,
-    "constancy": 0.0192,
-    "avg_hours_per_day": 0.2869,
+    "fishing_hours": 2.0269,
+    "unique_trips": 7,
+    "n_active_days": 7,
+    "avg_fidelity": 0.0254,
+    "constancy": 0.0224,
+    "avg_hours_per_day": 0.2896,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.2869
+    "hours_per_trip": 0.2896
   },
   {
     "h3_index": "897b4e7492bffff",
@@ -290395,14 +291211,14 @@
   {
     "h3_index": "897b4e74947ffff",
     "year": 2026,
-    "fishing_hours": 1.6789,
-    "unique_trips": 2,
-    "n_active_days": 2,
-    "avg_fidelity": 0.1189,
-    "constancy": 0.0064,
-    "avg_hours_per_day": 0.8394,
+    "fishing_hours": 3.6017,
+    "unique_trips": 3,
+    "n_active_days": 3,
+    "avg_fidelity": 0.1784,
+    "constancy": 0.0096,
+    "avg_hours_per_day": 1.2006,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.8394
+    "hours_per_trip": 1.2006
   },
   {
     "h3_index": "897b4e7494bffff",
@@ -290683,14 +291499,14 @@
   {
     "h3_index": "897b4e74973ffff",
     "year": 2026,
-    "fishing_hours": 2.0608,
-    "unique_trips": 3,
-    "n_active_days": 3,
-    "avg_fidelity": 0.091,
-    "constancy": 0.0096,
-    "avg_hours_per_day": 0.6869,
+    "fishing_hours": 2.9681,
+    "unique_trips": 4,
+    "n_active_days": 4,
+    "avg_fidelity": 0.1034,
+    "constancy": 0.0128,
+    "avg_hours_per_day": 0.742,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.6869
+    "hours_per_trip": 0.742
   },
   {
     "h3_index": "897b4e74977ffff",
@@ -290715,6 +291531,18 @@
     "avg_hours_per_day": 0.739,
     "avg_visits_per_day": 0.7143,
     "hours_per_trip": 1.0347
+  },
+  {
+    "h3_index": "897b4e74977ffff",
+    "year": 2026,
+    "fishing_hours": 0.1297,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0201,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.1297,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.1297
   },
   {
     "h3_index": "897b4e7497bffff",
@@ -292291,14 +293119,14 @@
   {
     "h3_index": "897b4e74e03ffff",
     "year": 2026,
-    "fishing_hours": 5.6708,
-    "unique_trips": 8,
-    "n_active_days": 8,
-    "avg_fidelity": 0.1168,
-    "constancy": 0.0256,
-    "avg_hours_per_day": 0.7089,
+    "fishing_hours": 6.2203,
+    "unique_trips": 9,
+    "n_active_days": 9,
+    "avg_fidelity": 0.1136,
+    "constancy": 0.0288,
+    "avg_hours_per_day": 0.6911,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.7089
+    "hours_per_trip": 0.6911
   },
   {
     "h3_index": "897b4e74e07ffff",
@@ -292363,14 +293191,14 @@
   {
     "h3_index": "897b4e74e1bffff",
     "year": 2026,
-    "fishing_hours": 0.65,
-    "unique_trips": 3,
-    "n_active_days": 4,
-    "avg_fidelity": 0.0319,
-    "constancy": 0.0128,
-    "avg_hours_per_day": 0.1625,
-    "avg_visits_per_day": 0.75,
-    "hours_per_trip": 0.2167
+    "fishing_hours": 0.9989,
+    "unique_trips": 4,
+    "n_active_days": 5,
+    "avg_fidelity": 0.0379,
+    "constancy": 0.016,
+    "avg_hours_per_day": 0.1998,
+    "avg_visits_per_day": 0.8,
+    "hours_per_trip": 0.2497
   },
   {
     "h3_index": "897b4e74e33ffff",
@@ -294235,14 +295063,14 @@
   {
     "h3_index": "897b4ea4443ffff",
     "year": 2026,
-    "fishing_hours": 1.5867,
-    "unique_trips": 2,
-    "n_active_days": 2,
-    "avg_fidelity": 0.1423,
-    "constancy": 0.0064,
-    "avg_hours_per_day": 0.7933,
+    "fishing_hours": 2.4094,
+    "unique_trips": 3,
+    "n_active_days": 3,
+    "avg_fidelity": 0.1604,
+    "constancy": 0.0096,
+    "avg_hours_per_day": 0.8031,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.7933
+    "hours_per_trip": 0.8031
   },
   {
     "h3_index": "897b4ea4447ffff",
@@ -294259,14 +295087,14 @@
   {
     "h3_index": "897b4ea4447ffff",
     "year": 2026,
-    "fishing_hours": 0.6622,
-    "unique_trips": 1,
-    "n_active_days": 1,
-    "avg_fidelity": 0.1558,
-    "constancy": 0.0032,
-    "avg_hours_per_day": 0.6622,
+    "fishing_hours": 0.8211,
+    "unique_trips": 2,
+    "n_active_days": 2,
+    "avg_fidelity": 0.0969,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.4106,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.6622
+    "hours_per_trip": 0.4106
   },
   {
     "h3_index": "897b4ea444bffff",
@@ -294283,14 +295111,14 @@
   {
     "h3_index": "897b4ea444bffff",
     "year": 2026,
-    "fishing_hours": 6.6142,
-    "unique_trips": 2,
-    "n_active_days": 2,
-    "avg_fidelity": 0.6484,
-    "constancy": 0.0064,
-    "avg_hours_per_day": 3.3071,
+    "fishing_hours": 6.8911,
+    "unique_trips": 3,
+    "n_active_days": 3,
+    "avg_fidelity": 0.4543,
+    "constancy": 0.0096,
+    "avg_hours_per_day": 2.297,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 3.3071
+    "hours_per_trip": 2.297
   },
   {
     "h3_index": "897b4ea444fffff",
@@ -294305,6 +295133,18 @@
     "hours_per_trip": 0.1278
   },
   {
+    "h3_index": "897b4ea445bffff",
+    "year": 2026,
+    "fishing_hours": 0.2161,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0365,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.2161,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.2161
+  },
+  {
     "h3_index": "897b4ea44b7ffff",
     "year": 2026,
     "fishing_hours": 0.1367,
@@ -294315,6 +295155,42 @@
     "avg_hours_per_day": 0.1367,
     "avg_visits_per_day": 1,
     "hours_per_trip": 0.1367
+  },
+  {
+    "h3_index": "897b4ea44c3ffff",
+    "year": 2026,
+    "fishing_hours": 0.0211,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0036,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.0211,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.0211
+  },
+  {
+    "h3_index": "897b4ea44cfffff",
+    "year": 2026,
+    "fishing_hours": 0.0411,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0098,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.0411,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.0411
+  },
+  {
+    "h3_index": "897b4ea44dbffff",
+    "year": 2026,
+    "fishing_hours": 0.5642,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0954,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.5642,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.5642
   },
   {
     "h3_index": "897b4ea4507ffff",
@@ -294675,6 +295551,30 @@
     "avg_hours_per_day": 1.5668,
     "avg_visits_per_day": 0.8333,
     "hours_per_trip": 1.8801
+  },
+  {
+    "h3_index": "897b4ea4693ffff",
+    "year": 2026,
+    "fishing_hours": 0.5694,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0963,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.5694,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.5694
+  },
+  {
+    "h3_index": "897b4ea4697ffff",
+    "year": 2026,
+    "fishing_hours": 0.7425,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.1255,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.7425,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.7425
   },
   {
     "h3_index": "897b4ea46bbffff",
@@ -296035,14 +296935,14 @@
   {
     "h3_index": "897b4ea602bffff",
     "year": 2026,
-    "fishing_hours": 0.8208,
-    "unique_trips": 3,
-    "n_active_days": 3,
-    "avg_fidelity": 0.0523,
-    "constancy": 0.0096,
-    "avg_hours_per_day": 0.2736,
+    "fishing_hours": 2.5294,
+    "unique_trips": 4,
+    "n_active_days": 4,
+    "avg_fidelity": 0.1413,
+    "constancy": 0.0128,
+    "avg_hours_per_day": 0.6324,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.2736
+    "hours_per_trip": 0.6324
   },
   {
     "h3_index": "897b4ea602fffff",
@@ -296539,14 +297439,14 @@
   {
     "h3_index": "897b4ea632fffff",
     "year": 2026,
-    "fishing_hours": 3.6508,
-    "unique_trips": 4,
-    "n_active_days": 4,
-    "avg_fidelity": 0.1788,
-    "constancy": 0.0128,
-    "avg_hours_per_day": 0.9127,
+    "fishing_hours": 4.1111,
+    "unique_trips": 5,
+    "n_active_days": 5,
+    "avg_fidelity": 0.1586,
+    "constancy": 0.016,
+    "avg_hours_per_day": 0.8222,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.9127
+    "hours_per_trip": 0.8222
   },
   {
     "h3_index": "897b4ea6333ffff",
@@ -297043,14 +297943,14 @@
   {
     "h3_index": "897b4ea6c5bffff",
     "year": 2026,
-    "fishing_hours": 0.8747,
-    "unique_trips": 1,
-    "n_active_days": 1,
-    "avg_fidelity": 0.32,
-    "constancy": 0.0032,
-    "avg_hours_per_day": 0.8747,
+    "fishing_hours": 2.0514,
+    "unique_trips": 2,
+    "n_active_days": 2,
+    "avg_fidelity": 0.3006,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 1.0257,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.8747
+    "hours_per_trip": 1.0257
   },
   {
     "h3_index": "897b4ea6c63ffff",
@@ -297236,13 +298136,13 @@
     "h3_index": "897b4ea6cbbffff",
     "year": 2026,
     "fishing_hours": 0.0975,
-    "unique_trips": 1,
-    "n_active_days": 1,
-    "avg_fidelity": 0.0203,
-    "constancy": 0.0032,
-    "avg_hours_per_day": 0.0975,
+    "unique_trips": 2,
+    "n_active_days": 2,
+    "avg_fidelity": 0.0101,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.0488,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.0975
+    "hours_per_trip": 0.0488
   },
   {
     "h3_index": "897b4ea6cc3ffff",
@@ -297379,14 +298279,14 @@
   {
     "h3_index": "897b4ea6e5bffff",
     "year": 2026,
-    "fishing_hours": 7.7958,
-    "unique_trips": 3,
-    "n_active_days": 3,
-    "avg_fidelity": 0.4975,
-    "constancy": 0.0096,
-    "avg_hours_per_day": 2.5986,
+    "fishing_hours": 10.2239,
+    "unique_trips": 4,
+    "n_active_days": 4,
+    "avg_fidelity": 0.4757,
+    "constancy": 0.0128,
+    "avg_hours_per_day": 2.556,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 2.5986
+    "hours_per_trip": 2.556
   },
   {
     "h3_index": "897b4ea6e7bffff",
@@ -297545,6 +298445,42 @@
     "hours_per_trip": 0.9447
   },
   {
+    "h3_index": "897b4ea712bffff",
+    "year": 2026,
+    "fishing_hours": 0.1383,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0234,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.1383,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.1383
+  },
+  {
+    "h3_index": "897b4ea712fffff",
+    "year": 2026,
+    "fishing_hours": 0.7178,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.1214,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.7178,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.7178
+  },
+  {
+    "h3_index": "897b4ea7167ffff",
+    "year": 2026,
+    "fishing_hours": 0.0564,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0095,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.0564,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.0564
+  },
+  {
     "h3_index": "897b4ea71b3ffff",
     "year": 2025,
     "fishing_hours": 0.0411,
@@ -297627,6 +298563,18 @@
     "avg_hours_per_day": 0.0189,
     "avg_visits_per_day": 1,
     "hours_per_trip": 0.0189
+  },
+  {
+    "h3_index": "897b4eb4db7ffff",
+    "year": 2026,
+    "fishing_hours": 0.3181,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.5073,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.3181,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.3181
   },
   {
     "h3_index": "897b4eb68b7ffff",
@@ -302945,6 +303893,18 @@
     "hours_per_trip": 0.27
   },
   {
+    "h3_index": "897b59028b7ffff",
+    "year": 2026,
+    "fishing_hours": 0.0231,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.7345,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.0231,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.0231
+  },
+  {
     "h3_index": "897b590299bffff",
     "year": 2025,
     "fishing_hours": 0.0992,
@@ -303186,14 +304146,14 @@
   {
     "h3_index": "897b5902d4fffff",
     "year": 2026,
-    "fishing_hours": 0.0033,
-    "unique_trips": 1,
-    "n_active_days": 1,
-    "avg_fidelity": 0.0063,
-    "constancy": 0.0032,
-    "avg_hours_per_day": 0.0033,
+    "fishing_hours": 0.0117,
+    "unique_trips": 2,
+    "n_active_days": 2,
+    "avg_fidelity": 0.1359,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.0058,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.0033
+    "hours_per_trip": 0.0058
   },
   {
     "h3_index": "897b5902d5bffff",
@@ -317214,14 +318174,14 @@
   {
     "h3_index": "897b5942b83ffff",
     "year": 2026,
-    "fishing_hours": 0.2725,
-    "unique_trips": 1,
-    "n_active_days": 2,
-    "avg_fidelity": 0.0638,
-    "constancy": 0.0064,
-    "avg_hours_per_day": 0.1362,
-    "avg_visits_per_day": 0.5,
-    "hours_per_trip": 0.2725
+    "fishing_hours": 0.6531,
+    "unique_trips": 2,
+    "n_active_days": 3,
+    "avg_fidelity": 0.1106,
+    "constancy": 0.0096,
+    "avg_hours_per_day": 0.2177,
+    "avg_visits_per_day": 0.6667,
+    "hours_per_trip": 0.3265
   },
   {
     "h3_index": "897b5942b87ffff",
@@ -317238,14 +318198,14 @@
   {
     "h3_index": "897b5942b8bffff",
     "year": 2026,
-    "fishing_hours": 0.3886,
-    "unique_trips": 1,
-    "n_active_days": 1,
-    "avg_fidelity": 0.1436,
-    "constancy": 0.0032,
-    "avg_hours_per_day": 0.3886,
+    "fishing_hours": 1.4183,
+    "unique_trips": 2,
+    "n_active_days": 2,
+    "avg_fidelity": 0.2849,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.7092,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.3886
+    "hours_per_trip": 0.7092
   },
   {
     "h3_index": "897b5942b8fffff",
@@ -317262,26 +318222,26 @@
   {
     "h3_index": "897b5942bc3ffff",
     "year": 2026,
-    "fishing_hours": 0.0839,
-    "unique_trips": 1,
-    "n_active_days": 1,
-    "avg_fidelity": 0.031,
-    "constancy": 0.0032,
-    "avg_hours_per_day": 0.0839,
+    "fishing_hours": 0.1039,
+    "unique_trips": 2,
+    "n_active_days": 2,
+    "avg_fidelity": 0.0196,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.0519,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.0839
+    "hours_per_trip": 0.0519
   },
   {
     "h3_index": "897b5942bc7ffff",
     "year": 2026,
-    "fishing_hours": 0.3536,
-    "unique_trips": 1,
-    "n_active_days": 1,
-    "avg_fidelity": 0.1307,
-    "constancy": 0.0032,
-    "avg_hours_per_day": 0.3536,
+    "fishing_hours": 1.0697,
+    "unique_trips": 2,
+    "n_active_days": 2,
+    "avg_fidelity": 0.2136,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.5349,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.3536
+    "hours_per_trip": 0.5349
   },
   {
     "h3_index": "897b5942bcbffff",
@@ -317322,14 +318282,14 @@
   {
     "h3_index": "897b5942bd7ffff",
     "year": 2026,
-    "fishing_hours": 0.0833,
-    "unique_trips": 1,
-    "n_active_days": 1,
-    "avg_fidelity": 0.0308,
-    "constancy": 0.0032,
-    "avg_hours_per_day": 0.0833,
+    "fishing_hours": 0.3531,
+    "unique_trips": 2,
+    "n_active_days": 2,
+    "avg_fidelity": 0.0712,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.1765,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.0833
+    "hours_per_trip": 0.1765
   },
   {
     "h3_index": "897b5942bdbffff",
@@ -320118,14 +321078,14 @@
   {
     "h3_index": "897b594701bffff",
     "year": 2026,
-    "fishing_hours": 1.2606,
-    "unique_trips": 5,
-    "n_active_days": 4,
-    "avg_fidelity": 0.5991,
-    "constancy": 0.0128,
-    "avg_hours_per_day": 0.3151,
-    "avg_visits_per_day": 1.25,
-    "hours_per_trip": 0.2521
+    "fishing_hours": 1.2819,
+    "unique_trips": 6,
+    "n_active_days": 5,
+    "avg_fidelity": 0.508,
+    "constancy": 0.016,
+    "avg_hours_per_day": 0.2564,
+    "avg_visits_per_day": 1.2,
+    "hours_per_trip": 0.2137
   },
   {
     "h3_index": "897b5947043ffff",
@@ -320574,14 +321534,14 @@
   {
     "h3_index": "897b59470cfffff",
     "year": 2026,
-    "fishing_hours": 0.16,
-    "unique_trips": 1,
-    "n_active_days": 1,
-    "avg_fidelity": 1,
-    "constancy": 0.0032,
-    "avg_hours_per_day": 0.16,
+    "fishing_hours": 0.5453,
+    "unique_trips": 2,
+    "n_active_days": 2,
+    "avg_fidelity": 0.9737,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.2726,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.16
+    "hours_per_trip": 0.2726
   },
   {
     "h3_index": "897b59470d3ffff",
@@ -324472,6 +325432,18 @@
     "hours_per_trip": 2.1107
   },
   {
+    "h3_index": "897b594eec7ffff",
+    "year": 2026,
+    "fishing_hours": 0.0167,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 1,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.0167,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.0167
+  },
+  {
     "h3_index": "897b594eecbffff",
     "year": 2025,
     "fishing_hours": 0.0167,
@@ -327558,14 +328530,14 @@
   {
     "h3_index": "897b5984d83ffff",
     "year": 2026,
-    "fishing_hours": 18.1522,
+    "fishing_hours": 18.4022,
     "unique_trips": 24,
     "n_active_days": 23,
-    "avg_fidelity": 0.2701,
+    "avg_fidelity": 0.2739,
     "constancy": 0.0737,
-    "avg_hours_per_day": 0.7892,
+    "avg_hours_per_day": 0.8001,
     "avg_visits_per_day": 1.0435,
-    "hours_per_trip": 0.7563
+    "hours_per_trip": 0.7668
   },
   {
     "h3_index": "897b5984d87ffff",
@@ -327597,7 +328569,7 @@
     "fishing_hours": 11.7944,
     "unique_trips": 15,
     "n_active_days": 15,
-    "avg_fidelity": 0.2192,
+    "avg_fidelity": 0.2187,
     "constancy": 0.0481,
     "avg_hours_per_day": 0.7863,
     "avg_visits_per_day": 1,
@@ -327642,14 +328614,14 @@
   {
     "h3_index": "897b5984d93ffff",
     "year": 2026,
-    "fishing_hours": 1.5972,
+    "fishing_hours": 1.3472,
     "unique_trips": 8,
     "n_active_days": 8,
-    "avg_fidelity": 0.0886,
+    "avg_fidelity": 0.0694,
     "constancy": 0.0256,
-    "avg_hours_per_day": 0.1997,
+    "avg_hours_per_day": 0.1684,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.1997
+    "hours_per_trip": 0.1684
   },
   {
     "h3_index": "897b5984d97ffff",
@@ -327669,7 +328641,7 @@
     "fishing_hours": 5.6331,
     "unique_trips": 16,
     "n_active_days": 16,
-    "avg_fidelity": 0.1311,
+    "avg_fidelity": 0.1317,
     "constancy": 0.0513,
     "avg_hours_per_day": 0.3521,
     "avg_visits_per_day": 1,
@@ -327738,14 +328710,14 @@
   {
     "h3_index": "897b5984db3ffff",
     "year": 2026,
-    "fishing_hours": 20.4008,
+    "fishing_hours": 20.1508,
     "unique_trips": 36,
     "n_active_days": 36,
-    "avg_fidelity": 0.3153,
+    "avg_fidelity": 0.3139,
     "constancy": 0.1154,
-    "avg_hours_per_day": 0.5667,
+    "avg_hours_per_day": 0.5597,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.5667
+    "hours_per_trip": 0.5597
   },
   {
     "h3_index": "897b5984dbbffff",
@@ -330585,7 +331557,7 @@
     "fishing_hours": 6.0267,
     "unique_trips": 15,
     "n_active_days": 15,
-    "avg_fidelity": 0.1786,
+    "avg_fidelity": 0.1813,
     "constancy": 0.0481,
     "avg_hours_per_day": 0.4018,
     "avg_visits_per_day": 1,
@@ -330621,7 +331593,7 @@
     "fishing_hours": 3.0689,
     "unique_trips": 8,
     "n_active_days": 8,
-    "avg_fidelity": 0.2404,
+    "avg_fidelity": 0.2548,
     "constancy": 0.0256,
     "avg_hours_per_day": 0.3836,
     "avg_visits_per_day": 1,
@@ -330645,7 +331617,7 @@
     "fishing_hours": 2.9097,
     "unique_trips": 11,
     "n_active_days": 11,
-    "avg_fidelity": 0.1536,
+    "avg_fidelity": 0.1538,
     "constancy": 0.0353,
     "avg_hours_per_day": 0.2645,
     "avg_visits_per_day": 1,
@@ -330669,7 +331641,7 @@
     "fishing_hours": 2.5222,
     "unique_trips": 8,
     "n_active_days": 7,
-    "avg_fidelity": 0.1093,
+    "avg_fidelity": 0.1094,
     "constancy": 0.0224,
     "avg_hours_per_day": 0.3603,
     "avg_visits_per_day": 1.1429,
@@ -332406,14 +333378,14 @@
   {
     "h3_index": "897b59b2513ffff",
     "year": 2026,
-    "fishing_hours": 5.7128,
+    "fishing_hours": 5.7175,
     "unique_trips": 49,
     "n_active_days": 43,
-    "avg_fidelity": 0.0358,
+    "avg_fidelity": 0.0359,
     "constancy": 0.1378,
-    "avg_hours_per_day": 0.1329,
+    "avg_hours_per_day": 0.133,
     "avg_visits_per_day": 1.1395,
-    "hours_per_trip": 0.1166
+    "hours_per_trip": 0.1167
   },
   {
     "h3_index": "897b59b2517ffff",
@@ -332454,14 +333426,14 @@
   {
     "h3_index": "897b59b258bffff",
     "year": 2026,
-    "fishing_hours": 81.1789,
-    "unique_trips": 255,
+    "fishing_hours": 80.9119,
+    "unique_trips": 253,
     "n_active_days": 168,
-    "avg_fidelity": 0.1332,
+    "avg_fidelity": 0.1334,
     "constancy": 0.5385,
-    "avg_hours_per_day": 0.4832,
-    "avg_visits_per_day": 1.5179,
-    "hours_per_trip": 0.3183
+    "avg_hours_per_day": 0.4816,
+    "avg_visits_per_day": 1.506,
+    "hours_per_trip": 0.3198
   },
   {
     "h3_index": "897b59b258fffff",
@@ -332526,14 +333498,14 @@
   {
     "h3_index": "897b59b25c7ffff",
     "year": 2026,
-    "fishing_hours": 7.6964,
-    "unique_trips": 46,
-    "n_active_days": 44,
-    "avg_fidelity": 0.0621,
-    "constancy": 0.141,
-    "avg_hours_per_day": 0.1749,
-    "avg_visits_per_day": 1.0455,
-    "hours_per_trip": 0.1673
+    "fishing_hours": 7.6953,
+    "unique_trips": 45,
+    "n_active_days": 43,
+    "avg_fidelity": 0.0408,
+    "constancy": 0.1378,
+    "avg_hours_per_day": 0.179,
+    "avg_visits_per_day": 1.0465,
+    "hours_per_trip": 0.171
   },
   {
     "h3_index": "897b59b25cbffff",
@@ -333261,7 +334233,7 @@
     "fishing_hours": 1.2308,
     "unique_trips": 2,
     "n_active_days": 2,
-    "avg_fidelity": 0.2158,
+    "avg_fidelity": 0.2157,
     "constancy": 0.0064,
     "avg_hours_per_day": 0.6154,
     "avg_visits_per_day": 1,
@@ -333381,7 +334353,7 @@
     "fishing_hours": 9.5117,
     "unique_trips": 20,
     "n_active_days": 19,
-    "avg_fidelity": 0.1982,
+    "avg_fidelity": 0.1985,
     "constancy": 0.0609,
     "avg_hours_per_day": 0.5006,
     "avg_visits_per_day": 1.0526,
@@ -333405,7 +334377,7 @@
     "fishing_hours": 2.4353,
     "unique_trips": 6,
     "n_active_days": 6,
-    "avg_fidelity": 0.3061,
+    "avg_fidelity": 0.3063,
     "constancy": 0.0192,
     "avg_hours_per_day": 0.4059,
     "avg_visits_per_day": 1,
@@ -333441,7 +334413,7 @@
     "fishing_hours": 4.5656,
     "unique_trips": 10,
     "n_active_days": 10,
-    "avg_fidelity": 0.1547,
+    "avg_fidelity": 0.1543,
     "constancy": 0.0321,
     "avg_hours_per_day": 0.4566,
     "avg_visits_per_day": 1,
@@ -333465,7 +334437,7 @@
     "fishing_hours": 1.6031,
     "unique_trips": 3,
     "n_active_days": 3,
-    "avg_fidelity": 0.2709,
+    "avg_fidelity": 0.2707,
     "constancy": 0.0096,
     "avg_hours_per_day": 0.5344,
     "avg_visits_per_day": 1,
@@ -333537,7 +334509,7 @@
     "fishing_hours": 1.5508,
     "unique_trips": 3,
     "n_active_days": 3,
-    "avg_fidelity": 0.1834,
+    "avg_fidelity": 0.1833,
     "constancy": 0.0096,
     "avg_hours_per_day": 0.5169,
     "avg_visits_per_day": 1,
@@ -333561,7 +334533,7 @@
     "fishing_hours": 3.9656,
     "unique_trips": 8,
     "n_active_days": 8,
-    "avg_fidelity": 0.1919,
+    "avg_fidelity": 0.186,
     "constancy": 0.0256,
     "avg_hours_per_day": 0.4957,
     "avg_visits_per_day": 1,
@@ -333573,7 +334545,7 @@
     "fishing_hours": 1.4922,
     "unique_trips": 2,
     "n_active_days": 2,
-    "avg_fidelity": 0.1951,
+    "avg_fidelity": 0.1929,
     "constancy": 0.0064,
     "avg_hours_per_day": 0.7461,
     "avg_visits_per_day": 1,
@@ -333597,7 +334569,7 @@
     "fishing_hours": 7.3678,
     "unique_trips": 8,
     "n_active_days": 9,
-    "avg_fidelity": 0.317,
+    "avg_fidelity": 0.3153,
     "constancy": 0.0288,
     "avg_hours_per_day": 0.8186,
     "avg_visits_per_day": 0.8889,
@@ -333621,7 +334593,7 @@
     "fishing_hours": 2.8825,
     "unique_trips": 5,
     "n_active_days": 5,
-    "avg_fidelity": 0.3099,
+    "avg_fidelity": 0.3104,
     "constancy": 0.016,
     "avg_hours_per_day": 0.5765,
     "avg_visits_per_day": 1,
@@ -333645,7 +334617,7 @@
     "fishing_hours": 1.2403,
     "unique_trips": 2,
     "n_active_days": 2,
-    "avg_fidelity": 0.2889,
+    "avg_fidelity": 0.298,
     "constancy": 0.0064,
     "avg_hours_per_day": 0.6201,
     "avg_visits_per_day": 1,
@@ -333729,7 +334701,7 @@
     "fishing_hours": 4.4011,
     "unique_trips": 5,
     "n_active_days": 6,
-    "avg_fidelity": 0.2343,
+    "avg_fidelity": 0.2428,
     "constancy": 0.0192,
     "avg_hours_per_day": 0.7335,
     "avg_visits_per_day": 0.8333,
@@ -333837,7 +334809,7 @@
     "fishing_hours": 6.0314,
     "unique_trips": 7,
     "n_active_days": 6,
-    "avg_fidelity": 0.3095,
+    "avg_fidelity": 0.3131,
     "constancy": 0.0192,
     "avg_hours_per_day": 1.0052,
     "avg_visits_per_day": 1.1667,
@@ -342474,14 +343446,14 @@
   {
     "h3_index": "897b5b0a8dbffff",
     "year": 2026,
-    "fishing_hours": 6.8242,
-    "unique_trips": 29,
-    "n_active_days": 29,
-    "avg_fidelity": 0.1254,
-    "constancy": 0.0929,
-    "avg_hours_per_day": 0.2353,
+    "fishing_hours": 6.8692,
+    "unique_trips": 30,
+    "n_active_days": 30,
+    "avg_fidelity": 0.1225,
+    "constancy": 0.0962,
+    "avg_hours_per_day": 0.229,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.2353
+    "hours_per_trip": 0.229
   },
   {
     "h3_index": "897b5b0a917ffff",
@@ -343290,14 +344262,14 @@
   {
     "h3_index": "897b5b0ae0bffff",
     "year": 2026,
-    "fishing_hours": 19.6192,
-    "unique_trips": 102,
-    "n_active_days": 96,
-    "avg_fidelity": 0.2448,
-    "constancy": 0.3077,
-    "avg_hours_per_day": 0.2044,
-    "avg_visits_per_day": 1.0625,
-    "hours_per_trip": 0.1923
+    "fishing_hours": 19.8886,
+    "unique_trips": 103,
+    "n_active_days": 97,
+    "avg_fidelity": 0.2446,
+    "constancy": 0.3109,
+    "avg_hours_per_day": 0.205,
+    "avg_visits_per_day": 1.0619,
+    "hours_per_trip": 0.1931
   },
   {
     "h3_index": "897b5b0ae0fffff",
@@ -343482,14 +344454,14 @@
   {
     "h3_index": "897b5b0ae37ffff",
     "year": 2026,
-    "fishing_hours": 3.8053,
-    "unique_trips": 17,
-    "n_active_days": 15,
-    "avg_fidelity": 0.2537,
-    "constancy": 0.0481,
-    "avg_hours_per_day": 0.2537,
-    "avg_visits_per_day": 1.1333,
-    "hours_per_trip": 0.2238
+    "fishing_hours": 3.8486,
+    "unique_trips": 18,
+    "n_active_days": 16,
+    "avg_fidelity": 0.2417,
+    "constancy": 0.0513,
+    "avg_hours_per_day": 0.2405,
+    "avg_visits_per_day": 1.125,
+    "hours_per_trip": 0.2138
   },
   {
     "h3_index": "897b5b0ae3bffff",
@@ -343554,14 +344526,14 @@
   {
     "h3_index": "897b5b0ae47ffff",
     "year": 2026,
-    "fishing_hours": 18.7361,
-    "unique_trips": 127,
-    "n_active_days": 118,
-    "avg_fidelity": 0.1441,
-    "constancy": 0.3782,
-    "avg_hours_per_day": 0.1588,
-    "avg_visits_per_day": 1.0763,
-    "hours_per_trip": 0.1475
+    "fishing_hours": 18.7833,
+    "unique_trips": 128,
+    "n_active_days": 119,
+    "avg_fidelity": 0.1433,
+    "constancy": 0.3814,
+    "avg_hours_per_day": 0.1578,
+    "avg_visits_per_day": 1.0756,
+    "hours_per_trip": 0.1467
   },
   {
     "h3_index": "897b5b0ae57ffff",
@@ -343614,14 +344586,14 @@
   {
     "h3_index": "897b5b0ae6fffff",
     "year": 2026,
-    "fishing_hours": 8.2647,
-    "unique_trips": 38,
-    "n_active_days": 36,
-    "avg_fidelity": 0.2142,
-    "constancy": 0.1154,
-    "avg_hours_per_day": 0.2296,
-    "avg_visits_per_day": 1.0556,
-    "hours_per_trip": 0.2175
+    "fishing_hours": 8.9353,
+    "unique_trips": 39,
+    "n_active_days": 37,
+    "avg_fidelity": 0.2236,
+    "constancy": 0.1186,
+    "avg_hours_per_day": 0.2415,
+    "avg_visits_per_day": 1.0541,
+    "hours_per_trip": 0.2291
   },
   {
     "h3_index": "897b5b0ae73ffff",
@@ -343830,14 +344802,14 @@
   {
     "h3_index": "897b5b0aeafffff",
     "year": 2026,
-    "fishing_hours": 4.2286,
-    "unique_trips": 22,
-    "n_active_days": 20,
-    "avg_fidelity": 0.1268,
-    "constancy": 0.0641,
-    "avg_hours_per_day": 0.2114,
-    "avg_visits_per_day": 1.1,
-    "hours_per_trip": 0.1922
+    "fishing_hours": 4.3269,
+    "unique_trips": 23,
+    "n_active_days": 21,
+    "avg_fidelity": 0.1249,
+    "constancy": 0.0673,
+    "avg_hours_per_day": 0.206,
+    "avg_visits_per_day": 1.0952,
+    "hours_per_trip": 0.1881
   },
   {
     "h3_index": "897b5b0aeb3ffff",
@@ -351869,14 +352841,14 @@
   {
     "h3_index": "897b5b4b587ffff",
     "year": 2026,
-    "fishing_hours": 4.6689,
-    "unique_trips": 26,
-    "n_active_days": 26,
-    "avg_fidelity": 0.4588,
-    "constancy": 0.0833,
-    "avg_hours_per_day": 0.1796,
+    "fishing_hours": 4.7089,
+    "unique_trips": 27,
+    "n_active_days": 27,
+    "avg_fidelity": 0.4579,
+    "constancy": 0.0865,
+    "avg_hours_per_day": 0.1744,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.1796
+    "hours_per_trip": 0.1744
   },
   {
     "h3_index": "897b5b4b58bffff",
@@ -351893,14 +352865,14 @@
   {
     "h3_index": "897b5b4b58fffff",
     "year": 2026,
-    "fishing_hours": 2.2544,
-    "unique_trips": 25,
-    "n_active_days": 25,
-    "avg_fidelity": 0.2698,
-    "constancy": 0.0801,
-    "avg_hours_per_day": 0.0902,
+    "fishing_hours": 2.2733,
+    "unique_trips": 26,
+    "n_active_days": 26,
+    "avg_fidelity": 0.2674,
+    "constancy": 0.0833,
+    "avg_hours_per_day": 0.0874,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.0902
+    "hours_per_trip": 0.0874
   },
   {
     "h3_index": "897b5b4b593ffff",
@@ -351977,14 +352949,14 @@
   {
     "h3_index": "897b5b4b5bbffff",
     "year": 2026,
-    "fishing_hours": 0.8689,
-    "unique_trips": 10,
-    "n_active_days": 10,
-    "avg_fidelity": 0.1245,
-    "constancy": 0.0321,
-    "avg_hours_per_day": 0.0869,
+    "fishing_hours": 0.9017,
+    "unique_trips": 11,
+    "n_active_days": 11,
+    "avg_fidelity": 0.1457,
+    "constancy": 0.0353,
+    "avg_hours_per_day": 0.082,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.0869
+    "hours_per_trip": 0.082
   },
   {
     "h3_index": "897b5b4b5c3ffff",
@@ -1053483,14 +1054455,14 @@
   {
     "h3_index": "8997921124bffff",
     "year": 2026,
-    "fishing_hours": 17.1033,
-    "unique_trips": 43,
-    "n_active_days": 44,
-    "avg_fidelity": 0.0851,
-    "constancy": 0.141,
-    "avg_hours_per_day": 0.3887,
-    "avg_visits_per_day": 0.9773,
-    "hours_per_trip": 0.3978
+    "fishing_hours": 17.7272,
+    "unique_trips": 44,
+    "n_active_days": 45,
+    "avg_fidelity": 0.0855,
+    "constancy": 0.1442,
+    "avg_hours_per_day": 0.3939,
+    "avg_visits_per_day": 0.9778,
+    "hours_per_trip": 0.4029
   },
   {
     "h3_index": "8997921124fffff",
@@ -1053507,14 +1054479,14 @@
   {
     "h3_index": "8997921124fffff",
     "year": 2026,
-    "fishing_hours": 40.6417,
-    "unique_trips": 52,
-    "n_active_days": 54,
+    "fishing_hours": 41.5886,
+    "unique_trips": 53,
+    "n_active_days": 55,
     "avg_fidelity": 0.1559,
-    "constancy": 0.1731,
-    "avg_hours_per_day": 0.7526,
-    "avg_visits_per_day": 0.963,
-    "hours_per_trip": 0.7816
+    "constancy": 0.1763,
+    "avg_hours_per_day": 0.7562,
+    "avg_visits_per_day": 0.9636,
+    "hours_per_trip": 0.7847
   },
   {
     "h3_index": "89979211253ffff",
@@ -1054518,7 +1055490,7 @@
     "fishing_hours": 0.25,
     "unique_trips": 1,
     "n_active_days": 1,
-    "avg_fidelity": 0.2112,
+    "avg_fidelity": 0.2059,
     "constancy": 0.0032,
     "avg_hours_per_day": 0.25,
     "avg_visits_per_day": 1,
@@ -1054530,7 +1055502,7 @@
     "fishing_hours": 2.6292,
     "unique_trips": 2,
     "n_active_days": 3,
-    "avg_fidelity": 0.7701,
+    "avg_fidelity": 0.7615,
     "constancy": 0.0096,
     "avg_hours_per_day": 0.8764,
     "avg_visits_per_day": 0.6667,
@@ -1054539,14 +1055511,14 @@
   {
     "h3_index": "8997921328fffff",
     "year": 2026,
-    "fishing_hours": 0.0042,
+    "fishing_hours": 0.0344,
     "unique_trips": 1,
     "n_active_days": 1,
-    "avg_fidelity": 0.0035,
+    "avg_fidelity": 0.0284,
     "constancy": 0.0032,
-    "avg_hours_per_day": 0.0042,
+    "avg_hours_per_day": 0.0344,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.0042
+    "hours_per_trip": 0.0344
   },
   {
     "h3_index": "899792132bbffff",
@@ -1054554,7 +1055526,7 @@
     "fishing_hours": 0.4281,
     "unique_trips": 2,
     "n_active_days": 2,
-    "avg_fidelity": 0.1226,
+    "avg_fidelity": 0.1213,
     "constancy": 0.0064,
     "avg_hours_per_day": 0.214,
     "avg_visits_per_day": 1,
@@ -1054635,14 +1055607,14 @@
   {
     "h3_index": "8997921a003ffff",
     "year": 2026,
-    "fishing_hours": 0.1019,
-    "unique_trips": 1,
-    "n_active_days": 1,
-    "avg_fidelity": 0.0185,
-    "constancy": 0.0032,
-    "avg_hours_per_day": 0.1019,
+    "fishing_hours": 0.3789,
+    "unique_trips": 2,
+    "n_active_days": 2,
+    "avg_fidelity": 0.032,
+    "constancy": 0.0064,
+    "avg_hours_per_day": 0.1894,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.1019
+    "hours_per_trip": 0.1894
   },
   {
     "h3_index": "8997921a013ffff",
@@ -1054655,6 +1055627,18 @@
     "avg_hours_per_day": 0.8353,
     "avg_visits_per_day": 0.5,
     "hours_per_trip": 1.6706
+  },
+  {
+    "h3_index": "8997921a013ffff",
+    "year": 2026,
+    "fishing_hours": 0.8697,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.1429,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.8697,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.8697
   },
   {
     "h3_index": "8997921a017ffff",
@@ -1054849,6 +1055833,18 @@
     "hours_per_trip": 0.3025
   },
   {
+    "h3_index": "8997921a083ffff",
+    "year": 2026,
+    "fishing_hours": 0.0186,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0031,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.0186,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.0186
+  },
+  {
     "h3_index": "8997921a087ffff",
     "year": 2026,
     "fishing_hours": 1.1781,
@@ -1054873,6 +1055869,18 @@
     "hours_per_trip": 0.1603
   },
   {
+    "h3_index": "8997921a08bffff",
+    "year": 2026,
+    "fishing_hours": 0.7803,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.1282,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.7803,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.7803
+  },
+  {
     "h3_index": "8997921a08fffff",
     "year": 2025,
     "fishing_hours": 0.6347,
@@ -1054895,6 +1055903,42 @@
     "avg_hours_per_day": 0.2994,
     "avg_visits_per_day": 1,
     "hours_per_trip": 0.2994
+  },
+  {
+    "h3_index": "8997921a093ffff",
+    "year": 2026,
+    "fishing_hours": 0.4972,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.0817,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.4972,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.4972
+  },
+  {
+    "h3_index": "8997921a097ffff",
+    "year": 2026,
+    "fishing_hours": 0.7519,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.1236,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.7519,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.7519
+  },
+  {
+    "h3_index": "8997921a09bffff",
+    "year": 2026,
+    "fishing_hours": 0.0606,
+    "unique_trips": 1,
+    "n_active_days": 1,
+    "avg_fidelity": 0.01,
+    "constancy": 0.0032,
+    "avg_hours_per_day": 0.0606,
+    "avg_visits_per_day": 1,
+    "hours_per_trip": 0.0606
   },
   {
     "h3_index": "8997921a0a3ffff",
@@ -1054971,14 +1056015,14 @@
   {
     "h3_index": "8997921a0bbffff",
     "year": 2026,
-    "fishing_hours": 4.4208,
-    "unique_trips": 7,
-    "n_active_days": 7,
-    "avg_fidelity": 0.163,
-    "constancy": 0.0224,
-    "avg_hours_per_day": 0.6315,
+    "fishing_hours": 4.6517,
+    "unique_trips": 8,
+    "n_active_days": 8,
+    "avg_fidelity": 0.1474,
+    "constancy": 0.0256,
+    "avg_hours_per_day": 0.5815,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.6315
+    "hours_per_trip": 0.5815
   },
   {
     "h3_index": "8997921a113ffff",
@@ -1055511,26 +1056555,26 @@
   {
     "h3_index": "8997921a54bffff",
     "year": 2026,
-    "fishing_hours": 1.5808,
-    "unique_trips": 5,
-    "n_active_days": 5,
-    "avg_fidelity": 0.1041,
-    "constancy": 0.016,
-    "avg_hours_per_day": 0.3162,
+    "fishing_hours": 1.9061,
+    "unique_trips": 6,
+    "n_active_days": 6,
+    "avg_fidelity": 0.0957,
+    "constancy": 0.0192,
+    "avg_hours_per_day": 0.3177,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.3162
+    "hours_per_trip": 0.3177
   },
   {
     "h3_index": "8997921a54fffff",
     "year": 2026,
-    "fishing_hours": 4.0231,
-    "unique_trips": 7,
-    "n_active_days": 8,
-    "avg_fidelity": 0.2284,
-    "constancy": 0.0256,
-    "avg_hours_per_day": 0.5029,
-    "avg_visits_per_day": 0.875,
-    "hours_per_trip": 0.5747
+    "fishing_hours": 4.725,
+    "unique_trips": 8,
+    "n_active_days": 9,
+    "avg_fidelity": 0.2142,
+    "constancy": 0.0288,
+    "avg_hours_per_day": 0.525,
+    "avg_visits_per_day": 0.8889,
+    "hours_per_trip": 0.5906
   },
   {
     "h3_index": "8997921a553ffff",
@@ -1066670,14 +1067714,14 @@
   {
     "h3_index": "89979481197ffff",
     "year": 2026,
-    "fishing_hours": 3.5472,
-    "unique_trips": 10,
-    "n_active_days": 10,
-    "avg_fidelity": 0.121,
-    "constancy": 0.0321,
-    "avg_hours_per_day": 0.3547,
+    "fishing_hours": 3.8761,
+    "unique_trips": 11,
+    "n_active_days": 11,
+    "avg_fidelity": 0.1382,
+    "constancy": 0.0353,
+    "avg_hours_per_day": 0.3524,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.3547
+    "hours_per_trip": 0.3524
   },
   {
     "h3_index": "8997948119bffff",
@@ -1066718,14 +1067762,14 @@
   {
     "h3_index": "899794811a3ffff",
     "year": 2026,
-    "fishing_hours": 2.0711,
-    "unique_trips": 5,
-    "n_active_days": 5,
-    "avg_fidelity": 0.1127,
-    "constancy": 0.016,
-    "avg_hours_per_day": 0.4142,
+    "fishing_hours": 2.2917,
+    "unique_trips": 6,
+    "n_active_days": 6,
+    "avg_fidelity": 0.1287,
+    "constancy": 0.0192,
+    "avg_hours_per_day": 0.3819,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.4142
+    "hours_per_trip": 0.3819
   },
   {
     "h3_index": "899794811a7ffff",
@@ -1069610,14 +1070654,14 @@
   {
     "h3_index": "899794815c3ffff",
     "year": 2026,
-    "fishing_hours": 0.5439,
-    "unique_trips": 5,
-    "n_active_days": 5,
-    "avg_fidelity": 0.0497,
-    "constancy": 0.016,
-    "avg_hours_per_day": 0.1088,
+    "fishing_hours": 0.5811,
+    "unique_trips": 6,
+    "n_active_days": 6,
+    "avg_fidelity": 0.0473,
+    "constancy": 0.0192,
+    "avg_hours_per_day": 0.0969,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.1088
+    "hours_per_trip": 0.0969
   },
   {
     "h3_index": "899794815c7ffff",
@@ -1069634,14 +1070678,14 @@
   {
     "h3_index": "899794815c7ffff",
     "year": 2026,
-    "fishing_hours": 1.1144,
-    "unique_trips": 8,
-    "n_active_days": 8,
-    "avg_fidelity": 0.07,
-    "constancy": 0.0256,
-    "avg_hours_per_day": 0.1393,
+    "fishing_hours": 1.4089,
+    "unique_trips": 9,
+    "n_active_days": 9,
+    "avg_fidelity": 0.0932,
+    "constancy": 0.0288,
+    "avg_hours_per_day": 0.1565,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.1393
+    "hours_per_trip": 0.1565
   },
   {
     "h3_index": "899794815cbffff",
@@ -1069730,14 +1070774,14 @@
   {
     "h3_index": "899794815d7ffff",
     "year": 2026,
-    "fishing_hours": 2.4611,
-    "unique_trips": 10,
-    "n_active_days": 10,
-    "avg_fidelity": 0.1172,
-    "constancy": 0.0321,
-    "avg_hours_per_day": 0.2461,
+    "fishing_hours": 2.6372,
+    "unique_trips": 11,
+    "n_active_days": 11,
+    "avg_fidelity": 0.1217,
+    "constancy": 0.0353,
+    "avg_hours_per_day": 0.2397,
     "avg_visits_per_day": 1,
-    "hours_per_trip": 0.2461
+    "hours_per_trip": 0.2397
   },
   {
     "h3_index": "899794815dbffff",
